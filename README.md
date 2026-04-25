@@ -1,8 +1,9 @@
 # Materiale Universitario - Informatica 🎓
 
-Benvenuti in questa Repository! Qui troverete appunti, dispense ed esercizi organizzati per il corso di laurea in Informatica, suddivisi per anni e semestri. 
+Benvenuti in questa Repository! Qui troverete appunti, dispense ed esercizi organizzati per il corso di laurea in Informatica, suddivisi per anni e semestri.
 
 ## 📍 Accesso Rapido
+*   🚀 [**GUIDA PER IL PRIMO ANNO**](./GUIDA_PRIMO_ANNO.md) (Consigliata per i nuovi studenti!)
 *   📂 [**Primo Anno**](./Anno_01)
 *   📂 [**Secondo Anno**](./Anno_02)
 *   📂 [**Terzo Anno**](./Anno_03)
@@ -31,7 +32,17 @@ Questa repository utilizza **Git LFS** per gestire i file PDF e gli archivi più
 
 ## ⚖️ Licenza
 Questo materiale è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**. 
-Puoi condividere e modificare il materiale, a patto di citare l'autore, non utilizzarlo per scopi commerciali e distribuire le tue versioni sotto la stessa licenza. Consulta il file [LICENSE](./LICENSE) per i dettagli.
+Consulta il file [LICENSE](./LICENSE) per i dettagli.
+
+## 🤝 Ringraziamenti & Contributi
+Un ringraziamento speciale va a tutti gli studenti, colleghi e creatori che hanno reso possibile questa raccolta mettendo a disposizione il proprio materiale e le proprie conoscenze. In particolare:
+
+*   **Matteo Galletta**, **Salvo Polizzi**, **Datalux** e **ManciSee** per le straordinarie repository di appunti e tutorati.
+*   **Federico Grasso** per i formulari di MMS.
+*   Il **DMI - Università di Catania** per le risorse storiche.
+*   I creatori di progetti open source come **OSSU** e **LabEx** per la formazione gratuita.
+
+*La condivisione è la chiave della crescita accademica.*
 
 ---
 *Creato con cura per supportare gli studenti nel loro percorso di studi.*
