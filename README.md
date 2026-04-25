@@ -1,10 +1,17 @@
 # Materiale Universitario - Informatica 🎓
 
-Benvenuti in questa Repository! Qui troverete appunti, dispense ed esercizi suddivisi per anni e semestri. 
+Benvenuti in questa Repository! Qui troverete appunti, dispense ed esercizi organizzati per il corso di laurea in Informatica, suddivisi per anni e semestri. 
+
+## 📍 Accesso Rapido
+*   📂 [**Primo Anno**](./Anno_01)
+*   📂 [**Secondo Anno**](./Anno_02)
+*   📂 [**Terzo Anno**](./Anno_03)
+*   🔗 [**Link e Fonti Esterne**](./Risorse%20Universitarie/Link%20e%20Fonti)
+
+---
 
 ## 📁 Struttura della Repository
 La repository è organizzata in modo da facilitare la ricerca del materiale:
-
 *   **Anno_01/**: Materiale del primo anno (Analisi, Algebra, Programmazione, ecc.)
 *   **Anno_02/**: Materiale del secondo anno (Algoritmi, Sistemi Operativi, ecc.)
 *   **Anno_03/**: Materiale del terzo anno e risorse per la laurea.
@@ -17,8 +24,14 @@ Se sei uno studente e vuoi aggiungere i tuoi appunti:
 2. Aggiungi il materiale nella cartella corrispondente.
 3. Invia una Pull Request!
 
-## ⚠️ Nota sui Video
-I file video delle lezioni non sono presenti su questa repository per via dei limiti di dimensione di GitHub. 
+## ⚠️ Nota sui Video e Git LFS
+I file video delle lezioni non sono presenti per via dei limiti di dimensione di GitHub. 
+Questa repository utilizza **Git LFS** per gestire i file PDF e gli archivi più pesanti. 
+**Nota per il download:** Se riscontri problemi nello scaricare i file più grandi, potrebbe essere dovuto al superamento del limite mensile di banda di GitHub LFS. In tal caso, riprova il mese successivo o consulta i link ai Drive esterni nella sezione [Link e Fonti](./Risorse%20Universitarie/Link%20e%20Fonti).
+
+## ⚖️ Licenza
+Questo materiale è distribuito sotto licenza **Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International (CC BY-NC-SA 4.0)**. 
+Puoi condividere e modificare il materiale, a patto di citare l'autore, non utilizzarlo per scopi commerciali e distribuire le tue versioni sotto la stessa licenza. Consulta il file [LICENSE](./LICENSE) per i dettagli.
 
 ---
 *Creato con cura per supportare gli studenti nel loro percorso di studi.*

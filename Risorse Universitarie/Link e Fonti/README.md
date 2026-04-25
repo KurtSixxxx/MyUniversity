@@ -4,6 +4,18 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 
 ---
 
+## 🧠 Metodo di Studio & Apprendimento
+Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e la gestione del tempo.
+
+*   [Dr. Barbara Oakley | Coursera](https://www.coursera.org/instructor/barboakley) - Corsi sulla scienza dell'apprendimento (Learning How to Learn).
+*   [Imparare ad Imparare (UniCT)](https://www.dmi.unict.it/barba/Imparare/index.htm) - Portale dedicato alle metodologie di studio efficace.
+*   [Khan Academy](https://www.khanacademy.org/) - Piattaforma leader per l'apprendimento intuitivo.
+*   [3Blue1Brown](https://www.3blue1brown.com/) - Visualizzazioni matematiche per una comprensione profonda.
+*   [Metodo di Studio - Luca Alpini](02_Libri_e_Manuali/Da%20Zlibrary/Metodi%20di%20Studio/Metodo%20di%20Studio%20I%20segreti%20degli%20studenti%20di%20successo.pdf) - Manuale su come ottimizzare i tempi (File locale).
+*   [Tecniche di memoria e lettura veloce](02_Libri_e_Manuali/Da%20Zlibrary/Metodi%20di%20Studio/Tecniche%20di%20memoria%20e%20lettura%20veloce.pdf) - Strategie per la gestione di grandi moli di informazioni (File locale).
+
+---
+
 ## 🏛️ Università
 
 ### 🎓 1° Anno
@@ -108,8 +120,7 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 *   [ELIA BOMBARDELLI (Matematica)](https://eliabombardelli.com/videolezioni-matematica/)
 *   [Learn LaTeX in 30 minutes - Overleaf](https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes)
 *   [Core Concepts | Baeldung on CS](https://www.baeldung.com/cs/category/core-concepts)
-*   [Imparare ad Imparare](https://www.dmi.unict.it/barba/Imparare/index.htm)
-*   [Neso Academy](https://www.nesoacademy.org/)
+*   [Watch Free Masterclass](https://www.theangryexplainer.com/free-masterclass)
 *   [Appunti Enk](https://enkk.me/scritti/)
 *   [Formazione GitHub](https://education.github.com/learner/learn)
 *   [Linux Journey](https://labex.io/linuxjourney)
@@ -129,3 +140,16 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 *   [Google Skills](https://www.skills.google/)
 *   [Prompt Cowboy Generator](https://www.promptcowboy.ai/)
 *   [40Hz Binaural Beats for Focus](https://www.youtube.com/watch?v=4SUK0tkhmVg)
+
+---
+
+## 🤝 Ringraziamenti & Credits
+
+Un ringraziamento speciale va a tutti gli studenti, colleghi e creatori che hanno reso possibile questa raccolta mettendo a disposizione il proprio materiale e le proprie conoscenze. In particolare:
+
+*   **Matteo Galletta**, **Salvo Polizzi**, **Datalux** e **ManciSee** per le straordinarie repository di appunti e tutorati.
+*   **Federico Grasso** per i formulari di MMS.
+*   Il **DMI - Università di Catania** per le risorse storiche.
+*   I creatori di progetti open source come **OSSU** e **LabEx** per la formazione gratuita.
+
+*La condivisione è la chiave della crescita accademica.*
