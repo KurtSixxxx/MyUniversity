@@ -1,4 +1,4 @@
-# 🏛️ Architettura degli Elaboratori
+# Architettura degli Elaboratori
 
 Materiale relativo al funzionamento dei calcolatori, CPU, Assembly e Logica Digitale.
 

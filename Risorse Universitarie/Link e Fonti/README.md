@@ -1,26 +1,22 @@
-# 📚 Risorse Universitarie: Link e Fonti
+# Risorse Universitarie: Link e Fonti
 
-Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolta curata di link utili, dispense, tool e repository per il corso di laurea in Informatica.
-
----
-
-## 🧠 Metodo di Studio & Apprendimento
-Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e la gestione del tempo.
-
-*   [Dr. Barbara Oakley | Coursera](https://www.coursera.org/instructor/barboakley) - Corsi sulla scienza dell'apprendimento (Learning How to Learn).
-*   [Imparare ad Imparare (UniCT)](https://www.dmi.unict.it/barba/Imparare/index.htm) - Portale dedicato alle metodologie di studio efficace.
-*   [Khan Academy](https://www.khanacademy.org/) - Piattaforma leader per l'apprendimento intuitivo.
-*   [3Blue1Brown](https://www.3blue1brown.com/) - Visualizzazioni matematiche per una comprensione profonda.
-*   [Metodo di Studio - Luca Alpini](02_Libri_e_Manuali/Da%20Zlibrary/Metodi%20di%20Studio/Metodo%20di%20Studio%20I%20segreti%20degli%20studenti%20di%20successo.pdf) - Manuale su come ottimizzare i tempi (File locale).
-*   [Tecniche di memoria e lettura veloce](02_Libri_e_Manuali/Da%20Zlibrary/Metodi%20di%20Studio/Tecniche%20di%20memoria%20e%20lettura%20veloce.pdf) - Strategie per la gestione di grandi moli di informazioni (File locale).
+Raccolta organizzata di risorse esterne, dispense e strumenti per il supporto allo studio.
 
 ---
 
-## 🏛️ Università
+## Metodo di Studio e Apprendimento
+*   [Dr. Barbara Oakley | Coursera](https://www.coursera.org/instructor/barboakley) - Science of learning.
+*   [Imparare ad Imparare (UniCT)](https://www.dmi.unict.it/barba/Imparare/index.htm) - Metodologie di studio efficace.
+*   [Khan Academy](https://www.khanacademy.org/) - Piattaforma di apprendimento intuitivo.
+*   [3Blue1Brown](https://www.3blue1brown.com/) - Approfondimenti matematici visuali.
 
-### 🎓 1° Anno
+---
 
-#### **Prog 1 (Programmazione 1 & C)**
+## Università
+
+### 1° Anno
+
+#### **Prog 1 (Programmazione 1 e C)**
 *   [Prof. Messina | Prog. 1](https://www.dmi.unict.it/messina/teaching.html)
 *   [Codegrind](https://codegrind.it/)
 *   [C (linguaggio): tutorial per imparare programmare | Guida HTML.it](https://www.html.it/guide/guida-c/)
@@ -64,7 +60,7 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 
 ---
 
-### 🎓 2° Anno
+### 2° Anno
 
 #### **Sistemi Operativi**
 *   [Slide sistemi operartivi 22-23](https://git.crypto.dmi.unict.it/teaching/operating-systems.2022-2023)
@@ -76,13 +72,13 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 #### **Basi di Dati**
 *   [Il modello relazionale della base di dati - Andrea Minini](https://www.andreaminini.com/database/il-modello-relazionale)
 
-#### **Prog 2 (Programmazione 2 & C++)**
+#### **Prog 2 (Programmazione 2 e C++)**
 *   [The Complete C & C++ Programming Course](https://www.psdly.to/the-complete-c-c-programming-course-mastering-c-c)
 *   [Learn C++ | C++ Courses Online | LabEx](https://labex.io/learn/cpp)
 
 ---
 
-### 🎓 3° Anno
+### 3° Anno
 
 #### **VAPT (Cybersecurity)**
 *   [Cyber Kill Chain® | Lockheed Martin](https://www.lockheedmartin.com/en-us/capabilities/cyber/cyber-kill-chain.html)
@@ -93,7 +89,7 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 
 ---
 
-## 📂 Appunti GitHub & Varie
+## Appunti GitHub e Varie
 
 ### **GitHub**
 *   [GitDmi](https://unict-dmi.github.io/git-catalogue/#/tab/appunti)
@@ -107,11 +103,11 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 *   [Drive DMI](https://drive.google.com/drive/folders/16YGvrGatUcbQixmZ5WR-Kui_XH2oH28M)
 *   [Docsity Appunti UNICT](https://www.docsity.com/it/utenti/profilo/realme90/home/)
 *   [Scritti](https://enkk.me/scritti/)
-*   [OSSU Computer Science - Autodidatta](https://github.com/ossu/computer-science)
+*   [OSSU Computer Science](https://github.com/ossu/computer-science)
 
 ---
 
-## 🛠️ Tools & Resources
+## Tools e Resources
 
 ### **Tool**
 *   [Online LaTeX Equation Editor](https://latex.codecogs.com/eqneditor/editor.php)
@@ -120,11 +116,9 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 *   [ELIA BOMBARDELLI (Matematica)](https://eliabombardelli.com/videolezioni-matematica/)
 *   [Learn LaTeX in 30 minutes - Overleaf](https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes)
 *   [Core Concepts | Baeldung on CS](https://www.baeldung.com/cs/category/core-concepts)
-*   [Watch Free Masterclass](https://www.theangryexplainer.com/free-masterclass)
-*   [Appunti Enk](https://enkk.me/scritti/)
 *   [Formazione GitHub](https://education.github.com/learner/learn)
 *   [Linux Journey](https://labex.io/linuxjourney)
-*   [ExplainShell - Command help](https://explainshell.com/)
+*   [ExplainShell](https://explainshell.com/)
 *   [tldr InBrowser.App](https://tldr.inbrowser.app/)
 *   [Learn Shell Tutorial](https://www.learnshell.org/)
 *   [LinuxCommand.org](https://linuxcommand.org/lc3_learning_the_shell.php)
@@ -136,20 +130,20 @@ Risorse e tecniche per migliorare l'efficacia dello studio, la memorizzazione e 
 *   [Awesome Markdown Editors](https://github.com/mundimark/awesome-markdown-editors)
 *   [Security Research | moltbook](https://www.moltbook.com/m/security)
 *   [ai-boost/awesome-prompts](https://github.com/ai-boost/awesome-prompts)
-*   [Guida al Prompt Engineering](https://www.promptingguide.ai/it)
+*   [Guida al Prompt Engineering](https://www.promptcoding.ai/it)
 *   [Google Skills](https://www.skills.google/)
 *   [Prompt Cowboy Generator](https://www.promptcowboy.ai/)
 *   [40Hz Binaural Beats for Focus](https://www.youtube.com/watch?v=4SUK0tkhmVg)
 
 ---
 
-## 🤝 Ringraziamenti & Credits
+## Ringraziamenti e Credits
 
-Un ringraziamento speciale va a tutti gli studenti, colleghi e creatori che hanno reso possibile questa raccolta mettendo a disposizione il proprio materiale e le proprie conoscenze. In particolare:
+Si ringraziano gli studenti, i colleghi e i creatori che hanno reso possibile questa raccolta mettendo a disposizione il proprio materiale e le proprie conoscenze. In particolare:
 
-*   **Matteo Galletta**, **Salvo Polizzi**, **Datalux** e **ManciSee** per le straordinarie repository di appunti e tutorati.
+*   **Matteo Galletta**, **Salvo Polizzi**, **Datalux** e **ManciSee** per le repository di appunti e tutorati.
 *   **Federico Grasso** per i formulari di MMS.
 *   Il **DMI - Università di Catania** per le risorse storiche.
 *   I creatori di progetti open source come **OSSU** e **LabEx** per la formazione gratuita.
 
-*La condivisione è la chiave della crescita accademica.*
+La condivisione è fondamentale per la crescita accademica.

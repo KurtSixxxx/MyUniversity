@@ -1,4 +1,4 @@
-# 📐 Algebra & Geometria Lineare
+# Algebra e Geometria Lineare
 
 Risorse e appunti per il corso di Algebra e Geometria Lineare.
 

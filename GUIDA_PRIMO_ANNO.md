@@ -1,111 +1,70 @@
-# 🚀 GUIDA PER SUPERARE IL PRIMO ANNO DI INFORMATICA
-*(Scritta da qualcuno che è al terzo anno e ha capito le cose troppo tardi)*
+# Guida per superare il primo anno di Informatica
+*Autore: Studente del terzo anno*
 
 ---
 
-## 0. Prima cosa fondamentale: non sei indietro
-Non sentirti indietro. Te lo dice una persona del terzo anno che è indietro e che ancora fatica a crederci quando si dice che non è in ritardo. 
-
-Ognuno ha i suoi tempi. Il primo anno non è una gara.
+## 0. Premessa
+Non sentirti in ritardo. Ognuno ha i suoi tempi e il primo anno non deve essere considerato una gara.
 
 ---
 
-## 🎯 Obiettivo realistico: 4–5 materie al primo anno
-Le materie sono:
+## Obiettivi realistici
+Un obiettivo sostenibile per il primo anno consiste nel superare 4 o 5 materie:
 *   Programmazione 1
 *   Architettura degli Elaboratori
 *   Fondamenti di Informatica
 *   Inglese
-*   *(eventualmente Algebra e Geometria Lineare)*
-
-Vediamo come chiuderne almeno quattro.
+*   Algebra e Geometria Lineare (opzionale)
 
 ---
 
-## 1️⃣ Inglese – La materia più semplice
-L’esame è composto da:
-*   Prova scritta a crocette (inglese base)
-*   Prova orale: scegli un testo tra quelli proposti dalla prof, lo studi e lo esponi. Lei ti fa al massimo una o due domande, ma spesso ti lascia parlare e basta.
-
-Non ha voto. È solo idoneità (passato/non passato). È un esame strategico da togliersi subito.
-
-✅ **Prima materia chiusa.**
+## 1. Inglese
+L’esame consiste in una prova scritta a risposta multipla e una prova orale su un testo a scelta. Non prevede voto, ma solo idoneità. È consigliabile sostenerlo il prima possibile per ridurre il carico di studio.
 
 ---
 
-## 2️⃣ Fondamenti di Informatica – L’esame che si passa DURANTE le lezioni
-Due professori: Barbanera e Madonia. Ognuno valuta la propria parte.
+## 2. Fondamenti di Informatica
+Questo esame può essere affrontato e superato durante il periodo delle lezioni.
 
-**Struttura:**
-*   Quiz alla fine di ogni lezione (circa 8 domande)
-*   Voto finale = media delle due parti
+**Metodo:**
+*   Frequenza costante delle lezioni.
+*   Svolgimento dei quiz proposti alla fine di ogni lezione (circa 8 domande).
+*   Studio su dispense semplificate (ad esempio, quella di Rosario Terranova).
 
-**Strategia:**
-*   Frequentare tutte le lezioni (non sono obbligatorie, ma di fatto lo sono)
-*   Fare tutti i quiz
-*   Fare domande quando non capisci
-*   Prendere appunti seri
-
-Consiglio studiare da dispense più semplificate (quella di Rosario Terranova). Se fai bene i quiz durante il semestre, potresti arrivare a fine lezioni con l’esame già superato.
-
-✅ **Seconda materia chiusa.**
+Se i quiz intermedi vengono svolti con costanza, è possibile arrivare alla fine del semestre con l'esame già virtualmente superato.
 
 ---
 
-## 3️⃣ Programmazione 1 – La più difficile, ma la più importante
-Secondo me è la più complessa, ma anche la più bella.
+## 3. Programmazione 1
+Rappresenta la materia più complessa e fondamentale del primo anno.
 
-### Parte teorica
-*   Studia dalle slide del professore.
-*   Sottolinea solo i concetti chiave.
-*   Riscrivi tutto a parole tue.
-*   Usa esempi semplici (array = scatole, ecc.).
-*   Fatti fare domande per testare la comprensione.
+### Teoria
+Lo studio deve basarsi sulle slide del docente. È essenziale rielaborare i concetti a parole proprie e utilizzare esempi pratici per testare la comprensione.
 
-Capire la teoria è fondamentale per fare la pratica.
+### Pratica
+È la parte decisiva. Dopo ogni blocco teorico è necessario svolgere numerosi esercizi, mischiando i vari argomenti. Verso la fine del programma, è fondamentale esercitarsi sulle tracce d'esame degli anni precedenti per acquisire velocità e precisione.
 
-### Parte pratica (la parte decisiva)
-Dopo ogni blocco di teoria:
-*   Fai tantissimi esercizi.
-*   Mischia gli argomenti tra loro.
-*   Allenati costantemente.
-*   Quando finisci il programma, passa alle prove d’esame (scegli 10 tracce frequenti e falle a rotazione).
+### Studio su carta
+Non limitarsi alla programmazione su computer. Per concetti come puntatori, allocazione dinamica e strutture dati, il disegno su carta della gestione della memoria (stack e heap) aiuta a visualizzare correttamente il flusso dei dati.
 
-### ✏️ Usa la carta per capire davvero
-Non programmare solo al computer. Per concetti come **Puntatori, Allocazione dinamica e Strutture dati**, fai disegni su carta. Disegna le “scatole” di memoria e gli indirizzi. Quando lo vedi, smette di essere astratto.
-
-### 🧠 Usa Python Tutor per vedere la memoria
-Strumento consigliato: **Python Tutor**. Ti permette di vedere graficamente cosa succede alla memoria passo passo. Costruisce davvero l'intuizione.
-
-### ⚠️ Regola fondamentale sull’AI
-Non usare intelligenze artificiali per farti fare gli esercizi subito. Prima devi sbatterci la testa almeno 30–40 minuti.
-
-### 💡 Come usare Gemini in modalità “Apprendimento Guidato”
-Quando sei bloccata su un esercizio:
-1.  Non chiedere la soluzione.
-2.  Chiedi di farti arrivare alla soluzione con domande più semplici.
-3.  Rispondi tu passo passo.
-4.  Se sbagli, fatti correggere.
+### Strumenti consigliati
+*   **Python Tutor**: Eccellente per visualizzare graficamente cosa accade in memoria durante l'esecuzione del codice C.
+*   **AI (Gemini/ChatGPT)**: Utilizzare l'intelligenza artificiale solo dopo aver tentato autonomamente la risoluzione per almeno 30 minuti. Chiedere spiegazioni concettuali o guide passo-passo piuttosto che la soluzione diretta.
 
 ---
 
-## 4️⃣ Architettura degli Elaboratori – Divertente e interessante
-È diviso in: Prova scritta a crocette, Esercizio in Assembly su carta e Orale.
+## 4. Architettura degli Elaboratori
+L'esame si divide in uno scritto (crocette), un esercizio di Assembly su carta e una prova orale.
 
-*   **Parte teorica:** Scrivi una tua dispensa personale per ripassare.
-*   **Assembly:** L'esame è su carta, quindi devi allenarti su carta. Poi riscrivili sull'IDE per verificare.
-*   **Algebra booleana:** Sono argomenti semplici, serve solo pratica.
-
-✅ **Quarta materia chiusa.**
+*   **Assembly**: Poiché l'esame è su carta, è fondamentale esercitarsi nella scrittura manuale del codice, verificandone successivamente la correttezza su un simulatore.
+*   **Logica Digitale**: Gli argomenti relativi ad algebra booleana e transistor richiedono principalmente esercitazione pratica.
 
 ---
 
-## 5️⃣ Sguardo avanti: Programmazione 2 e Strutture Dati
-Tutto quello che fai bene in Programmazione 1 ti servirà qui. La mentalità sviluppata sbattendo la testa sarà la tua risorsa migliore.
+## 5. Prospettive: Programmazione 2
+La solida preparazione di Programmazione 1 è la base necessaria per affrontare Programmazione 2 e lo studio delle strutture dati avanzate.
 
 ---
 
 ## Conclusione
-Non demordere mai. Se fai questo percorso, non solo passi gli esami, ma costruisci la mentalità giusta per tutti quelli dopo.
-
-**Non sei in ritardo. Stai solo iniziando a farlo nel modo corretto.**
+La costanza è superiore alla velocità. Seguendo un metodo strutturato si costruisce non solo il successo negli esami, ma anche la mentalità necessaria per l'intero percorso accademico.
