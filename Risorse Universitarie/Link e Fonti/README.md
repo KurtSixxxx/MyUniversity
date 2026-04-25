@@ -42,6 +42,7 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 #### **Strutture Discrete**
 *   [Discrete Mathematics | Neso Academy](https://www.nesoacademy.org/cs/07-discrete-mathematics)
 *   [Cosa sono i grafi - Andrea Minini](https://www.andreaminini.org/matematica/grafi/)
+*   [Aritmetica modulare - Profound Academy](https://profound.academy/it/algorithms-data-structures/aritmetica-modulare-67px1EUYmfErEf16acKr)
 
 #### **Architettura Degli Elaboratori**
 *   [Syllabus Santoro](https://www.dmi.unict.it/santoro/index.php?p=15)
@@ -62,6 +63,10 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 
 #### **Basi di Dati**
 *   [Il modello relazionale della base di dati - Andrea Minini](https://www.andreaminini.com/database/il-modello-relazionale)
+
+#### **Prog 2 (Programmazione 2 & C++)**
+*   [The Complete C & C++ Programming Course](https://www.psdly.to/the-complete-c-c-programming-course-mastering-c-c)
+*   [Learn C++ | C++ Courses Online | LabEx](https://labex.io/learn/cpp)
 
 ---
 
@@ -101,30 +106,26 @@ Benvenuti nella sezione dedicata alle risorse esterne. Qui troverete una raccolt
 *   [The Free ChatGPT Prompt Generator](https://www.feedough.com/chatgpt-prompt-generator/)
 *   [Education - Microsoft Azure](https://portal.azure.com/#view/Microsoft_Azure_Education/EducationMenuBlade/~/overview)
 *   [ELIA BOMBARDELLI (Matematica)](https://eliabombardelli.com/videolezioni-matematica/)
-*   [Presentazione corso Scienze Biologiche](https://www.dsbga.unict.it/it/corsi/l-13/presentazione-del-corso)
 *   [Learn LaTeX in 30 minutes - Overleaf](https://www.overleaf.com/learn/latex/Learn_LaTeX_in_30_minutes)
 *   [Core Concepts | Baeldung on CS](https://www.baeldung.com/cs/category/core-concepts)
 *   [Imparare ad Imparare](https://www.dmi.unict.it/barba/Imparare/index.htm)
 *   [Neso Academy](https://www.nesoacademy.org/)
-*   [Watch Free Masterclass](https://www.theangryexplainer.com/free-masterclass)
 *   [Appunti Enk](https://enkk.me/scritti/)
 *   [Formazione GitHub](https://education.github.com/learner/learn)
-*   [corsi.csail.mit.edu](https://courses.csail.mit.edu/)
 *   [Linux Journey](https://labex.io/linuxjourney)
 *   [ExplainShell - Command help](https://explainshell.com/)
 *   [tldr InBrowser.App](https://tldr.inbrowser.app/)
 *   [Learn Shell Tutorial](https://www.learnshell.org/)
 *   [LinuxCommand.org](https://linuxcommand.org/lc3_learning_the_shell.php)
 *   [Free Linux & Cybersecurity Labs | LabEx](https://labex.io/)
+*   [Learn Cybersecurity | LabEx](https://labex.io/learn/cybersecurity)
+*   [Learn Kali Linux | LabEx](https://labex.io/learn/kali)
 *   [Cybersecurity Career Advice | Reddit](https://www.reddit.com/r/SecurityCareerAdvice/comments/14k9vqx/how_to_get_started_in_cybersecurity_zero_to_hero/)
 *   [Informatica Booklist | Z-Library](https://1lib.sk/booklist/2676226/f9aaa2/informatica.html)
 *   [Awesome Markdown Editors](https://github.com/mundimark/awesome-markdown-editors)
 *   [Security Research | moltbook](https://www.moltbook.com/m/security)
-*   [Google Cloud Console](https://console.cloud.google.com/)
-*   [Awesome Prompts GitHub](https://github.com/ai-boost/awesome-prompts)
-*   [Aritmetica modulare - Profound Academy](https://profound.academy/it/algorithms-data-structures/aritmetica-modulare-67px1EUYmfErEf16acKr)
-*   [Guida al Prompt Engineering](https://www.promptcoding.ai/it)
+*   [ai-boost/awesome-prompts](https://github.com/ai-boost/awesome-prompts)
+*   [Guida al Prompt Engineering](https://www.promptingguide.ai/it)
 *   [Google Skills](https://www.skills.google/)
 *   [Prompt Cowboy Generator](https://www.promptcowboy.ai/)
 *   [40Hz Binaural Beats for Focus](https://www.youtube.com/watch?v=4SUK0tkhmVg)
-*   [The Complete C & C++ Programming Course](https://www.psdly.to/the-complete-c-c-programming-course-mastering-c-c)
