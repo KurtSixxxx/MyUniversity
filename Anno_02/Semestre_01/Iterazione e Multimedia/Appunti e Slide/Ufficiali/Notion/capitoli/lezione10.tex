@@ -1,0 +1,830 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{lezione-10-bitplanes}{%
+\section{Lezione 10: BitPlanes}\label{lezione-10-bitplanes}}
+
+Un'immagine con una profondità colore di N bit viene rappresentata da N piani di bit (bit-planes), ciascuno dei quali può essere vista come una singola immagine binaria. Si può indurre un ordine che varia dal Most Significant Bit (MSB) fino al Least Significant Bit (LSB).
+
+💡
+
+\textbf{Definizione:}
+
+\textbf{Il bit plane di un'immagine digitale a N bit, è un'insieme di N immagini binarie (piani), in cui l'immagine i-esima contiene i valori dell'i-esimo bit della codifica scelta.}
+
+Se tu \textbf{separi i bit}, ottieni \textbf{8 immagini diverse}.
+
+Se si usa la codifica \textbf{binario puro} i piani di \textbf{bit più significativi} contengono informazioni sulla \textbf{struttura} dell'immagine, mentre quello via via \textbf{meno significativi} forniscono i \textbf{dettagli sempre più piccoli}.
+Si nota che i piano dal 7 al 3 contengono dati significativi dal punto di vista visuale.
+\textbf{Il rumore delle immagini e gli errori di acquisizione sono più evidenti nei piani bassi.}
+
+Ogni bit-plane è:
+
+\begin{itemize}
+\tightlist
+\item
+  un'immagine \textbf{binaria}
+\item
+  pixel = 0 oppure 1
+\item
+  dice se \textbf{quel peso è presente o no}
+\end{itemize}
+
+Esempio:
+
+Pixel = 127 → \texttt{01111111}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Piano & Valore \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+piano 7 (128) & 0 \\
+piano 6 (64) & 1 \\
+piano 5 (32) & 1 \\
+piano 4 (16) & 1 \\
+piano 3 (8) & 1 \\
+piano 2 (4) & 1 \\
+piano 1 (2) & 1 \\
+piano 0 (1) & 1 \\
+\end{longtable}
+
+\textbf{Ogni piano è un'immagine a sé}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{Bit Plane di Lena}
+\caption{Bit Plane di Lena}
+\end{figure}
+
+Bit Plane di Lena
+
+\hypertarget{bit-planes-codifica-binario-puro}{%
+\subsubsection{Bit planes: codifica binario puro}\label{bit-planes-codifica-binario-puro}}
+
+Finora abbiamo detto che:
+Un'immagine in scala di grigi \textbf{non è altro che una griglia di numeri}.
+Ogni pixel ha un numero che dice \textbf{quanto è chiaro o scuro}.
+
+\begin{itemize}
+\tightlist
+\item
+  0 → nero
+\item
+  numero grande → più chiaro
+\item
+  massimo → bianco
+\end{itemize}
+
+Questi numeri devono essere \textbf{scritti da qualche parte nel computer}. Il computer però \textbf{non capisce i numeri decimali}, capisce solo \textbf{0 e 1}.
+
+\begin{quote}
+\textbf{Codifica in binario puro = modo standard per scrivere un numero usando solo 0 e 1.}
+\end{quote}
+
+``Binario puro'' significa:
+
+\begin{itemize}
+\tightlist
+\item
+  ogni numero viene scritto \textbf{in base 2}
+\item
+  ogni bit ha un \textbf{peso fisso}
+\item
+  quei pesi \textbf{non cambiano mai}
+\end{itemize}
+
+Poiché usiamo immagini ad 8 bit:
+
+Questo significa:
+
+\begin{itemize}
+\item
+  ogni pixel è un numero tra \textbf{\(0\) e \(255\)}
+\item
+  perché con 8 bit puoi fare:
+
+  \(2^8=256\) valori → da \(0\) a \(255\)
+\end{itemize}
+
+I pesi dei bit sono:
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Bit & Valore \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+bit 7 & 128 \\
+bit 6 & 64 \\
+bit 5 & 32 \\
+bit 4 & 16 \\
+bit 3 & 8 \\
+bit 2 & 4 \\
+bit 1 & 2 \\
+bit 0 & 1 \\
+\end{longtable}
+
+Si dice \textbf{binario puro} perché:
+
+\begin{itemize}
+\tightlist
+\item
+  ogni bit ha \textbf{sempre lo stesso significato}
+\item
+  il bit 7 vale \textbf{sempre 128}
+\item
+  il bit 0 vale \textbf{sempre 1}
+\item
+  non dipende dai pixel vicini
+\end{itemize}
+
+\textbf{Esempio chiave: pixel = 127}
+Numero decimale: \textbf{127}
+In binario puro: \texttt{01111111}
+
+Traduzione:
+
+\begin{itemize}
+\tightlist
+\item
+  0×128 = 0
+\item
+  1×64 = 64
+\item
+  1×32 = 32
+\item
+  1×16 = 16
+\item
+  1×8 = 8
+\item
+  1×4 = 4
+\item
+  1×2 = 2
+\item
+  1×1 = 1
+\end{itemize}
+
+Somma: 64+32+16+8+4+2+1 = \textbf{127}
+Ogni \textbf{1} significa ``quel contributo è acceso''.
+
+\begin{figure}
+\centering
+{Codifica binario puro}
+\caption{Codifica binario puro}
+\end{figure}
+
+Codifica binario puro
+
+Questo genere di scomposizione è molto utile per eliminare tutti i valori compresi in un certo range.
+Ad esempio se vogliamo eliminare tutti i grigi compresi tra 32 e 63, è necessari porre a 0 il quinto bit, e quindi tutto il piano 5.
+Questa osservazione è valida solo se la codifica utilizzata è quella in binario puro.
+
+\hypertarget{problema-del-bit-plane}{%
+\subsubsection{Problema del Bit-Plane}\label{problema-del-bit-plane}}
+
+Se la codifica usata è quella in \textbf{binario puro}, allora risulta evidente uno svantaggio: u\textbf{na piccola variazione può ripercuotersi su tutti i piani.}
+
+Esempio: Se un pixel ha ad esempio intensità 127 (01111111) e il suo adiacente ha intensità 128 (10000000) allora la transizione tra 0 e 1 si ripercuote su tutti i piani di bit.
+
+\textbf{Serve un codice in cui valori molti vicini abbiamo codifiche binarie molto simili, per evitare di incorrere in ``salti'' di intensità.}
+
+\hypertarget{soluzione-codice-gray}{%
+\subsubsection{Soluzione: Codice Gray}\label{soluzione-codice-gray}}
+
+Il \textbf{codice Gray} è un modo alternativo di scrivere i numeri in binario tale che:
+
+\begin{itemize}
+\tightlist
+\item
+  ogni numero differisce dal precedente
+\item
+  \textbf{per un solo bit}
+\item
+  sempre
+\end{itemize}
+
+Non cambia il numero che rappresenti, cambia \textbf{come lo scrivi in binario}
+
+\textbf{Attenzione: Gray NON è ``un altro numero''}
+
+Questa è una cosa fondamentale.
+
+\begin{itemize}
+\tightlist
+\item
+  5 in decimale è \textbf{sempre 5}
+\item
+  ma:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    in binario puro → \texttt{101}
+  \item
+    in Gray code → \texttt{111}
+  \end{itemize}
+\end{itemize}
+
+Il valore è lo stesso.
+
+La \textbf{codifica} è diversa.
+
+💡
+
+Il codice Gray a \(m\) bit \(g_{m-1} \dots g_1g_0\) che corrisponde al numero in binario puro \(a_{m-1} \dots a_1a_0\) può essere calcolato con la formula:
+
+\[
+g_i = a_i \oplus a_{i+1} \\ g_{m-1} = a_{m-1} \\
+\text{con: } 0 \leq i \leq m - 2
+\]
+
+\begin{itemize}
+\item
+  \(a_i\) è il bit i-esimo del numero in binario puro, esempio:
+  \(a_2 a_1 a_0 = 1 0 1\)
+\item
+  g\_i è il bit i-esimi del codice Gray
+\item
+  \(\oplus\) denota l'operatore XOR (OR esclusivo). Funziona così
+
+  \begin{longtable}[]{@{}lll@{}}
+  \toprule\noalign{}
+  \(a\) & \(b\) & \(a \oplus b\) \\
+  \midrule\noalign{}
+  \endhead
+  \bottomrule\noalign{}
+  \endlastfoot
+  0 & 0 & 0 \\
+  0 & 1 & 1 \\
+  1 & 0 & 1 \\
+  1 & 1 & 0 \\
+  \end{longtable}
+
+  XOR vale \textbf{1 solo se i due bit sono diversi}
+\end{itemize}
+
+Ecco come calcolare il codice gray!
+
+Ipotizziamo di voler trasformare un numero in 3 bit in codice gray.
+
+\textbf{L'algoritmo è questo:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Converti in binario puro
+\item
+  Converti da binario puro in codice gray
+\end{enumerate}
+
+\textbf{Per convertire un numero DECIMALE in BINARIO con i pesi:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Scrivi i pesi delle posizioni binarie}~da destra a sinistra:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    In 3 bit: 4, 2, 1 (peso della posizione più a sinistra = 4, poi 2, poi 1)
+  \end{itemize}
+\item
+  \textbf{Parti dal peso più grande}~(quello più a sinistra) e chiediti:
+
+  ``Questo peso CI STA nel numero che sto convertendo?''
+\item
+  \textbf{Se CI STA}~(il peso è ≤ del numero rimanente):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Metti~\textbf{1}~in quella posizione
+  \item
+    \textbf{SOTTRAI}~il peso dal numero
+  \end{itemize}
+\item
+  \textbf{Se NON CI STA}~(il peso è \textgreater{} del numero rimanente):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Metti~\textbf{0}~in quella posizione
+  \item
+    \textbf{NON sottrarre}~nulla
+  \end{itemize}
+\item
+  \textbf{Passa al peso successivo}~(quello più piccolo) e ripeti
+\end{enumerate}
+
+\textbf{Per convertire un numero DECIMALE in BINARIO con la divisone per 2:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Dividi il numero per 2
+\item
+  Scrivi il~\textbf{RESTO}~(0 o 1)
+\item
+  Prendi il~\textbf{QUOZIENTE INTERO}~(senza decimali)
+\item
+  Ripeti finché il quoziente non diventa 0
+\item
+  \textbf{Leggi i resti DAL FONDO VERSO L'ALTO}~(dall'ultimo al primo)
+\end{enumerate}
+
+\textbf{Per convertire in codice gray:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \(g_2 = a_2\) \textbf{SEMPRE}
+\item
+  \(g_1 = a_2 \oplus a_1\)
+\item
+  \(g0 = a_1 \oplus a_0\)
+\end{enumerate}
+
+(Questo è nel caso dei 3 bit, in altre dimensioni i calcoli sono uguali, basta sostituire con i-esimo.)
+
+\hypertarget{esempio-completo-da-decimale-a-binario-a-gray}{%
+\subsubsection{Esempio Completo: Da Decimale a Binario a Gray}\label{esempio-completo-da-decimale-a-binario-a-gray}}
+
+Facciamo un esempio \textbf{con il numero 5} e seguiamo TUTTI i passaggi che hai descritto.
+
+\hypertarget{passo-1-conversione-decimale-binario-5-in-binario}{%
+\subsubsection{\texorpdfstring{\textbf{PASSO 1: CONVERSIONE DECIMALE → BINARIO (5 in binario)}}{PASSO 1: CONVERSIONE DECIMALE → BINARIO (5 in binario)}}\label{passo-1-conversione-decimale-binario-5-in-binario}}
+
+\hypertarget{metodo-a-divisioni-per-2}{%
+\subsubsection{\texorpdfstring{\textbf{METODO A: DIVISIONI PER 2}}{METODO A: DIVISIONI PER 2}}\label{metodo-a-divisioni-per-2}}
+
+\textbf{Numero da convertire: 5}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{5 ÷ 2 = 2} con resto \textbf{1}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quoziente: 2
+  \item
+    Resto: 1
+  \end{itemize}
+\item
+  \textbf{2 ÷ 2 = 1} con resto \textbf{0}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quoziente: 1
+  \item
+    Resto: 0
+  \end{itemize}
+\item
+  \textbf{1 ÷ 2 = 0} con resto \textbf{1}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Quoziente: 0
+  \item
+    Resto: 1
+  \end{itemize}
+\end{enumerate}
+
+\textbf{Ora abbiamo i resti in ordine:} 1, 0, 1
+
+\textbf{Leggiamo DAL FONDO VERSO L'ALTO} (dall'ultimo resto al primo): 1, 0, 1
+
+\textbf{Risultato:} \textbf{101₂} (binario a 3 bit)
+
+\textbf{Verifica rapida:} 101₂ = (1×4) + (0×2) + (1×1) = 4 + 0 + 1 = 5 ✓
+
+\hypertarget{metodo-b-pesi-4-2-1}{%
+\subsubsection{\texorpdfstring{\textbf{METODO B: PESI (4, 2, 1)}}{METODO B: PESI (4, 2, 1)}}\label{metodo-b-pesi-4-2-1}}
+
+\textbf{Numero da convertire: 5}
+
+\textbf{Pesi per 3 bit:} 4, 2, 1
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Peso 4} ci sta in 5? \textbf{SÌ} (4 ≤ 5)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Metti \textbf{1} nella posizione del peso 4
+  \item
+    5 - 4 = \textbf{1} (nuovo numero rimanente)
+  \end{itemize}
+\item
+  \textbf{Peso 2} ci sta in 1? \textbf{NO} (2 \textgreater{} 1)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Metti \textbf{0} nella posizione del peso 2
+  \item
+    Numero rimanente resta \textbf{1}
+  \end{itemize}
+\item
+  \textbf{Peso 1} ci sta in 1? \textbf{SÌ} (1 ≤ 1)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Metti \textbf{1} nella posizione del peso 1
+  \item
+    1 - 1 = \textbf{0}
+  \end{itemize}
+\end{enumerate}
+
+\textbf{Risultato:} \textbf{101₂} (esattamente come con le divisioni!)
+
+\textbf{Interpretazione:}
+
+\begin{itemize}
+\tightlist
+\item
+  Posizione del peso 4: \textbf{1}
+\item
+  Posizione del peso 2: \textbf{0}
+\item
+  Posizione del peso 1: \textbf{1}
+\end{itemize}
+
+\hypertarget{passo-2-da-binario-a-gray-101-binario-gray}{%
+\subsubsection{\texorpdfstring{\textbf{PASSO 2: DA BINARIO A GRAY (101 binario → Gray)}}{PASSO 2: DA BINARIO A GRAY (101 binario → Gray)}}\label{passo-2-da-binario-a-gray-101-binario-gray}}
+
+Ora applichiamo le tue formule per 3 bit:
+
+\textbf{Binario:} \(( a_2 a_1 a_0 = 1 \ 0 \ 1 )\)
+Dove:
+
+\begin{itemize}
+\tightlist
+\item
+  \(( a_2 = 1 )\) (bit più significativo, peso 4)
+\item
+  \(( a_1 = 0 )\) (bit centrale, peso 2)
+\item
+  \(( a_0 = 1 )\) (bit meno significativo, peso 1)
+\end{itemize}
+
+\textbf{Formule Gray:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \(( g_2 = a_2 = 1 )\) ← \textbf{SEMPRE si copia il primo bit}
+\item
+  \(( g_1 = a_2 \oplus a_1 = 1 \oplus 0 )\)
+\item
+  \((g_0 = a_1 \oplus a_0 = 0 \oplus 1\) )
+\end{enumerate}
+
+\hypertarget{calcoliamo}{%
+\subsubsection{\texorpdfstring{\textbf{Calcoliamo:}}{Calcoliamo:}}\label{calcoliamo}}
+
+\textbf{Per \(( g_1 ): ( 1 \oplus 0 )\)}
+
+\begin{itemize}
+\tightlist
+\item
+  XOR: 1 ⊕ 0 = \textbf{1} (perché 1 e 0 sono diversi)
+\end{itemize}
+
+\textbf{Per \(( g_0 ): ( 0 \oplus 1 )\)}
+
+\begin{itemize}
+\tightlist
+\item
+  XOR: 0 ⊕ 1 = \textbf{1} (perché 0 e 1 sono diversi)
+\end{itemize}
+
+\hypertarget{risultato-gray}{%
+\subsubsection{\texorpdfstring{\textbf{Risultato Gray:}}{Risultato Gray:}}\label{risultato-gray}}
+
+\begin{itemize}
+\tightlist
+\item
+  \(( g_2 = 1 )\)
+\item
+  \(( g_1 = 1 )\)
+\item
+  \(( g_0 = 1)\)
+\end{itemize}
+
+\textbf{Codice Gray: 111}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{verifica-finale}{%
+\subsection{\texorpdfstring{\textbf{VERIFICA FINALE}}{VERIFICA FINALE}}\label{verifica-finale}}
+
+Abbiamo convertito: \textbf{5 (decimale) → 101 (binario) → 111 (Gray)}
+
+\textbf{Verifichiamo con la tabella dei 3 bit:}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+Decimale & Binario & Gray \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 & 000 & 000 \\
+1 & 001 & 001 \\
+2 & 010 & 011 \\
+3 & 011 & 010 \\
+4 & 100 & 110 \\
+\textbf{5} & \textbf{101} & \textbf{111} \\
+6 & 110 & 101 \\
+7 & 111 & 100 \\
+\end{longtable}
+
+\textbf{Perfetto!} 5 in binario è 101, e in Gray è 111.
+
+\hypertarget{spiegazione-dettagliata-dellxor}{%
+\subsection{\texorpdfstring{\textbf{SPIEGAZIONE DETTAGLIATA DELL'XOR (⊕)}}{SPIEGAZIONE DETTAGLIATA DELL'XOR (⊕)}}\label{spiegazione-dettagliata-dellxor}}
+
+Forse ti stai chiedendo: ``Perché proprio queste formule per il Gray?''
+
+L'operazione \textbf{XOR (⊕)} significa:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{0 ⊕ 0 = 0} (stesso valore → 0)
+\item
+  \textbf{0 ⊕ 1 = 1} (valori diversi → 1)
+\item
+  \textbf{1 ⊕ 0 = 1} (valori diversi → 1)
+\item
+  \textbf{1 ⊕ 1 = 0} (stesso valore → 0)
+\end{itemize}
+
+In pratica: \textbf{Se i due bit sono UGUALI, risultato 0. Se sono DIVERSI, risultato 1.}
+
+Nella conversione a Gray:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{g₂ = a₂}: Il primo bit si copia sempre
+\item
+  \textbf{g₁ = a₂ ⊕ a₁}: Confronto tra il primo e il secondo bit del binario
+\item
+  \textbf{g₀ = a₁ ⊕ a₀}: Confronto tra il secondo e il terzo bit del binario
+\end{itemize}
+
+\hypertarget{secondo-esempio-completo-convertiamo-il-3}{%
+\subsubsection{\texorpdfstring{\textbf{SECONDO ESEMPIO COMPLETO: CONVERTIAMO IL 3}}{SECONDO ESEMPIO COMPLETO: CONVERTIAMO IL 3}}\label{secondo-esempio-completo-convertiamo-il-3}}
+
+\hypertarget{passo-1-3-in-binario}{%
+\subsubsection{\texorpdfstring{\textbf{PASSO 1: 3 in binario}}{PASSO 1: 3 in binario}}\label{passo-1-3-in-binario}}
+
+\textbf{Metodo divisioni:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  3 ÷ 2 = 1 resto \textbf{1}
+\item
+  1 ÷ 2 = 0 resto \textbf{1}
+  Resti: 1, 1 → Leggi al contrario: \textbf{11₂} → Ma servono 3 bit! Aggiungiamo uno 0 a sinistra: \textbf{011₂}
+\end{enumerate}
+
+\textbf{Metodo pesi (4,2,1):}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Peso 4 in 3? NO → \textbf{0}
+\item
+  Peso 2 in 3? SÌ → \textbf{1}, 3-2=1
+\item
+  Peso 1 in 1? SÌ → \textbf{1}, 1-1=0
+  Risultato: \textbf{011₂}
+\end{enumerate}
+
+\textbf{Binario: 011} (dove a₂=0, a₁=1, a₀=1)
+
+\hypertarget{passo-2-da-binario-a-gray}{%
+\subsubsection{\texorpdfstring{\textbf{PASSO 2: Da binario a Gray}}{PASSO 2: Da binario a Gray}}\label{passo-2-da-binario-a-gray}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \(( g_2 = a_2 = 0 )\)
+\item
+  \(( g_1 = a_2 ⊕ a_1 = 0 ⊕ 1 = 1 )\)
+\item
+  \(( g_0 = a_1 ⊕ a_0 = 1 ⊕ 1 = 0 )\)
+\end{enumerate}
+
+\textbf{Risultato Gray: 010}
+
+\textbf{Verifica in tabella:} 3 in Gray è proprio 010 ✓
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{terzo-esempio-convertiamo-il-6-per-esercizio}{%
+\subsection{\texorpdfstring{\textbf{TERZO ESEMPIO: CONVERTIAMO IL 6 (per esercizio)}}{TERZO ESEMPIO: CONVERTIAMO IL 6 (per esercizio)}}\label{terzo-esempio-convertiamo-il-6-per-esercizio}}
+
+Prova a farlo tu, poi controlla:
+
+\textbf{Decimale 6 → Binario:}
+
+\begin{itemize}
+\tightlist
+\item
+  Metodo divisioni: 6÷2=3r0, 3÷2=1r1, 1÷2=0r1 → Resti: 0,1,1 → Al contrario: \textbf{110₂}
+\item
+  Metodo pesi: Peso 4 in 6? SÌ→1 (6-4=2), Peso 2 in 2? SÌ→1 (2-2=0), Peso 1 in 0? NO→0 → \textbf{110₂}
+\end{itemize}
+
+\textbf{Binario 110 → Gray:}
+
+\begin{itemize}
+\tightlist
+\item
+  a₂=1, a₁=1, a₀=0
+\item
+  g₂ = 1
+\item
+  g₁ = 1 ⊕ 1 = 0
+\item
+  g₀ = 1 ⊕ 0 = 1
+\item
+  \textbf{Risultato: 101}
+\end{itemize}
+
+Verifica in tabella: 6 in Gray è proprio 101 ✓
+
+\hypertarget{riassunto-visivo-dellintero-processo-per-il-numero-5}{%
+\subsubsection{\texorpdfstring{\textbf{RIASSUNTO VISIVO DELL'INTERO PROCESSO PER IL NUMERO 5}}{RIASSUNTO VISIVO DELL'INTERO PROCESSO PER IL NUMERO 5}}\label{riassunto-visivo-dellintero-processo-per-il-numero-5}}
+
+\begin{verbatim}
+DECIMALE: 5
+        ↓
+    CONVERSIONE A BINARIO
+        ↓
+METODO DIVISIONI:       METODO PESI:
+5÷2=2r1                 Peso 4 in 5? SÌ → 1, 5-4=1
+2÷2=1r0                 Peso 2 in 1? NO → 0
+1÷2=0r1                 Peso 1 in 1? SÌ → 1
+Resti: 1,0,1
+Leggi al contrario: 101₂
+        ↓
+    BINARIO: 101 (a₂=1, a₁=0, a₀=1)
+        ↓
+    CONVERSIONE A GRAY
+        ↓
+Formule:
+g₂ = a₂ = 1
+g₁ = a₂ ⊕ a₁ = 1 ⊕ 0 = 1
+g₀ = a₁ ⊕ a₀ = 0 ⊕ 1 = 1
+        ↓
+    GRAY: 111
+\end{verbatim}
+
+\hypertarget{lesempio-del-127-verso-128-il-caso-peggiore}{%
+\subsubsection{L'esempio del ``127 verso 128'' (Il caso peggiore)}\label{lesempio-del-127-verso-128-il-caso-peggiore}}
+
+Immagina un grigio medio (127) e un grigio appena appena più chiaro (128). L'occhio umano quasi non li distingue.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{In Binario Puro:}
+\end{itemize}
+
+◦ 127 = \textbf{01111111}
+
+◦ 128 = \textbf{10000000}
+
+◦ \textbf{Disastro:} Sono cambiati \textbf{tutti e 8 i bit}! Se guardi i singoli piani bit-plane, vedresti un ``muro'' netto, come se l'immagine fosse cambiata drasticamente, mentre in realtà il colore è quasi uguale. Questo crea ``rumore'' visivo inutile nei piani bassi.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{In Codice Gray:}
+\end{itemize}
+
+◦ 127 = \textbf{01000000}
+
+◦ 128 = \textbf{11000000}
+
+◦ \textbf{Soluzione:} Cambia \textbf{solo un bit}. La transizione è morbida anche a livello di dati.
+
+Il Codice Gray ha una proprietà fondamentale: la \textbf{Distanza di Hamming (}distanza tra due stringhe, indica il numero di posizioni nelle quali i
+simboli corrispondenti sono diversi
+-numero di sostituzioni necessarie per convertire una stringa nell'altra\textbf{) è sempre 1}. Significa che tra un numero e il successivo cambia sempre e solo una cifra.
+
+I vantaggi sono:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Coerenza tra i piani:} Se l'immagine ha colori sfumati (es. un cielo), i bit-plane in Codice Gray saranno più ``puliti'' e meno rumorosi rispetto al binario puro.
+\item
+  \textbf{Minore Entropia (più facile da comprimere):} Poiché ci sono meno cambiamenti frenetici di bit (meno transizioni bianco-nero inutili), il file contiene ``meno disordine''. Per un computer, un'immagine codificata in Gray è più facile da comprimere (occupa meno spazio) rispetto a una in binario puro, perché i dati sono più prevedibili.
+\end{enumerate}
+
+\textbf{In sintesi:} Se vuoi scomporre un'immagine in bit-plane per analizzarla o comprimerla, \textbf{non usare il binario classico}, perché crea ``falsi bordi'' (come tra 127 e 128). Usa il \textbf{Codice Gray}, che mantiene i dati stabili e coerenti con la percezione visiva.
+
+\end{document}

@@ -1,0 +1,18 @@
+Introduzione a Processing
+
+metodi principali e variabili principali: settings(), setup(), draw() e frameRate, width, heigth, ecc…;
+principali primitive di disegno ellipse(), rect(), line(), bezier(), beginShape(), ecc… e modificatori ellipseMode(), rectMode(), ecc…
+tipo color e metodo color().
+Interazione utente e rilevamento input da mouse e da tastiera
+
+variabili mousePressed, keyPressed, mouseButton, key, keycode;
+metodi mousePressed(), keyPressed(), mouseReleased(), mouseClicked().
+Operazioni affini per il disegno:
+
+Metodi rotate(), translate(), pushMatrix() e popMatrix().
+Classi e oggetti in Processing, ereditarietà e strutture dati.
+
+Elaborazione immagini, classe PImage e metodi;
+
+metodi Processing: loadImage(), createImage(), red(), green(), blue()
+get(), set(), loadPixels(), updatePixels(), pixels, ecc…..

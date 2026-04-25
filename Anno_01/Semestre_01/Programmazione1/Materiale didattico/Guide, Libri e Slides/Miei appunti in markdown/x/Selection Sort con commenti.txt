@@ -1,0 +1,22 @@
+#include <stdio.h>
+#define N 5	//Definisco la dimensione dell'array
+
+int main(){
+	int arr[5] = {8, 2, 3, 6, 9};	//Definisco l'array di dimensione N con i suoi elementi
+	
+	for(int i = 0; i < N-1; i++){	//per ogni posizione dell’array
+	int min = i;			// suppongo che l’attuale sia il più piccolo
+		for(int j = i - 1; j < N; j++){ // confronto con tutti quelli successivi
+		if(arr[j] < arr[min]) min = j;	/// se ne trovo uno più piccolo, allora segno dov'è
+
+			if(min != i){	// se ho trovato un vero minimo altrove, allora faccio lo scambio
+			int tmp = arr[i];
+			arr[i] = arr[min];
+			arr[min] = tmp;
+			}
+	
+		}
+	}
+
+return 0;
+}

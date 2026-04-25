@@ -1,0 +1,3 @@
+Questa frase e' ridirezionata su un file.
+... anche questa ...
+... e pure quest'altra!

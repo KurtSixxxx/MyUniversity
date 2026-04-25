@@ -1,0 +1,1092 @@
+PImage Im,ImN,ImG,ImL;
+
+void setup(){
+  
+  Im=loadImage("lena.png");
+  Im.resize(256,256);
+  size(512,512);
+  image(Im,0,0);
+  
+  ImN=negativo(Im);
+  image(ImN,256,0);
+  
+  ImG=gamma(Im,2);
+  image(ImG,0,256);
+  
+  ImL=logaritmo(Im);
+  image(ImL,256,256);
+
+}
+
+void draw(){}
+
+PImage negativo(PImage I)
+{
+  PImage R=I.copy();
+  
+  float r,g,b;
+  R.loadPixels();
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    r=255-red(R.pixels[i]);
+    g=255-green(R.pixels[i]);
+    b=255-blue(R.pixels[i]);
+    
+    R.pixels[i]=color(r,g,b);
+  }
+  return R;
+}
+
+PImage gamma(PImage I, float gm)
+{
+  PImage R=createImage(I.width,I.height, RGB);
+  
+  R.loadPixels();
+  I.loadPixels();
+  float r,g,b;
+  float c=1/pow(255,gm-1);
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+  
+    r=c*pow(red(I.pixels[i]),gm);
+    g=c*pow(green(I.pixels[i]),gm);
+    b=c*pow(blue(I.pixels[i]),gm);
+    
+    R.pixels[i]=color(r,g,b);
+  }
+  
+  R.updatePixels();
+  return R;
+}
+
+PImage logaritmo(PImage I)
+{
+  PImage R=I.copy();
+  
+  R.loadPixels();
+  I.loadPixels();
+  
+  float r,g,b;
+  float C=255/log(256);
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    r=C*log(1+red(I.pixels[i]));
+    g=C*log(1+green(I.pixels[i]));
+    b=C*log(1+blue(I.pixels[i]));
+    
+    R.pixels[i]=color(r,g,b);
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+/*PImage I;
+float r,g,b=0;
+color c;
+
+void setup(){
+  
+  I=createImage(500,500,RGB);
+  size(500,500);
+  //I.loadPixels();
+  for(int y=0; y<I.height; y++)
+  {
+    for(int x=0; x<I.width; x++)
+    {
+      r=lerp(0,255,float(x)/I.width);
+      g=lerp(0,255,float(y)/I.height);
+      c=color(r,g,b);
+      //I.pixels[pos(x,y,I.width)]=c;
+      I.set(x,y,c);
+    }
+  }
+  
+  //I.updatePixels();
+  
+
+}
+void draw(){
+  image(I,0,0);
+}
+
+int pos(int x, int y, int w)
+{
+  return x+y*w;
+}*/
+
+
+/*
+
+matrice linearizzata
+
+PImage I;
+float r,g,b;
+color c,c1;
+int ar;
+
+void setup(){
+  I=loadImage("lena.png");
+  size(512,512);
+  ar=0;
+  c=color(255,255,0);
+  I.loadPixels();
+  for(int i=0; i<I.width; i++)
+  {
+      I.pixels[pos(i,i,I.width)]=c;
+  }
+  I.updatePixels();
+}
+
+void draw(){
+  image(I,0,0);
+}
+
+void keyPressed(){
+  if(key=='r')
+  {
+    ar--;
+  }
+  else if(key=='R')
+  {
+    ar++;
+  }
+  
+  I.loadPixels();
+  println(I.pixels.length);
+  for(int i=0; i<I.pixels.length; i++)
+  {
+    c1=I.pixels[i];
+    c1=color(red(c1)+ar, green(c1), blue(c1));
+    I.pixels[i]=c1;
+    
+  }
+  I.updatePixels();
+  println(ar);
+
+}
+
+int pos(int x, int y, int w)
+{
+  return x+y*w;
+}
+*/
+
+/*
+
+estrazione colore da lena.png
+PImage H;
+color c;
+int x,y;
+
+void setup(){
+
+  size(500,500);
+  H=loadImage("lena.png");
+  H.resize(200,200);
+  c=color(0);
+  x=width/2-H.width/2;
+  y=height/2-H.height/2;
+  
+}
+
+void draw(){
+  background(c);
+  c=H.get(mouseX-x,mouseY-y);
+  println(mouseX-x);
+  image(H,x,y);
+
+}*/
+
+
+
+/*
+PImage I;
+String url="https://media.laregione.ch/files/domains/laregione.ch/images/4by1/s_-homer-quando-va-essere-quel-pdcb.jpg";
+int g=0;
+
+void settings(){
+
+  I=loadImage(url);
+  I.resize(int(I.width/4.5),int(I.height/4.5));
+  size(500,500);
+
+} 
+
+void draw(){
+  background(0);
+    image(I,0,0);
+}
+
+void keyTyped(){
+  
+  if(key=='+')
+  {
+    g++;
+    I.filter(BLUR,g);
+    println("Blur:"+g);
+  }
+
+}*/
+
+
+/*
+subImage
+
+PImage I, subI;
+String url;
+
+
+void setup(){
+  size(432,432);
+  url="https://media.laregione.ch/files/domains/laregione.ch/images/4by1/s_-homer-quando-va-essere-quel-pdcb.jpg";
+  I=loadImage(url);
+  I.resize(int(I.width/2.5),int(I.height/2.5));
+  subI=I.get(I.width/2,I.height/2,150,150);
+  I.filter(GRAY);
+  image(I,0,0);
+  image(subI,width/2,height/2);
+  subI.save("HomerPorzione.png");
+  saveFrame("disegno.png");
+}
+
+
+
+void draw(){}
+*/
+
+/*PImage im;
+
+void setup(){
+  size(600,600);
+  im=loadImage("lena.png");
+  println("Larghezza: "+im.width);
+  println("Altezza: "+im.height);
+}
+
+void draw(){
+    background(0);
+    image(im,0,0);
+}
+
+void mousePressed(){
+  im.resize(im.width/2,im.height/2);
+}
+
+void keyTyped(){
+  if(key=='s' || key=='S')
+  {
+    println(savePath("lenaPiccola.png"));
+    im.save(savePath("out/lenaPiccola.png"));
+  }
+  
+  if(key=='c' || key=='C')
+  {
+    println("Salvo la canvas...");
+    saveFrame("lenaCanvas.png");
+  }
+}*/
+
+PImage Im, Is, Ie;
+
+void setup(){
+  size(1536,812);
+  background(0);
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  Is=stretching(Im);
+  Ie=equalizza(Im);
+  
+  image(Im,0,0);
+  image(Is,512,0);
+  image(Ie,1024,0);
+  
+  float [] H1,H2,H3;
+  H1=istogramma(Im);
+  H2=istogramma(Is);
+  H3=istogramma(Ie);
+  
+  rectMode(CORNERS);
+  noStroke();
+  fill(255,255,0);
+  for (int i=0;i<256;i++)
+  {
+    rect(i*2,height-(H1[i]*256*100),i*2+2,height);
+    rect(Im.width+i*2,height-(H2[i]*256*100),Im.width+i*2+2,height);
+    rect(Im.width*2+i*2,height-(H3[i]*256*100),Im.width*2+i*2+2,height);
+  }
+}
+void draw(){}
+
+PImage stretching(PImage I)
+{
+  PImage R=I.copy();
+  
+  float max,min;
+  R.loadPixels();
+  
+  max=red(R.pixels[0]);
+  min=red(R.pixels[0]);
+  
+  for(int i=1; i<R.pixels.length; i++)
+  {
+    if(red(R.pixels[i])<min)
+    min=red(R.pixels[i]);
+    
+    if(red(R.pixels[i])>max)
+    max=red(R.pixels[i]);
+  }
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    R.pixels[i]=color(255*(red(R.pixels[i])-min)/(max-min));
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+float [] istogramma(PImage I)
+{
+  float[] H=new float[256];
+  for(int i=0; i<256; i++)
+  {
+    H[i]=0;
+  }
+  
+  I.loadPixels();
+  for(int i=0; i<I.pixels.length; i++)
+  {
+    H[int(red(I.pixels[i]))]++;
+  }
+  
+  for(int i=0; i<256; i++)
+  {
+    H[i]=H[i]/I.pixels.length;
+  }
+  
+  return  H;
+  
+}
+
+PImage equalizza(PImage I)
+{
+  PImage R=I.copy();
+  
+  float [] H=istogramma(I);
+  
+  //Istogramma cumulativo
+  for(int i=1; i<256; i++)
+  H[i]=H[i-1]+H[i];
+  
+  
+ R.loadPixels();
+ 
+ for(int i=0; i<R.pixels.length; i++)
+ {
+   R.pixels[i]=color(255*H[int(red(R.pixels[i]))]);
+ }
+ 
+ R.updatePixels();
+  
+  return R;
+}
+
+/*
+
+ZOOMING
+
+PImage Im, Ic, Ir;
+float mseO, mseP, mseR, psnrO, psnrP, psnrR;
+
+void setup(){
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  size(1536,512);
+  
+  Ic=Im.copy();
+  Ic.resize(256,256);
+  Ic.resize(512,512);
+  
+  Ir=Im.copy();
+  Ir.resize(256,256);
+  Ir=replication2x(Ir);
+  
+  image(Im,0,0);
+  image(Ic,512,0);
+  image(Ir,1024,0);
+  
+  mseO=MSE(Im,Im);
+  mseP=MSE(Im,Ic);
+  mseR=MSE(Im,Ir);
+  
+  psnrO=PSNR(Im,Im);
+  psnrP=PSNR(Im,Ic);
+  psnrR=PSNR(Im,Ir);
+  
+  println("MSE con se stessa:"+mseO);
+  println("MSE processing:"+mseP);
+  println("MSE replication 2x:"+mseR);
+  
+  println("PSNR con se stessa:"+psnrO);
+  println("PSNR processing:"+psnrP);
+  println("PSNR replication 2x:"+psnrR);
+  
+}
+
+void draw(){
+
+}
+
+PImage replication2x(PImage I)
+{
+  PImage R=createImage(2*I.width,2*I.height,RGB);
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      R.set(2*x,2*y,I.get(x,y));
+      R.set(2*x+1,2*y,I.get(x,y));
+      R.set(2*x,2*y+1,I.get(x,y));
+      R.set(2*x+1,2*y+1,I.get(x,y));
+    }
+  }
+  
+  
+  return R;
+}
+
+float MSE(PImage I1, PImage I2)
+{
+  float res=0;
+  I1.loadPixels();
+  I2.loadPixels();
+  
+  for(int i=0; i<I1.pixels.length; i++)
+  {
+    res+=pow(blue(I1.pixels[i])-blue(I2.pixels[i]),2);
+  }
+  res=res/I1.pixels.length;
+  
+  return res;
+}
+
+
+float PSNR(PImage I1, PImage I2)
+{
+  float res=0;
+  float mse=MSE(I1,I2);
+  
+  res=10*log(255*255/mse)/log(10);
+  
+  return res;
+  
+}
+
+float log10(int x)
+{
+  return (log(x)/log(10));
+}
+
+float log2(int x)
+{
+  return (log(x)/log(2));
+}
+
+*/
+
+
+/*
+
+QUANTIZZAZIONE
+
+PImage Im, Iq;
+int K;
+
+void setup(){
+  K=2;
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  size(1024,512);
+  
+  Iq=quantizza(Im,K);
+  
+  image(Im,0,0);
+  image(Iq,512,0);
+  
+}
+
+void draw(){}
+
+PImage quantizza(PImage I, int k)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  
+  int q;
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    q=floor((blue(R.pixels[i])*k)/256);
+    
+    q=int((float(q)/(k-1))*255);
+    
+    R.pixels[i]=color(q);
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+void keyPressed(){
+  
+  if((key=='+') && (K<256))
+  {
+    K++;
+    image(quantizza(Im,K),512,0);
+  }
+  
+  if((key=='-') && (K>2))
+  {
+    K--;
+    image(quantizza(Im,K),512,0);
+  }
+
+
+}*/
+
+PImage Im,Ib;
+int K;
+void setup()
+{
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  size(1024,512);
+  image(Im,0,0);
+  K=7;
+  Ib=bitplane(Im,K);
+  image(Ib,512,0);
+}
+
+void draw()
+{
+}
+
+PImage bitplane(PImage I, int nb)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  
+  int x;
+  int r;
+  
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    x=int(blue(R.pixels[i]));
+    r=(x>>nb)&1;
+    
+    R.pixels[i]=color(255*r);
+  
+  }
+  
+  R.updatePixels();
+  return R;
+}
+
+void keyPressed(){
+  if((key=='+') && (K<7))
+  {
+    Ib=bitplane(Im,++K);
+    image(Ib,512,0);
+  }
+  
+  if((key=='-') && (K>0))
+  {
+    Ib=bitplane(Im,--K);
+    image(Ib,512,0);
+  }
+}
+
+/*
+
+RANGO
+
+PImage Im,Imax,Imin,Imed;
+
+void setup()
+{
+  size(1024,1024);
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  Imax=massimo(Im,11);
+  Imin=minimo(Im,11);
+  Imed=mediano(Im,11);
+  image(Im,0,0);
+  image(Imax,512,0);
+  image(Imin,0,512);
+  image(Imed,512,512);
+}
+
+void draw()
+{}
+
+PImage massimo(PImage I, int N)
+{
+  PImage R=createImage(I.width, I.height, RGB);
+  PImage tmp;
+  int off=N/2;
+  float[] tmpF;
+  
+  tmpF= new float[N*N];
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      tmp=I.get(x-off,y-off,N,N);
+      tmp.loadPixels();
+      
+      for(int i=0; i<tmp.pixels.length; i++)
+      {
+        tmpF[i]=green(tmp.pixels[i]);
+      }
+      
+      R.set(x,y,color(max(tmpF)));
+    }
+  }
+  
+  
+  return R;
+}
+
+
+PImage minimo(PImage I, int N)
+{
+  PImage R=createImage(I.width, I.height, RGB);
+  PImage tmp;
+  int off=N/2;
+  float[] tmpF;
+  
+  int xs;
+  int ys;
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      
+      xs=x-off;
+      ys=y-off;
+      
+      //tmp=I.get(x-off,y-off,N,N);
+      tmp=I.get(max(0,xs),max(0,ys),min(N,min(N+xs,I.width-xs)),min(N,min(N+ys,I.height-ys)));
+      tmp.loadPixels();
+      
+      tmpF=new float[tmp.pixels.length];
+      
+      for(int i=0; i<tmp.pixels.length; i++)
+      {
+        tmpF[i]=green(tmp.pixels[i]);
+      }
+      
+      R.set(x,y,color(min(tmpF)));
+    }
+  }
+  
+  
+  return R;
+}
+
+
+PImage mediano(PImage I, int N)
+{
+  PImage R=createImage(I.width, I.height, RGB);
+  PImage tmp;
+  int off=N/2;
+  float[] tmpF;
+  
+  float med;
+  
+  int xs;
+  int ys;
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      
+      xs=x-off;
+      ys=y-off;
+      
+      //tmp=I.get(x-off,y-off,N,N);
+      tmp=I.get(max(0,xs),max(0,ys),min(N,min(N+xs,I.width-xs)),min(N,min(N+ys,I.height-ys)));
+      tmp.loadPixels();
+      
+      tmpF=new float[tmp.pixels.length];
+      
+      for(int i=0; i<tmp.pixels.length; i++)
+      {
+        tmpF[i]=green(tmp.pixels[i]);
+      }
+      
+      tmpF=sort(tmpF);
+      int s=tmp.pixels.length;
+      
+      if(s%2==1)
+      med=tmpF[s/2];
+      else
+      {
+        med=(tmpF[s/2]+tmpF[s/2-1])/2;
+      }
+      
+      
+      R.set(x,y,color(med));
+    }
+  }
+  
+  
+  return R;
+}
+*/
+
+/*
+
+CONVOLUZIONE
+
+PImage Im, In3, In5, Il, Is, IsX;
+//creo i kernel
+float n3=1/9.0;
+float[][] nbox3={{n3, n3, n3},
+                  {n3, n3, n3},
+                  {n3, n3, n3}};
+
+
+float n5=1.0/25;
+float[][] nbox5={{n5,n5,n5,n5,n5},
+                  {n5,n5,n5,n5,n5},
+                  {n5,n5,n5,n5,n5},
+                  {n5,n5,n5,n5,n5},
+                  {n5,n5,n5,n5,n5}};
+
+float[][] lapl={ {-1,0,-1},
+                  {0,4,0},
+                  {-1,0,-1}};
+
+float[][] sobX={ {-1,-2,-1},
+                  {0,0,0},
+                  {1,2,1}};
+float[][] sharp={{-1,0,-1},
+                  {0,5,0},
+                  {-1,0,-1}};
+float[][] random={{2,-2,-3},
+                  {2,-1,0.5},
+                  {-1,4,2}};
+
+
+void setup(){
+
+  size(1536,1024);
+  Im=loadImage("lena.png");
+  Im.filter(GRAY);
+  //convoluzione su matrici e conversione in PImage
+  In3=converti(convoluzione(Im,random));
+  In5=converti(convoluzione(Im,nbox5));
+  Il=converti(convoluzione(Im,lapl));
+  Is=converti(convoluzione(Im,sharp));
+  IsX=converti(convoluzione(Im,sobX));
+  image(Im,0,0);
+  image(In3,512,0);
+  image(In5,1024,0);
+  image(Il,0,512);
+  image(Is,512,512);
+  image(IsX,1024,512);
+}
+
+void draw(){}
+
+float[][] convoluzione(PImage I, float[][] K)
+{
+  float[][] R=new float[I.height][I.width];
+  
+  //kernel MxN
+  int M=K.length;
+  int N=K[0].length;
+  
+  PImage tmp;
+  float res;
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      tmp=I.get(x-N/2, y-M/2, N, M);
+      res=0;
+      
+      for(int p=0; p<N; p++)
+      {
+        for(int q=0; q<M; q++)
+        {
+          res=res+green(tmp.get(p,q))*K[q][p];
+        }
+      }
+      
+      R[y][x]= res;
+      
+    
+    }
+  }
+  
+  return R;
+  
+}
+
+PImage converti(float[][] F)
+{
+  PImage R=createImage(F[0].length,F.length,RGB);
+  float res=0;
+  for(int x=0; x<R.width; x++)
+  {
+    for(int y=0; y<R.height; y++)
+    {
+      res=constrain(F[y][x],0,255);
+      R.set(x,y,color(res));
+    }
+  }
+  
+  return R;
+}
+
+
+*/
+
+/*
+
+SCALING
+
+PImage Im, Ir,Iri;
+float scale=1;;
+
+void setup()
+{
+  Im=loadImage("lena.png");
+  size(1025,512);
+  Ir=scaleF(Im,scale,scale);
+  Iri=scaleI(Im,scale,scale);
+  //image(Im,0,0);
+  image(Ir,0,0);
+  image(Iri,512,0);
+}
+
+void draw(){}
+
+PImage scaleF(PImage I, float cx, float cy)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    R.pixels[i]=color(0);
+  }
+  
+  float x,y;
+  float v1,w1;
+  
+  for(int v=0; v<I.width; v++)
+  {
+    for(int w=0; w<I.height; w++)
+    {
+        v1=v-I.width/2;
+        w1=w-I.height/2;
+        
+        x=v1*cx;
+        y=w1*cy;
+        
+        x=x+I.width/2;
+        y=y+I.height/2;
+        
+        R.set(round(x),round(y),I.get(v,w));
+    }
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+PImage scaleI(PImage I,float cx, float cy)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    R.pixels[i]=color(0);
+  }
+  
+  float v,w;
+  float x1,y1;
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      x1=x-I.width/2;
+      y1=y-I.height/2;
+      
+      v=x1*1/cx;
+      w=y1*1/cy;
+      
+      v=v+I.width/2;
+      w=w+I.height/2;
+      
+      R.set(x,y,I.get(round(v),round(w)));
+    
+    }
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+void keyPressed(){
+  if(key=='+')
+  {
+    scale+=.1;
+  }
+  
+  if(key=='-')
+  {
+    scale-=.1;
+  }
+  
+  
+  Ir=scaleF(Im,scale,scale);
+  image(Ir,0,0);
+  
+  Iri=scaleI(Im,scale,scale);
+  image(Iri,512,0);
+}
+*/
+
+
+/*
+
+ROTATE
+
+PImage Im, Ir,Iri;
+int ang=0;
+
+void setup()
+{
+  Im=loadImage("lena.png");
+  size(1025,512);
+  Ir=rotateF(Im,radians(ang));
+  Iri=rotateI(Im,radians(ang));
+  //image(Im,0,0);
+  image(Ir,0,0);
+  image(Iri,512,0);
+}
+
+void draw(){}
+
+PImage rotateF(PImage I, float theta)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    R.pixels[i]=color(0);
+  }
+  
+  float x,y;
+  float v1,w1;
+  
+  for(int v=0; v<I.width; v++)
+  {
+    for(int w=0; w<I.height; w++)
+    {
+        v1=v-I.width/2;
+        w1=w-I.height/2;
+        
+        x=v1*cos(theta)-w1*sin(theta);
+        y=v1*sin(theta)+w1*cos(theta);
+        
+        x=x+I.width/2;
+        y=y+I.height/2;
+        
+        R.set(round(x),round(y),I.get(v,w));
+    }
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+PImage rotateI(PImage I, float theta)
+{
+  PImage R=I.copy();
+  R.loadPixels();
+  for(int i=0; i<R.pixels.length; i++)
+  {
+    R.pixels[i]=color(0);
+  }
+  
+  float v,w;
+  float x1,y1;
+  
+  for(int x=0; x<I.width; x++)
+  {
+    for(int y=0; y<I.height; y++)
+    {
+      x1=x-I.width/2;
+      y1=y-I.height/2;
+      
+      v=x1*cos(theta)+y1*sin(theta);
+      w=-x1*sin(theta)+y1*cos(theta);
+      
+      v=v+I.width/2;
+      w=w+I.height/2;
+      
+      R.set(x,y,I.get(round(v),round(w)));
+    
+    }
+  }
+  
+  R.updatePixels();
+  
+  return R;
+}
+
+
+void keyPressed(){
+  if(key=='+')
+  {
+    ang+=5;
+  }
+  
+  if(key=='-')
+  {
+    ang-=5;
+  }
+  
+  ang=ang%360;
+  
+  Ir=rotateF(Im,radians(ang));
+  image(Ir,0,0);
+  
+  Iri=rotateI(Im,radians(ang));
+  image(Iri,512,0);
+}*/

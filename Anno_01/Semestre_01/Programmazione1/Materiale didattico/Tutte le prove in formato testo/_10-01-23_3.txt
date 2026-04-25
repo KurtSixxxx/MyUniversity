@@ -1,0 +1,85 @@
+int main(int argc, char *argv[]) {
+int n = readN(argc, argv);
+Node **head = malloc(sizeof(Node*));
+*head = readFile("input.txt");
+filterList(head, n);
+printList(*head);
+}
+
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Programmazione 1 e Laboratorio
+Esempio di Prova di Esame Svolta
+10 gennaio 2023
+Descrizione del programma
+Scrivere un programma in C che:
+- A prenda un input da tastiera (argomenti della funzione main) costituito da un intero
+positivo N in [10,20], e due numeri in virgola mobile positivi x,y. Dovra' essere 5.0 ≤
+x < y ≤ 30.0; se gli argomenti a riga di comando non rispondono ai suddetti requisiti,
+il programma stampa un messaggio di errore sullo standard error e termina la
+propria esecuzione;
+- B allochi dinamicamente una matrice A di numeri double pseudo-casuali in [x,y] di
+dimensioni N x N;
+- C calcoli il minimo degli elementi della diagonale principale della matrice (sia mind),
+e il massimo valore degli elementi della diagonale secondaria della matrice stessa
+(sia maxd); si restituisca inoltre il numero di elementi della matrice aventi valori in
+[mind, maxd];
+D allochi dinamicamente un array di double e lo riempia con tutti gli elementi di A
+nell'intervallo [mind, maxd];
+- E ordini l'array mediante un algoritmo a scelta tra selection sort e insertion sort;
+F stampi l’array sullo standard output, insieme alla media aritmetica dei suoi
+elementi.
+
+Specifiche
+
+Il programma potrà essere articolato in un unico file sorgente, ma dovrà contenere almeno
+le seguenti funzioni con opportuni parametri formali:
+-
+
+-
+
+readInput: funzione che prenda in input gli argomenti argv ed argc della funzione
+main, controlli i requisiti dei parametri e restituisca un record (una struct) che
+contiene tali parametri. Verificare che i requisiti dei parametri siano rispettati come
+specificato nel punto A. Nel caso in cui i requisiti non fossero specificati, stampare
+un opportuno messaggio di errore e terminare il programma;
+genDouble: genera un numero double in un intervallo specificato mediante
+parametri formali;
+genMatrix: funzione che crea e restituisce una matrice con elementi double
+generati dalla funzione genDouble;
+computeMinMax: calcola mind e maxd e restituisce il numeri di elementi che
+ricadono nell’intervallo [mind, maxd] come specificato nel punto C. La funzione
+permette di restituire al chiamante anche i valori di mind e maxd;
+createArray: creazione e riempimento array come specificato nel punto D;
+sortArray: ordinamento dell’array come specificato nel punto E;
+printArray: stampa dell’array come specificato nel punto F.
+
+Note
+Durata della prova: 120 minuti
+Generazione di numeri pseudocasuali:
+·
+Si consideri la seguente funzione get_random() per la generazione di numeri
+pseudo-casuali interi positivi (qualora necessaria):
+// Scaricabile da: https://pastebin.com/f6eAKNQy
+unsigned int get_random() {
+static unsigned int m_w = 123456;
+static unsigned int m_z = 789123;
+m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+return (m_z << 16) + m_w;
+}
+
+·
+
+NB: Ai fini della generazione di numeri in virgola mobile, si faccia uso della costante
+UINT_MAX (<limits.h>) unitamente alla funzione get_random().
+
+È VIETATO usare variabili globali.
+
+Output di controllo
+L’esecuzione del programma con il comando ./main 10 5 10 dovrà produrre il
+seguente output:
+6.122730
+
+

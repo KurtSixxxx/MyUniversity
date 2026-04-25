@@ -1,0 +1,122 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Prova di Laboratorio - 28 Aprile 2023
+Descrizione del programma
+Scrivere un programma in C che:
+●
+
+●
+●
+●
+
+A. Prenda un input da tastiera (argomenti della funzione
+main) costituito dal nome di un file di testo (ES: input.txt)
+e due lettere minuscole dell’alfabeto a e b, per cui sia
+a<=b. Il file contiene una collezione di stringhe, una per
+riga; si suppone che la lunghezza di ogni stringa sia non
+superiore ai 30 caratteri;
+B. Legga tutte le stringhe contenute nel file di input e le
+memorizzi in una struttura dati dinamica di tipo FIFO (una
+CODA);
+C. Stampi tutte le stringhe, estraendole dalla coda, mediante
+una sequenza di operazioni ``dequeue``;
+D. con riferimento al punto C, tutti i caratteri delle
+stringhe compresi nell’intervallo [a, b], siano sostituiti, a
+schermo, dal carattere ‘0’ (zero).
+
+Specifiche
+Il programma potra’ essere strutturato in un unico file sorgente,
+ma dovra’ contenere almeno le seguenti funzioni:
+●
+
+●
+●
+●
+●
+
+●
+
+readInput: funzione che prende in input l'array di puntatori
+a carattere argv ed il numero di argomenti argc della
+funzione main, controlla che gli argomenti richiesti siano
+nel numero e nei limiti specificati, e restituisca tali
+parametri in una struct; se il controllo non va a buon fine,
+stampa un messaggio sullo standard error e termina il
+programma.
+enqueue(): funzione che inserisce una stringa in coda;
+deQueue(): funzione che preleva una stringa dalla coda;
+buildQueue(): funzione che legge le stringhe presenti nel
+file e le inserisce una alla volta sullo stack mediante la
+funzione enqueue();
+elab(): funzione che prende in input una stringa e due
+caratteri a e b, e restituisca la stringa stessa in cui i
+caratteri contenuti nello intervallo [a,b] siano sostituiti
+con il carattere ‘0’ (zero).
+printQueue(): funzione che rimuove dalla coda e stampa tutte
+le stringhe contenute nella coda stessa, nel modo descritto
+nel punto D.
+
+È VIETATO usare variabili globali.
+Durata della prova: 120 minuti. NB: Inserire nome, cognome e numero
+di matricola all’interno del file sorgente.
+
+INPUT DI CONTROLLO ((contenuto del file input.txt, che si trova all’interno della
+home directory):
+
+zamicrus
+xylophaga
+zaffres
+worked
+woorari
+abdicative
+coffles
+abasing
+chemical
+chello
+olympics
+ekatantalum
+cherishes
+circumsinous
+cobblers
+cohesiveness
+dacoity
+exacinate
+yearned
+immixture
+indecency
+laguncularia
+miminypiminy
+noncomprehensive
+novorolsky
+
+./a.out input.txt e k
+Output atteso:
+zam0crus
+xylop0a0a
+za00r0s
+wor00d
+woorar0
+abd0cat0v0
+co00l0s
+abas0n0
+c00m0cal
+c00llo
+olymp0cs
+00atantalum
+c00r0s00s
+c0rcums0nous
+cobbl0rs
+co00s0v0n0ss
+daco0ty
+0xac0nat0
+y0arn0d
+0mm0xtur0
+0nd0c0ncy
+la0uncular0a
+m0m0nyp0m0ny
+noncompr000ns0v0
+
+novorols0y
+
+

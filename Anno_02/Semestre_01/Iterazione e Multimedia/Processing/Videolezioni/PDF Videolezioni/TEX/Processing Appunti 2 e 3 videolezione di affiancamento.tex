@@ -1,0 +1,948 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\usepackage{longtable,booktabs,array}
+\newcounter{none} % for unnumbered tables
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\usepackage{graphicx}
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi% select the smaller of both
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+% Set default figure placement to htbp
+\def\fps@figure{htbp}
+\makeatother
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Processing Appunti 2 e 3 videolezione di
+affiancamento.}\label{processing-appunti-2-e-3-videolezione-di-affiancamento}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\FunctionTok{point}\OperatorTok{();} \CommentTok{//per fare un punto}
+\FunctionTok{line}\OperatorTok{();} \CommentTok{//per fare una linea}
+\FunctionTok{ellipse}\OperatorTok{();} \CommentTok{//per fare un ellisse}
+\FunctionTok{circle}\OperatorTok{();} \CommentTok{//per fare un cerchio, prende x,y del centro e ed il raggio {-}\textgreater{} 3 parametri}
+\FunctionTok{rect}\OperatorTok{();} \CommentTok{//per fare u rettangolo}
+\FunctionTok{quad}\OperatorTok{();} \CommentTok{//per fare un quadrilatero (4 vertici)}
+\FunctionTok{shape}\OperatorTok{();} \CommentTok{//per fare una forma con i vertici}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[PRIMO FILE]}
+\FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\CommentTok{//L\textquotesingle{}arco verrà disegnato in senso orario, quindi parte da un punto e torna all\textquotesingle{}altrosize(500,500);}
+\CommentTok{//Disegno dimostrativo di tutti e 4 gli spicchi, di ogni metà, e della circonferenza chiusa}
+\CommentTok{//arc(a,b,c,d,start,stop) {-}\textgreater{}ATTENZIONE: Stop \textgreater{} Start!!! deve essere così.}
+\CommentTok{//a e b sono le coordinate del centro, c e d sono le dimensioni di larghezza e altezza, e start e stop sono angoli (in radianti) di inzio e fine.}
+
+\CommentTok{/* In Processing, la funzione arc() ha un comportamento rigido:}
+\CommentTok{{-} Il punto 0 (zero radianti) è a ore 3:00 (a destra).}
+\CommentTok{{-} Disegna sempre in senso ORARIO (da Start verso Stop).}
+\CommentTok{{-} Disegna solo se Stop \textgreater{} Start. */}
+
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{60}\OperatorTok{,} \DecValTok{60}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,}\NormalTok{ PI}\OperatorTok{,}\NormalTok{ PI }\OperatorTok{+}\NormalTok{ HALF\_PI}\OperatorTok{);} \CommentTok{//1 quadrante}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{160}\OperatorTok{,} \DecValTok{60}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,}\NormalTok{ PI }\OperatorTok{+}\NormalTok{ HALF\_PI}\OperatorTok{,}\NormalTok{ TWO\_PI}\OperatorTok{);} \CommentTok{//2 quadrante}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{260}\OperatorTok{,} \DecValTok{60}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{0}\OperatorTok{,}\NormalTok{ HALF\_PI}\OperatorTok{);} \CommentTok{//3 quadrane}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{360}\OperatorTok{,} \DecValTok{60}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,}\NormalTok{ HALF\_PI}\OperatorTok{,}\NormalTok{ PI}\OperatorTok{);} \CommentTok{//4 quadrante}
+\CommentTok{/*Il punto "Ore 12:00" ha due nomi:}
+\CommentTok{Nome lungo (giro completo): 270° (PI + HALF\_PI).}
+\CommentTok{Nome corto (indietro): {-}90° ({-}HALF\_PI).*/}
+
+
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{60}\OperatorTok{,} \DecValTok{200}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,}\NormalTok{ PI}\OperatorTok{,}\NormalTok{ TWO\_PI}\OperatorTok{);} \CommentTok{//metà in alto}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{160}\OperatorTok{,} \DecValTok{200}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{0}\OperatorTok{,}\NormalTok{ PI}\OperatorTok{);} \CommentTok{//metà in basso}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{260}\OperatorTok{,} \DecValTok{200}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,}\NormalTok{ HALF\_PI}\OperatorTok{,}\NormalTok{ PI }\OperatorTok{+}\NormalTok{ HALF\_PI}\OperatorTok{);} \CommentTok{//metà a sinistra}
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{360}\OperatorTok{,} \DecValTok{200}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \OperatorTok{{-}}\NormalTok{HALF\_PI}\OperatorTok{,}\NormalTok{ HALF\_PI}\OperatorTok{);} \CommentTok{//metà a destra}
+
+\FunctionTok{arc}\OperatorTok{(}\DecValTok{60}\OperatorTok{,} \DecValTok{340}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{80}\OperatorTok{,} \DecValTok{0}\OperatorTok{,}\NormalTok{ TWO\_PI}\OperatorTok{);}\NormalTok{\_PI)}\OperatorTok{;}
+
+
+\CommentTok{//Introduciamo un\textquotesingle{}altra funzione, che ci servirà per disegnare pacman}
+\CommentTok{//ossia la funzione \textquotesingle{}radins()\textquotesingle{}, se inseriamo un angolo in gradi lo converte in radianti}
+\CommentTok{//quindi pacman sarebbe:}
+\FunctionTok{arc}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,} \DecValTok{100}\OperatorTok{,} \DecValTok{100}\OperatorTok{,} \FunctionTok{radians}\OperatorTok{(}\DecValTok{30}\OperatorTok{),} \FunctionTok{radians}\OperatorTok{(}\DecValTok{330}\OperatorTok{));}
+
+
+\CommentTok{//Però la nostra "torta" rimarrà aperta e senza stroke che la chiude, per questo \textquotesingle{}arc()\textquotesingle{} accetta un settimo parameto che sarebbe la MODE, e ne abbiamo 3}
+\CommentTok{/*}
+\CommentTok{{-} PIE: chiude la nostra "torta/pie"}
+\CommentTok{{-} OPEN: lascia la linea aperta, ma non ha la forma a torta, collega i due punti con una retta, ma rimane aperta}
+\CommentTok{{-} CHORD: collega i due punti con una linea chiusa, ossia con un suo stroke}
+\CommentTok{Dunque il nostro pacman sarebbe:}
+\CommentTok{*/}
+
+\FunctionTok{arc}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,} \DecValTok{100}\OperatorTok{,} \DecValTok{100}\OperatorTok{,} \FunctionTok{radians}\OperatorTok{(}\DecValTok{30}\OperatorTok{),} \FunctionTok{radians}\OperatorTok{(}\DecValTok{330}\OperatorTok{),}\NormalTok{ PIE}\OperatorTok{);}
+\end{Highlighting}
+\end{Shaded}
+
+\pandocbounded{\includegraphics[keepaspectratio,alt={}]{C:/Users/giuli/AppData/Roaming/marktext/images/2026-02-12-02-08-08-image.png}}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[SECONDO FILE]}
+\CommentTok{//Vediamo l\textquotesingle{}ultima funzione di disegno che ci rimane}
+\CommentTok{//E la funzione è: \textquotesingle{}bezier()\textquotesingle{}}
+
+\CommentTok{/*Disegna una curva di Bézier sullo schermo.}
+\CommentTok{Queste curve sono definite da una serie di punti di ancoraggio e di controllo.}
+\CommentTok{I primi due parametri specificano il primo punto di ancoraggio e gli ultimi due parametri specificano l\textquotesingle{}altro punto di ancoraggio.}
+\CommentTok{I parametri centrali specificano i punti di controllo che definiscono la forma della curva. */}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+  \FunctionTok{noFill}\OperatorTok{();}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);} \CommentTok{//Reimpostare il background serve per rendere il disegno una vera e propria animazione e non un disegno ripetuto uno sopra l\textquotesingle{}altro. Prova a rimuover questa istruzione per capire meglio.}
+  \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{100}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\DecValTok{185}\OperatorTok{,}\DecValTok{50}\OperatorTok{,}\NormalTok{ mouseX}\OperatorTok{,}\NormalTok{ mouseY}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\DecValTok{15}\OperatorTok{,}\DecValTok{290}\OperatorTok{,} \DecValTok{190}\OperatorTok{,}\DecValTok{300}\OperatorTok{);}
+  \FunctionTok{stroke}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+  \CommentTok{//bezier(ancorPoint1\_X, ancorPoint2\_Y, controlPoint1\_X, controlPoint1\_Y, controlPoint2\_X, controlPoint2\_Y, ancorPoint1\_X, ancorPoint1\_Y);}
+  \FunctionTok{bezier}\OperatorTok{(}\DecValTok{185}\OperatorTok{,}\DecValTok{50}\OperatorTok{,}\NormalTok{ mouseX}\OperatorTok{,}\NormalTok{mouseY}\OperatorTok{,} \DecValTok{190}\OperatorTok{,}\DecValTok{300}\OperatorTok{,} \DecValTok{15}\OperatorTok{,}\DecValTok{290}\OperatorTok{);}
+
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[TERZO FILE]}
+
+\CommentTok{//Facciamo la prima animazione}
+\DataTypeTok{int}\NormalTok{ pos1 }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ pos2 }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+
+\OperatorTok{\}}
+
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\NormalTok{pos1}\OperatorTok{,}\DecValTok{20}\OperatorTok{,}\NormalTok{ pos2}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+\NormalTok{  pos1}\OperatorTok{++;}
+\NormalTok{  pos2}\OperatorTok{++;}
+\OperatorTok{\}}
+
+\CommentTok{//Animazione di una semplice linea che si sposta da sinistra a destra}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[QUARTO FILE]}
+
+\DataTypeTok{int}\NormalTok{ pos }\OperatorTok{=} \DecValTok{0}\OperatorTok{;} \CommentTok{//Come sempre rendiamo globale lo scope della variabile che ci serve usare}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+  \FunctionTok{frameRate}\OperatorTok{(}\DecValTok{200}\OperatorTok{);}
+\OperatorTok{\}}
+
+\CommentTok{/*}
+\CommentTok{In questo esercizio vogliamo una linea che si muove da sinistra a destra facendo l\textquotesingle{}effetto pacman, ossia che una volta arrivato alla fine dello schermo appare di nuovo a sinistra all\textquotesingle{}infinito.}
+\CommentTok{Ovviamente impostiamo il nostro background ad ogni iterazione della funzione drawInizializziamo la nostra linea, una semplice linea verticale che attraversa tutta la canvas.}
+\CommentTok{Adesso presta attenzione.}
+\CommentTok{Se il nostro incremento sarà pos++ (quindi che aumenta la coordinata x di 1) allora il funzionerà tutto}
+\CommentTok{Ma se il nostro incremento sarà pos+=3 allora non passeremo mai a pos == 500 (che è la nostra width) e dunque la condizione non sarà mai vera. Per questo è opportuno modificare la condizione come pos \textgreater{}= width, ciò vuol dire che se pos sarà comunque uguale o poco maggiore di 500 dovrà ripartire comunque da 0.}
+\CommentTok{*/}
+
+\CommentTok{//SCRIVO DUE FUNZIONI DRAW PER MOSTRARE LE DIFFERENZE, MA OVVIAMENTE POSSIAMO AVERNE SOLAMENTE UNA!!!}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\NormalTok{pos}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\NormalTok{ pos}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+\NormalTok{  pos}\OperatorTok{++;}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{pos }\OperatorTok{==}\NormalTok{ width}\OperatorTok{)\{}
+\NormalTok{    pos }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\NormalTok{pos}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\NormalTok{ pos}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+\NormalTok{  pos}\OperatorTok{+=}\DecValTok{3}\OperatorTok{;}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{pos }\OperatorTok{\textgreater{}=}\NormalTok{ width}\OperatorTok{)\{}
+\NormalTok{    pos }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[QUINTO FILE]}
+\CommentTok{//Adesso vogliamo eliminare l\textquotesingle{}effetto pacman, e fare in modo che la linea rimbalzi a destra e sinista}
+
+\DataTypeTok{int}\NormalTok{ pos }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ dir }\OperatorTok{=} \DecValTok{1}\OperatorTok{;} \CommentTok{//direzione}
+\DataTypeTok{int}\NormalTok{ v }\OperatorTok{=} \DecValTok{3}\OperatorTok{;} \CommentTok{//velocità}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\NormalTok{pos}\OperatorTok{,}\DecValTok{20}\OperatorTok{,}\NormalTok{ pos}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+  \CommentTok{//pos+=3 vuol dire pos += direzione * velocità, perchè si sposta di 3 per un framerate di 3}
+  \CommentTok{//per fare avanti ed indietro dobbiamo solo aumentare e diminuire e poi aumentare e così via la dimensione.}
+   \ControlFlowTok{if}\OperatorTok{(}\NormalTok{pos}\OperatorTok{\textgreater{}}\NormalTok{width }\OperatorTok{||}\NormalTok{ pos}\OperatorTok{\textless{}}\DecValTok{0}\OperatorTok{)\{}
+\NormalTok{   dir }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{dir}\OperatorTok{;}
+   \OperatorTok{\}}
+
+\NormalTok{   pos }\OperatorTok{+=}\NormalTok{ dir }\OperatorTok{*}\NormalTok{ v}\OperatorTok{;}
+\OperatorTok{\}}
+
+
+\CommentTok{/*1. Il Segreto del segno Meno ({-})}
+\CommentTok{In matematica e informatica, moltiplicare per {-}1 è l\textquotesingle{}equivalente di fare una inversione a U con l\textquotesingle{}auto.}
+\CommentTok{Guarda cosa succede ai numeri se li moltiplichi per {-}1:}
+\CommentTok{Se hai 1 (stai andando avanti) e lo moltiplichi per {-}1, ottieni {-}1 (vai indietro).}
+\CommentTok{Se hai {-}1 (stai andando indietro) e lo moltiplichi per {-}1, ottieni 1 (meno per meno fa più {-}\textgreater{} torni ad andare avanti).}
+
+\CommentTok{2. Cosa succede nel tuo codice?}
+\CommentTok{Tu hai questa riga fondamentale alla fine: pos += dir * v;}
+\CommentTok{Analizziamola in due scenari:}
+\CommentTok{SCENARIO A: La marcia avanti (dir = 1) Stai iniziando il programma. dir è 1. Il calcolo diventa: pos = pos + (1 * 3). Ovvero: pos = pos + 3. La linea si sposta a destra: 0, 3, 6, 9... fino a 500.}
+\CommentTok{SCENARIO B: Il Muro (dir = {-}dir) Appena tocchi il bordo (pos \textgreater{} width), il codice esegue: dir = {-}dir; Siccome dir era 1, ora diventa {-}1.}
+\CommentTok{SCENARIO C: La retromarcia (dir = {-}1) Al frame successivo, il codice riesegue il calcolo di movimento: pos += dir * v; Sostituiamo i numeri: pos = pos + ({-}1 * 3). Ovvero: pos = pos {-} 3. Vedi? Ora sottrai 3! La linea torna indietro: 500, 497, 494...}
+
+\CommentTok{In sintesi}
+\CommentTok{Quella riga dir = {-}dir è un interruttore. È un modo velocissimo per dire al computer: "Qualunque cosa tu sia (1 o {-}1), diventa il tuo opposto".}
+\CommentTok{Se sei positivo, diventa negativo.}
+\CommentTok{Se sei negativo, diventa positivo.}
+\CommentTok{È come sbattere contro un muro e rimbalzare: la tua velocità (v) è sempre 3 km/h, ma la tua direzione (dir) cambia verso.*/}
+
+
+\CommentTok{//Rifacciamo la stessa animazione ma con la riga che si muove in orizzontale}
+\DataTypeTok{int}\NormalTok{ pos }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ dir }\OperatorTok{=} \DecValTok{1}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ v }\OperatorTok{=} \DecValTok{3}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,} \DecValTok{500}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+  \FunctionTok{strokeWeight}\OperatorTok{(}\DecValTok{2}\OperatorTok{);}
+  \FunctionTok{line}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\NormalTok{pos}\OperatorTok{,}\NormalTok{ width}\OperatorTok{,}\NormalTok{pos}\OperatorTok{);}
+
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{pos}\OperatorTok{\textgreater{}}\NormalTok{height }\OperatorTok{||}\NormalTok{ pos}\OperatorTok{\textless{}}\DecValTok{0}\OperatorTok{)\{} \CommentTok{//Se il valore di y è \textgreater{} 500 o \textless{} di 0, allora rendi la direzione negativa {-}\textgreater{} torna indietro}
+\NormalTok{    dir }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{dir}\OperatorTok{;}
+  \OperatorTok{\}}
+
+\NormalTok{  pos }\OperatorTok{+=}\NormalTok{ dir}\OperatorTok{*}\NormalTok{v}\OperatorTok{;} \CommentTok{//per far muovere la linea si fa la posizione = posizione + (dir * v)}
+  \CommentTok{//Ad esempio {-}\textgreater{} posizione (2) = 2 + (+1 * 3); }
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[SESTO FILE]}
+\CommentTok{//Esercizio di mattonelle sconnesse}
+\FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\FunctionTok{noStroke}\OperatorTok{();}
+
+\CommentTok{//Usiamo la funzione \textquotesingle{}random()\textquotesingle{}, prende uno o due parametri.}
+\CommentTok{//Se usiamo random(30) ci restituisce un float. Quindi da 0.0 a 29.999... Quindi non avremo mai 30}
+\CommentTok{//Il casting in float si fa come nel C: (int)random(30)}
+\CommentTok{//Se passiamo due parametri stiamo attivando un range più definito. Quindi se usiamo:}
+\CommentTok{//random(10,15) avremo il range che va da 10.0 a 14.999...}
+
+\DataTypeTok{int}\NormalTok{ l}\OperatorTok{=}\DecValTok{50}\OperatorTok{;} \CommentTok{//lato della mattonella}
+
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ y}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ y}\OperatorTok{\textless{}}\NormalTok{height}\OperatorTok{;}\NormalTok{ y}\OperatorTok{+=}\NormalTok{l}\OperatorTok{)\{}
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ x}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ x}\OperatorTok{\textless{}}\NormalTok{width}\OperatorTok{;}\NormalTok{x}\OperatorTok{+=}\NormalTok{l}\OperatorTok{)\{}
+    \FunctionTok{fill}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),}\DecValTok{130}\OperatorTok{);} \CommentTok{//Questa riga riempie casualmente e con varie tonalità i colori. Perché impostiamo livelli di grigio diversi di trasparenze diverse.}
+    \FunctionTok{rect}\OperatorTok{(}\NormalTok{x}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,}\DecValTok{5}\OperatorTok{),}\NormalTok{y}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,+}\DecValTok{5}\OperatorTok{),}\NormalTok{l}\OperatorTok{,}\NormalTok{l}\OperatorTok{);} \CommentTok{//come al solito, i primi due parametri impostano l\textquotesingle{}angolo in alto a sinistra e gli altri due larghezza e altezza}
+    \CommentTok{//Aggiungiamo \textquotesingle{}x+random({-}5,5),y+random({-}5,+5)\textquotesingle{}. Quello che abbiamo fatto è stato spostare di 5 pixel a sinistra o destra o in alto o in basso}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\CommentTok{//Ricordiamo i parametri accettati da \textquotesingle{}fill()\textquotesingle{}}
+\CommentTok{/*}
+\CommentTok{{-} 3 parametri = RGB}
+\CommentTok{{-} 1 paramrtro = livello di grigio}
+\CommentTok{{-} 1 parametro = \#esadeciamle}
+\CommentTok{{-} 4 parametri = RGB e alpga}
+\CommentTok{{-} 2 parametri = livello di grigio e alpha}
+\CommentTok{*/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[SETTIMO FILE]}
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+\FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\DataTypeTok{int}\NormalTok{ l}\OperatorTok{=}\DecValTok{50}\OperatorTok{;}
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ y}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ y}\OperatorTok{\textless{}}\NormalTok{height}\OperatorTok{;}\NormalTok{ y}\OperatorTok{+=}\NormalTok{l}\OperatorTok{)\{}
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ x}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ x}\OperatorTok{\textless{}}\NormalTok{width}\OperatorTok{;}\NormalTok{x}\OperatorTok{+=}\NormalTok{l}\OperatorTok{)\{}
+    \FunctionTok{fill}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),}\DecValTok{130}\OperatorTok{);} 
+    \FunctionTok{rect}\OperatorTok{(}\NormalTok{x}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,}\DecValTok{5}\OperatorTok{),}\NormalTok{y}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,+}\DecValTok{5}\OperatorTok{),}\NormalTok{l}\OperatorTok{,}\NormalTok{l}\OperatorTok{);}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{mousePressed}\OperatorTok{()\{} \CommentTok{//Funzione che capisce se premi un tasto del mouse}
+\FunctionTok{setup}\OperatorTok{();}\CommentTok{//ogni volta che premiamo un tasto richiama la funzione setup}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[OTTAVO FILE]}
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mousePressed}\OperatorTok{)\{} \CommentTok{//E\textquotesingle{} una variabile booleana. False se non premiamo nulla, True se premiamo qualcosa.}
+    \CommentTok{//mouseButton conserva quale abbiamo premuto}
+    \CommentTok{//mouseButton è una variabile di tipo intero}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton}\OperatorTok{==}\NormalTok{LEFT}\OperatorTok{)\{} \CommentTok{//Se premiamo tasto sinistro stampa L}
+      \FunctionTok{println}\OperatorTok{(}\StringTok{"L"}\OperatorTok{);}
+  \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton}\OperatorTok{==}\NormalTok{RIGHT}\OperatorTok{)\{} \CommentTok{//Se premiamo tasto destro stampa R}
+      \FunctionTok{println}\OperatorTok{(}\StringTok{"R"}\OperatorTok{);}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{keyPressed}\OperatorTok{)\{} \CommentTok{//keyPressed è booleana come mousePressed}
+  \CommentTok{//key è una funzione di tipo char}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}a\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}A\textquotesingle{}}\OperatorTok{)\{}
+      \FunctionTok{println}\OperatorTok{(}\StringTok{"ho premuto \textquotesingle{}a\textquotesingle{}"}\OperatorTok{);}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[NONO FILE]}
+\CommentTok{//creiamo un array di tipo float globalmente in modo che è accessibile ovunque}
+\CommentTok{//new è l\textquotesingle{}equivalente del malloc in C, ed in questo caso abbiamo allocato un array di 10 valori, ossia 10 cerchi}
+\DataTypeTok{float} \OperatorTok{[]}\NormalTok{ d }\OperatorTok{=} \KeywordTok{new} \DataTypeTok{float} \OperatorTok{[}\DecValTok{10}\OperatorTok{];} 
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{800}\OperatorTok{,} \DecValTok{800}\OperatorTok{);}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{} \CommentTok{//riempiamo l\textquotesingle{}array}
+\NormalTok{    d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]} \OperatorTok{=} \OperatorTok{(}\NormalTok{i}\OperatorTok{+}\DecValTok{1}\OperatorTok{)*}\DecValTok{60}\OperatorTok{;} \CommentTok{//ogni valore sarà quello precedente + 60}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{{-}}\DecValTok{1}\OperatorTok{;}\NormalTok{ i}\OperatorTok{\textgreater{}=}\DecValTok{0}\OperatorTok{;}\NormalTok{ i}\OperatorTok{{-}{-})\{} \CommentTok{//Scorriamo l\textquotesingle{}array al contrario altrimenti i cerchi più grandi saranno disegnati su quelli più piccoli }
+    \FunctionTok{fill}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{));} \CommentTok{//Riempiamo con colori random}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{],}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);} \CommentTok{//Il centro di ogni ellisse sarà al centro della canvas, e i diametri avranno i valori che andiamo a leggere dall\textquotesingle{}array}
+  \OperatorTok{\}}
+
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mousePressed}\OperatorTok{)\{}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton }\OperatorTok{==}\NormalTok{ LEFT}\OperatorTok{)\{}
+        \FunctionTok{println}\OperatorTok{(}\StringTok{"L"}\OperatorTok{);}
+        \FunctionTok{noLoop}\OperatorTok{();} \CommentTok{//interrompe l\textquotesingle{}esecuzione della funzione \textquotesingle{}draw()\textquotesingle{} se noi premiamo il tasto sinistro del mouse}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton }\OperatorTok{==}\NormalTok{ RIGHT}\OperatorTok{)\{}
+        \FunctionTok{println}\OperatorTok{(}\StringTok{"R"}\OperatorTok{);}
+        \FunctionTok{loop}\OperatorTok{();} \CommentTok{//Il loop qui non riprenderà, perchè una volta che abbiamo premuto il tasto sinistro per interrompere il Loop allora usciremo anche dalla funzine \textquotesingle{}draw()\textquotesingle{}, per questo allora dovremo usare le funzioni apposite. Mostrerò il funzionamento nel codice qui sotto }
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{quote}
+Considerando che veniamo dal C/C++, e non siamo esperti di Java, è
+importante chiarire la sintassi della dichiarazione di un array, e di
+una piccolezza nella condizione del for.\\
+Ecco spiegato tutto.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  La Dichiarazione e Allocazione
+\end{enumerate}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{float}\OperatorTok{[]}\NormalTok{ d }\OperatorTok{=} \KeywordTok{new} \DataTypeTok{float}\OperatorTok{[}\DecValTok{10}\OperatorTok{];}
+\end{Highlighting}
+\end{Shaded}
+
+In C, per fare la stessa cosa dinamicamente, scriveresti qualcosa come:
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// C equivalente (approssimativo)}
+\DataTypeTok{float} \OperatorTok{*}\NormalTok{d }\OperatorTok{=} \OperatorTok{(}\DataTypeTok{float}\OperatorTok{*)}\NormalTok{ calloc}\OperatorTok{(}\DecValTok{10}\OperatorTok{,} \KeywordTok{sizeof}\OperatorTok{(}\DataTypeTok{float}\OperatorTok{));}
+\end{Highlighting}
+\end{Shaded}
+
+Ecco le differenze fondamentali:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{\texttt{float{[}{]}\ d} (Il Puntatore)}:
+
+  \begin{itemize}
+  \item
+    In C scriveresti \texttt{float\ d{[}{]}} o \texttt{float\ *d}.
+  \item
+    In Processing, le parentesi quadre \texttt{{[}{]}} si mettono
+    preferibilmente \emph{dopo il tipo} (\texttt{float{[}{]}}) per dire
+    "Sto dichiarando un riferimento (puntatore) a un array di float".
+  \item
+    In questo momento \texttt{d} è solo un riferimento, non contiene
+    ancora i dati.
+  \end{itemize}
+\item
+  \textbf{\texttt{new} (Il Malloc Potenziato)}:
+
+  \begin{itemize}
+  \item
+    Questa è la parola chiave magica. In C usi \texttt{malloc}. In
+    Java/Processing usi \texttt{new}.
+  \item
+    \textbf{Differenza cruciale:} \texttt{new} non solo alloca la
+    memoria nello \emph{Heap}, ma la \textbf{pulisce anche}.
+  \item
+    Mentre in C un array creato nello stack contiene valori
+    "spazzatura", in Processing \texttt{new\ float{[}10{]}} crea 10
+    caselle e le riempie tutte automaticamente con
+    \textbf{\texttt{0.0}}.
+  \end{itemize}
+\item
+  \textbf{\texttt{{[}10{]}} (La Dimensione)}:
+
+  \begin{itemize}
+  \item
+    Stai chiedendo spazio per 10 elementi. Una volta creato,
+    l\textquotesingle array \textbf{non può cambiare dimensione}
+    (proprio come un blocco \texttt{malloc} in C, a meno che non usi
+    \texttt{realloc}, cosa che qui non esiste direttamente).
+  \end{itemize}
+\end{enumerate}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\mbox{}%
+\subsubsection{\texorpdfstring{2. La gestione della dimensione
+(\texttt{.length})}{2. La gestione della dimensione (.length)}}\label{2-la-gestione-della-dimensione-length}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)} \OperatorTok{\{} \KeywordTok{...} \OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+In C, un array è "stupido": non sa quanto è grande. Devi sempre portarti
+dietro una variabile \texttt{int\ size} o fare calcoli con
+\texttt{sizeof}.
+
+In Processing, gli array sono \textbf{oggetti intelligenti}.
+
+\begin{itemize}
+\item
+  L\textquotesingle array \texttt{d} si porta dietro "nello zaino" la
+  sua dimensione.
+\item
+  \texttt{d.length} è una proprietà di sola lettura che ti restituisce
+  \texttt{10}.
+\item
+  È comodissimo: non rischi mai di andare fuori dai bordi (Buffer
+  Overflow) senza accorgertene, perché se provi a leggere
+  \texttt{d{[}11{]}}, Processing ti ferma subito con un errore, invece
+  di leggere memoria a caso come farebbe C.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\mbox{}%
+\subsubsection{Riassunto C vs
+Processing}\label{riassunto-c-vs-processing}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+\textbf{Concetto} & \textbf{C (classico)} & \textbf{Processing
+(Java)} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\textbf{Dichiarazione} & \texttt{float\ d{[}10{]};} (Stack) o
+\texttt{float\ *d;} & \texttt{float{[}{]}\ d;} \\
+\textbf{Allocazione} & \texttt{malloc(10\ *\ sizeof(float))} &
+\texttt{new\ float{[}10{]}} \\
+\textbf{Pulizia memoria} & Manuale (\texttt{memset} o \texttt{calloc}) &
+Automatica (tutto a 0) \\
+\textbf{Dimensione} & Devi ricordartela tu (\texttt{sizeof} o var extra)
+& \texttt{d.length} (l\textquotesingle array lo sa) \\
+\textbf{Deallocazione} & \texttt{free(d)} (Obbligatorio!) &
+\textbf{Automatica} (Garbage Collector) 🎉 \\
+\end{longtable}
+}
+\end{quote}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[DECIMO FILE]}
+\CommentTok{//creiamo un array di tipo float globalmente in modo che è accessibile ovunque}
+\CommentTok{//new è l\textquotesingle{}equivalente del malloc in C, ed in questo caso abbiamo allocato un array di 10 valori, ossia 10 cerchi}
+\DataTypeTok{float} \OperatorTok{[]}\NormalTok{ d }\OperatorTok{=} \KeywordTok{new} \DataTypeTok{float} \OperatorTok{[}\DecValTok{10}\OperatorTok{];} 
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{800}\OperatorTok{,} \DecValTok{800}\OperatorTok{);}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{} \CommentTok{//riempiamo l\textquotesingle{}array}
+\NormalTok{    d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]} \OperatorTok{=} \OperatorTok{(}\NormalTok{i}\OperatorTok{+}\DecValTok{1}\OperatorTok{)*}\DecValTok{60}\OperatorTok{;} \CommentTok{//ogni valore sarà quello precedente + 60}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{{-}}\DecValTok{1}\OperatorTok{;}\NormalTok{ i}\OperatorTok{\textgreater{}=}\DecValTok{0}\OperatorTok{;}\NormalTok{ i}\OperatorTok{{-}{-})\{} \CommentTok{//Scorriamo l\textquotesingle{}array al contrario altrimenti i cerchi più grandi saranno disegnati su quelli più piccoli }
+    \FunctionTok{fill}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{));} \CommentTok{//Riempiamo con colori random}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{],}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);} \CommentTok{//Il centro di ogni ellisse sarà al centro della canvas, e i diametri avranno i valori che andiamo a leggere dall\textquotesingle{}array}
+  \OperatorTok{\}}
+  \OperatorTok{\}}
+
+
+  \CommentTok{//{-}{-}{-}FUNZIONI PER MOUSE{-}{-}{-}}
+  \DataTypeTok{void} \FunctionTok{mousePressed}\OperatorTok{()\{} \CommentTok{//Adesso la nostra animazione riprenderà tranquillamente premendo tasto destro e si interromperà premendo tasto sinistro}
+     \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton }\OperatorTok{==}\NormalTok{ LEFT}\OperatorTok{)\{}
+        \FunctionTok{println}\OperatorTok{(}\StringTok{"L"}\OperatorTok{);}
+        \FunctionTok{noLoop}\OperatorTok{();}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mouseButton }\OperatorTok{==}\NormalTok{ RIGHT}\OperatorTok{)\{}
+        \FunctionTok{println}\OperatorTok{(}\StringTok{"R"}\OperatorTok{);}
+        \FunctionTok{loop}\OperatorTok{();}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{mouseReleased}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{mouseClicked}\OperatorTok{()\{}
+  \OperatorTok{\}}
+
+  \CommentTok{//{-}{-}{-}FUNZIONI PER TASTIERA{-}{-}{-}}
+  \DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{} \CommentTok{//Vale anche se holdiamo il tasto}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{keyReleased}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{keyTyped}\OperatorTok{()\{}
+  \OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[UNIDCESIMO FILE]}
+\CommentTok{//Adesso: Vogliamo eliminare il funzionamento di tasto destro e tasto sinistreo per interrompere e riprendere l\textquotesingle{}animazione. E vogliamo utilizzare un solo tasto come se fosse un interruttore.}
+\DataTypeTok{float} \OperatorTok{[]}\NormalTok{ d }\OperatorTok{=} \KeywordTok{new} \DataTypeTok{float} \OperatorTok{[}\DecValTok{10}\OperatorTok{];} 
+\CommentTok{//utilizziamo una variabile booleana}
+\DataTypeTok{boolean}\NormalTok{ vai }\OperatorTok{=} \KeywordTok{true}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{800}\OperatorTok{,} \DecValTok{800}\OperatorTok{);}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{}
+\NormalTok{    d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]} \OperatorTok{=} \OperatorTok{(}\NormalTok{i}\OperatorTok{+}\DecValTok{1}\OperatorTok{)*}\DecValTok{60}\OperatorTok{;}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \ControlFlowTok{for} \OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=}\NormalTok{ d}\OperatorTok{.}\FunctionTok{length}\OperatorTok{{-}}\DecValTok{1}\OperatorTok{;}\NormalTok{ i}\OperatorTok{\textgreater{}=}\DecValTok{0}\OperatorTok{;}\NormalTok{ i}\OperatorTok{{-}{-})\{}
+    \FunctionTok{fill}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{255}\OperatorTok{));}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{],}\NormalTok{ d}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);}
+  \OperatorTok{\}}
+  \OperatorTok{\}}
+
+  \DataTypeTok{void} \FunctionTok{mousePressed}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{mouseReleased}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{mouseClicked}\OperatorTok{()\{}
+    \CommentTok{//Qui stiamo dicendo che la nostra animazione si attacca e si stacca, con qualunque tasto del mouse (sinistro, centro, destro)}
+\NormalTok{    vai }\OperatorTok{=} \OperatorTok{!}\NormalTok{vai}\OperatorTok{;}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{vai }\OperatorTok{==} \KeywordTok{true}\OperatorTok{)\{}
+        \FunctionTok{loop}\OperatorTok{();}
+    \OperatorTok{\}}\ControlFlowTok{else}\OperatorTok{\{}
+        \FunctionTok{noLoop}\OperatorTok{();}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+
+  \DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{keyReleased}\OperatorTok{()\{}
+  \OperatorTok{\}}
+  \DataTypeTok{void} \FunctionTok{keyTyped}\OperatorTok{()\{}
+  \OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[DODICESIMO FILE]}
+\CommentTok{//Adesso lavoriamo sull\textquotesingle{}utilizzo delle freccette della tastiera}
+\DataTypeTok{int}\NormalTok{ x }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+   \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);} 
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+    \FunctionTok{rect}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,} \DecValTok{50}\OperatorTok{,}\DecValTok{50}\OperatorTok{);}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{keyPressed}\OperatorTok{)\{}
+        \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\NormalTok{CODED}\OperatorTok{)\{}
+        \ControlFlowTok{if}\OperatorTok{(}\NormalTok{keyCode}\OperatorTok{==}\NormalTok{LEFT}\OperatorTok{)\{} \CommentTok{//Se il keyCode corrisponde al tasto della freccia sinistra, decrementiamo il valore di x.}
+\NormalTok{            x}\OperatorTok{{-}=}\DecValTok{5}\OperatorTok{;}
+        \OperatorTok{\}}
+        \ControlFlowTok{if}\OperatorTok{(}\NormalTok{keyCode}\OperatorTok{==}\NormalTok{RIGHT}\OperatorTok{)\{} \CommentTok{//Se il keyCode corrisponde al tasto della freccia destra, incrementiamo il valore di x.}
+\NormalTok{            x}\OperatorTok{+=}\DecValTok{5}\OperatorTok{;}
+        \OperatorTok{\}}
+    \OperatorTok{\}}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{} \CommentTok{//Ci sono dei caratteri che sono codificati, detti \textquotesingle{}CODED\textquotesingle{}.}
+\CommentTok{/*    if(key==CODED)\{}
+\CommentTok{        if(keyCode==LEFT)\{ //Se il keyCode corrisponde al tasto della freccia sinistra, decrementiamo il valore di x.}
+\CommentTok{            x{-}=5;}
+\CommentTok{        \}}
+\CommentTok{        if(keyCode==RIGHT)\{ //Se il keyCode corrisponde al tasto della freccia destra, incrementiamo il valore di x.}
+\CommentTok{            x+=5;}
+\CommentTok{        \}}
+\CommentTok{    \}*/}
+\OperatorTok{\}} 
+
+\CommentTok{//HO CONSTATATO CHE A QUANTO PARE USARLO NEL DRAW è MEGLIO. OVVIAMENTE BISOGNA USARE IL BOOLEANO \textquotesingle{}keyPressed\textquotesingle{} PER S}
+\CommentTok{/*}
+\CommentTok{Codici dei tasti CODED reperibili con keyCode;}
+\CommentTok{UP, DOWN, LEFT, RIGHT, ALT, CONTROL e SHIFT}
+
+\CommentTok{Mentre in key, non avendo bisogno di fare il controlo se key==CODED, abbiamo i seguenti caratteri speciali:}
+\CommentTok{BACKSPACE, TAB, ENTER, RETURN, ESC, e DELETE.}
+\CommentTok{L\textquotesingle{}invio si può "catturare" in due modi (key == ENTER) oppure (key == \textquotesingle{}\textbackslash{}n\textquotesingle{}).}
+\CommentTok{Lo spazio è il carattere \textquotesingle{} \textquotesingle{} (c\textquotesingle{}è uno spazio tra i singoli apici)}
+\CommentTok{*/}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[TREDICESIMO FILE]}
+\CommentTok{/*}
+\CommentTok{    Esercizio di PacMan animato. Il personaggio dovrà aprire e chiudere la bocca e tornare avanti ed indietro.}
+\CommentTok{*/}
+
+\CommentTok{//Dichiariamo le variabili che ci serviranno}
+\DataTypeTok{int}\NormalTok{ x }\OperatorTok{=} \DecValTok{60}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ dir }\OperatorTok{=} \DecValTok{1}\OperatorTok{;} \CommentTok{//direzione}
+\DataTypeTok{int}\NormalTok{ a }\OperatorTok{=} \DecValTok{30}\OperatorTok{;} \CommentTok{//angolo = 30°}
+\DataTypeTok{int}\NormalTok{ dira }\OperatorTok{=} \OperatorTok{{-}}\DecValTok{1}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ v }\OperatorTok{=} \DecValTok{10}\OperatorTok{;} \CommentTok{//velocità}
+\DataTypeTok{int}\NormalTok{ va }\OperatorTok{=}\NormalTok{ v}\OperatorTok{/}\DecValTok{2}\OperatorTok{;} \CommentTok{//velocità di apertura bocca}
+\DataTypeTok{int}\NormalTok{ r }\OperatorTok{=} \DecValTok{40}\OperatorTok{;} \CommentTok{//raggio}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+    \FunctionTok{ellipseMode}\OperatorTok{(}\NormalTok{RADIUS}\OperatorTok{);}  \CommentTok{// CAMBIA IL MODO DI DISEGNARE: I parametri diventano il RAGGIO (metà larghezza), non il DIAMETRO. Senza questa riga, il Pacman sarebbe largo 40 totali (piccolo). Con questa riga, 40 è solo la metà, quindi il totale è 80 (grande il doppio).}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{);} \CommentTok{//Impostiamo lo sfondo nero}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{255}\OperatorTok{,} \DecValTok{255}\OperatorTok{,} \DecValTok{0}\OperatorTok{);} \CommentTok{//Coloriamo di giallo il nostro pacman}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{dir}\OperatorTok{==}\DecValTok{1}\OperatorTok{)\{} \CommentTok{//Se il nostro pacman si muove verso destra...}
+    \FunctionTok{arc}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ r}\OperatorTok{,}\NormalTok{r}\OperatorTok{,} \FunctionTok{radians}\OperatorTok{(}\NormalTok{a}\OperatorTok{),} \FunctionTok{radians}\OperatorTok{(}\DecValTok{360}\OperatorTok{{-}}\NormalTok{a}\OperatorTok{));} \CommentTok{//...allora la bocca sarà a destra}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{dir}\OperatorTok{=={-}}\DecValTok{1}\OperatorTok{)\{} \CommentTok{//Se il nostro pacman si muove verso destra...}
+        \FunctionTok{arc}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ r}\OperatorTok{,}\NormalTok{r}\OperatorTok{,} \FunctionTok{radians}\OperatorTok{(}\DecValTok{180}\OperatorTok{+}\NormalTok{a}\OperatorTok{),} \FunctionTok{radians}\OperatorTok{(}\DecValTok{360}\OperatorTok{+}\DecValTok{180}\OperatorTok{{-}}\NormalTok{a}\OperatorTok{));} \CommentTok{//...allora la bocca sarà a sinistra}
+    \OperatorTok{\}}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{);} \CommentTok{//Colore dell\textquotesingle{}occhio}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{ height}\OperatorTok{/}\DecValTok{2}\OperatorTok{{-}}\DecValTok{20}\OperatorTok{,} \DecValTok{5}\OperatorTok{,}\DecValTok{5}\OperatorTok{);} \CommentTok{//Definizione dell\textquotesingle{}ellisse che sarà l\textquotesingle{}occhio}
+    \CommentTok{//Questo è il controllo dell\textquotesingle{}occhio. }
+    \CommentTok{//Se x è maggiore uguale della larghezza della canvas meno il raggio (si aggiunge {-} r perché dobbiamo controllare che sia la bocca a toccare e non il centro)...7}
+    \CommentTok{//Oppure se x è minore del raggio}
+    \CommentTok{//allora cambia la direzione}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{x }\OperatorTok{\textgreater{}=}\NormalTok{ width}\OperatorTok{{-}}\NormalTok{r }\OperatorTok{||}\NormalTok{ x }\OperatorTok{\textless{}}\NormalTok{ r}\OperatorTok{)\{} 
+\NormalTok{            dir }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{dir}\OperatorTok{;} \CommentTok{//dir = {-}dir è un interruttore. È un modo velocissimo per dire al computer: "Qualunque cosa tu sia (1 o {-}1), diventa il tuo opposto".}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{a }\OperatorTok{\textgreater{}} \DecValTok{30} \OperatorTok{||}\NormalTok{ a }\OperatorTok{\textless{}=} \DecValTok{0}\OperatorTok{)\{} \CommentTok{//Questo comanda l\textquotesingle{}apertura della bocca.}
+    \CommentTok{//Se a \textgreater{} 30 la bocca è aperta}
+    \CommentTok{//Se a \textless{}= 0 la bocca è chiusa}
+\NormalTok{        dira }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{dira}\OperatorTok{;}
+        \CommentTok{/*Immagina dira come un interruttore del respiro.}
+\CommentTok{        Quando dira è positivo (es. +1): Pacman sta INSPIRANDO. Ad ogni fotogramma aggiungi 1 all\textquotesingle{}angolo. La bocca si apre sempre di più. Angolo: 10°... 20°... 30° (Bocca spalancata! Aaaah!)}
+\CommentTok{        Quando dira è negativo (es. {-}1): Pacman sta ESPIRANDO. Ad ogni fotogramma togli 1 all\textquotesingle{}angolo. La bocca si chiude sempre di più. Angolo: 30°... 20°... 10°... 0° (Bocca chiusa! Mmh!)}
+\CommentTok{        Quindi cosa fa dira = {-}dira? È il comando che dice: "Inverti il respiro!"}
+\CommentTok{        Il computer controlla continuamente:}
+\CommentTok{        "Ehi, la bocca è arrivata a 30 (troppo aperta)?" {-}\textgreater{} SÌ! {-}\textgreater{} Allora fai dira = {-}dira. Da ora in poi chiudi.}
+\CommentTok{        (Il tempo passa, la bocca si chiude...)}
+\CommentTok{        "Ehi, la bocca è arrivata a 0 (troppo chiusa)?" {-}\textgreater{} SÌ! {-}\textgreater{} Allora fai dira = {-}dira. Da ora in poi apri.}
+\CommentTok{        È un ciclo infinito: Apri {-}\textgreater{} Inverti {-}\textgreater{} Chiudi {-}\textgreater{} Inverti {-}\textgreater{} Apri... Proprio come un polmone o un cuore che batte.*/}
+    \OperatorTok{\}}
+\NormalTok{    a}\OperatorTok{+=}\NormalTok{dira}\OperatorTok{*}\NormalTok{va}\OperatorTok{;} \CommentTok{//Ad ogni fotogrammala bocca si muove un po\textquotesingle{} (e con va comandiamo la velocità della bocca, che è proporzionale a v)}
+\NormalTok{    x }\OperatorTok{+=}\NormalTok{ dir }\OperatorTok{*}\NormalTok{ v}\OperatorTok{;} \CommentTok{//Prendi la posizione x e aggiungi la velocità v nella direzione giusta dir. Questa riga cambia la direzione, la velocità di movimento è sempre v}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[QUATTORDICESIMO FILE]}
+\CommentTok{//Introduciamo l\textquotesingle{}interpolazione in processing: \textquotesingle{}lerp()\textquotesingle{} [Linear Interpolation]}
+\CommentTok{//Gli forniamo dei key frame, lui si muoverà da un punto ad un altro calcolando dei punti intermedi, dunque ci servirà per l\textquotesingle{}animazione.}
+\CommentTok{//Come parametri prende: un punto di inizio, un punto di fine e la percentuale. Per un totale di 3 parametri.}
+
+\CommentTok{//Proviamo prima su un disegno e poi su una animazione.}
+
+\DataTypeTok{int}\NormalTok{ x1 }\OperatorTok{=} \DecValTok{15}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ y1 }\OperatorTok{=} \DecValTok{10}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ x2 }\OperatorTok{=} \DecValTok{80}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ y2 }\OperatorTok{=} \DecValTok{90}\OperatorTok{;}
+\FunctionTok{line}\OperatorTok{(}\NormalTok{x1}\OperatorTok{,}\NormalTok{y1}\OperatorTok{,}\NormalTok{x2}\OperatorTok{,}\NormalTok{y2}\OperatorTok{);}
+\ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}=} \DecValTok{10}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{} 
+    \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,} \DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{);}
+    \FunctionTok{strokeWeight}\OperatorTok{(}\DecValTok{3}\OperatorTok{);}
+    \DataTypeTok{float}\NormalTok{ x }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{x1}\OperatorTok{,}\NormalTok{x2}\OperatorTok{,}\NormalTok{ i}\OperatorTok{/}\FloatTok{10.0}\OperatorTok{);} 
+    \DataTypeTok{float}\NormalTok{ y }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{y1}\OperatorTok{,}\NormalTok{y2}\OperatorTok{,}\NormalTok{ i}\OperatorTok{/}\FloatTok{10.0}\OperatorTok{);}
+    \FunctionTok{point}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{);}
+\OperatorTok{\}}
+
+\CommentTok{//Quindi abbiamo disegnato dei puntini al 10\%, 20\%, 30\%, 40\%, 50\%, 60\%, 70\%, 80\%, 90\%, 100\%.}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[QUINDICESIMO FILE]}
+ \CommentTok{//Adesso utilizziamo la funzione di interpolazione nelle animazioni}
+\DataTypeTok{float}\NormalTok{ x}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ y}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+    \FunctionTok{noStroke}\OperatorTok{();}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+    \CommentTok{//x=mouseX;  }
+    \CommentTok{//y=mouseY;}
+\NormalTok{    x }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{ mouseX}\OperatorTok{,} \FloatTok{0.1}\OperatorTok{);} \CommentTok{//0.1 riguarda lo spostamento}
+\NormalTok{    y }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{y}\OperatorTok{,}\NormalTok{ mouseY}\OperatorTok{,} \FloatTok{0.1}\OperatorTok{);}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\DecValTok{60}\OperatorTok{,}\DecValTok{60}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[SEDICESIMO FILE]}
+\CommentTok{//Facciamo una pallina che lascia la scia}
+
+\DataTypeTok{float}\NormalTok{ x}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ y}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+    \FunctionTok{noStroke}\OperatorTok{();}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \CommentTok{//background(0);}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,} \DecValTok{40}\OperatorTok{);}
+    \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{,}\NormalTok{ width}\OperatorTok{,}\NormalTok{ height}\OperatorTok{);}
+\NormalTok{    x }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{ mouseX}\OperatorTok{,} \FloatTok{0.1}\OperatorTok{);}
+\NormalTok{    y }\OperatorTok{=} \FunctionTok{lerp}\OperatorTok{(}\NormalTok{y}\OperatorTok{,}\NormalTok{ mouseY}\OperatorTok{,} \FloatTok{0.1}\OperatorTok{);}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\DecValTok{60}\OperatorTok{,}\DecValTok{60}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[DICIASETTESIMO FILE]}
+ \CommentTok{//Movimento randomico di una pallina}
+
+\DataTypeTok{float}\NormalTok{ x}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ y}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+
+\NormalTok{    x}\OperatorTok{=}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{;}
+\NormalTok{    y}\OperatorTok{=}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{;}
+    \FunctionTok{noStroke}\OperatorTok{();}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \CommentTok{//background(0);}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,} \DecValTok{25}\OperatorTok{);}
+    \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{,}\NormalTok{ width}\OperatorTok{,}\NormalTok{ height}\OperatorTok{);}
+\NormalTok{    x }\OperatorTok{=}\NormalTok{ x}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,}\DecValTok{5}\OperatorTok{);}
+\NormalTok{    y }\OperatorTok{=}\NormalTok{ y}\OperatorTok{+}\FunctionTok{random}\OperatorTok{({-}}\DecValTok{5}\OperatorTok{,}\DecValTok{5}\OperatorTok{);}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\DecValTok{60}\OperatorTok{,}\DecValTok{60}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//[DICIOTTESIMO FILE]}
+\CommentTok{//Programmiamo una sorta di paint con 3 colori}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+     \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,} \DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{);}
+    \FunctionTok{stroke}\OperatorTok{(}\DecValTok{10}\OperatorTok{);}
+    \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \FunctionTok{strokeWeight}\OperatorTok{(}\DecValTok{5}\OperatorTok{);}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{mousePressed}\OperatorTok{)\{}
+        \CommentTok{//pmouse è una variabile che salva la posizione precedente del click del mouse}
+        \FunctionTok{line}\OperatorTok{(}\NormalTok{pmouseX}\OperatorTok{,}\NormalTok{ pmouseY}\OperatorTok{,}\NormalTok{ mouseX}\OperatorTok{,}\NormalTok{ mouseY}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}r\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}R\textquotesingle{}}\OperatorTok{)\{}
+        \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}g\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}G\textquotesingle{}}\OperatorTok{)\{}
+        \FunctionTok{stroke}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}b\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}B\textquotesingle{}}\OperatorTok{)\{}
+        \FunctionTok{stroke}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{);}
+    \OperatorTok{\}}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{} \textquotesingle{}}\OperatorTok{)\{}
+        \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+    \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

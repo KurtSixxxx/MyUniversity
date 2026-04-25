@@ -1,0 +1,10 @@
+grid(PImage I, color c1, color c2)
+divide in 4 parti e scambia gli angoli fra loro
+stampa le due diagonali (principale e l'inversa) di colori diversi, rispettivamente c1 e c2
+l'angolo in alto a sinistra mantiene solo il rosso, langolo in alto a destra mantiene solo il verde, l'angolo in basso a sinistra mantiene solo il blu e nell'angolo in basso a destra viene applicato il filtro negativo
+
+g_mas(PImage I, color c, int h, int n, int s)
+stessa cosa di grid ma le due diagonali hanno lo stesso colore
+nel quadrato centrale il valore di ogni pixel viene cambiato in (r+g+b)/3 e viene applicato il filtro di massimo
+
+Nel resto dell'immagine viene richiamata la funzione bw che scambia le due metà destra e sinistra, e applica il filtro binario con soglia s, infine nella metà inferiore applica il filtro negativo

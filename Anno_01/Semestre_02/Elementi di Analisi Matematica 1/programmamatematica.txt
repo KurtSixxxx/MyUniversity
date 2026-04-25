@@ -1,0 +1,185 @@
+ARITMETICA
+
+Espressioni matematiche: ordine delle operazioni
+Potenze
+Proprietà delle potenze
+Espressioni con potenze
+Operazioni con i numeri decimali
+Come approssimare un numero
+Notazione scientifica di un numero
+Forma polinomiale di un numero
+Sistema binario
+Operazioni con i numeri binari
+Numeri relativi
+Regola dei segni
+Multipli, sottomultipli e divisori
+Proprietà commutativa
+Proprietà associativa
+Proprietà dissociativa
+Proprietà invariantiva
+Proprietà distributiva
+Criteri di divisibilità
+Massimo comune divisore
+Minimo comune multiplo
+Numeri razionali
+Frazioni
+Frazioni proprie, frazioni improprie, frazioni apparenti
+Come ridurre una frazione ai minimi termini
+Minimo comune denominatore
+Confronto tra frazioni
+Frazione generatrice
+Operazioni con le frazioni
+Espressioni con le frazioni
+Problemi con le frazioni
+Radice quadrata
+Radice quadrata senza calcolatrice
+Radice cubica
+Numeri irrazionali
+Proprietà dell'addizione
+Proprietà della sottrazione
+Proprietà della divisione
+Proporzioni
+Direttamente proporzionale
+Inversamente proporzionale
+Proporzionalità quadratica
+Ripartizione semplice diretta e inversa
+Ripartizione composta
+Calcolo percentuale
+Tipi di grafici
+
+INSIEMI
+
+Cos'è un insieme
+Rappresentazione di insiemi per elencazione o estensiva
+Rappresentazione di insiemi per caratteristica o intensiva
+Cardinalità di un insieme finito
+Insiemi uguali, insiemi equipotenti
+Sottoinsiemi propri e impropri
+Insieme vuoto
+Insieme universo o insieme ambiente
+Unione tra insiemi
+Intersezione tra due insiemi
+Insieme complementare
+Differenza tra insiemi
+Differenza simmetrica
+Diagramma di Eulero Venn
+Leggi di De Morgan
+Partizione di un insieme
+Insieme delle parti
+Prodotto cartesiano
+
+POLINOMI
+
+Monomi
+Operazioni tra monomi
+MCD e mcm tra monomi
+Cos'è un polinomio
+Grado di un polinomio
+Addizione tra polinomi
+Differenza tra polinomi
+Prodotto tra monomi e polinomi
+Prodotto tra polinomi
+Divisione di un polinomio per un monomio
+Prodotti notevoli
+Quadrato di un binomio
+Cubo di un binomio
+Somma per differenza - Differenza di quadrati
+Somma di cubi
+Differenza di cubi
+Quadrato di un trinomio
+Raccoglimento totale
+Raccoglimento parziale
+Potenza di un binomio
+Binomio di Newton
+Trinomio notevole con somma e prodotto
+Scomposizione dei polinomi di secondo grado con le equazioni
+Radici di un polinomio
+Regola di Ruffini
+Divisione tra polinomi
+Teorema del resto
+MCD tra polinomi
+mcm di polinomi
+Frazioni algebriche
+Semplificare le frazioni algebriche
+Espressioni con frazioni algebriche
+
+EQUAZIONI
+Cosa sono le equazioni?
+Principi di equivalenza delle equazioni
+Identità ed equazioni senza incognite
+Equazioni di primo grado
+Come risolvere le equazioni di primo grado
+Problemi con le equazioni
+Equazioni fratte di primo grado
+Equazioni parametriche di primo grado
+Sistemi lineari
+Metodo di sostituzione
+Metodo del confronto
+Metodo di riduzione
+Metodo di Cramer
+Equazioni di secondo grado
+Formula del discriminante
+Δ/4 - Delta quarti
+Equazioni fratte di secondo grado
+Equazioni parametriche di secondo grado
+Regola di Cartesio
+Equazioni di grado superiore al secondo
+Equazioni binomie (equazioni di grado superiore al secondo)
+Equazioni trinomie (equazioni di grado superiore al secondo)
+Equazioni scomponibili (equazioni di grado superiore al secondo)
+Equazioni irrazionali
+Equazioni con valore assoluto
+Equazioni esponenziali
+Equazioni logaritmiche
+Equazioni goniometriche
+Equazioni trigonometriche - seconda parte
+Equazioni lineari in seno e coseno
+Equazioni goniometriche di secondo grado in seno e coseno
+Equazioni in due incognite
+Sistemi di equazioni
+Sistemi di equazioni con il metodo grafico
+Equazioni fratte
+Equazioni non risolvibili algebricamente
+Tipi di equazioni
+
+DISEQUAZIONI
+
+Disequazioni: disuguaglianze, simboli e soluzioni
+Principi di equivalenza delle disequazioni
+Disequazioni di primo grado
+Disequazioni letterali di primo grado
+Disequazioni di secondo grado
+Disequazioni letterali di secondo grado
+Disequazioni di grado superiore al secondo
+Disequazioni fratte
+Sistemi di disequazioni
+Disequazioni irrazionali
+Disequazioni logaritmiche
+Disequazioni esponenziali
+Disequazioni goniometriche
+Disequazioni goniometriche non elementari
+Disequazioni con valore assoluto
+Disequazioni con la regola dei segni
+Disequazioni miste
+Disequazioni trascendenti e metodo grafico
+Disequazione in due incognite nel piano
+
+LE FUNZIONI
+LIMITI
+DERIVATE
+STUDIO DI FUNZIONI
+INTEGRALI
+
+
+Aritmetica: Impara le tabelline e le proprietà delle operazioni elementari. Fai esercizi con numeri decimali, frazioni e percentuali.
+
+Insiemi: Comprendi i concetti di unione, intersezione e complemento di insiemi. Usa diagrammi di Eulero-Venn per visualizzare le relazioni tra insiemi.
+
+Polinomi: Impara a svolgere operazioni con monomi e polinomi. Riconosci i fattori comuni e scomponi i polinomi in fattori.
+
+Equazioni: Impara a risolvere equazioni di primo e secondo grado. Applica le proprietà delle equazioni per risolvere equazioni più complesse.
+
+Disequazioni: Comprendi il significato di disequaglianza e impara a risolvere disequazioni di primo e secondo grado.
+
+Funzioni, Limiti, Derivate, Studio di funzioni, Integrali: Questi argomenti sono più complessi e richiedono una base solida di matematica. Segui lezioni specifiche e svolgi esercizi per acquisire dimestichezza con questi concetti.
+

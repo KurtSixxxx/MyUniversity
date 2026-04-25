@@ -1,0 +1,722 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{lezione-6-campionamento-e-quantizzazione}{%
+\section{Lezione 6: Campionamento e quantizzazione}\label{lezione-6-campionamento-e-quantizzazione}}
+
+\begin{figure}
+\centering
+{unnamed.png}
+\caption{unnamed.png}
+\end{figure}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Un \textbf{segnale continuo} è qualcosa che esiste in \textbf{ogni istante} e in \textbf{ogni punto}.
+Ad esempio il suono nell'aria, la luce che arriva ad un sensore, un immagine reale davanti agli occhi: il segnale continuo non è fatto a pezzi, non ha ``scatti'': varia \textbf{senza interruzioni}.
+
+Poiché i computer non possono gestire segnali continui si lavora con numeri finiti, ed è qui che entra in gioco il campionamento.
+
+\hypertarget{campionamento}{%
+\subsubsection{Campionamento}\label{campionamento}}
+
+Il \textbf{campionamento} si basa sullo scegliere un numero finito di \textbf{campioni rappresentativi del segnale} continuo.
+
+Ogni campione corrisponde ad una misura del segnale in un punto preciso (nello spazio o nel tempo).
+Di conseguenza: avere più campioni vuol dire avere più informazioni, meno campioni vuol dire avere meno informazioni.
+
+\hypertarget{problemi-del-campionamento-sbagliato}{%
+\subsubsection{Problemi del campionamento sbagliato}\label{problemi-del-campionamento-sbagliato}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Campionamento troppo basso}
+
+  Se il tasso di campionamento è troppo basso (ossia abbiamo pochi campioni):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Si perdono dettagli
+  \item
+    Si perde informazione
+  \item
+    Il segnale ricostruito è più ``povero''
+  \end{itemize}
+
+  Ma questo a volte è voluto, perché:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Salvare troppi campioni richiede troppa memoria
+  \item
+    Si accetta una perdita pur di avere dati gestibili ottenute in dimensioni maneggevoli
+  \end{itemize}
+\item
+  \textbf{Aliasing}
+
+  Se il campionamento è troppo basso rispetto al contenuto del segnale:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Compaiono dettagli che NON esistono
+  \item
+    Il segnale viene alterato, e dunque cambiato in qualcos'altro.
+  \end{itemize}
+
+  Questo fenomeno si chiama aliasing, e poiché imprevedibile richiede attenzione.
+
+  Alias significa falsa identità: una frequenza alta viene interpretata come una frequenza bassa.
+\end{enumerate}
+
+\hypertarget{dominio-del-tempo-e-dominio-della-frequenza}{%
+\subsubsection{Dominio del tempo e dominio della frequenza}\label{dominio-del-tempo-e-dominio-della-frequenza}}
+
+Quando osserviamo un segnale, come un suono o un'immagine, possiamo guardarlo in due modi diversi, chiamati \textbf{domini}.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  \textbf{Dominio del tempo (o dello spazio)}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+
+  Nel dominio del tempo guardiamo \textbf{come cambia il segnale nel tempo} (\textbf{o nello spazio}, se parliamo di immagini).
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Per un suono: vediamo quanto il volume sale o scende ogni secondo.
+  \item
+    Per un'immagine: vediamo quanto chiaro o scuro è ogni punto dell'immagine lungo la superficie.
+  \end{itemize}
+
+  In questo dominio osserviamo la forma grezza del segnale, esattamente \textbf{come appare ``dal vivo''}.
+\item
+  \textbf{Dominio della frequenza}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+
+  Nel dominio della frequenza guardiamo di \textbf{quali frequenze è composto} il segnale, cioè \textbf{quanto velocemente cambia}.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Frequenze basse → cambiamenti lenti, come grandi macchie o curve larghe in un'immagine.
+  \item
+    Frequenze alte → cambiamenti rapidi, come linee sottili o dettagli minuti.
+  \end{itemize}
+\end{enumerate}
+
+Passare dal dominio del tempo/spazio al dominio della frequenza ci permette di capire quali dettagli sono presenti nel segnale.
+
+\textbf{Per trasformare un segnale dal domino del tempo a quello della frequenza si usa la Serie di Fourier.}
+
+La \textbf{serie di Fourier} dice che qualsiasi segnale, anche molto complesso, può essere visto come \textbf{somma di onde sinusoidali di diverse frequenze}.
+
+\begin{itemize}
+\tightlist
+\item
+  Ogni onda sinusoidale rappresenta un ``ritmo'' specifico di cambiamento.
+\item
+  Il segnale originale è la somma di tutte queste onde.
+\end{itemize}
+
+In questo modo possiamo separare il segnale nei suoi ingredienti di frequenza.
+
+Una volta che il segnale è nel dominio delle frequenze, possiamo individuare la \textbf{frequenza più alta} presente.
+
+\begin{itemize}
+\tightlist
+\item
+  Questa frequenza è importante, perché ci dice quanto velocemente cambiano i dettagli in più minuti
+\item
+  Determina quante volte dobbiamo campionare il segnale per catturare tutti i dettagli senza errori (Nyquist rate e aliasing)
+\end{itemize}
+
+\hypertarget{nyquist-rate}{%
+\subsubsection{Nyquist Rate}\label{nyquist-rate}}
+
+Per scegliere il giusto valore di campionamento si ricorre al teorema di Shannon, che si basa sul Nyquist Rate.
+
+Si definisce Nyquist Rate il doppio della più alta frequenza, contenuta in un segnale continuo e limitato.
+
+Come si calcola in pratica?
+
+Immaginiamo di osservare un fenomeno si un determinato intervallo di tempo o di spazio (ad esempio, una riga di pixel di una foto):
+
+\begin{itemize}
+\tightlist
+\item
+  Se il fenomeno rimane costante per tutto l'intervallo, la sua frequenza è 1.
+\item
+  Se il fenomeno cambia, dividi l'intervallo i parti sempre più piccole (2, 3, 4\ldots) finché non trovi una suddivisione tale che, dentro ogni singolo ``intervallino'', il segnale sia praticamente costante.
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Se hai dovuto dividere l'intervallo in \(N\) parti, allora \(2N\) è il tuo Nyquist rate.
+\end{itemize}
+
+Come detto prima, il Nyquist Rate è il pilastro del Teorema del campionamento di Shannon. Questo teorema afferma che se raccogliamo campioni con una frequenza almeno doppia rispetto alla frequenza Nyquist (quindi \textbf{\(2N\)} nel nostro esempio operativo) allora il segnale può essere ricostruito in modo fedele e perfetto in ogni suo punto.
+
+Se questo non accade allora può accadere l'aliasing o il risultato visivo è disastroso per via di compara di artefatti o comparsa di dettagli fantasma. Tutti fenomeni che abbiamo discusso prima.
+
+Esempio concreto:
+Supponiamo di avere un'immagine larga 720 pixel dove il dettaglio più piccolo (ad esempio un singolo tratto di un disegno) misura \textbf{4 pixel.}
+
+\begin{itemize}
+\tightlist
+\item
+  Dividiamo lo spazio totale per la grandezza del dettaglio: \(720/4 = 180\) tratti.
+\item
+  Il Nyquist rate sarà il doppio di questi tratti: \(2 \times 180 = 360\).
+\item
+  Conclusione: Se prendiamo almeno 360 campioni (misure), l'immagine ricostruita sarà identica all'originale. Se ne prendessimo solo 180, l'immagine risulterebbe rovinata e piena di errori.
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Adesso facciamo un esempio di campionamento sbagliato
+
+Ipotizziamo, per la stessa immamgine di voler trascurare i tratti fini (4 px) e volerci concentrare su quelli più evidenti (6 px). Allora la nostra ipotetica ``frequenza più alta'' sarà:
+
+\begin{itemize}
+\tightlist
+\item
+  \(720/6 = 120\) tratti.
+\item
+  Nyquist rate \(2 \times 120 = 240\)
+\item
+  Prendiamo solo \(240\) campioni e ricostruiremo con interpolazione binomiale l'immagine
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Un altro tipo di campionamento errato.
+
+\hypertarget{sottocampionamento}{%
+\subsubsection{Sottocampionamento}\label{sottocampionamento}}
+
+Cosa succede invece quando si campiona ad una frequenza inferiore a quella del Nyquist rate?
+Si perdono dettagli significativi e spesso si introducono dettagli che nemmeno esistono.
+
+Questo effetto è detto ``frequency aliasing'' o semplicemente ``aliasing''.
+Con l'aliasing quelle che erano alte frequenze sono state ``mascherate'' come basse frequenze nella fase di campionamento.
+
+Ecco un effetto di sottocampionamento.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+L'aliasing è sempre presente, anche se usiamo sensori eccellenti un minimo di aliasing (quel fenomeno per cui il segnale viene alterato e appaiono dettagli ``fantasma'') esiste sempre.
+Perché la realtà ha dettagli infinitamente piccoli (alte frequenze), mentre ogni strumento digitale ha un limite fisico oltre il quale non può andare.
+
+Per poter campionare un segnale (ovvero trasformarlo in una serie di punti), dobbiamo imporre che quel segnale sia limitato.
+In parole semplici: dobbiamo ``decidere'' che oltre una certa velocità di dettaglio non ci interessa guardare. Nel momento in cui mettiamo questo ``recinto'' (limite) per poter scattare le nostre foto o registrare i nostri suoni, creiamo involontariamente le condizioni perché l'aliasing si presenti.
+
+La \textbf{soluzione}? L'aliasing può essere ridotto applicando una funzione di smussamento sul segnale originale prima del campionamento.
+Cos'è lo smussamento? È essenzialmente un leggero ``sfocamento'' (\textbf{blurring}).
+Come funziona? Se so che il mio sensore non è abbastanza veloce per catturare i dettagli finissimi (come le righe sottili di una camicia che creano l'effetto \textbf{Moiré}), io ``sfoco'' leggermente l'immagine originale. Eliminando quei dettagli troppo fini che il sensore non capirebbe, evito che vengano scambiati per ``fantasmi'' o onde inesistenti, rendendo l'immagine molto più naturale e ``accettabile'' all'occhio umano.
+
+\begin{figure}
+\centering
+{Effetto Moirè}
+\caption{Effetto Moirè}
+\end{figure}
+
+Effetto Moirè
+
+\hypertarget{quantizzazione}{%
+\subsubsection{Quantizzazione}\label{quantizzazione}}
+
+Mentre il campionamento decide ``dove'' guardare, la quantizzazione decide ``cosa'' vede il sensore.
+
+I sensori delle fotocamere (i CCD) sono apparecchiature analogiche, che misurano la luce sottoforma di numeri REALI (infiniti decimali). Tuttavia, il computer non può gestire questi numeri all'infinito, dunque ha bisogno di arrotondare questi valori e mantenerli in un certo range. La \textbf{quantizzazione} è proprio questo \textbf{processo di arrotondamento e discretizzazione dei valori di luminosità.}
+
+Perché non possiamo essere precisi al \(100 \%\)?
+Oltre ai limiti di memoria, i sensori soffrono di rumore, il quale è dovuto a perturbazioni termiche o difetti tecnici. Ad esempio, nei CCD esiste la ``dark current'': anche a obbiettivo chiuso, passano piccole correnti che creano disturbi. Quantizzare serve quindi anche a ``pulire'' queste piccole variazioni insignificanti, raggruppandole in livelli definiti.
+
+\textbf{La procedura}:
+Per trasformare ciò che i sensori CCD catturano in numeri, dividiamo la scala di grigi (dal nero al bianco) in un numero finito di \(N\) livelli.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Suddivisione: si fissano delle soglie (chiamate t\_\{0\}, t\_\{1\}, ecc\ldots). Se la luce misurata cade tra le due soglie, viene assegnata a quel particolare ``livello''.
+\item
+  Etichettatura: ogni livello riceve un'etichetta numerica (es. Livello 0, Livello 1\ldots)
+\end{enumerate}
+
+{[}\textbf{\texttt{DA\ SITEMARE}}{]}
+
+\textbf{//////////////////////////////////}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{introduzione-alla-quantizzazione}{%
+\subsection{1. Introduzione alla quantizzazione}\label{introduzione-alla-quantizzazione}}
+
+I sensori misurano valori \textbf{analogici} (reali), ad esempio la luminosità di un pixel.
+
+Per memorizzare o elaborare questi valori digitalmente, si usa la \textbf{quantizzazione}:
+
+\begin{itemize}
+\tightlist
+\item
+  La quantizzazione \textbf{arrotonda} i valori reali a un numero finito di livelli.
+\item
+  Ogni livello ha un \textbf{valore rappresentativo} che viene memorizzato.
+\item
+  Questo processo riduce il numero di bit necessari, ma introduce \textbf{errore di quantizzazione}.
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{procedura-generale-della-quantizzazione}{%
+\subsection{2. Procedura generale della quantizzazione}\label{procedura-generale-della-quantizzazione}}
+
+Sia \texttt{{[}a,\ b{]}} il range dei valori reali e si voglia quantizzare in \textbf{n livelli}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Si scelgono \textbf{n+1 soglie}:
+
+\begin{verbatim}
+t0 = a < t1 < t2 < ... < tn = b
+\end{verbatim}
+\item
+  Un valore \texttt{x} viene assegnato al livello \texttt{k} se:
+
+\begin{verbatim}
+tk ≤ x < tk+1
+\end{verbatim}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    L'ultimo valore \texttt{b} viene assegnato all'ultimo livello \texttt{n-1}.
+  \end{itemize}
+\item
+  Ogni livello ha un \textbf{valore rappresentativo Qi}.
+\end{enumerate}
+
+\textbf{In pratica:} il range \texttt{{[}a,\ b{]}} viene diviso in intervalli, e ogni intervallo è un livello numerico memorizzabile.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{quantizzazione-uniforme}{%
+\subsection{3. Quantizzazione uniforme}\label{quantizzazione-uniforme}}
+
+La quantizzazione uniforme divide il range di ingresso \textbf{in blocchi uguali}.
+
+\begin{itemize}
+\item
+  Range ingresso: 0 \ldots{} N-1
+\item
+  Range uscita: 0 \ldots{} K-1, con K ≤ N
+\item
+  Formula:
+
+\begin{verbatim}
+L' = (L * K) / N
+\end{verbatim}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    L = livello in ingresso
+  \item
+    L' = livello quantizzato in uscita
+  \item
+    K = numero livelli in uscita
+  \item
+    N = numero livelli in ingresso
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{esempio}{%
+\subsubsection{Esempio}\label{esempio}}
+
+\begin{itemize}
+\tightlist
+\item
+  Ingresso: 0--255 (N = 256)
+\item
+  Uscita: 0--7 (K = 8)
+\end{itemize}
+
+\begin{verbatim}
+L = 10 → L' = (10*8)/256 = 0
+L = 20 → L' = 0
+L = 30 → L' = 0
+L = 32 → L' = 1
+\end{verbatim}
+
+\textbf{Osservazione:} tutti i valori piccoli finiscono nello stesso livello. I valori aumentano di livello in blocchi uguali.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{quantizzazione-non-uniforme}{%
+\subsection{4. Quantizzazione non uniforme}\label{quantizzazione-non-uniforme}}
+
+La quantizzazione non uniforme divide il range \textbf{in blocchi di dimensione variabile}, più stretti nei valori importanti.
+
+\begin{itemize}
+\item
+  Formula generale:
+
+\begin{verbatim}
+L' = f(L, N, K)
+\end{verbatim}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    La funzione \texttt{f} definisce come i valori vengono ri-quantizzati.
+  \end{itemize}
+\item
+  Viene usata quando alcune zone del range richiedono \textbf{più precisione} (ad esempio i toni scuri nelle immagini).
+\end{itemize}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{quantizzazione-logaritmica}{%
+\subsection{5. Quantizzazione logaritmica}\label{quantizzazione-logaritmica}}
+
+È un caso particolare di quantizzazione non uniforme.
+
+\begin{itemize}
+\item
+  Formula:
+
+\begin{verbatim}
+L' = (log2(L) * K) / log2(N)
+\end{verbatim}
+
+  \begin{itemize}
+  \tightlist
+  \item
+    log2(L) = parte intera del logaritmo in base 2
+  \item
+    N = numero livelli in ingresso
+  \item
+    K = numero livelli in uscita
+  \end{itemize}
+\end{itemize}
+
+\textbf{Caso comune:} N = 256, K = 8 →
+
+\begin{verbatim}
+L' = log2(L)
+\end{verbatim}
+
+\hypertarget{esempi-pratici}{%
+\subsubsection{Esempi pratici}\label{esempi-pratici}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+L & log2(L) & L' \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 0 & 0 \\
+5 & 2 & 2 \\
+14 & 3 & 3 \\
+60 & 5 & 5 \\
+200 & 7 & 7 \\
+\end{longtable}
+
+\textbf{Osservazione:}
+
+\begin{itemize}
+\tightlist
+\item
+  Più livelli nei toni scuri → più dettagli
+\item
+  Pochi livelli nei toni chiari → valori compressi
+\end{itemize}
+
+\hypertarget{mini-tabella-mentale-utile-per-0255-8-livelli}{%
+\subsubsection{Mini-tabella mentale utile per 0--255 → 8 livelli}\label{mini-tabella-mentale-utile-per-0255-8-livelli}}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Intervallo L & L′ \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 -- 1 & 0 \\
+2 -- 3 & 1 \\
+4 -- 7 & 2 \\
+8 -- 15 & 3 \\
+16 -- 31 & 4 \\
+32 -- 63 & 5 \\
+64 -- 127 & 6 \\
+128 -- 255 & 7 \\
+\end{longtable}
+
+\textbf{Frase da dire all'orale:}
+
+\begin{quote}
+``La quantizzazione logaritmica assegna più livelli ai valori bassi di luminosità, mantenendo dettagli nei toni scuri, mentre i toni chiari sono compressi.''
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{riepilogo-dei-tipi-di-quantizzazione}{%
+\subsection{6. Riepilogo dei tipi di quantizzazione}\label{riepilogo-dei-tipi-di-quantizzazione}}
+
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\columnwidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Tipo
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Come divide il range
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Quando si usa
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Uniforme & Blocchi uguali & Scanner generici, immagini standard \\
+Non uniforme & Blocchi variabili & Zone di interesse con più precisione \\
+Logaritmica (non uniforme) & Blocchi più piccoli per valori bassi & Fotocamere digitali, radiografie \\
+\end{longtable}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Se vuoi, posso fare anche \textbf{una tabella con esempi di valori concreti da 0 a 255} sia \textbf{uniforme} sia \textbf{logaritmica}, così hai \textbf{tutto pronto per l'esame} e puoi solo leggere e memorizzare.
+
+Vuoi che faccia anche quella?
+
+Perfetto! Ecco una \textbf{tabella completa di esempi concreti da 0 a 255} per entrambe le quantizzazioni: uniforme e logaritmica, pronta da mettere su Notion. Ho scelto \textbf{8 livelli di uscita (0--7)}, che è il caso più comune e semplice da memorizzare.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{esempio-pratico-completo-quantizzazione-0255-8-livelli}{%
+\section{Esempio pratico completo -- Quantizzazione 0--255 → 8 livelli}\label{esempio-pratico-completo-quantizzazione-0255-8-livelli}}
+
+\hypertarget{quantizzazione-uniforme-1}{%
+\subsubsection{1. Quantizzazione uniforme}\label{quantizzazione-uniforme-1}}
+
+Formula:
+
+\begin{verbatim}
+L' = (L * K) / N
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  N = 256 (range ingresso 0--255)
+\item
+  K = 8 (livelli uscita 0--7)
+\end{itemize}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+L (ingresso) & L′ (uscita uniforme) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+0 -- 31 & 0 \\
+32 -- 63 & 1 \\
+64 -- 95 & 2 \\
+96 -- 127 & 3 \\
+128 -- 159 & 4 \\
+160 -- 191 & 5 \\
+192 -- 223 & 6 \\
+224 -- 255 & 7 \\
+\end{longtable}
+
+\textbf{Osservazione:} intervalli uguali (256/8 = 32). Ogni blocco di 32 valori diventa un livello.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{quantizzazione-logaritmica-1}{%
+\subsubsection{2. Quantizzazione logaritmica}\label{quantizzazione-logaritmica-1}}
+
+Formula:
+
+\begin{verbatim}
+L' = log2(L)
+\end{verbatim}
+
+\begin{itemize}
+\tightlist
+\item
+  Prendi la \textbf{parte intera del log2(L)}
+\item
+  Livelli uscita: 0--7
+\end{itemize}
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+L (ingresso) & L′ (uscita logaritmica) \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+1 & 0 \\
+2 -- 3 & 1 \\
+4 -- 7 & 2 \\
+8 -- 15 & 3 \\
+16 -- 31 & 4 \\
+32 -- 63 & 5 \\
+64 -- 127 & 6 \\
+128 -- 255 & 7 \\
+\end{longtable}
+
+\textbf{Osservazione:} intervalli \textbf{piccoli per valori bassi} (più dettagli nei toni scuri), intervalli \textbf{grandi per valori alti} (toni chiari compressi).
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+\hypertarget{confronto-rapido}{%
+\subsubsection{3. Confronto rapido}\label{confronto-rapido}}
+
+\begin{longtable}[]{@{}lll@{}}
+\toprule\noalign{}
+L (ingresso) & Uniforme & Logaritmica \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+10 & 0 & 3 \\
+50 & 1 & 5 \\
+100 & 3 & 6 \\
+200 & 6 & 7 \\
+255 & 7 & 7 \\
+\end{longtable}
+
+\textbf{Frase utile all'esame:}
+
+\begin{quote}
+``La quantizzazione uniforme divide tutti i valori in blocchi uguali, mentre la logaritmica dà più livelli ai valori bassi per preservare i dettagli dei toni scuri.''
+\end{quote}
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Se vuoi, posso anche fare \textbf{un mini-schema grafico tipo ``barra con livelli''} per uniforme e logaritmica, così la differenza visiva resta impressa e puoi ricordarla subito all'esame. Vuoi che lo faccia?
+
+\end{document}

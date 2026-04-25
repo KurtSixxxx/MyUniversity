@@ -1,0 +1,52 @@
+**Semantica dei linguaggi di programmazione**
+- Definito dalla sintassi e dalla semantica
+- La semantica è il significato delle stringhe che scriviamo (sintassi = insieme di stringhe corrette che passano un'azione).
+- In una corretta dimostrazione di un linguaggio di programmazione bisogna riconoscere la sintassi e la semantica.
+- C++ e ∑* (insieme delle stringhe) sono la stessa cosa, linguaggi formali.
+- (https://www.externsoft.ch/download/cpp-iso.html) descrizione in formato EBNF della grammatica di Chomsky.
+- La semantica, il significato delle stringhe/programma, il suo risultato sono delle computazioni.
+
+** Semantica formale dei linguaggi di programmazione: **
+Principalmente quando si scrive utilizzando un programma di programmazione, bisogna conoscere la semantica per conoscere la computazione che verrà eseguita.
+Il compilatore, dove lanciamo un comando per eseguire il programma, si occupa di controllare la correttezza della sintattica e dunque la sua scrittura formale per un corretto funzionamento del programma. Infine traduce il programma in linguaggio macchina per eseguirlo.
+
+Approccio assiomatico della semantica -> classe di approcci in cui il comportamento di un programma è dato in termini degli effetti che l'esecuzione del programma ha sullo stato del programma visto come (variabili, istruzioni, …).
+Logica di Hoare, classico esempio di approccio assiomatico -> consiste in un linguaggio formale {A} P {B}
+il programma P ha il significato rappresentato dai predicati A e B che rappresentano lo stato (che soddisfa o meno un predicato)
+Si da un giudizio ai predicati, di fatti il programma è dato dall'insieme dei giudizi dei predicati.
+
+Semantica Operazionale -> Come significato di un programma prendiamo una descrizione formale di come il programma viene trasformato alla sua rappresentazione.
+Descrive la computazione eseguita dai programmi, in termini di esecuzione passo passo dell'informazione.
+Esistono vari tipi di questa semantica. Noi studieremo la SOS (Semantica Operazionale Strutturata).
+
+Quindi, in sintesi abbiamo visto che ci sono tanti modi diversi per definire la semantica di un linguaggio di programmazione.
+
+Le semantiche operazionali si distinguono in due grandi classi:
+1- big step -> "Come viene eseguita la computazione -> a differenza di small step, se si parte in un programma da un certo input, qual è il risultato finale, l'output.
+Sono un modo un po' più astratto di rappresentare l'SOS
+-----------------
+2- small step -> "Come si fa un passo di computazione"
+
+In sintesi big step mostra meno computazioni, small step lo fa più nel dettaglio.
+
+** Descrizione del linguaggio di programmazione "WHILE" **
+- Il linguaggio WHILE è definito da una grammatica formale.
+- Le variabili sono denominate X1, ..., Xk e i loro valori sono memorizzati in un vettore di stato.
+- La semantica è definita tramite regole di Semantica Operazionale Strutturata (S.O.S.)
+ 
+Esempio di programma:
+
+<variabile > ::= X <indice >
+<indice > ::= <digit ><indice >< digit >
+<assegnazione > ::= < variabile >:= 0 < variabile >:= succ(< variabile >)
+	<variabile >:= pred(< variabile >)
+<test > ::= <variabile >=< variabile >
+<istruzione > ::= < assegnazione >while < test > do < istruzione >
+	while < test > do < programma >
+<sequenza > ::= <istruzione >< istruzione > ; < sequenza >
+<programma > ::= begin end begin<sequenza > end
+
+Un programma è fatto da una sequenza di simboli terminali (esempio "begin end")
+Il programma deve essere in grado di eseguire i simboli non terminali, quelli in mezzo alle parentesi acute per intenderci "<programma>"
+Una sequenza è una o più istruzioni separate da parentesi acute e |
+

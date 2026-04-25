@@ -1,0 +1,342 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Processing appunti 6 lezione di
+affiancamento}\label{processing-appunti-6-lezione-di-affiancamento}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//Facciamo un esercizio dove abbiamo un\textquotesingle{}immagine 200x200 sulla nostra canvas al centro, e poi vogliamo colorare il bordo con il colore del pixel che abbiamo sotto il puntatore del mouse}
+
+\CommentTok{/*}
+\CommentTok{Vediamo come acquisire il colore di ogni singolo pixel}
+
+\CommentTok{usiamo get() che prende due parametri, la coordinata x e y del pixel di cui vogliamo prelevare il valore}
+\CommentTok{*/}
+
+\NormalTok{PImage H}\OperatorTok{;}
+\NormalTok{color c}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ x}\OperatorTok{,}\NormalTok{y}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\NormalTok{  H}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+  \CommentTok{//Riduciamo la dimensione dell\textquotesingle{}immagine che è di 512x512}
+\NormalTok{  H}\OperatorTok{.}\FunctionTok{resize}\OperatorTok{(}\DecValTok{200}\OperatorTok{,}\DecValTok{200}\OperatorTok{);}
+\NormalTok{  c}\OperatorTok{=}\FunctionTok{color}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+  \CommentTok{//Così posizioniamo l\textquotesingle{}immagine al centro. Potremmo usare anche ImageMode()}
+\NormalTok{  x}\OperatorTok{=}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{{-}}\NormalTok{H}\OperatorTok{.}\FunctionTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{;}
+\NormalTok{  y}\OperatorTok{=}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{{-}}\NormalTok{H}\OperatorTok{.}\FunctionTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{;}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\NormalTok{c}\OperatorTok{);}
+\NormalTok{  c}\OperatorTok{=}\NormalTok{H}\OperatorTok{.}\FunctionTok{get}\OperatorTok{(}\NormalTok{mouseX}\OperatorTok{{-}}\NormalTok{x}\OperatorTok{,}\NormalTok{mouseY}\OperatorTok{{-}}\NormalTok{y}\OperatorTok{);} \CommentTok{//Il motivo per cui sottraiamo x e y allce coordinate mouseX e mouseY è che: poiché abbiamo messo l\textquotesingle{}immagine 200x200 al centro, usando width/2{-}100px (e la stessa cosa con height), noi trasliamo la cattura del colore solo nei campi dove si trova il mouse all\textquotesingle{}interno dell\textquotesingle{}immagine. Se noi non lo facessimo avremmo un "quadrato invsibile" di dimensione 200x200 nell\textquotesingle{}angolo in alto a sinistra e il colore verrebbe prelevato da lì, non passando il mouse sulla foto}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"R: "}\OperatorTok{+}\FunctionTok{red}\OperatorTok{(}\NormalTok{c}\OperatorTok{)+}\StringTok{"; G: "}\OperatorTok{+}\FunctionTok{green}\OperatorTok{(}\NormalTok{c}\OperatorTok{)+}\StringTok{"; B: "}\OperatorTok{+}\FunctionTok{blue}\OperatorTok{(}\NormalTok{c}\OperatorTok{));}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{H}\OperatorTok{,}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//MODIFICHIAMO LA COMPONENTE DI ROSSO DI UN\textquotesingle{}IMMAGINE}
+\NormalTok{PImage I}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{;} \CommentTok{//il valore di ogni componente}
+\NormalTok{color c}\OperatorTok{,}\NormalTok{c1}\OperatorTok{;} \CommentTok{//due colori}
+\DataTypeTok{int}\NormalTok{ vr}\OperatorTok{;} \CommentTok{//variazione di rosso, perché vogliamo variare la componente di rosso}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+\NormalTok{  I}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{512}\OperatorTok{,}\DecValTok{512}\OperatorTok{);}
+\NormalTok{  vr}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{I}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{}
+  \CommentTok{//Vogliamo fare che se premiamo r sottraiamo componente di rosso, con R invece aggiungiamo componente di rosso}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}r\textquotesingle{}}\OperatorTok{)\{}
+\NormalTok{    vr}\OperatorTok{{-}{-};}
+  \OperatorTok{\}}\ControlFlowTok{else} \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}R\textquotesingle{}}\OperatorTok{)\{}
+\NormalTok{    vr}\OperatorTok{++;}
+  \OperatorTok{\}}
+  \FunctionTok{println}\OperatorTok{(}\NormalTok{vr}\OperatorTok{);}
+  
+  \CommentTok{//A questo punto vogliamo cambiare il valore di rosso per ogni pixel dell\textquotesingle{}immagine. Come? O abbiamo un for che scorre ogni riga e colonna e usiamo un get che preleva ogni valore.}
+  \CommentTok{//Oppure usiamo la matrice di pixel, che è un metodo differente da quello sopra, che rende una matrice bidimensionale in una monodimensionale chimata "matrice linearizzata"}
+  \CommentTok{//Per farlo facciamo così:}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();} \CommentTok{//in questo caso all\textquotesingle{}interno di I ci sarà una struttura dati array chiamata Pixels che non è altro che è un array che è la matrice linearizzata della matrice immagine}
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{}
+\NormalTok{    c1 }\OperatorTok{=}\NormalTok{ I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{];}
+\NormalTok{    c1 }\OperatorTok{=} \FunctionTok{color}\OperatorTok{(}\FunctionTok{red}\OperatorTok{(}\NormalTok{c1}\OperatorTok{)+}\NormalTok{vr}\OperatorTok{,} \FunctionTok{green}\OperatorTok{(}\NormalTok{c1}\OperatorTok{),} \FunctionTok{blue}\OperatorTok{(}\NormalTok{c1}\OperatorTok{));}
+\NormalTok{    I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]=}\NormalTok{c1}\OperatorTok{;}
+  \OperatorTok{\}}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();} \CommentTok{//forziamo l\textquotesingle{}aggiornameto della matrice di pixel  }
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//Vogliamo colorare in giallo tutti i pixel che fanno parte della diagonale principale}
+
+\NormalTok{PImage I}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{;}
+\NormalTok{color c}\OperatorTok{,}\NormalTok{c1}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ vr}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+\NormalTok{  I}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{512}\OperatorTok{,}\DecValTok{512}\OperatorTok{);}
+\NormalTok{  vr}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}
+\NormalTok{  c }\OperatorTok{=} \FunctionTok{color}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ I}\OperatorTok{.}\FunctionTok{width}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{} \CommentTok{//poiché l\textquotesingle{}immagine è quadrata basta muoverci solo per la dimensione di larghezza}
+\NormalTok{    I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\FunctionTok{pos}\OperatorTok{(}\NormalTok{i}\OperatorTok{,}\NormalTok{i}\OperatorTok{,}\NormalTok{I}\OperatorTok{.}\FunctionTok{width}\OperatorTok{)]} \OperatorTok{=}\NormalTok{ c}\OperatorTok{;}
+  \OperatorTok{\}}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{I}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\OperatorTok{\}}
+
+\CommentTok{//questa funzione calcola la posizione (1,1),(2,2),(3,3) e via dicendo della diagonale principale dopo che la nostra matrice è stata linearizzata}
+\DataTypeTok{int} \FunctionTok{pos}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ w}\OperatorTok{)\{}
+  \ControlFlowTok{return}\NormalTok{ x}\OperatorTok{+}\NormalTok{y}\OperatorTok{*}\NormalTok{w}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{/*Faremo gli operatori puntuali: negativo, gamma e logaritmo}
+
+\CommentTok{{-} 01.13.50: Vogliamo fare una canvas divisa in 4.}
+\CommentTok{  In alto a sinstra lena originale, poi lena in negativo, poi lena in gamma e poi lena in logaritmo*/}
+
+\NormalTok{PImage Im}\OperatorTok{,}\NormalTok{ ImN}\OperatorTok{,}\NormalTok{ ImG}\OperatorTok{,}\NormalTok{ ImL}\OperatorTok{;}
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+ \CommentTok{//rimpiccioliamo lena della metà cosi ne entrano 4 nella canvas}
+ \FunctionTok{size}\OperatorTok{(}\DecValTok{512}\OperatorTok{,}\DecValTok{512}\OperatorTok{);}
+\NormalTok{ Im}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+\NormalTok{ Im}\OperatorTok{.}\FunctionTok{resize}\OperatorTok{(}\DecValTok{256}\OperatorTok{,}\DecValTok{256}\OperatorTok{);}
+ \FunctionTok{image}\OperatorTok{(}\NormalTok{Im}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+  
+\NormalTok{  ImN}\OperatorTok{=}\FunctionTok{negativo}\OperatorTok{(}\NormalTok{Im}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{ImN}\OperatorTok{,}\DecValTok{256}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+  
+\NormalTok{  ImG}\OperatorTok{=}\FunctionTok{gamma}\OperatorTok{(}\NormalTok{Im}\OperatorTok{,}\DecValTok{2}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{ImG}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{256}\OperatorTok{);}
+  
+\NormalTok{  ImL}\OperatorTok{=}\FunctionTok{logaritmo}\OperatorTok{(}\NormalTok{Im}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{ImL}\OperatorTok{,}\DecValTok{256}\OperatorTok{,}\DecValTok{256}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{\}}
+
+\CommentTok{//Funzione che ci restituisce una immagine in negativo}
+\NormalTok{PImage }\FunctionTok{negativo}\OperatorTok{(}\NormalTok{PImage I}\OperatorTok{)\{}
+\NormalTok{  PImage R}\OperatorTok{=}\NormalTok{I}\OperatorTok{.}\FunctionTok{copy}\OperatorTok{();} \CommentTok{//Creiamo la copia dell\textquotesingle{}immagine. Quindi leggiamo da I e scriviamo su R}
+\NormalTok{   R}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();} \CommentTok{//carichiamo i pixel}
+   \DataTypeTok{float}\NormalTok{ r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{;}  \CommentTok{//abbiamo i valori delle componenti r g b}
+   \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{} \CommentTok{//iteriamo sui pixel dell\textquotesingle{}immagine}
+\NormalTok{     r}\OperatorTok{=}\DecValTok{255}\OperatorTok{{-}}\FunctionTok{red}\OperatorTok{(}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);}
+\NormalTok{     g}\OperatorTok{=}\DecValTok{255}\OperatorTok{{-}}\FunctionTok{green}\OperatorTok{(}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);}
+\NormalTok{     b}\OperatorTok{=}\DecValTok{255}\OperatorTok{{-}}\FunctionTok{blue}\OperatorTok{(}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]);}
+\NormalTok{     R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]=}\FunctionTok{color}\OperatorTok{(}\NormalTok{r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{);}
+   \OperatorTok{\}}
+\NormalTok{   R}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();}
+   \ControlFlowTok{return}\NormalTok{ R}\OperatorTok{;}
+\OperatorTok{\}}
+
+\CommentTok{//Funzione che ci restituisce una immagine in gamma}
+\NormalTok{PImage }\FunctionTok{gamma}\OperatorTok{(}\NormalTok{PImage I}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ gm}\OperatorTok{)\{}
+\NormalTok{  PImage R}\OperatorTok{=}\FunctionTok{createImage}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{width}\OperatorTok{,}\NormalTok{I}\OperatorTok{.}\FunctionTok{height}\OperatorTok{,}\NormalTok{RGB}\OperatorTok{);}
+ 
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+  
+  \DataTypeTok{float}\NormalTok{ r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{;}
+  \DataTypeTok{float}\NormalTok{ C}\OperatorTok{=}\DecValTok{1}\OperatorTok{/}\FunctionTok{pow}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\NormalTok{gm}\OperatorTok{{-}}\DecValTok{1}\OperatorTok{);}
+  
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ i}\OperatorTok{\textless{}}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{}
+\NormalTok{    r}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{pow}\OperatorTok{(}\FunctionTok{red}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]),}\NormalTok{gm}\OperatorTok{);}
+\NormalTok{    g}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{pow}\OperatorTok{(}\FunctionTok{green}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]),}\NormalTok{gm}\OperatorTok{);}
+\NormalTok{    b}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{pow}\OperatorTok{(}\FunctionTok{blue}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]),}\NormalTok{gm}\OperatorTok{);}
+    
+\NormalTok{    R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]=}\FunctionTok{color}\OperatorTok{(}\NormalTok{r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{);}
+  \OperatorTok{\}}
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();}
+  \ControlFlowTok{return}\NormalTok{ R}\OperatorTok{;}
+\OperatorTok{\}}
+
+\NormalTok{PImage }\FunctionTok{logaritmo}\OperatorTok{(}\NormalTok{PImage I}\OperatorTok{)}
+\OperatorTok{\{}
+\NormalTok{  PImage R}\OperatorTok{=}\FunctionTok{createImage}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{width}\OperatorTok{,}\NormalTok{I}\OperatorTok{.}\FunctionTok{height}\OperatorTok{,}\NormalTok{RGB}\OperatorTok{);}
+  
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+\NormalTok{  I}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+  
+  \DataTypeTok{float}\NormalTok{ r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{;}
+  \DataTypeTok{float}\NormalTok{ C}\OperatorTok{=}\DecValTok{255}\OperatorTok{/(}\FunctionTok{log}\OperatorTok{(}\DecValTok{1}\OperatorTok{+}\DecValTok{255}\OperatorTok{)/}\FunctionTok{log}\OperatorTok{(}\DecValTok{2}\OperatorTok{));}
+  
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i}\OperatorTok{=}\DecValTok{0}\OperatorTok{;}\NormalTok{ i}\OperatorTok{\textless{}}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)}
+  \OperatorTok{\{}
+\NormalTok{    r}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{log}\OperatorTok{(}\DecValTok{1}\OperatorTok{+}\FunctionTok{red}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]));}
+\NormalTok{    g}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{log}\OperatorTok{(}\DecValTok{1}\OperatorTok{+}\FunctionTok{green}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]));}
+\NormalTok{    b}\OperatorTok{=}\NormalTok{C}\OperatorTok{*}\FunctionTok{log}\OperatorTok{(}\DecValTok{1}\OperatorTok{+}\FunctionTok{blue}\OperatorTok{(}\NormalTok{I}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]));}
+    
+\NormalTok{    R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]=}\FunctionTok{color}\OperatorTok{(}\NormalTok{r}\OperatorTok{,}\NormalTok{g}\OperatorTok{,}\NormalTok{b}\OperatorTok{);}
+  \OperatorTok{\}}
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();}
+  \ControlFlowTok{return}\NormalTok{ R}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// {-} 01.52.00 Iniziamo a studiare la quantizzazione in Processing}
+
+\NormalTok{PImage Im}\OperatorTok{,}\NormalTok{ Iq}\OperatorTok{;}
+\DataTypeTok{int}\NormalTok{ K }\OperatorTok{=} \DecValTok{2}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{1024}\OperatorTok{,}\DecValTok{512}\OperatorTok{);}
+\NormalTok{  Im}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+\NormalTok{  Im}\OperatorTok{.}\FunctionTok{filter}\OperatorTok{(}\NormalTok{GRAY}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{Im}\OperatorTok{,} \DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{);}
+  
+\NormalTok{  Iq }\OperatorTok{=} \FunctionTok{quantizza}\OperatorTok{(}\NormalTok{Im}\OperatorTok{,}\NormalTok{ K}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{Iq}\OperatorTok{,}\DecValTok{512}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+\OperatorTok{\}}
+
+\NormalTok{PImage }\FunctionTok{quantizza}\OperatorTok{(}\NormalTok{PImage I}\OperatorTok{,} \DataTypeTok{int}\NormalTok{ k}\OperatorTok{)\{}
+\NormalTok{  PImage R }\OperatorTok{=}\NormalTok{ I}\OperatorTok{.}\FunctionTok{copy}\OperatorTok{();}
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{loadPixels}\OperatorTok{();}
+  \DataTypeTok{int}\NormalTok{ q}\OperatorTok{;}
+  \ControlFlowTok{for}\OperatorTok{(}\DataTypeTok{int}\NormalTok{ i }\OperatorTok{=} \DecValTok{0}\OperatorTok{;}\NormalTok{ i }\OperatorTok{\textless{}}\NormalTok{ R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{.}\FunctionTok{length}\OperatorTok{;}\NormalTok{ i}\OperatorTok{++)\{}
+\NormalTok{    q }\OperatorTok{=} \FunctionTok{floor}\OperatorTok{(}\FunctionTok{red}\OperatorTok{(}\NormalTok{R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{])*}\NormalTok{k}\OperatorTok{/}\DecValTok{256}\OperatorTok{);}
+    \CommentTok{//Un metodo uguale è: q = int(lerp(0,255,float(q)/(k{-}1)));}
+\NormalTok{    q }\OperatorTok{=} \DataTypeTok{int}\OperatorTok{(}\DataTypeTok{float}\OperatorTok{(}\NormalTok{q}\OperatorTok{)/(}\NormalTok{k}\OperatorTok{{-}}\DecValTok{1}\OperatorTok{)} \OperatorTok{*} \DecValTok{255}\OperatorTok{);}
+\NormalTok{    R}\OperatorTok{.}\FunctionTok{pixels}\OperatorTok{[}\NormalTok{i}\OperatorTok{]} \OperatorTok{=} \FunctionTok{color}\OperatorTok{(}\NormalTok{q}\OperatorTok{);}
+  \OperatorTok{\}}
+\NormalTok{  R}\OperatorTok{.}\FunctionTok{updatePixels}\OperatorTok{();}
+  \ControlFlowTok{return}\NormalTok{ R}\OperatorTok{;}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}+\textquotesingle{}} \OperatorTok{\&\&}\NormalTok{ K }\OperatorTok{\textless{}} \DecValTok{256}\OperatorTok{)\{}
+\NormalTok{    K}\OperatorTok{++;}
+   \OperatorTok{\}}
+   
+   \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}{-}\textquotesingle{}} \OperatorTok{\&\&}\NormalTok{ K }\OperatorTok{\textgreater{}} \DecValTok{2}\OperatorTok{)\{}
+\NormalTok{    K}\OperatorTok{{-}{-};}
+   \OperatorTok{\}}
+   
+   \FunctionTok{println}\OperatorTok{(}\NormalTok{K}\OperatorTok{);}
+   \FunctionTok{image}\OperatorTok{(}\FunctionTok{quantizza}\OperatorTok{(}\NormalTok{Im}\OperatorTok{,}\NormalTok{K}\OperatorTok{),} \DecValTok{512}\OperatorTok{,} \DecValTok{0}\OperatorTok{);}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Prossima lezione: algoritmo di zooming messo a confronto con
+l\textquotesingle algoritmo messo a confronto di resize usato da
+Processing. Con calcolo di MSE e di PSNR.
+
+\end{document}

@@ -1,0 +1,52 @@
+Certo! Prendiamo l’array del tuo esempio:
+A = {9, 6, 8, 7, 5, 10} (6 elementi, pari, ma il meccanismo è identico anche per dispari).
+
+Ecco come lavora il merge sort passo-passo:
+
+1) Chiamata iniziale:
+	mergeSort(A, 0, 5)
+
+2) Prima divisione:
+	m = 0 + (5-0)/2 = 2
+
+	mergeSort(A, 0, 2)
+	mergeSort(A, 3, 5)
+
+3) Divido la prima metà (0,2):
+	m = 0 + (2-0)/2 = 1
+
+	mergeSort(A, 0, 1)
+	mergeSort(A, 2, 2)
+
+4) Divido ancora (0,1):
+	m = 0 + (1-0)/2 = 0
+
+	mergeSort(A, 0, 0) (caso base, ritorna)
+	mergeSort(A, 1, 1) (caso base, ritorna)
+	merge(A, 0, 0, 1) → unisce 9 e 6 → {6, 9}
+
+5) Unisco con il terzo elemento:
+
+	merge(A, 0, 1, 2) → unisce {6, 9} e 8 → {6, 8, 9}
+
+6) Divido la seconda metà (3,5):
+	m = 3 + (5-3)/2 = 4
+
+	mergeSort(A, 3, 4)
+	mergeSort(A, 5, 5)
+
+7) Divido ancora (3,4):
+	m = 3 + (4-3)/2 = 3
+
+	mergeSort(A, 3, 3) (caso base)
+	mergeSort(A, 4, 4) (caso base)
+	merge(A, 3, 3, 4) → unisce 7 e 5 → {5, 7}
+
+8 Unisco con il sesto elemento:
+
+	merge(A, 3, 4, 5) → unisce {5, 7} e 10 → {5, 7, 10}
+
+9) Ultima fusione:
+
+	merge(A, 0, 2, 5) → unisce {6, 8, 9} e {5, 7, 10}
+	→ risultato finale: {5, 6, 7, 8, 9, 10}

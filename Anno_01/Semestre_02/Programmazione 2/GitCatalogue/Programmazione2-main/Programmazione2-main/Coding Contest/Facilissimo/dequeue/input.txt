@@ -1,0 +1,3 @@
+int 11 i3 i20 dequeue dequeue i19 dequeue i16 i14 i18 i8 i11
+double 11 i0.08 i1.61 i1.35 dequeue i1.76 i0.39 i1.31 dequeue i0.72 dequeue i1.84
+bool 11 i1 i1 i0 i1 i1 i0 dequeue i1 dequeue i0 i1

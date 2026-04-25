@@ -1,0 +1,12 @@
+P#sapone;5.99
+PA#patate;2.49;20/09/2023
+PPB#pannol.;10.99;0-3
+P#secchio;3.99
+PA#latte;1.22;20/09/2022
+PPB#ciuccio;3.99;3-6
+P#penne;1.99
+PA#acqua;1.21;01/02/2021
+PPB#peluche;22.20;6-9
+P#tappeto;25.99
+PA#burro;2.35;25/09/2023
+PPB#crema;13.99;0-3

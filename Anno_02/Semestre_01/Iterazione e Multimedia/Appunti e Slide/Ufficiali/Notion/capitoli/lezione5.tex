@@ -1,0 +1,113 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{untitled}{%
+\section{Untitled}\label{untitled}}
+
+Come vediamo? L'occhio è una fotocamera avanzata
+Nell'occhio, la luce entra, viene messa a fuoco da una lente (il cristallino) e viene infine proiettata su un sensore (la retina)
+
+La luce entra nel ``pinhole'' e sulla parete opposta si forma l'immagine capovolta:
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+I raggi vanno dal basso verso l'alto e dall'alto verso il basso
+
+Nel pinhole:
+
+\begin{itemize}
+\tightlist
+\item
+  Per avere una immagine nitida serve un foro piccolo ma l'immagine è quasi un punto
+\item
+  Se invece abbiamo un foro grande entra tanta luce e l'immagine appare come una macchia sfocata. Questo fa riferimento al fenomeno di diffrazione.
+\end{itemize}
+
+Per risolvere il problema della legge di sovrapposizione si fa riferimento alla lente sottile
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Un apertura grande raccoglie la luce
+\item
+  Tramite rifrazione fa coincidere tutti i punti in un unico punto nitido detto fuoco
+\end{enumerate}
+
+Quindi piega tutti raggi e li fa coincidere in un unico punto
+
+\[
+\frac{1}{u} + \frac{1}{v} = \frac{1}{f}
+\]
+
+U è la distanza tra la lente e l'oggetto
+
+v è la distanza tra la l ente e il punto dove si forma l'immagine
+
+f è la lunghezza focale
+
+\end{document}

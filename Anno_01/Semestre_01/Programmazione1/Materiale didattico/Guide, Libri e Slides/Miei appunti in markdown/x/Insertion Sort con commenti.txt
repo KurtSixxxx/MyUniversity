@@ -1,0 +1,26 @@
+#include <stdio.h>
+#define N 5 //Definisco la dimensione dell'array uguale a 5
+
+int main(){
+	int arr[5] = {8, 2, 3, 6, 9}; 	//Dichiaro l'array di dimensione N ed i suoi elementi
+
+	for(int i = 1; i < N; i++){ //Iteriamo dal secondo elemento in poi tenendo in mente il primo come elemento ordinato
+	int key = arr[i];	    //Impostiamo l'elemento in posizione i come chiave, quindi elemento da confrontare
+	int j = i-1;		    //Impostiamo un cursore j, che controlla se siamo dentro l'array e si occupa degli scambi
+
+	/*
+         * Ciclo interno: Sposta gli elementi della parte ordinata (a sinistra)
+         * che sono maggiori di 'key' per fare spazio a 'key'.
+         * Continua finché non si trova un elemento minore di 'key' o si arriva all'inizio dell'array.
+         */
+
+	while(j >= 0 && arr[j] > key){	//Impostiamo un ciclo while con la condizione: finche j è maggiore o uguale a 0, e l'elemento in posizione j sarà maggiore di k, allora...
+	arr[j+1] = arr[j];		//Sposta l'elemento a destra
+	j--;				//Passa all'elemento precedente
+	}
+	
+	arr[j+1] = key;			//Inserisci key nella posizione corretta. Nota bene: qui siamo fuori dal ciclo while, quindi j sarà uguale allo somma di (i-1)+1
+	}
+
+return 0;
+}

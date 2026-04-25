@@ -1,0 +1,7 @@
+P#cuscino;5.99
+PPB#body;10.99;0-3
+P#tovagl.;3.99
+PPB#bavagl.;3.99;3-6
+P#tende;50.00
+PPB#peluche;22.20;6-9
+P#tappeto;45.99

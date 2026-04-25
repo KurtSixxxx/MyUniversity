@@ -1,0 +1,30 @@
+
+E' possibile implementare una coda mediante array gestito in modo ``circolare''. 
+
+Si usano due indici, HEAD e TAIL. 
+
+Sia Q l'array e d il dato da inserire nell'array. Con un array 
+di n elementi sara' possibile mantenere una coda ``circolare'' 
+di n-1 elementi. 
+
+Inizialmente HEAD=TAIL=0. 
+
+Coda vuota: HEAD==TAIL
+Coda piena: HEAD==(TAIL+1)%n
+
+Inserimento in coda: 
+
+//pseudo-codice
+Enqueue(Q, d): 
+   if (HEAD==(TAIL+1)%n) // coda piena! 
+      return -1; 
+   Q[TAIL] = dato;
+   TAIL=(TAIL+1)%n 
+
+// Rimozione di un elemento dalla testa
+Dequeue(Q):
+   if (HEAD==TAIL) // coda vuota! 
+      return -1;
+   dato = Q[HEAD];
+   HEAD=(HEAD+1)%n;
+   return dato; 

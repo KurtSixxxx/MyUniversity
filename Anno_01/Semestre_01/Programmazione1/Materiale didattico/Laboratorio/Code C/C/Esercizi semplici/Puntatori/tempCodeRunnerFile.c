@@ -1,0 +1,1 @@
+int ptr_somma (4,6);

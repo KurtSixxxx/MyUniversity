@@ -1,0 +1,75 @@
+Partiamo da una domanda fondamentale. Ma perché i software di oggi sono così complicati da realizzare? Beh, perché il mondo reale è complicato. 
+
+È un groviglio di sistemi che interagiscono tra loro e il nostro software deve in qualche modo riflettere questa complessità. Ecco, la programmazione oggetti nasce proprio per mettere ordine in questo caos. E come si gestisce la complessità? Semplificando. 
+
+E per farlo abbiamo un'arma potentissima, l'astrazione. Pensate a una mappa di una città. Non vi mostra ogni singolo tombino o ogni albero, giusto? No, vi mostra solo quello che vi serve per orientarvi, le strade, i monumenti. 
+
+Ecco, questo è il cuore dell'astrazione. Quindi, se all'esame vi chiedono una definizione, questa è perfetta. L'astrazione è l'arte di filtrare la realtà e buttare via tutti i dettagli inutili per concentrarsi, solo e soltanto, su quello che è essenziale per risolvere il nostro problema. 
+
+È come mettere a fuoco, per vedere chiaramente solo quello che conta. Bene, allora siamo pronti a tuffarci. Questa è la nostra roadmap. 
+
+Seguiremo questi punti uno per uno e alla fine avremo una visione completa e chiara della programmazione orientata agli oggetti, pronti per qualsiasi domanda. Prima della OOP, ovviamente, si programmava in un altro modo. È fondamentale capire la differenza tra il prima e il dopo, per apprezzare davvero la rivoluzione che la OOP ha portato.
+
+Dunque, da una parte abbiamo la programmazione procedurale. Pensate a una ricetta. È una sequenza di istruzioni, passo dopo passo. 
+
+I dati, cioè gli ingredienti, e le azioni, cioè le istruzioni, sono cose separate. La OOP, invece, è come giocare con i Lego. Non abbiamo una lunga lista di istruzioni, ma tanti mattoncini indipendenti, gli oggetti, che sanno come funzionare e che interagiscono tra loro. 
+
+E qui un punto cruciale da capire subito. La classe è il progetto, lo stampino, per creare un mattoncino. L'oggetto è il mattoncino vero e proprio, che abbiamo creato usando quello stampino.
+
+E ora arriviamo al cuore di tutto. Dobbiamo cambiare prospettiva. Smettere di pensare a una lista di cose da fare e iniziare a pensare ai protagonisti del nostro sistema. 
+
+Iniziamo a pensare in oggetti. Questa è la definizione che deve essere scolpita nella pietra. Un oggetto non è solo un ammasso di dati, e non è solo un elenco di funzioni.
+
+No. È un'entità unica che tiene insieme due cose. Le sue caratteristiche, che da ora in poi chiameremo attributi, e i suoi comportamenti, cioè quello che sa fare, che chiameremo metodi. 
+
+Facciamo subito un esempio pratico che ci accompagnerà per tutto il percorso. Prendiamo un'automobile. Quali sono le sue caratteristiche, i suoi attributi? Beh, la sua velocità, il colore, il numero di porte, il livello di benzina.
+
+E quali sono i suoi comportamenti, i suoi metodi? Cosa sa fare? Beh, sa accelerare, fermarsi, girare. Vedete? Attributi e metodi. Insieme.
+
+L'insieme di tutti i valori dei suoi attributi, in un dato momento, definisce lo stato dell'oggetto. È come una fotografia dell'oggetto in quell'istante. In questo momento, per esempio, lo stato della nostra AUTO1 ci dice che la sua velocità è 60.
+
+Ok, e come facciamo a far fare qualcosa a quest'auto? Le inviamo un messaggio. Che detto così sembra strano, ma in pratica significa semplicemente che chiamiamo un suo metodo. Quando scriviamo AUTO1.FERMATI, stiamo dicendo all'oggetto AUTO1, Ehi tu, esegui il tuo comportamento, fermati. 
+
+Ed ecco la magia. Questo è il punto chiave. Il metodo FERMATI non è una funzione generica che fluttua nel vuoto. 
+
+No, agisce direttamente sugli attributi interni dell'oggetto stesso. Dopo aver chiamato FERMATI, lo stato della nostra AUTO1 cambia. La sua velocità non è più 60. 
+
+È diventata 0. Perfetto. Ora che abbiamo capito cos'è un oggetto, passiamo al primo dei tre pilastri della UOP. L'INCAPSULAMENTO. 
+
+Pensatelo come una specie di bolla protettiva che avvolge l'oggetto. La definizione da manuale è proprio questa. È l'idea di impacchettare insieme, in un unico blocco, sia i dati di un oggetto, sia i metodi che possono modificare quei dati. 
+
+Tutto chiuso lì dentro. E qual è il vantaggio enorme di questa bolla? È che noi, dall'esterno, non abbiamo bisogno di sapere come funziona il motore di un'auto per guidarla. Ci basta usare l'interfaccia pubblica. 
+
+Il volante, i pedali, il cambio. Questo, in un team di sviluppo, è fondamentale. Significa che un programmatore può modificare il motore del nostro oggetto auto, e gli altri non se ne accorgeranno nemmeno, continueranno a usare la stessa interfaccia.
+
+Protegge i dati, riduce gli errori e rende il codice un milione di volte più facile da mantenere. Proseguiamo con il secondo pilastro, un concetto che ha a che fare con il riutilizzo del codice e la creazione di ordine. Si chiama EREDITARIETÀ. 
+
+L'ereditarietà è, in parole povere, il principio del non reinventare la ruota. Si basa su una relazione logica molto semplice. È un tipo di.
+
+Per esempio, un'automobile è un tipo di mezzo di trasporto. Allora, invece di riscrivere da zero tutto il codice per l'auto, possiamo dire che la classe Automobile eredita dalla classe Mezzo di Trasporto. Si prende tutte le sue caratteristiche e comportamenti base, e poi ci aggiunge le sue specificità. 
+
+Questo ci fa risparmiare un sacco di tempo e crea delle gerarchie logiche nel codice, rendendolo molto più pulito. Questo diagramma rende l'idea perfettamente. Abbiamo una superclasse generica, Mezzi di Trasporto, e poi abbiamo delle sottoclassi più specifiche, Automobile, Motocicletta, Autobus. 
+
+Ognuna di queste eredita le caratteristiche comuni, come avere una velocità, ma poi ognuna potrà aggiungere i propri dettagli unici. E siamo arrivati al terzo pilastro. Quello che ha il nome più strano e che spesso è considerato il più difficile, ma vi garantisco, il concetto è molto più semplice del nome. 
+
+Parliamo di Polimorfismo. Analizziamo la parola. Poli significa molte, morfo significa forma. 
+
+Molte forme. E l'idea è tutta qui. Significa che possiamo inviare lo stesso identico messaggio, la stessa chiamata di metodo, a oggetti di tipo diverso, e ognuno di loro risponderà a modo suo, nella sua forma specifica. 
+
+Per capire, facciamo l'esempio più classico. Tutti i mezzi di trasporto a motore possono accelerare, ma lo fanno tutti nello stesso identico modo? Chiaramente no. Ed ecco qui il Polimorfismo in azione. 
+
+Il messaggio è lo stesso per entrambi. Accelera. Ma l'implementazione, l'azione concreta, è completamente diversa. 
+
+L'auto accelera premendo un pedale. La moto girando una manopola. Stesso nome, molte forme. 
+
+E perché questo è così potente? Perché ci permette di scrivere codice super flessibile. Possiamo dire una lista di mezzi di trasporto. Accelerate tutti, senza doverci preoccupare se siano auto, moto o camion. 
+
+Ognuno saprà come farlo a modo suo. Bene, abbiamo visto i singoli pezzi del puzzle. Gli oggetti, l'incapsulamento, l'ereditarietà e il Polimorfismo. 
+
+Adesso mettiamoli insieme. Perché la OOP non è solo un insieme di tecniche. È un vero e proprio modo di pensare, un approccio alla risoluzione dei problemi. 
+
+Se c'è una cosa da portarsi a casa e da ricordare per l'esame è questo processo in tre passaggi. Di fronte a un qualsiasi problema, per prima cosa ci chiediamo chi sono i protagonisti, quali sono gli oggetti. Poi per ognuno di loro ne descriviamo le caratteristiche e i comportamenti, definendo le loro classi. 
+
+E infine, come ultimo passo, progettiamo come questi oggetti parleranno tra loro, come interagiranno per dar vita alla soluzione finale. E adesso la vera sfida per consolidare tutto. Provate a guardare un sistema del mondo reale. 
+
+Che ne so, una biblioteca. Si riesce a vedere gli oggetti? Certo, ci sono il libro, il lettore, lo scaffale. Quali sono i loro attributi? Quali i loro metodi? Ecco, imparare a vedere il mondo con gli occhiali della OOP come un sistema di oggetti che interagiscono è il vero segreto per padroneggiare questa materia. 

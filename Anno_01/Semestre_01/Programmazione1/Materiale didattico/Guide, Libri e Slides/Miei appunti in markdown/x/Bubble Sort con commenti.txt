@@ -1,0 +1,20 @@
+#include <stdio.h>
+#include <stdbool.h>
+#define N 5	//Definisco la dimensione dell'array uguale a 5
+
+int main(){
+	int arr[5] = {8, 2, 3, 6, 9}; 	//Dichiaro l'array di dimensione N ed i suoi elementi
+	for(int i = 0; i < N-1; i++){	//Questo for conta le iterazioni totali per ordinare N elementi. La condizione di terminazione si basa sul fatto che, ad ogni passaggio del ciclo esterno, l'elemento più grande tra quelli non ancora ordinati viene posizionato correttamente alla fine del sotto-array considerato (come una "bolla" che sale).
+		bool sentinella; 	//Dichiaro la sentinella booleana che ci serve per poter capire se l'array è ordinato o no
+			for(int j = 0; j < N - i - 1; j++){	//La condizione j < N-i-1 serve a limitare i confronti del ciclo interno alla porzione dell'array ancora da ordinare, escludendo gli elementi già posizionati correttamente in coda.
+				if(arr[j] > arr[j+1]){ //Se l'elemento adiacente a j è maggiore di j scambia (contenuto dell'if)
+				int tmp = arr[j];
+				arr[j] = arr[j+1];
+				arr[j+1] = tmp;
+				sentinella = 1; 	//Imposto scambiato ad 1 perché è avvenuto uno scambio
+				}
+			}
+		if(sentinella == 0) break;		//Se la sentinella è uguale a 0 allora non è avvenuto nessuno scambio e non serve iterare ancora
+		}
+return 0;
+}

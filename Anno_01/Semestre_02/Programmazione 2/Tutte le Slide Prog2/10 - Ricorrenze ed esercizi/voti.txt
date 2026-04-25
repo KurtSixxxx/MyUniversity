@@ -1,0 +1,20 @@
+Marco 25 14 13
+Anna 22 18 16 29 21 23
+Luca 30 30 30
+Giulia 19 20 21
+Francesco 24 27 25 26 23 24 28
+Sofia 30
+Davide 18 22 19 21 20
+Elena 29 30 30 28 27
+Andrea 25 24 24 25 23 22
+Martina 19 21 22 20 19
+Riccardo 26 24 23
+Chiara 16
+Alessandro 30 30 30 30 30 30 30 30 30 30
+Valeria 25 27 28 29 24 26
+Gabriele 20 20 21 20 22
+Federica 19 18 17
+Simone 30 29 30 30
+Marta 22 12 13 11
+Luigi 23 26 17 25 19 20
+Serena 21 12 13

@@ -1,0 +1,374 @@
+2.5. ACCETTAZIONE E RICONOSCIMENTO DI LINGUAGGI
+Le grammatiche formali introdotte in questa sezione costituiscono uno strumento generativo per la rappresentazione e la classificazione di linguaggi. Esse non consentono tuttavia di impostare in modo algoritmico il problema del riconoscimento di un linguaggio, e cioè il problema di decidere, dato un linguaggio
+L e una stringa x, se x ∈ L. Tale problema riveste importanza fondamentale:
+si ricorda, a tal proposito, che il problema di stabilire se un programma scrit-
+to in un linguaggio di programmazione sia sintatticamente corretto può essere
+formalizzato come il problema di decidere se una particolare stringa (appunto,
+il programma sorgente) appartenga o meno a un determinato linguaggio (ad
+esempio, il Pascal, visto come l’insieme dei programmi Pascal sintatticamente
+corretti), definito per mezzo di una opportuna grammatica (ad esempio, la
+definizione del Pascal in BNF).
+Notiamo inoltre che l’importanza di affrontare i problemi di riconoscimento
+di linguaggi deriva anche dal fatto che ogni problema decisionale, cioè un
+qualunque problema consistente nel determinare se una certa proprietà sia
+verificata o meno sull’istanza fornita in input, può essere visto come problema
+di riconoscimento di un particolare linguaggio (ad esempio, il problema di
+decidere se un dato numero intero sia un numero primo può essere espresso
+come il problema di riconoscere tutte le stringhe di 0 e 1 che costituiscono la
+rappresentazione binaria di un numero primo).
+
+
+2.5.1 Automi e computazioni
+Il concetto fondamentale per quanto riguarda il riconoscimento di linguaggi è
+il concetto di automa, inteso come dispositivo astratto che, data un stringa
+x fornitagli in input, può eseguire una computazione ed eventualmente, se la
+computazione termina, restituisce, secondo una qualche modalità, un valore
+che, nel caso del problema del riconoscimento, sarà booleano. In generale, la
+(Figura 2.4 Schema generale di automa.)
+struttura di un automa comprende un dispositivo interno, che ad ogni istante
+assume uno stato in un possibile insieme predefinito: lo stato rappresenta
+essenzialmente l’informazione associata al funzionamento interno.
+Inoltre, un automa può utilizzare uno o più dispositivi di memoria, sui
+quali è possibile memorizzare delle informazioni, sotto forma di stringhe di
+caratteri da alfabeti anch’essi predefiniti. In genere si assume che tali dispo-
+sitivi di memoria siano nastri, sequenze cioè di celle, ognuna delle quali può
+contenere un carattere: uno tra tali nastri contiene inizialmente l’input fornito
+all’automa. I caratteri vengono letti o scritti per mezzo di testine che possono
+muoversi lungo i nastri, posizionandosi sulle diverse celle (vedi Figura 2.5).
+Come si vedrà nei capitoli successivi, diversi tipi di automi possono essere de-
+finiti facendo ipotesi diverse sulle capacità di movimento, lettura e scrittura
+delle testine sui vari nastri. Il funzionamento di un automa è definito rispetto
+(Figura 2.5 Schema particolareggiato di automa.)
+ai due concetti di configurazione e di funzione di transizione.
+Una configurazione rappresenta l’insieme delle informazioni che determi-
+nano, in un certo istante, il comportamento (o l’insieme di comportamenti,
+nel caso degli automi non deterministici introdotti nella Sezione 2.5.2) futuro dell’automa: se si considera nuovamente lo schema generale di automa
+in Figura 2.5, ne risulta che una configurazione è composta dalle seguenti
+informazioni:
+1. stato interno dell’automa;
+2. contenuto di tutti i nastri di memoria;
+3. posizione di tutte le testine sui nastri.
+
+La definizione di un automa permette, come vedremo, di associare ad una
+stringa in input una ed una sola configurazione, detta configurazione iniziale,
+che rappresenta la situazione complessiva in cui si trova l’automa all’inizio, nel
+momento in cui la stringa di input gli viene sottoposta.
+
+Esempio 2.27 In Sezione 3.1 verrà introdotto un particolare tipo di automa, detto
+Automa a stati finiti. Gli automi di questo tipo non possono memorizzare informa-
+zioni, a parte la stringa di input; inoltre, il nastro contenente la stringa di input può
+essere scandito dalla relativa testina una sola volta, dall’inizio alla fine della stringa
+stessa. Per tali automi una configurazione è rappresentata dalle seguenti componenti:
+1. la stringa x di input;
+2. la posizione del carattere di x che viene attualmente letto;
+3. lo stato interno dell’automa.
+
+In tali automi, un particolare stato q0 è specificato essere lo stato iniziale. La
+configurazione iniziale associata alla stringa di input x è allora data da:
+
+1. la stringa x;
+2. la prima posizione della stringa;
+3. lo stato q0.
+
+La funzione di transizione, che è parte della definizione della struttura dell’au-
+toma, induce una relazione di transizione tra configurazioni, che associa ad
+una configurazione un’altra (o più di una) configurazione successiva.2 L’appli-
+cazione della funzione di transizione ad una configurazione si dice transizione
+o mossa o passo computazionale dell’automa. In generale, per ogni automa A,
+date due configurazioni ci, cj di A, useremo nel seguito la notazione ci |----A cj
+per indicare che ci e cj sono correlate dalla relazione di transizione, vale a dire
+che cj deriva da ci per effetto dell’applicazione della funzione di transizione di
+A.^3
+
+Esempio 2.28 La funzione di transizione, nel caso di automi a stati finiti, associa ad
+una coppia “stato attuale - carattere letto” un nuovo stato. Tale funzione consente
+di associare ad una configurazione la configurazione successiva nel modo seguente. Se
+la funzione associa lo stato qj alla coppia composta dallo stato qi e dal carattere a
+allora, data una configurazione composta da:
+1. la stringa x;
+2. la posizione i-esima;
+3. lo stato qi;
+dove l’i-esimo carattere di x è il carattere a, la configurazione successiva sarà composta
+da:
+1. la stringa x;
+2. la posizione i + 1-esima;
+3. lo stato qj.
+Alcune configurazioni, aventi strutture particolari e dipendenti dalla struttura
+dell’automa, sono inoltre considerate come configurazioni di accettazione. Tut-
+te le altre configurazioni sono definite come Configurazioni di non accettazione,
+o di rifiuto.
+
+Esempio 2.29 Nel caso di automi a stati finiti viene definito, dato un automa, un
+insieme F di stati, detti finali. Una configurazione di accettazione corrisponderà
+allora alla situazione in cui l’automa, letta tutta la stringa di input, si trova in uno
+stato finale. Ne deriva quindi che una configurazione di accettazione ha la struttura:
+1. la stringa x;
+2. la prima posizione successiva alla stringa;
+3. uno stato finale q ∈ F.
+Una configurazione non di accettazione corrisponderà, al contrario, alla situazione in
+cui l’automa non ha letto tutta la stringa di input oppure, se l’ha letta, non si trova
+in uno stato finale. Una configurazione di rifiuto ha quindi la struttura
+1. la stringa x
+2. posizione su un carattere della stringa
+3. uno stato qualunque q ∈ Q,
+o la struttura
+1. la stringa x
+2. la prima posizione successiva alla stringa
+3. uno stato non finale q 6∈ F.
+Un automa esegue una computazione applicando iterativamente, ad ogni istan-
+te, la propria funzione di transizione alla configurazione attuale, a partire dalla
+configurazione iniziale.
+Possiamo quindi vedere una computazione eseguita da un automa A a
+partire da una configurazione iniziale c0 come una sequenza di configurazioni
+c0, c1, c2, . . . tale che, per i = 0, 1, . . ., si ha ci
+A
+ci+1. Indicheremo anche nel
+seguito con la notazione
+∗
+A
+la chiusura transitiva e riflessiva della relazione
+A
+. È facile allora rendersi conto che, dato un automa A e due configurazioni
+ci, cj di A, si ha ci
+∗
+A
+cj se e solo se esiste una computazione che porta A da
+ci a cj.
+Se la sequenza di configurazioni c0, c1, c2, . . . , cn ha lunghezza finita e se è
+massimale, nel senso che non esiste nessuna configurazione c tale che cn
+A
+c,
+allora diciamo che la computazione termina: in tal caso, diciamo che essa è
+una computazione di accettazione se termina in una configurazione di accet-
+tazione, mentre, nel caso contrario in cui termini in una configurazione non di
+accettazione, diremo che è una computazione di rifiuto.
+
+2.5.2 Automi deterministici e non deterministici
+In questa sezione introdurremo due concetti importanti, relativi alle struttura
+degli automi. Tali concetti, che saranno successivamente ripresi e ridiscussi in
+modo estensivo per i vari tipi di automi che saranno considerati, sono quelli di
+determinismo e non determinismo, ed hanno una grande rilevanza per quanto
+riguarda la classificazione dei linguaggi.
+Al fine di introdurre questi concetti, osserviamo che, per quanto esposto
+nella sezione precedente, possiamo considerare un automa come un dispositivo
+che, data una stringa di input, associa ad essa (una o più) computazioni.
+Un automa, in particolare, è detto deterministico se ad ogni stringa di input
+associa una sola computazione, e quindi una singola sequenza di configurazioni
+(vedi Figura 2.6). Possiamo anche dire che un automa deterministico, data una
+stringa di input, può eseguire una sola computazione: se tale computazione
+termina in una configurazione di accettazione, allora la stringa viene accettata.
+(c0)-->(c1)-->(c2)-->(c3)-->(c4)--> · · ·
+Figura 2.6 Computazione di un automa deterministico.
+
+Dato un automa deterministico A e data una stringa x di input ad A,
+se indichiamo con c0(x) la configurazione iniziale di A corrispondente alla
+stringa x, avremo che A accetta x se e solo se esiste una configurazione di
+accettazione c di A per la quale c0(x)
+∗
+A
+c. Il linguaggio accettato da A sarà
+allora l’insieme L(A) di tutte le stringhe x accettate da A.
+Nel caso in cui si verifichi inoltre che per ogni stringa la computazione ese-
+guita dall’automa A sulla stringa stessa termina, e quindi se ogni stringa viene
+o accettata o rifiutata, allora diciamo che il linguaggio L(A) è riconosciuto (
+o deciso) da A.
+Un automa è, al contrario, detto non deterministico se esso associa ad
+ogni stringa di input un numero qualunque, in generale maggiore di uno, di
+computazioni.4 Automi di questo tipo corrispondono al caso generale in cui
+la funzione di transizione associa a qualche configurazione c più di una con-
+figurazione successiva: in tal modo, per ogni computazione che conduce alla configurazione c sono definite continuazioni diverse, che definiscono diverse
+computazioni.
+Indichiamo con il termine grado di non determinismo di un automa il mas-
+simo numero di configurazioni che la funzione di transizione associa ad una con-
+figurazione. Ciò evidentemente corrisponde al massimo numero di configura-
+zioni differenti che si possono raggiungere in un singolo passo di computazione
+a partire da una stessa configurazione.
+Esempio 2.30 In Figura 2.7 viene riportato il caso in cui, per effetto della funzione
+di transizione che associa alla configurazione c3 la coppia di configurazioni c4, c5, la
+computazione c0, c1, c2, c3 ha due distinte possibili continuazioni, dando luogo quindi
+alle due computazioni c0, c1, c2, c3, c4, c5, . . . e c0, c1, c2, c3, c6, c7, . . ..
+c0 c1 c2 c3
+c4 c5
+c6 c7
+· · ·
+· · ·
+Figura 2.7 Continuazioni diverse di una stessa computazione in un automa
+non deterministico.
+
+Un diverso modo di introdurre il non determinismo, che citiamo qui
+ma non considereremo nel seguito, consiste nel prevedere la presenza di ε-
+transizioni, transizioni cioè che un automa può eseguire senza leggere alcun
+carattere in input. Ci si può rendere conto facilmente che il fatto che da una
+configurazione c una automa possa passare o meno in un’altra configurazione
+c0 senza leggere caratteri in input introduce due diverse possibili continuazioni
+della computazione attuale, l’una da c e l’altra da c0.
+Esempio 2.31 Si consideri la situazione in Figura 2.8, in cui si assume che la con-
+figurazione attuale sia c0 e che il prossimo carattere in input sia il carattere a. Si
+assuma inoltre che, per definizione della funzione di transizione dell’automa, la lettu-
+ra di a fa passare dalla configurazione c0 alla configurazione c3, e che è però definita
+una possibile ε-transizione da c0 a c1, da cui la lettura di a fa passare l’automa nella
+configurazione c2.
+2.5. ACCETTAZIONE E RICONOSCIMENTO DI LINGUAGGI 65
+Come si può osservare ciò dà luogo a due diverse continuazioni: la prima attraverso
+c3, nel caso in cui la ε-transizione non viene eseguita, la seconda attraverso c1 e c2,
+nel caso in cui essa venga eseguita.
+c0
+c1 c2
+c3
+· · ·
+· · ·
+· · ·
+ε
+a
+a
+Figura 2.8 Esempio di non determinismo introdotto da ε-transizione.
+Dalle osservazioni precedenti, possiamo osservare che, mentre un automa de-
+terministico associa alla stringa di input una computazione avente struttura
+lineare, un automa non deterministico associa ad essa una struttura più com-
+plessa, ad albero, con i nodi che rappresentano configurazioni dell’automa
+(con la radice associata alla configurazione iniziale) e gli archi che indicano
+la possibile transizione tra configurazioni. In questa struttura, detta albero di
+computazione, ogni computazione corrisponde ad un cammino avente origine
+dalla radice stessa (vedi Figura 2.9).
+L’automa non deterministico può quindi eseguire una qualunque compu-
+tazione, associata ad una sequenza di “scelte su quale transizione applicare in
+corrispondenza ad ogni applicazione della funzione di transizione. L’automa
+accetta la stringa di input se, tra tutte le computazioni possibili, ne esiste
+almeno una di accettazione, vale a dire se esiste, nell’albero di computazione,
+un cammino dalla radice ad un nodo rappresentante una configurazione di
+accettazione.
+Si osservi la asimmetria tra accettazione e rifiuto di una stringa, introdotta
+dal non determinismo: infatti, nel caso deterministico la stringa viene accet-
+tata se la singola computazione definita è di accettazione, e rifiutata se essa
+termina in una configurazione non di accettazione. Al contrario, nel caso non
+deterministico la stringa viene accettata se una qualunque delle computazioni
+definite è di accettazione, mentre non lo viene se tutte le possibili computazioni
+che terminano non sono di accettazione.
+Un modo alternativo, a cui faremo a volte riferimento nel seguito, di vedere
+il comportamento di un automa non deterministico, consiste nel considerare
+che l’automa esegua una sola computazione non deterministica, per la quale, ad
+ogni passo, assume non una sola, ma un insieme di configurazioni, transitando,
+66 CAPITOLO 2. LINGUAGGI FORMALI
+ad ogni passo, non da configurazione a configurazione ma da un insieme di
+configurazioni ad un insieme di configurazioni.
+c0
+c1
+c2
+c3
+c4
+c5
+c6
+c7
+c8
+c9
+· · ·
+· · ·
+· · ·
+· · ·
+· · ·
+· · ·
+Figura 2.9 Albero di computazione di un automa non deterministico.
+Esempio 2.32 L’albero di computazione riportato in Figura 2.9 definisce le sin-
+gole computazioni aventi come prefissi le sequenze di configurazioni c0, c1, c4, . . .;
+c0, c1, c5, . . .; c0, c1, c6, . . .; c0, c2, c7, . . .; c0, c3, c8, . . .; c0, c3, c9, . . . corrispondenti per
+l’appunto ai cammini con origine nella radice c0 dell’albero. Si osservi che il grado
+di non determinismo di un automa è pari al massimo grado di uscita per un nodo
+dell’albero di computazione relativo all’automa stesso. Il massimo grado di non deter-
+minismo nell’albero in Figura 2.10 è pari a 3 (configurazioni c0 e c1): ne deriva quindi
+che il grado di non determinismo dell’automa a cui si riferisce l’albero di computazione
+è almeno pari a 3.
+Il concetto di non determinismo, che qui incontriamo per la prima volta, non
+deve essere confuso con il non determinismo presente nel mondo reale. Nella
+realtà, in varie circostanze, accade che un osservatore, in base alla conoscenza
+dello stato attuale di un sistema e di eventuali stimoli, non sia in grado di
+determinare univocamente in quale stato il sistema si troverà. Ciò può veri-
+ficarsi o per caratteristiche intrinseche del sistema, come accade nel caso di
+fenomeni quantistici, oppure perché l’osservatore non ha un modello adeguato
+a rappresentare la complessità del fenomeno osservato e quindi a tener conto
+di tutti i diversi fattori che influenzano l’evoluzione del sistema, come accade
+ad esempio nei sistemi termodinamici o, più banalmente, nella complessità
+della vita quotidiana. In tali casi si usa supplire alle carenze di conoscenza del
+sistema facendo ricorso al concetto di probabilità.
+2.5. ACCETTAZIONE E RICONOSCIMENTO DI LINGUAGGI 67
+Il non determinismo che abbiamo qui introdotto, e che introdurremo nel
+corso della trattazione seguente nei vari modelli di calcolo che considereremo
+per modificarne il potere computazionale, ha caratteristiche del tutto diverse.
+Nel nostro caso il non determinismo è sostanzialmente un artificio matematico
+che ci consente di rappresentare un calcolo, anziché come una traiettoria in uno
+spazio di stati, come un albero di traiettorie, analogamente a come possono
+essere previste evoluzioni diverse di una vicenda in una narrazione a finale
+multiplo. In particolare, come visto, ciò che ci interessa è poter definire un
+concetto di accettazione legato al fatto che almeno uno dei rami dell’albero
+conduca ad uno stato finale.
+c0
+c1
+c2
+c3
+c4
+c5
+c6
+c7
+c8
+c9
+c10
+c11
+c12
+Figura 2.10 Esempio di computazione di un automa non deterministico.
+2.5.3 Automi e classi di linguaggi
+Una prima osservazione riguardante il rapporto fra generazione di linguaggi
+e problemi decisionali è già stata fatta nella Sezione 1.3.4 dove, sulla base di
+semplici considerazioni di cardinalità, abbiamo mostrato che esistono infiniti
+linguaggi per cui non esistono algoritmi (né automi) di riconoscimento.5 Una
+5
+Si noti che le considerazioni relative alla numerabilità dell’insieme degli algoritmi si
+applicano anche agli automi. In effetti, un automa può essere visto come un particolare tipo
+di algoritmo.
+68 CAPITOLO 2. LINGUAGGI FORMALI
+considerazione analoga può essere fatta in relazione alle grammatiche: poiché
+una grammatica può essere rappresentata essa stessa come una stringa finita di
+caratteri, l’insieme delle grammatiche di tipo 0 è un insieme numerabile. Poi-
+ché d’altra parte l’insieme dei linguaggi ha la cardinalità del continuo esistono
+infiniti linguaggi a cui non corrisponde alcuna grammatica.
+A tal proposito, secondo una terminologia consolidata, un problema de-
+cisionale (o un linguaggio) viene detto decidibile se esiste un algoritmo che
+risolve ogni istanza del problema. In alcune situazioni, come vedremo meglio
+nei prossimi capitoli, non esistono algoritmi di decisione ma solo algoritmi in
+grado di riconoscere correttamente un’istanza positiva del problema. In queste
+situazioni si parla di semidecidibilità.
+Definizione 2.10 Un problema decisionale (o un linguaggio) è detto decidi-
+bile se esiste un algoritmo (in particolare, un automa) che per ogni istanza
+del problema risponde correttamente vero oppure falso. In caso contrario il
+problema è detto indecidibile.
+Definizione 2.11 Un problema decisionale (o un linguaggio) è detto semide-
+cidibile se esiste un algoritmo (in particolare, un automa) che per tutte e sole
+le istanze positive del problema risponde correttamente vero.
+Possiamo fin da ora anticipare che, come vedremo nei capitoli successivi
+i linguaggi di tipo 1, 2 e 3 sono decidibili, mentre quelli di tipo 0 sono semi-
+decidibili. Nei capitoli successivi infatti introdurremo vari tipi di automi che
+possono essere utilizzati per risolvere problemi di decisione relativi alle diverse
+classi di linguaggi.
+In particolare vedremo che:
+• Per i linguaggi di tipo 3 esistono dispositivi di riconoscimento che
+operano con memoria costante e tempo lineare (Automi a stati finiti).
+• Per i linguaggi strettamente di tipo 2, il riconoscimento può avvenire
+sempre in tempo lineare ma con dispositivi di tipo non deterministico6
+dotati di una memoria a pila (Automi a pila non deterministici).
+• Per i linguaggi strettamente di tipo 1, l’esigenza di tempo e di memoria
+è ancora maggiore. Per essi si può mostrare che il riconoscimento può
+essere effettuato con una macchina non deterministica che fa uso di una
+quantità di memoria che cresce linearmente con la lunghezza della stringa
+da esaminare (Macchina di Turing non deterministica “linear bounded”,
+o Automa lineare).
+• Infine, per i linguaggi strettamente di tipo 0, si farà riferimento a un
+dispositivo di calcolo costituito da un automa che opera con quantità di
+tempo e di memoria potenzialmente illimitate (Macchina di Turing).
+6
+Vedremo nel seguito (Sezione 2.5.2) cosa tale termine stia a significare.
+2.5. ACCETTAZIONE E RICONOSCIMENTO DI LINGUAGGI 69
+Nei Capitoli 3 e 4 ci soffermeremo sui metodi di riconoscimento e sulle proprietà
+delle due classi di linguaggi che hanno maggiore attinenza con i linguaggi di
+programmazione, cioè i linguaggi di tipo 3 e di tipo 2.
+Alle macchine di Turing ed alla caratterizzazione del loro potere compu-
+tazionale sarà dedicato il Capitolo 5 e, in quel contesto, sarà ripreso anche lo
+studio delle proprietà dei linguaggi di tipo 0 e di tipo 1.
+

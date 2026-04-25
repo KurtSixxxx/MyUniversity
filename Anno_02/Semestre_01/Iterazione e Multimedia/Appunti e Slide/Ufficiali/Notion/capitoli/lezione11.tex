@@ -1,0 +1,793 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{ripasso-prerequisiti}{%
+\section{Ripasso prerequisiti}\label{ripasso-prerequisiti}}
+
+\hypertarget{le-funzioni}{%
+\subsection{1. LE FUNZIONI}\label{le-funzioni}}
+
+Immagina una~\textbf{macchinetta mangiasoldi}:
+
+\begin{itemize}
+\tightlist
+\item
+  Tu metti una moneta (input)
+\item
+  La macchina ti dà una lattina (output)
+\item
+  Ogni moneta → una specifica lattina
+\end{itemize}
+
+Una~\textbf{funzione matematica}~è esattamente così:
+
+\begin{itemize}
+\tightlist
+\item
+  È una~\textbf{``macchina''}~che trasforma numeri
+\item
+  Tu gli dai un numero in~\textbf{ingresso}~(chiamato~\texttt{x})
+\item
+  Lei ti restituisce un numero in~\textbf{uscita}~(chiamato~\texttt{f(x)}~o~\texttt{y})
+\end{itemize}
+
+Quando scrivo:
+
+\begin{verbatim}
+f(x) = 2x + 3
+\end{verbatim}
+
+Significa:
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{f}~= nome della macchina/funzione
+\item
+  \texttt{(x)}~= il numero che tu metti nella macchina
+\item
+  \texttt{2x\ +\ 3}~= cosa fa la macchina con il numero
+\end{itemize}
+
+\textbf{Esempio pratico:}
+
+Se~\texttt{x\ =\ 4}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Prendi~\texttt{x\ =\ 4}
+\item
+  La macchina fa:~\texttt{2\ ×\ 4\ +\ 3}
+\item
+  Risultato:~\texttt{8\ +\ 3\ =\ 11}
+\item
+  Quindi~\texttt{f(4)\ =\ 11}
+\end{enumerate}
+
+Se ho una funzione:~\texttt{g(t)\ =\ t²\ -\ 1}
+
+Cosa significa~\texttt{g(3)}? → 3² - 1 = 9 - 1 = 8
+
+\hypertarget{le-onde}{%
+\subsection{2. LE ONDE}\label{le-onde}}
+
+\hypertarget{immagina-di-essere-in-spiaggia}{%
+\subsubsection{\texorpdfstring{\textbf{Immagina di essere in spiaggia:}}{Immagina di essere in spiaggia:}}\label{immagina-di-essere-in-spiaggia}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{L'acqua sale}~(arriva verso la spiaggia)
+\item
+  \textbf{Raggiunge il punto più alto}~(cresta dell'onda)
+\item
+  \textbf{L'acqua scende}~(torna indietro)
+\item
+  \textbf{Raggiunge il punto più basso}~(ventre dell'onda)
+\item
+  \textbf{Poi ricomincia da capo}
+\end{enumerate}
+
+Questo movimento~\textbf{SU e GIÙ}~che~\textbf{SI RIPETE}~è un'\textbf{onda}.
+
+\hypertarget{altri-esempi-concreti-di-onde-nella-vita}{%
+\subsubsection{\texorpdfstring{\textbf{ALTRI ESEMPI CONCRETI DI ONDE NELLA VITA:}}{ALTRI ESEMPI CONCRETI DI ONDE NELLA VITA:}}\label{altri-esempi-concreti-di-onde-nella-vita}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Un'altalena}: va avanti e indietro, avanti e indietro\ldots{}
+\item
+  \textbf{Una molla}~che oscilla: su e giù, su e giù\ldots{}
+\item
+  \textbf{Il suono di una chitarra}: l'aria vibra in modo ripetitivo
+\item
+  \textbf{La luce}: anche se non la vediamo oscillare
+\end{enumerate}
+
+\hypertarget{a.-ampiezza}{%
+\subsubsection{\texorpdfstring{\textbf{A. AMPIEZZA}}{A. AMPIEZZA}}\label{a.-ampiezza}}
+
+💡
+
+\textbf{AMPIEZZA = QUANTO E' ALTA UN'ONDA}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{A parole}: quanto è ``alta'' l'onda
+\item
+  \textbf{Esempio concreto}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Un'\textbf{onda alta 2 metri}~in mare → ampiezza grande
+  \item
+    Un'\textbf{onda alta 10 cm}~in una pozzanghera → ampiezza piccola
+  \item
+    Nell'altalena: quanto in alto va l'altalena
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{b.-periodo}{%
+\subsubsection{\texorpdfstring{\textbf{B. PERIODO}}{B. PERIODO}}\label{b.-periodo}}
+
+💡
+
+\textbf{PERIODO = QUANTO IMPIEGA A FARE IL SUO CICLO COMPLETO}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{A parole}: quanto tempo ci mette a fare un ciclo COMPLETO
+\item
+  \textbf{Esempio concreto}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Se un'altalena impiega~\textbf{3 secondi}~per: andare avanti → tornare indietro → tornare al punto di partenza
+  \item
+    Allora il suo~\textbf{periodo è 3 secondi}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{c.-frequenza}{%
+\subsubsection{\texorpdfstring{\textbf{C. FREQUENZA}}{C. FREQUENZA}}\label{c.-frequenza}}
+
+💡
+
+\textbf{FREQUENZA = QUANTE VOLTE SI RIPETE IL CICLO IN UN DATO TEMPO}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{A parole}: quante volte si ripete in un secondo
+\item
+  \textbf{Esempio concreto}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Se il tuo cuore batte~\textbf{60 volte al minuto}
+  \item
+    Allora batte~\textbf{1 volta al secondo}~(frequenza = 1 battito/secondo)
+  \item
+    Per le onde: se un'onda si ripete 2 volte al secondo → frequenza = 2
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{seno-e-coseno}{%
+\subsection{3. SENO E COSENO}\label{seno-e-coseno}}
+
+💡
+
+\textbf{SENO = FUNZIONE CHE DESCRIVE IL MOVIMENTO SU E GIU DI UN'ONDA}
+
+\textbf{Immagina una ruota di bicicletta con un raggio rosso:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  La ruota gira in senso antiorario
+\item
+  Metti un punto ROSSO sul bordo della ruota
+\item
+  Ora guarda SOLO l'altezza (su/giù) del punto rosso
+\item
+  La ruota gira → il punto va su e giù
+\end{enumerate}
+
+\textbf{Questo movimento SU e GIÙ del punto rosso è proprio la funzione SENO!}
+
+\hypertarget{visualizziamolo-in-modo-ancora-piuxf9-concreto}{%
+\subsection{\texorpdfstring{\textbf{2. VISUALIZZIAMOLO IN MODO ANCORA PIÙ CONCRETO:}}{2. VISUALIZZIAMOLO IN MODO ANCORA PIÙ CONCRETO:}}\label{visualizziamolo-in-modo-ancora-piuxf9-concreto}}
+
+Prendi un~\textbf{compasso}:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Apri il compasso di 5 cm (raggio)
+\item
+  Disegna un cerchio
+\item
+  Ora immagina che il compasso giri
+\item
+  La~\textbf{puntina che scrive}~va su e giù mentre gira
+\end{enumerate}
+
+\textbf{L'altezza della puntina rispetto al centro}~=~\textbf{VALORE DEL SENO}
+
+\hypertarget{cosa-misura-realmente-il-seno}{%
+\subsection{\texorpdfstring{\textbf{3. COSA MISURA REALMENTE IL SENO?}}{3. COSA MISURA REALMENTE IL SENO?}}\label{cosa-misura-realmente-il-seno}}
+
+Quando hai un cerchio di raggio 1:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Seno dell'angolo}~=~\textbf{quanto sei in ALTO}~rispetto al centro
+\item
+  \textbf{Coseno dell'angolo}~=~\textbf{quanto sei a DESTRA}~rispetto al centro
+\end{itemize}
+
+\textbf{Esempio pratico:}
+
+\begin{itemize}
+\tightlist
+\item
+  Se stai in cima alla ruota panoramica (angolo = 90°):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Sei tutto in ALTO →~\textbf{seno = 1}~(massimo)
+  \item
+    Non sei né a destra né a sinistra →~\textbf{coseno = 0}
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{perchuxe9-ci-serve-per-le-onde}{%
+\subsection{\texorpdfstring{\textbf{4. PERCHÉ CI SERVE PER LE ONDE?}}{4. PERCHÉ CI SERVE PER LE ONDE?}}\label{perchuxe9-ci-serve-per-le-onde}}
+
+Perché il movimento~\textbf{SU e GIÙ}~della ruota che gira\ldots{}
+
+\ldots è~\textbf{IDENTICO}~al movimento~\textbf{SU e GIÙ}~di:
+
+\begin{itemize}
+\tightlist
+\item
+  un'onda del mare
+\item
+  un'altalena
+\item
+  una corda di chitarra che vibra
+\end{itemize}
+
+Il~\textbf{seno}~è la~\textbf{matematica delle cose che oscillano}!
+
+\hypertarget{gradi-e-radianti}{%
+\subsection{4. GRADI E RADIANTI}\label{gradi-e-radianti}}
+
+\hypertarget{i-gradi-li-conosci-giuxe0}{%
+\subsubsection{\texorpdfstring{\textbf{I GRADI li conosci già:}}{I GRADI li conosci già:}}\label{i-gradi-li-conosci-giuxe0}}
+
+\begin{itemize}
+\tightlist
+\item
+  Cerchio completo = 360°
+\item
+  Mezzo giro = 180°
+\item
+  Quarto di giro = 90°
+\end{itemize}
+
+\textbf{Problema con i gradi:}~sono un'unità ``inventata'' (i Babilonesi usavano base 60)
+
+\hypertarget{i-radianti-sono-piuxf9-naturali}{%
+\subsubsection{\texorpdfstring{\textbf{I RADIANTI sono più ``naturali'':}}{I RADIANTI sono più ``naturali'':}}\label{i-radianti-sono-piuxf9-naturali}}
+
+\textbf{Immagina di srotolare una circonferenza:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Prendi un cerchio
+\item
+  Taglia il bordo
+\item
+  Stendilo dritto
+\item
+  \textbf{La lunghezza del bordo srotolato}~si chiama~\textbf{circonferenza}
+\end{enumerate}
+
+Per un cerchio di raggio 1:
+
+\begin{itemize}
+\tightlist
+\item
+  Circonferenza = 2π × raggio = 2π × 1 =~\textbf{2π}
+\end{itemize}
+
+\hypertarget{cosa-sono-i-radianti-concretamente}{%
+\subsection{\texorpdfstring{\textbf{2. COSA SONO I RADIANTI? CONCRETAMENTE}}{2. COSA SONO I RADIANTI? CONCRETAMENTE}}\label{cosa-sono-i-radianti-concretamente}}
+
+\textbf{Un radiante}~= l'angolo in cui~\textbf{l'arco di circonferenza è LUNGO QUANTO IL RAGGIO}
+
+\textbf{Esempio visivo:}
+
+\begin{itemize}
+\tightlist
+\item
+  Prendi una fetta di torta
+\item
+  Se il bordo curvo è~\textbf{lungo quanto il raggio}\ldots{}
+\item
+  \ldots allora l'angolo è~\textbf{1 radiante}
+\end{itemize}
+
+\textbf{Quanto è grande 1 radiante in gradi?}
+
+\begin{itemize}
+\tightlist
+\item
+  Cerchio completo = 360° = 2π radianti
+\item
+  Quindi: 1 radiante ≈ 360°/(2×3.14) ≈ 360°/6.28 ≈~\textbf{57.3°}
+\end{itemize}
+
+\hypertarget{perchuxe9-i-matematici-usano-i-radianti}{%
+\subsection{\texorpdfstring{\textbf{3. PERCHÉ I MATEMATICI USANO I RADIANTI?}}{3. PERCHÉ I MATEMATICI USANO I RADIANTI?}}\label{perchuxe9-i-matematici-usano-i-radianti}}
+
+Perché con i radianti le formule diventano più SEMPLICI:
+
+Con gradi:
+
+text
+
+\begin{verbatim}
+sin(90°) = 1
+(sin x)' = (π/180) cos x  ← formula complicata!
+\end{verbatim}
+
+Con radianti:
+
+text
+
+\begin{verbatim}
+sin(π/2) = 1
+(sin x)' = cos x  ← formula bellissima e semplice!
+\end{verbatim}
+
+\hypertarget{conversione-facile}{%
+\subsection{\texorpdfstring{\textbf{4. CONVERSIONE FACILE:}}{4. CONVERSIONE FACILE:}}\label{conversione-facile}}
+
+\textbf{Da gradi a radianti:}
+
+text
+
+\begin{verbatim}
+radianti = gradi × π / 180
+\end{verbatim}
+
+\textbf{Esempio pratico:}
+
+\begin{itemize}
+\tightlist
+\item
+  90° → 90 × π/180 = π/2 radianti
+\item
+  180° → 180 × π/180 = π radianti
+\item
+  360° → 360 × π/180 = 2π radianti
+\end{itemize}
+
+Immagina una~\textbf{torta perfettamente rotonda}:
+
+\textbf{Situazione A - Con i GRADI:}
+
+\begin{itemize}
+\tightlist
+\item
+  Tagli la torta in 360 fette uguali
+\item
+  Ogni fetta ha angolo =~\textbf{1°}
+\item
+  Ma\ldots{} perché proprio 360? È un numero ``storico'' (i Babilonesi contavano in base 60)
+\end{itemize}
+
+\textbf{Situazione B - Con i RADIANTI:}
+
+\begin{itemize}
+\tightlist
+\item
+  Non conti le fette, ma misuri il~\textbf{bordo della torta}
+\item
+  Usi il~\textbf{raggio della torta}~come unità di misura
+\end{itemize}
+
+\hypertarget{esperimento-mentale-concreto}{%
+\subsection{\texorpdfstring{\textbf{2. ESPERIMENTO MENTALE CONCRETO}}{2. ESPERIMENTO MENTALE CONCRETO}}\label{esperimento-mentale-concreto}}
+
+\textbf{Materiale:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Una moneta da 1 euro (raggio ≈ 1.2 cm)
+\item
+  Un filo
+\item
+  Forbici
+\end{enumerate}
+
+\textbf{Procedimento:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Misura il~\textbf{raggio}~della moneta: ≈ 1.2 cm
+\item
+  Prendi il filo e tagliane un pezzo~\textbf{lungo come il raggio}~(1.2 cm)
+\item
+  Metti il filo sul bordo della moneta
+\item
+  \textbf{L'angolo che copre quel filo}~=~\textbf{1 RADIANTE}
+\end{enumerate}
+
+\textbf{Cosa succede?}
+
+\begin{itemize}
+\tightlist
+\item
+  Il filo (lungo come il raggio) si piega lungo il bordo
+\item
+  Copre un certo angolo
+\item
+  Quell'angolo è circa~\textbf{57.3°}
+\end{itemize}
+
+\hypertarget{perchuxe9-proprio-il-raggio}{%
+\subsection{\texorpdfstring{\textbf{3. PERCHÉ PROPRIO IL RAGGIO?}}{3. PERCHÉ PROPRIO IL RAGGIO?}}\label{perchuxe9-proprio-il-raggio}}
+
+Perché è~\textbf{NATURALE}:
+
+Se prendo una circonferenza e la~\textbf{srotolo}:
+
+\begin{itemize}
+\tightlist
+\item
+  Lunghezza totale =~\textbf{2π × raggio}
+\item
+  Se misuro gli angoli in radianti:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Angolo pieno = lunghezza totale / raggio =~\textbf{2π}
+  \item
+    Mezzo giro = π
+  \item
+    Quarto di giro = π/2
+  \end{itemize}
+\end{itemize}
+
+\textbf{Vantaggio:}~Le formule non hanno ``fattori strani'' come π/180!
+
+\hypertarget{visualizziamo-con-un-cerchio-di-raggio-1}{%
+\subsection{\texorpdfstring{\textbf{4. VISUALIZZIAMO CON UN CERCHIO DI RAGGIO 1}}{4. VISUALIZZIAMO CON UN CERCHIO DI RAGGIO 1}}\label{visualizziamo-con-un-cerchio-di-raggio-1}}
+
+Prendiamo un cerchio di~\textbf{raggio = 1 unità}~(un ``cerchio unitario''):
+
+\textbf{Con i GRADI:}
+
+\begin{itemize}
+\tightlist
+\item
+  360 fette
+\item
+  Ogni fetta: angolo 1°, arco piccolo
+\end{itemize}
+
+\textbf{Con i RADIANTI:}
+
+\begin{itemize}
+\tightlist
+\item
+  Circonferenza totale = 2π × 1 =~\textbf{2π unità}
+\item
+  Se prendo un arco lungo~\textbf{1 unità}~(come il raggio!)\ldots{}
+\item
+  \ldots l'angolo corrispondente =~\textbf{1 radiante}
+\end{itemize}
+
+\hypertarget{tabella-di-confronto-concreta}{%
+\subsection{\texorpdfstring{\textbf{5. TABELLA DI CONFRONTO CONCRETA}}{5. TABELLA DI CONFRONTO CONCRETA}}\label{tabella-di-confronto-concreta}}
+
+\begin{longtable}[]{@{}llll@{}}
+\toprule\noalign{}
+\textbf{Angolo} & \textbf{Gradi} & \textbf{Radianti} & \textbf{Cosa vedi nel cerchio} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Giro completo & 360° & 2π ≈ 6.28 & Tutt'intorno \\
+Mezzo giro & 180° & π ≈ 3.14 & Da sinistra a destra \\
+Quarto di giro & 90° & π/2 ≈ 1.57 & Da centro a cima \\
+Un ottavo & 45° & π/4 ≈ 0.785 & Metà della salita \\
+\end{longtable}
+
+\hypertarget{esercizio-pratico-guidato}{%
+\subsection{\texorpdfstring{\textbf{6. ESERCIZIO PRATICO GUIDATO}}{6. ESERCIZIO PRATICO GUIDATO}}\label{esercizio-pratico-guidato}}
+
+\textbf{Problema:}~Ho un cerchio di raggio 5 cm.
+
+Quanto è lungo l'arco che corrisponde a π/3 radianti?
+
+\textbf{Ragioniamo insieme:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Ricorda:~\textbf{1 radiante}~= arco lungo come il raggio
+\item
+  Qui raggio = 5 cm → 1 radiante = arco di 5 cm
+\item
+  L'angolo è π/3 radianti ≈ 1.047 radianti
+\item
+  Arco = angolo × raggio = (π/3) × 5 cm ≈ 5.24 cm
+\end{enumerate}
+
+\textbf{Formula magica:}~\texttt{Arco\ =\ Angolo(in\ radianti)\ ×\ Raggio}
+
+Con i gradi sarebbe:~\texttt{Arco\ =\ (gradi\ ×\ π/180)\ ×\ Raggio}~→ più complicato!
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Seno/Coseno}~→ descrivono cose che oscillano (altalene, onde)
+\item
+  \textbf{Radianti}~→ modo ``naturale'' per misurare angoli (usa il raggio)
+\item
+  \textbf{Onda sinusoidale}~= A × sin(2πft + φ) → descrive un'oscillazione pura
+\item
+  \textbf{Fourier}~→ dice che le cose complesse sono somme di cose semplici
+\end{enumerate}
+
+\begin{verbatim}
+Cose che oscillano → Seno/Coseno → Onde pure → Somma di onde → Fourier
+       ↑                    ↑              ↑            ↑           ↑
+   altalene           radianti        frequenza    musica      applicazioni
+   suono              formule         ampiezza     immagini    reali
+   luce               semplici        fase         telecom
+\end{verbatim}
+
+\hypertarget{fourier}{%
+\subsection{FOURIER}\label{fourier}}
+
+\hypertarget{intuizione-prima-delle-formule}{%
+\subsection{\texorpdfstring{\textbf{1. INTUIZIONE PRIMA DELLE FORMULE}}{1. INTUIZIONE PRIMA DELLE FORMULE}}\label{intuizione-prima-delle-formule}}
+
+\textbf{Immagina di essere un DJ o un tecnico del suono:}
+
+\begin{itemize}
+\tightlist
+\item
+  Hai una~\textbf{canzone complessa}~(voce, chitarra, batteria, basso)
+\item
+  Ogni strumento fa~\textbf{onde diverse}
+\item
+  Il suono finale è un~\textbf{MISCUGLIO}~di tutte queste onde
+\end{itemize}
+
+\textbf{Domanda:}~Come fai a separare la voce dalla chitarra?
+
+\textbf{Risposta:}~Con l'analisi di Fourier!
+
+\hypertarget{lidea-geniale-di-fourier-1807}{%
+\subsection{\texorpdfstring{\textbf{2. L'IDEA GENIALE DI FOURIER (1807)}}{2. L'IDEA GENIALE DI FOURIER (1807)}}\label{lidea-geniale-di-fourier-1807}}
+
+Joseph Fourier scoprì che:
+
+\begin{quote}
+QUALSIASI~suono/seguale periodico, per quanto complesso,
+
+può essere scomposto in una~\textbf{SOMMA di onde sinusoidali SEMPLICI}
+\end{quote}
+
+\textbf{Esempio concreto - Un accordo di pianoforte:}
+
+\begin{itemize}
+\tightlist
+\item
+  Premi DO, MI, SOL insieme
+\item
+  Ottieni un suono ``ricco''
+\item
+  Fourier dice: ``Questo suono = Onda DO pura + Onda MI pura + Onda SOL pura''
+\end{itemize}
+
+\hypertarget{visualizziamolo-con-le-onde-del-mare}{%
+\subsection{\texorpdfstring{\textbf{3. VISUALIZZIAMOLO CON LE ONDE DEL MARE}}{3. VISUALIZZIAMOLO CON LE ONDE DEL MARE}}\label{visualizziamolo-con-le-onde-del-mare}}
+
+\textbf{Scenario:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Onda A}: alta 1m, periodo 5 secondi
+\item
+  \textbf{Onda B}: alta 0.5m, periodo 3 secondi
+\item
+  \textbf{Onda C}: alta 0.3m, periodo 8 secondi
+\end{enumerate}
+
+\textbf{Cosa vedi in mare?}
+
+\begin{itemize}
+\tightlist
+\item
+  Non vedi le 3 onde separate!
+\item
+  Vedi un'onda~\textbf{COMPLESSA}~che sembra irregolare
+\item
+  Ma in realtà è la~\textbf{SOMMA}~delle 3 onde semplici!
+\end{itemize}
+
+\hypertarget{la-serie-di-fourier-in-poche-parole}{%
+\subsection{\texorpdfstring{\textbf{4. LA SERIE DI FOURIER IN POCHE PAROLE}}{4. LA SERIE DI FOURIER IN POCHE PAROLE}}\label{la-serie-di-fourier-in-poche-parole}}
+
+\begin{quote}
+Data un'onda complessa periodica,
+
+la Serie di Fourier ci dice:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Quali}~onde sinusoidali ci sono dentro
+\item
+  Con che~\textbf{ampiezza}~(quanto sono forti)
+\item
+  Con che~\textbf{fase}~(quando iniziano)
+\end{enumerate}
+\end{quote}
+
+\textbf{Formula concettuale (senza panico!):}
+
+text
+
+\begin{verbatim}
+Onda complessa = A₁·sin(ω₁t+φ₁) + A₂·sin(ω₂t+φ₂) + A₃·sin(ω₃t+φ₃) + ...
+\end{verbatim}
+
+Dove ω₁, ω₂, ω₃ sono frequenze multiple della fondamentale.
+
+\hypertarget{applicazioni-reali---dove-serve}{%
+\subsection{\texorpdfstring{\textbf{5. APPLICAZIONI REALI - DOVE SERVE?}}{5. APPLICAZIONI REALI - DOVE SERVE?}}\label{applicazioni-reali---dove-serve}}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{🎵 AUDIO DIGITALE}~(MP3, Spotify)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Comprimi la musica trovando le onde ``principali''
+  \item
+    Elimina quelle che l'orecchio non sente
+  \end{itemize}
+\item
+  \textbf{📡 COMUNICAZIONI}~(Wi-Fi, telefoni)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Ogni canale ha una sua frequenza
+  \item
+    Fourier separa i canali
+  \end{itemize}
+\item
+  \textbf{🩺 MEDICINA}~(ECG, risonanza magnetica)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    L'ECG è un'onda complessa
+  \item
+    Fourier separa i battiti dai disturbi
+  \end{itemize}
+\item
+  \textbf{🖼️ IMMAGINI DIGITALI}~(JPEG, Instagram)
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Un'immagine = onde di colore in 2D
+  \item
+    JPEG comprime con Fourier 2D
+  \end{itemize}
+\end{enumerate}
+
+\end{document}

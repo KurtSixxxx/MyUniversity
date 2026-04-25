@@ -1,0 +1,85 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{guida}{%
+\section{Guida}\label{guida}}
+
+\hypertarget{sintesi-finale-per-il-tuo-studio-attivo}{%
+\subsubsection{\texorpdfstring{\textbf{SINTESI FINALE PER IL TUO STUDIO ATTIVO}}{SINTESI FINALE PER IL TUO STUDIO ATTIVO}}\label{sintesi-finale-per-il-tuo-studio-attivo}}
+
+Hai ora tra le mani una spiegazione integrata e discorsiva. Per trasformare questo in studio attivo, ti consiglio di fare così quando lo riscriverai:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Ripercorri il flusso logico:} Inizia sempre dalla griglia di numeri (0-255) e dalla formula \texttt{g\ =\ T(f)}.
+\item
+  \textbf{Disegna i grafici LUT:} Per ogni operazione (negativo, logaritmo, gamma\textgreater1, gamma\textless1, binarizzazione), prendi un foglio e \textbf{disegna a mano} l'asse X e l'asse Y. Poi traccia la curva caratteristica. Questo è l'esercizio più importante.
+\item
+  \textbf{Fai esempi numerici:} Prendi tre valori: un pixel scuro (30), uno medio (128), uno chiaro (220). Applica mentalmente le regole e chiediti: ``Questo operatore lo schiarisce o lo scurisce? Di molto o di poco?''.
+\item
+  \textbf{Collega la formula al grafico:} Quando vedi \texttt{s\ =\ c\ *\ r\^{}γ}, non memorizzarla. Pensa: ``Ah, γ è l'esponente. Se è piccolo (\textless1), la curva sul grafico sarà convessa verso l'alto, quindi schiarirà le ombre''.
+\item
+  \textbf{Rispondi alle domande nel testo:} Dove ti ho lasciato una domanda (``Domanda per te\ldots{}''), fermati e prova a ragionare con la tua testa prima di cercare la risposta.
+\end{enumerate}
+
+Il tuo obiettivo non è ricordare a memoria le formule, ma essere in grado di \textbf{guardare una curva LUT e prevedere l'effetto sull'immagine}, e viceversa, di \textbf{descrivere con parole tue l'effetto che vuoi ottenere e sapere che tipo di curva ti serve}.
+
+Buon lavoro di riscrittura! È nel momento in cui rielaborerai questi concetti con le tue parole e i tuoi disegni che diventeranno davvero tuoi.
+
+\end{document}

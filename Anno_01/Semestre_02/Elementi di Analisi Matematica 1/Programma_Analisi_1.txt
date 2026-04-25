@@ -1,0 +1,58 @@
+Programma di Studio per Analisi 1
+
+1. **Lacune da coprire:**
+   - Concetti di base (Scuola Elementari e Medie):
+     - Aritmetica di base: addizione, sottrazione, moltiplicazione, divisione.
+     - Proprietà delle operazioni (commutativa, associativa, distributiva).
+     - Frazioni: operazioni con le frazioni (somma, sottrazione, moltiplicazione, divisione).
+     - Percentuali e proporzioni.
+
+   - Scuola Secondaria Superiore:
+     - Insiemi numerici: numeri naturali, interi, razionali, irrazionali e reali.
+     - Espressioni algebriche: manipolazione e semplificazione.
+     - Valore assoluto e sue proprietà.
+     - Disequazioni: risoluzione di disequazioni algebriche, fratte, esponenziali e logaritmiche.
+
+   - Analisi Matematica:
+     - Fondamenti di funzioni: definizioni, grafici, dominio e codominio.
+     - Limiti di funzioni e successioni.
+     - Continuità delle funzioni.
+     - Derivazione: concetti e calcolo delle derivate.
+     - Applicazioni delle derivate: studio di funzione, punti di massimo e minimo.
+
+2. **Argomenti principali di Analisi 1:**
+   - Funzioni: definizione, tipi di funzioni, operazioni tra funzioni.
+   - Limiti e continuità: calcolo dei limiti, teoremi fondamentali sui limiti.
+   - Derivata: definizione, regole di derivazione, applicazioni geometriche.
+   - Teorema di Bolzano e teorema di Lagrange.
+   - Studio di funzioni: monotonia, concavità, punti di flesso.
+
+3. **Piano di studio:**
+   - Dedica del tempo per ogni argomento, iniziando dalle lacune:
+     - **Settimana 1**: Concetti di base (1-2 ore al giorno).
+     - **Settimana 2**: Insiemi numerici e algebra (1-2 ore al giorno).
+     - **Settimana 3**: Funzioni e limiti (2-3 ore al giorno).
+     - **Settimana 4**: Derivazione e applicazioni (2-3 ore al giorno).
+     - **Settimana 5**: Ripasso generale e esercizi (2-3 ore al giorno).
+
+4. **Risorse Utili:**
+   - Libri di testo consigliati e video tutorial online.
+   - Esercizi pratici per ogni argomento.
+
+Buono studio!
+
+Minoranti, maggioranti, massimo, minimo, estremo superiore, estremo inferiore
+
+disequazioni razionali, valore assoluto, disequazioni con valore assoluto, risoluzione disequazioni con valore assoluto con intorno, disequazioni logaritmiche, funzioni elementari (grafici), relazione definente, trigonometria (quadranti, seni e coseni degli angoli ricorrenti), esponenziali, disequazioni esponenziali, valori ricorrenti arcotangente.
+
+Per il compito:
+- Numeri complessi (coniugato modulo, somma, prodotto, differenza e divisione, Piano di Gauss, Forma Algebrica, Forma trigonometrica o polare, forma esponenziale, relazione modulo e argomento, proprietà modulo coniugato, principio d'identità dei numeri complessi in forma trigonometrica, formule delle radici n-esime o radici di un numero complesso)
+- Successioni e limiti di successioni (cosa significa limitate inferiormente e superiormente, studio della monotonia, monotonia crescente, crescente strettamente, decrescente, decrescente strettamente, diagrammi a ragnatela) 
+- Limiti (gerarchie degli infiniti, limiti notevoli, equivalenza sintotica, teorema di dehopital, forme indeterminate dei limiti, teorema dei due carabinieri o confronto)
+- Studio della continuità e derivabilità (punti di discontinuità, massimi e minimi globali, teorema dei valori intermedi o darboux)
+- Derivate (derivate di funzioni elementari, inversa della derivata, regola di leibniz, punti di non differenziabilità, retta tangente)
+- Studio di funzione (studio di funzione completo)
+
+Teoremi:
+
+

@@ -1,0 +1,286 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{lezione-3-il-bayer-pattern}{%
+\section{Lezione 3: Il Bayer Pattern}\label{lezione-3-il-bayer-pattern}}
+
+\hypertarget{acquisizione-delle-immagini-digitali}{%
+\subsubsection{Acquisizione delle immagini digitali}\label{acquisizione-delle-immagini-digitali}}
+
+Quando la luce colpisce un oggetto, una parte viene assorbita ed una parte viene riflessa. Quella che viene riflessa, dà origine al colore percepito.
+Per creare una immagine digitale, è essenziale che tale luce riflessa sia catturata da un sensore che si occupa di elaborarla.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{il-sensore}{%
+\subsubsection{Il sensore}\label{il-sensore}}
+
+L'energia che colpisce il sensore viene trasformata in impulso elettrico dal sensore che è composto da un materiale particolarmente sensibile alla luce. Tale impulso elettrico è successivamente digitalizzato.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Ci sono diversi tipi di sensori:
+
+\begin{itemize}
+\item
+  \textbf{Singolo sensore}
+  Gli scanner usano un singolo sensore che viene spostato lungo la sorgente da digitalizzare.
+  Questi sensori (tipici degli \textbf{scanner digitali}) sono costituiti da un unico elemento captante. Per poter digitalizzare una sorgente, come un foglio o una fotografia, il sensore deve essere \textbf{spostato meccanicamente} lungo tutta la superficie dell'oggetto. Le fonti mostrano che questo movimento può essere una combinazione di \textbf{moto lineare} e \textbf{rotazione}, a seconda della meccanica interna del dispositivo.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Sensore in linea}
+  Le macchine per fare le TAC usano dei sensori che sono disposti in un'unica linea.
+  Il dispositivo acquisisce \textbf{una riga dell'immagine alla volta} per ogni incremento del movimento. Per completare la scansione dell'intero soggetto, il sensore (o l'oggetto stesso) deve compiere un \textbf{moto lineare} costante in modo che la ``striscia'' di sensori passi sopra ogni sezione dell'area da riprendere.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Sensori in 2D array}
+  Nelle macchine fotografiche digitali, i sensori sono disposti su una matrice. Non è necessario spostare il sensore, come nei due casi precedenti, per effettuare una scansione. I più diffusi sensori di questo tipo sono i \textbf{CCD}.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\hypertarget{ccd-charged-coupled-device}{%
+\subsubsection{CCD: Charged Coupled Device}\label{ccd-charged-coupled-device}}
+
+Si tratta di dispostivi elettronici che se colpiti da fotoni (luce) assumono una carica positiva. Le celle del CCD non possono caricarsi oltre un certo limite: sono dei secchi d'acqua che non possono riempirsi oltre alla loro capacità.
+Il numero di celle per area di esposizione è un \textbf{parametro di qualità} della fotocamera misurato in \textbf{MEGAPIXEL}.
+
+\textbf{Schema di misurazione.}
+Dopo che le cariche sono state acquisite da una matrice di celle, debbono essere trasferite in un a memoria digitale. La scansione avviene in C fasi, una fase per ciascuna colonna della matrice.
+Ad ogni fase viene trasferita in memoria la prima colonna della matrice, nello stesso tempo tutti gli elementi (dalla seconda colonna in poi) vengono trasferiti dalla propria colonna a quella precedente.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{cfa-color-filter-array}{%
+\subsubsection{CFA: Color Filter Array}\label{cfa-color-filter-array}}
+
+Poiché ogni cella è in grado di memorizzare \textbf{un solo colore} per volta e non una terna, occorre scegliere qual è il modello di memorizzazione ottimale (CFA).
+I due colori mancanti per completare la terna, saranno ottenuti per interpolazione dai pixel vicini (Color Interpolation). Il grado di accuratezza del risultato dipende da quanto è sofisticato il metodo di interpolazione.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{Possibili modelli di CFA}
+\caption{Possibili modelli di CFA}
+\end{figure}
+
+Possibili modelli di CFA
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{il-bayer-pattern}{%
+\subsubsection{Il Bayer Pattern}\label{il-bayer-pattern}}
+
+Lo schema più utilizzato è il Bayer Pattern. E' stato proposto nel 1976 da Byce Bayer ed è utilizzato dal 1980 in tutti i dispositivi elettronici.
+Esso rappresenta un rapporto \textbf{1 : 2 : 1} per \textbf{R : G : B} dove i pixel verdi sono disposti sulle ``diagonali''.
+Esso privilegia le misure del canale verde perché è quello più importante alla percezione della vista umana.
+Una immagine in Bayer Pattern viene memorizzata nel formato ``raw''.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{Screenshot 2026-01-02 202238.png}
+\caption{Screenshot 2026-01-02 202238.png}
+\end{figure}
+
+Poiché tramite il Bayer Pattern per ogni pixel si memorizza solo una componente di colore, tutte le altre dovranno essere ottenute per interpolazione dai pixel vicini.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Più dettagliatamente nell'immagine sottostante viene descritto il processo dal sensore CCD all'immagine finale.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{color-interpolation}{%
+\subsubsection{Color Interpolation}\label{color-interpolation}}
+
+\begin{itemize}
+\item
+  La matrice di dati rilasciata dal sensore può essere visualizzata come immagine. In questo caso si vedrebbe una immagine in scala di grigi.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  L'aver conservato solo una componente della terna del colore comporta la visione dell'immagine come se fosse composta da un mosaico.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  Per ottenere una immagine a colori occorre procedere con un algoritmo di color interpolation, che ricava i valori mancanti per ogni singola terna dei dati dell'intorno.
+  Poiché dall'immagine a colori sparisce l'effetto a mosaico, l'algoritmo di color interpolation viene anche chiamato algoritmo di ``\textbf{demosaicking}''.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\hypertarget{color-interpolation-replicationnearest-neighbor-interpolation}{%
+\subsubsection{Color interpolation: replication/Nearest-neighbor interpolation}\label{color-interpolation-replicationnearest-neighbor-interpolation}}
+
+Per ogni singolo pixel gli elementi mancanti della terna vengono copiati dall'intorno. Questa tecnica viene anche chiamata ``\textbf{Nearest-neighbor interpolation}''
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{itemize}
+\item
+  \textbf{Color interpolation: bilinear
+  Abbiamo l'informazione di R e manca G e B}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Color interpolation: bilinear
+  Abbiamo l'informazione di G e manca R e B}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Color interpolation: bilinear
+  Abbiamo l'informazione di B e manca R e G}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\end{document}

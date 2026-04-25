@@ -1,0 +1,112 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Prova di Laboratorio
+31 Marzo 2023
+Descrizione del programma
+Scrivere un programma in C che:
+●
+
+●
+
+●
+●
+
+A. Prenda un input da tastiera (argomenti della funzione main)
+costituito dal nome di un file di testo (ES: input.txt) ed un numero k
+in [7,13]; il file contiene una collezione di stringhe, una per riga;
+si suppone che la lunghezza di ogni stringa sia non superiore ai 30
+caratteri;
+B. Legga tutte le stringhe contenute nel file di input e le memorizzi
+in una lista doppiamente concatenata che viene mantenuta con
+ordinamento lessicografico crescente;
+C. Stampi la lista ottenuta sullo standard output, dal primo
+all’ultimo elemento;
+D. Stampi infine il numero di stringhe della lista cha ha una
+lunghezza pari o maggiore di k.
+
+Specifiche
+Il programma potra’ essere strutturato in un unico file sorgente, ma dovra’
+contenere almeno le seguenti funzioni:
+●
+
+●
+●
+●
+●
+
+readInput: funzione che prende in input l'array di puntatori a
+carattere argv della funzione main, controlla che gli argomenti
+richiesti siano nel numero e nei limiti specificati, e restituisce un
+record (struct) che contiene tali parametri; se il controllo non va a
+buon fine, stampa un messaggio sullo standard error e termina il
+programma.
+insertWord: funzione che inserisce una stringa in una lista
+doppiamente concatenata in ordine lessicografico crescente;
+buildList: funzione che legge le stringhe dal file e le inserisce una
+alla volta all’interno della lista mediante la funzione insertWord();
+printList: funzione che stampa l’intera lista sullo standard output,
+dal primo all’ultimo elemento;
+elab: funzione che stampa il numero di stringhe che hanno lunghezza
+maggiore o uguale a k, come specificato nel punto D.
+
+È VIETATO usare variabili globali.
+Durata della prova: 120 minuti
+-------------------------------------------OUTPUT DI CONTROLLO:
+(contenuto del file input.txt, che si trova nella home directory)
+zamicrus
+xylophaga
+
+zaffres
+worked
+woorari
+abdicative
+coffles
+abasing
+chemical
+chello
+olympics
+ekatantalum
+cherishes
+circumsinous
+cobblers
+cohesiveness
+dacoity
+exacinate
+yearned
+immixture
+indecency
+laguncularia
+miminypiminy
+noncomprehensive
+novorolsky
+$ ./a.out input.txt 10
+Numero di stringhe aventi lunghezza pari o maggiore di 10: 8
+Output:
+abasing
+abdicative
+chello
+chemical
+cherishes
+circumsinous
+cobblers
+coffles
+cohesiveness
+dacoity
+ekatantalum
+exacinate
+immixture
+indecency
+laguncularia
+miminypiminy
+noncomprehensive
+novorolsky
+olympics
+woorari
+worked
+xylophaga
+yearned
+zaffres
+zamicrus
+
+

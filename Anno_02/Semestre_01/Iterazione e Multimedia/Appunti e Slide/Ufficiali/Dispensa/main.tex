@@ -1,0 +1,92 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% --- PACKAGES ---
+\usepackage[utf8]{inputenc}
+\usepackage[italian]{babel}
+\usepackage[T1]{fontenc}
+\usepackage{graphicx} % Per le immagini
+\usepackage{geometry} % Per i margini
+ \geometry{margin=2.5cm}
+\usepackage{hyperref} % Per i link cliccabili
+\usepackage{amsmath, amssymb} % Per le formule matematiche
+\usepackage{listings} % Per il codice Processing
+\usepackage{xcolor} % Per i colori del codice
+\usepackage{fancyhdr} % Per testata e piè di pagina
+\usepackage{longtable, booktabs}
+
+% --- CONFIGURAZIONE CODICE (Processing/Java) ---
+\lstset{
+    language=Java,
+    basicstyle=\ttfamily\small,
+    keywordstyle=\color{blue},
+    stringstyle=\color{red},
+    commentstyle=\color{green!50!black},
+    breaklines=true,
+    frame=single
+}
+
+% --- COMANDI EXTRA PER PANDOC ---
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+
+\usepackage{calc} 
+\usepackage{longtable,booktabs,array}
+
+\makeatletter
+\newsavebox\pandoc@box
+\newcommand*\pandocbounded[1]{% scales image to fit in text height/width
+  \sbox\pandoc@box{#1}%
+  \Gscale@div\@tempa{\textheight}{\dimexpr\ht\pandoc@box+\dp\pandoc@box\relax}%
+  \Gscale@div\@tempb{\linewidth}{\wd\pandoc@box}%
+  \ifdim\@tempb\p@<\@tempa\p@\let\@tempa\@tempb\fi%
+  \ifdim\@tempa\p@<\p@\scalebox{\@tempa}{\usebox\pandoc@box}%
+  \else\usebox{\pandoc@box}%
+  \fi%
+}
+\makeatother
+
+\begin{document}
+
+% 1. Copertina
+\input{copertina/copertina.tex}
+
+\pagenumbering{roman} % Numerazione romana per premessa e indice
+
+% 2. Premessa
+\input{premessa/premessa.tex}
+
+% 3. Info Esame, per adesso non esiste
+%\input{premessa/info_esame.tex}
+
+% 4. Indice
+\tableofcontents
+\newpage
+
+\pagenumbering{arabic} % Torna alla numerazione normale
+
+% 5. Teoria (Lezioni 1-12)
+\part{Teoria}
+\input{Teoria/Lezione 1/lezione1.tex} % Assicurati che il percorso sia identico a quello del file tree
+\input{Teoria/Lezione 2/lezione2.tex}
+\input{Teoria/Lezione 3/lezione3.tex}
+\input{Teoria/Lezione 4/lezione4.tex}
+\input{Teoria/Lezione 5/lezione5.tex}
+\input{Teoria/Lezione 6/lezione6.tex}
+\input{Teoria/Lezione 7/lezione7.tex}
+\input{Teoria/Lezione 8/lezione8.tex}
+\input{Teoria/Lezione 9/lezione9.tex}
+\input{Teoria/Lezione 10/lezione10.tex}
+\input{Teoria/Lezione 11/lezione11.tex}
+\input{Teoria/Lezione 12/lezione12.tex}
+% Aggiungi qui gli altri \input man mano che crei i file
+
+% 6. Laboratorio (Processing)
+\part{Laboratorio}
+\input{laboratorio/lezione1_lab.tex}
+% Aggiungi qui gli altri \input
+
+% 7. Formule
+\appendix
+\input{formule/formule.tex}
+
+\end{document}

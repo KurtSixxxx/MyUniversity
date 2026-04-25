@@ -1,0 +1,15 @@
+1. x ∧ (y ∨ z) = (x ∧ y) ∨ (x ∧ z)
+
+2. a ∨ (b ∧ c) = (a ∨ b) ∧ (a ∨ c)
+
+3. (p ∨ q) ∧ (r ∨ s) = (p ∧ r) ∨ (p ∧ s) ∨ (q ∧ r) ∨ (q ∧ s)
+
+4. (x ∧ y) ∨ (z ∧ w) = (x ∨ z) ∧ (x ∨ w) ∧ (y ∨ z) ∧ (y ∨ w)
+
+5. ¬(A ∨ B) = ¬A ∧ ¬B (De Morgan)
+
+6. ¬(A ∧ B) = ¬A ∨ ¬B (De Morgan)
+
+7. A ∨ (¬A ∧ B) = (A ∨ ¬A) ∧ (A ∨ B) = 1 ∧ (A ∨ B) = A ∨ B
+
+8. A ∧ (¬A ∨ B) = (A ∧ ¬A) ∨ (A ∧ B) = 0 ∨ (A ∧ B) = A ∧ B

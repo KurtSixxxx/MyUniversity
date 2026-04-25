@@ -1,0 +1,144 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Prova di Laboratorio
+27 Giugno 2023
+
+Descrizione del programma
+Scrivere un programma in C che:
+●
+
+●
+
+●
+●
+
+A. Prenda un input da tastiera (argomenti della funzione main)
+costituito dal nome di un file di testo (ES: input.txt) ed un numero F
+in virgola mobile in [1.0, 20.0]; il file contiene una collezione di
+stringhe, una per riga; si suppone che la lunghezza di ogni stringa
+sia non superiore ai 30 caratteri; Ogni coppia di stringhe rappresenta
+un singolo record, il quale risulta composto da un numero in virgola
+mobile (in una riga) ed una parola (nella riga successiva) -- vedi
+input in seconda pagina
+B. il programma legga tutte le stringhe contenute nel file di input e
+le memorizzi in una lista doppiamente concatenata in cui ogni record
+contenga il numero in virgola mobile (sia V) e la parola (sia P); i
+record vanno inseriti all’interno della lista sulla base
+dell’ordinamento lessicografico crescente del campo P;
+C. Stampi la lista ottenuta sullo standard output, dal primo
+all’ultimo elemento della lista stessa;
+D. Stampi infine il numero di record della lista tali che V >= F
+
+Il programma potra’ essere strutturato in un unico file sorgente, ma dovra’
+contenere almeno le seguenti funzioni:
+●
+
+●
+●
+●
+●
+
+readInput: funzione che prende in input l'array di puntatori a
+carattere argv della funzione main, controlla che gli argomenti
+richiesti siano nel numero e nei limiti specificati, e restituisce un
+record (struct) che contiene tali parametri; se il controllo non va a
+buon fine, stampa un messaggio sullo standard error e termina il
+programma;
+insertRecord: funzione che inserisce un nuovo record (P, V) in una
+lista doppiamente concatenata;
+buildList: funzione che legge le stringhe dal file e le inserisce una
+alla volta all’interno della lista mediante la funzione
+insertRecord();
+printList: funzione che stampa l’intera lista sullo standard output,
+dal primo all’ultimo elemento;
+elab: funzione che stampa il numero di record tali che V >= F;
+
+E’ VIETATO usare variabili globali.
+
+Durata della prova: 120 minuti
+
+INPUT di esempio:
+(contenuto del file input.txt, che si trova nella home directory)
+10.2
+zamicrus
+16.5
+xylophaga
+8.4
+zaffres
+3.456
+worked
+10.345
+woorari
+4.123
+abdicative
+79.1
+coffles
+18.4
+abasing
+15.4
+chemical
+32.1
+chello
+4.5
+olympics
+22.3
+ekatantalum
+19.3
+cherishes
+17.3
+circumsinous
+14.5
+cobblers
+13.2
+cohesiveness
+8.1
+dacoity
+3.4
+exacinate
+1.12345678
+yearned
+12.345678
+immixture
+3.456
+indecency
+1.2345
+laguncularia
+3.456
+miminypiminy
+9.8765
+noncomprehensive
+5.1234
+novorolsky
+
+OUTPUT DI CONTROLLO:
+$ ./a.out input.txt 18.2
+Numero di record aventi lunghezza pari o maggiore di 18.2: 5
+Output:
+abasing 18.4
+abdicative 4.123
+chello 32.1
+chemical 15.4
+cherishes 19.3
+circumsinous 17.3
+cobblers 14.5
+coffles 79.1
+cohesiveness 13.2
+dacoity 8.1
+ekatantalum 22.3
+exacinate 3.4
+immixture 12.345678
+indecency 3.456
+laguncularia 1.2345
+miminypiminy 3.456
+noncomprehensive 9.8765
+novorolsky 5.1234
+olympics 4.5
+woorari 10.345
+worked 3.456
+xylophaga 16.5
+yearned 1.12345678
+zaffres 8.4
+zamicrus 10.2
+
+

@@ -1,0 +1,28 @@
+# File di sistema Windows
+desktop.ini
+Thumbs.db
+ehthumbs.db
+[Dd]esktop.ini
+
+# File di sistema macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# File temporanei e di backup
+*.tmp
+*.bak
+*.swp
+*~
+
+# Esclusione video (già rimossi dalla cartella, ma per sicurezza)
+*.mp4
+*.mkv
+*.avi
+*.mov
+
+# Esclusione file compressi grandi
+*.zip
+*.rar
+*.7z
+*.7z.00*

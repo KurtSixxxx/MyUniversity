@@ -1,0 +1,13 @@
+ESERCIZIO 1 [15 punti]
+a) [10 punti] Implementare una classe Rocket con:
+
+Posizione, velocità lungo y, lunghezza 40px, altezza 80px
+Aspetto: razzo (rettangolo + punta triangolare) arancione
+Movimento verticale con wrap-around (esce sopra → rientra sotto)
+Velocità random tra 3-8 px/frame
+b) [5 punti] Estendere con RocketPro:
+
+Colore gradiente arancione→rosso
+Velocità doppia
+Scia di 5 cerchi gialli che segue il razzo
+OBBLIGATORIO: Finestra 512x512, sfondo nero, Reset con 'R'. Rocket a sinistra, RocketPro a destra.

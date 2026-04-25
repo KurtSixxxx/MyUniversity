@@ -1,0 +1,24 @@
+🌟 Caso Migliore — Pivot al centro (divisione perfetta)
+L'array viene diviso in due metà quasi uguali
+
+Esempio: pivot scelto come elemento centrale o mediano
+
+Profondità ricorsiva: log n
+
+Complessità totale: O(n log n) ✅ Prestazioni al top!
+
+⚖️ Caso Medio — Pivot scelto casualmente o in modo intelligente
+La divisione non è perfetta, ma comunque abbastanza bilanciata in media
+
+Anche se alcuni pivot causano divisioni sbilanciate (es. 20/80), la complessità resta O(n log n)
+
+La casualità o tecniche come “median-of-three” aiutano ad evitare divisioni estreme 🎲 È il caso più comune nella pratica
+
+🚨 Caso Peggiore — Pivot in un’estremità + array ordinato
+Esempio: array ordinato e pivot = primo o ultimo elemento
+
+Partizione: una vuota (0 elementi), l'altra con tutti gli altri ($$n - 1$$)
+
+Profondità ricorsiva = n
+
+Complessità: O(n²) 🔴 Rischioso, ma evitabile!

@@ -1,0 +1,47 @@
+
+
+ ** build_stack() **
+ Dato inserito (0): 345.122099
+ Dato inserito (1): 755.072944
+ Dato inserito (2): 682.017512
+ Dato inserito (3): 204.803674
+ Dato inserito (4): 468.580755
+ Dato inserito (5): 366.906065
+ Dato inserito (6): 797.045489
+ Dato inserito (7): 589.037990
+ Dato inserito (8): 464.557631
+ Dato inserito (9): 433.587222
+ Dato inserito (10): 581.251165
+ Dato inserito (11): 710.368997
+ Dato inserito (12): 727.231486
+ Dato inserito (13): 310.602995
+ Dato inserito (14): 591.033284
+ Dato inserito (15): 214.968371
+ Dato inserito (16): 349.200717
+ Dato inserito (17): 283.710068
+ Dato inserito (18): 212.181921
+ Dato inserito (19): 265.625206
+
+ ** build_array() **
+ Dato estratto (0): 265.625206
+ Dato estratto (1): 212.181921
+ Dato estratto (2): 283.710068
+ Dato estratto (3): 349.200717
+ Dato estratto (4): 214.968371
+ Dato estratto (5): 591.033284
+ Dato estratto (6): 310.602995
+ Dato estratto (7): 727.231486
+ Dato estratto (8): 710.368997
+ Dato estratto (9): 581.251165
+ Dato estratto (10): 433.587222
+ Dato estratto (11): 464.557631
+ Dato estratto (12): 589.037990
+ Dato estratto (13): 797.045489
+ Dato estratto (14): 366.906065
+ Dato estratto (15): 468.580755
+ Dato estratto (16): 204.803674
+ Dato estratto (17): 682.017512
+ Dato estratto (18): 755.072944
+ Dato estratto (19): 345.122099
+
+** elabValues(), avg=467.645280, no. of values > 467.645280 = 9

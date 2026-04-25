@@ -1,0 +1,44 @@
+#separator:tab
+#html:true
+Cos'è un Automa a Stati Finiti Deterministico (ASFD)?	È un modello computazionale in grado di leggere una stringa simbolo per simbolo, muovendosi solo verso destra e senza possibilità di scrittura o ritorno, definito come una quintupla [$]&lt;Σ, Q, δ, q_0, F&gt;[/$].
+Cosa rappresenta Σ in un ASFD?	Σ è l'alfabeto finito di input, cioè l'insieme dei simboli che l'automa può leggere.
+Cosa rappresenta Q in un ASFD?	Q è l'insieme finito di stati dell'automa.
+Cos'è la funzione δ in un ASFD?	È la funzione di transizione [latex]$δ: Q × Σ → Q$[/latex], che associa a ogni coppia (stato, simbolo) un nuovo stato.
+Cosa rappresenta q₀ in un ASFD?	È lo stato iniziale da cui parte la computazione.
+Cosa rappresenta F in un ASFD?	È l'insieme degli stati finali o accettanti.
+Un ASFD può scrivere o tornare indietro nel nastro?	No, può solo leggere e avanzare verso destra.
+"Cosa significa che la funzione δ è ""totale""?"	<div>Che per ogni coppia (q, a), con q ∈ Q e a ∈ Σ, è definita una e una sola transizione.</div>
+Quando una stringa è accettata da un ASFD?	Quando, al termine della lettura, l’automa si trova in uno stato q ∈ F e ha letto tutta la stringa (cioè si trova in una configurazione $(q, ε)$).
+Cos'è una tabella di transizione in un ASFD?	<div>Una tabella che mostra, per ogni stato e simbolo, lo stato successivo.</div>
+Cos'è un diagramma di stato di un ASFD?	Un grafo orientato in cui i nodi sono gli stati e gli archi rappresentano le transizioni etichettate dai simboli letti.
+Come viene indicato lo stato iniziale in un diagramma di stato?	Con una freccia entrante senza origine.
+Come viene indicato uno stato finale in un diagramma di stato?	Con un doppio cerchio.
+Cosa indica il simbolo speciale B?	Il simbolo <em>blank</em>, che rappresenta la fine della stringa nel nastro.
+Cos’è una configurazione di un ASFD?	È una coppia [latex]$(q, x)$[/latex] dove q è lo stato attuale e x la parte rimanente della stringa da leggere.
+Cosa rappresenta la configurazione [latex](q, ε)[/latex]?	<div>Una configurazione finale, in cui l’automa ha finito di leggere la stringa.</div>
+Quando una configurazione è iniziale?	Quando lo stato è q₀, cioè la configurazione è $(q₀, x)$.
+Quando una configurazione è finale?	Quando x = ε, cioè non c’è più nulla da leggere.
+Quando una configurazione è accettante?	Quando x = ε e q ∈ F.
+Qual è la condizione per il termine della computazione?	<div>Quando l’automa legge il simbolo B (blank), cioè entra in una configurazione $(q, ε)$.</div>
+Cosa rappresenta la configurazione [latex]$(q₀, x)$[/latex]?	L’inizio della computazione.
+Cos’è Σ* (Sigma star)?	L’insieme di tutte le stringhe, anche vuote, che si possono costruire con i simboli di Σ.
+Cos’è ε (epsilon)?	La stringa vuota, cioè una stringa con zero simboli.
+"Perché $(q, ε)$ ≡ ""fine del nastro""?"	Perché ε rappresenta l’assenza di altri simboli da leggere, cioè il nastro è finito.
+"Cosa significa che una configurazione rappresenta una ""fotografia"" dell'automa?"	<div>Mostra in che stato si trova, che simboli rimangono da leggere e dove si trova la testina.</div>
+In una configurazione [latex]$(q, x)$,[/latex] cosa rappresenta x?	La parte rimanente della stringa da leggere.
+Una configurazione può avere x = ε ma q ∉ F. La stringa è accettata?	No, serve anche che q ∈ F.
+Se la funzione δ non è definita per una certa coppia (q, a), l’automa è deterministico?	No, perché la funzione δ deve essere totale.
+Se la funzione δ associa più stati alla stessa coppia (q, a), l’automa è deterministico?	No, sarebbe un automa non deterministico.
+Perché una configurazione $(q, ε)$ con q ∈ F è detta accettante?	Perché indica che la computazione è terminata e l’automa è in uno stato finale.
+Se una stringa viene completamente letta e si arriva in uno stato NON appartenente a F, la stringa è accettata?	No.
+Se una stringa viene completamente letta e si arriva in uno stato appartenente a F, la stringa è accettata?	Sì.
+Cosa significa la notazione $\langle q, w \rangle \vdash \langle q', w' \rangle$?	<div>Significa che l’automa può passare dalla configurazione $\langle q, w \rangle$ a $\langle q', w' \rangle$ in <strong>un solo passo</strong> computazionale.</div>
+Cosa rappresenta la relazione $\vdash$?	La relazione di <strong>derivazione diretta</strong> tra due configurazioni, cioè un singolo passo di computazione dell’automa.
+Cosa indica la notazione $\vdash^*$?	La <strong>chiusura riflessiva e transitiva</strong> della relazione $\vdash$, cioè l’automa può passare da una configurazione a un’altra in <strong>zero o più passi</strong>.
+Qual è la differenza tra $\vdash$ e $\vdash^*$?	$\vdash$ rappresenta un <strong>solo passo</strong>, mentre $\vdash^*$ rappresenta <strong>zero o più passi</strong> (più generale).
+<em><em>Cosa significa $\langle q_0, x \rangle \vdash^</em> \langle q, \varepsilon \rangle$ con $q \in F$?</em>*	Che l’automa ha letto tutta la stringa $x$ partendo dallo stato iniziale $q_0$ ed è arrivato nello stato finale $q$, quindi ha <strong>accettato</strong> la stringa.
+Quando una stringa $x$ è accettata da un ASFD $M$?	Quando $\langle q_0, x \rangle \vdash^* \langle q, \varepsilon \rangle$ e $q \in F$.
+Come si definisce formalmente il linguaggio riconosciuto da un ASFD $M$?	$L(M) = { x \in \Sigma^* \mid \langle q_0, x \rangle \vdash^* \langle q, \varepsilon \rangle \land q \in F }$
+"Cosa significa dire che un ASFD ""riconosce un linguaggio""?"	Che <strong>accetta tutte e solo</strong> le stringhe che appartengono a quel linguaggio, cioè l’insieme delle stringhe per cui la computazione termina in uno stato finale.
+Cosa vuol dire che $x \in L(M)$?nta $\Sigma^*$?	Che la stringa $x$ è <strong>accettata</strong> dall’automa $M$, cioè $M$ riconosce $x$.
+Cosa vuol dire che $x \notin L(M)$?	Che la stringa $x$ <strong>non viene accettata</strong> dall’automa $M$, cioè non porta a uno stato finale.

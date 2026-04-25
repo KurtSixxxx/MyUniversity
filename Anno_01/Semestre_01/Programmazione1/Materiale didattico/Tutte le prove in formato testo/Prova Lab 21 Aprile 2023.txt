@@ -1,0 +1,118 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Prova di Laboratorio - 21 Aprile 2023
+Descrizione del programma
+Scrivere un programma in C che:
+●
+
+●
+●
+●
+
+A. Prenda un input da tastiera (argomenti della funzione
+main) costituito dal nome di un file di testo (ES: input.txt)
+ed un numero intero “k” nell’intervallo [5-15]. il file
+contiene una collezione di stringhe, una per riga; si suppone
+che la lunghezza di ogni stringa sia non superiore ai 30
+caratteri;
+B. Legga tutte le stringhe contenute nel file di input e le
+memorizzi in una struttura dati di tipo stack;
+C. Stampi tutte le stringhe mediante una sequenza di
+operazioni di rimozione dallo stack (pop()).
+D. con riferimento al punto C, i caratteri delle stringhe con
+lunghezza maggiore o uguale al numero k vanno stampate in
+ordine lessicografico crescente.
+
+Specifiche
+Il programma potra’ essere strutturato in un unico file sorgente,
+ma dovra’ contenere almeno le seguenti funzioni:
+●
+
+●
+●
+●
+●
+●
+
+readInput: funzione che prende in input l'array di puntatori
+a carattere argv ed il numero di argomenti argc della
+funzione main, controlla che gli argomenti richiesti siano
+nel numero e nei limiti specificati, e restituisca tali
+parametri in una struct; se il controllo non va a buon fine,
+stampa un messaggio sullo standard error e termina il
+programma.
+pushWord: funzione che inserisce una stringa in uno stack di
+stringhe;
+popWord: funzione che preleva una stringa da uno stack di
+stringhe;
+buildStack: funzione che legge le stringhe presenti nel file
+e le inserisce una alla volta sullo stack mediante la
+funzione pushWord();
+sortWord: funzione che prende in input una stringa e
+restituisce una stringa con gli stessi caratteri in ordine
+lessicografico crescente. ES: absbfjridm --> abbdfijmrs
+printStack(): funzione che stampa (e rimuove) le stringhe
+contenute nello stack come indicato nei punti C e D.
+
+È VIETATO usare variabili globali.
+Durata della prova: 120 minuti. NB: Inserire nome, cognome e numero
+di matricola all’interno del file sorgente.
+
+INPUT DI CONTROLLO ((contenuto del file input.txt, che si trova all’interno della
+home directory):
+
+zamicrus
+xylophaga
+zaffres
+worked
+woorari
+abdicative
+coffles
+abasing
+chemical
+chello
+olympics
+ekatantalum
+cherishes
+circumsinous
+cobblers
+cohesiveness
+dacoity
+exacinate
+yearned
+immixture
+indecency
+laguncularia
+miminypiminy
+noncomprehensive
+novorolsky
+./a.out input.txt 10
+Output atteso:
+klnooorsvy
+ceeehimnnnooprsv
+iiiimmmnnpyy
+aaacgillnruu
+indecency
+immixture
+yearned
+exacinate
+dacoity
+ceeehinosssv
+cobblers
+cciimnorssuu
+cherishes
+aaaeklmnttu
+olympics
+chello
+chemical
+abasing
+coffles
+aabcdeiitv
+woorari
+worked
+zaffres
+xylophaga
+zamicrus
+
+

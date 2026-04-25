@@ -1,0 +1,2 @@
+/*Estendi l'esercizio 3 aggiungendo una funzione modificaAnnoPubblicazione che accetta un puntatore a una struttura Libro
+e un nuovo anno di pubblicazione, modificando il campo annoPubblicazione del libro passato.*/

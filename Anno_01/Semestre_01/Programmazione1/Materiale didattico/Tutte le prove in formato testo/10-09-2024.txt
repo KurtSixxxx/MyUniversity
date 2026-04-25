@@ -1,0 +1,101 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2023-2024
+Compito di Programmazione 1 e Laboratorio F-N
+10 settembre 2024
+Descrizione del programma
+Si scriva un programma C che:
+A. [3 punti] Prenda in input da riga di comando un parametro stringa in_filename che contenga
+un nome di file di input (ad esempio “input”), un parametro stringa out_filename che contenga
+un nome di file di output (ad esempio “output”) e un parametro carattere c. Si assuma una
+lunghezza massima per i nomi dei file di 50 caratteri.
+Si stampino a schermo i valori dei parametri presi in input.
+B. [8 punti] Si assuma che il file di testo contenuto al percorso indicato da filename contenga un
+numero non noto di righe, ciascuna contenente una lettera dell’alfabeto. Il programma legga
+il contenuto del file e inserisca le lettere dell’alfabeto in una lista concatenata di caratteri L.
+Si stampi a schermo il contenuto della lista L.
+C. [5 punti] Conti il numero di occorrenze del carattere c nella lista L e lo inserisca in una
+variabile o.
+Si stampi il valore contenuto in o.
+D. [10 punti] Scorra la lista L dalla testa alla coda. Per ciascun elemento e conti il suo numero
+di occorrenze p all’interno della lista, nel suo stato corrente. Se il numero di occorrenze trovato
+p è inferiore a o, continui a scorrere la lista, altrimenti cancelli il carattere corrente e e
+ricominci a scorrere la lista dalla testa alla coda. Il processo termina quando la lista è stata
+attraversata dalla testa alla coda senza nessuna cancellazione.
+Si stampi il contenuto della lista L dopo le operazioni indicate sopra.
+E. [4 punti] Scriva il contenuto della lista L su un file di testo.
+Nota: gestire opportunamente i casi in cui i file non possono essere correttamente aperti in lettura o
+scrittura stampando un errore sullo standard error e terminando l’esecuzione del programma.
+
+Specifiche
+Scrivere il programma in un unico file sorgente main.c. Il programma dovrà contenere almeno le
+seguenti funzioni con opportuni parametri formali:
+-
+
+-
+
+decodeParameters: funzione che prende in input il numero argc e il vettore argv ricevuti in
+input dalla funzione main(), controlli la presenza e i requisiti degli argomenti e li inserisca in
+un record (struct) da restituire allo user code (funzione main). La funzione deve gestire
+correttamente gli errori relativi a input non corretti;
+readFile: funzione che legge il contenuto del file e restituisce la lista L come definito nel
+punto B del testo;
+countOccurrences: funzione che conta il numero di occorrenze di un carattere nella lista
+come indicato nel punto C del testo;
+processL: modifica la lista come indicato nel punto D del testo;
+writeToFile: scrive la lista su file come indicato nel punto E.
+
+Note
+-
+
+Durata della prova: 120 minuti
+È VIETATO usare variabili globali.
+Si inseriscano i file sorgenti direttamente nella propria home directory.
+Accesso alla documentazione disponibile tramite il browser al link: https://devdocs.io/c/.
+
+Output di controllo
+Si consideri il seguente file “input” (troverete il file nella vostra home directory):
+A
+G
+E
+R
+L
+R
+M
+S
+K
+C
+K
+J
+F
+P
+N
+R
+C
+E
+M
+F
+W
+P
+A
+H
+P
+Eseguendo il programma con il comando: ./main input output A
+il programma stamperà su standard output il seguente contenuto:
+==========PUNTO A==========
+Nome del file di input: input
+Nome del file ouput: output
+Valore di c: A
+==========PUNTO B==========
+Contenuto della lista:
+
+AGERLRMSKCKJFPNRCEMFWPAHP
+==========PUNTO C==========
+Occorrenze di A in L: 2
+==========PUNTO D==========
+Contenuto della lista:
+GLSKJNRCEMFWAHP
+E produrrà un file “output” con il seguente contenuto:
+GLSKJNRCEMFWAHP
+
+

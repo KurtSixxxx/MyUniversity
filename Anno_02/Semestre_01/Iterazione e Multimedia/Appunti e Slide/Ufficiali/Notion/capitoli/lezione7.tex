@@ -1,0 +1,1461 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\usepackage{longtable,booktabs,array}
+\usepackage{calc} % for calculating minipage widths
+% Correct order of tables after \paragraph or \subparagraph
+\usepackage{etoolbox}
+\makeatletter
+\patchcmd\longtable{\par}{\if@noskipsec\mbox{}\fi\par}{}{}
+\makeatother
+% Allow footnotes in longtable head/foot
+\IfFileExists{footnotehyper.sty}{\usepackage{footnotehyper}}{\usepackage{footnote}}
+\makesavenoteenv{longtable}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{lezione-7-colore}{%
+\section{Lezione 7: Colore}\label{lezione-7-colore}}
+
+\begin{figure}
+\centering
+{unnamed.png}
+\caption{unnamed.png}
+\end{figure}
+
+\textbf{Come è fatta la luce?}
+
+Se un raggio luminoso bianco attraversa un prisma di vetro, a luce viene decomposta in onde luminose di tipo differente e si ottiene uno spettro di colori dal violetto al rosso.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Quello che il nostro occhio percepisce è solo una piccola porzione dello spettro elettromagnetico.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+I colori sono legati alla \textbf{lunghezza d'onda}.
+
+La \textbf{lunghezza d'onda} è una grandezza fisica che descrive \textbf{quanto ``è larga'' un'onda luminosa}.
+
+Più precisamente:
+
+\begin{itemize}
+\tightlist
+\item
+  è la \textbf{distanza tra due massimi consecutivi dell'onda} (per esempio due ``creste'')
+\item
+  si indica con la lettera greca \textbf{λ (lambda)}
+\item
+  si misura in \textbf{nanometri (nm)}, cioè miliardesimi di metro
+\end{itemize}
+
+Nel caso della luce:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{lunghezze d'onda corte} → colore violetto/blu
+\item
+  \textbf{lunghezze d'onda medie} → colore verde
+\item
+  \textbf{lunghezze d'onda lunghe} → colore rosso
+\end{itemize}
+
+Esempio concreto:
+
+\begin{itemize}
+\tightlist
+\item
+  luce blu ≈ 450 nm
+\item
+  luce verde ≈ 550 nm
+\item
+  luce rossa ≈ 650 nm
+\end{itemize}
+
+Quindi \textbf{il colore dipende direttamente dalla lunghezza d'onda della luce che arriva al nostro occhio}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+La luce è formata da tutte quelle lunghezze d'onda percepite dall'occhio umano, e la luce visibile da noi umani oscilla tra il violetto ed il rosso.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+L'occhio umano percepisce come colore di un oggetto quella luce che l'oggetto stesso \textbf{riflette}. Se un oggetto riflette tutte le lunghezze d'onda luminosa, allora l'oggetto sarà percepito come bianco; come se lo spettro di colori si ricomponesse.
+Ad esempio, un oggetto che riflette le lunghezze d'onda da 500 a 570nm ed assorbe tutto il resto sarà percepito come di colore verde.
+
+Per \textbf{descrivere la luce} ci serviamo dei seguenti attributi:
+
+\begin{itemize}
+\item
+  \textbf{Radianza}: la quantità di luce emessa dalla sorgente luminosa.
+\item
+  \textbf{Luminanza}: La \textbf{luminanza} misura \textbf{quanta luce viene percepita dall'occhio umano} proveniente da una superficie.
+  È diversa dalla radianza:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    la \textbf{radianza} è una quantità fisica ``oggettiva''
+  \item
+    la \textbf{luminanza} tiene conto \textbf{di come l'occhio umano risponde alla luce}
+  \end{itemize}
+
+  Infatti:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    l'occhio \textbf{non è ugualmente sensibile a tutte le lunghezze d'onda}
+  \item
+    siamo più sensibili al \textbf{verde}, meno al blu e al rosso
+  \end{itemize}
+
+  Quindi due superfici che emettono la \textbf{stessa energia fisica} possono apparire:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    una molto luminosa
+  \item
+    l'altra più scura
+  \end{itemize}
+
+  In sintesi: \textbf{la luminanza è la luminosità ``vista'' dall'uomo}, non solo misurata con strumenti.
+\item
+  \textbf{Brillantezza}: La \textbf{brillantezza} non è una grandezza fisica, ma \textbf{una sensazione soggettiva}.
+
+  Dipende da:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    luminanza
+  \item
+    contesto visivo (sfondo, luce ambientale)
+  \item
+    adattamento dell'occhio
+  \item
+    percezione personale
+  \end{itemize}
+
+  Esempio semplice:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    un grigio su sfondo nero sembra \textbf{più brillante}
+  \item
+    lo stesso grigio su sfondo bianco sembra \textbf{più spento}
+  \end{itemize}
+
+  Quindi:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{luminanza} → misura fisica legata alla percezione
+  \item
+    \textbf{brillantezza} → sensazione psicologica
+  \end{itemize}
+
+  Due persone possono percepire \textbf{brillantezze diverse} guardando la stessa scena.
+\end{itemize}
+
+\textbf{In sintesi:}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Radianza} → quanta luce emette la sorgente (fisica)
+\item
+  \textbf{Luminanza} → quanta luce percepisce l'occhio (fisica + visiva)
+\item
+  \textbf{Brillantezza} → quanto ``sembra luminosa'' una cosa (psicologica)
+\end{itemize}
+
+\hypertarget{i-coni}{%
+\subsubsection{I coni}\label{i-coni}}
+
+Nella retina, ossia il CCD dell'occhio, ci sono tre tipi di coni
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Tipo S}: sensibili alle lunghezza d'onda corte (colori bluastri)
+\item
+  \textbf{Tipo M}: sensibili alle lunghezza d'onda medie (colori verdastri)
+\item
+  \textbf{Tipo L}: sensibili alle lunghezza d'onda lunghe (colori rossastri)
+\end{itemize}
+
+\hypertarget{teoria-del-tristimolo}{%
+\subsubsection{Teoria del tristimolo}\label{teoria-del-tristimolo}}
+
+💡
+
+\emph{Tutti i colori si possono ottenere ``mescolando'' tre colori fondamentali in proporzioni differenti.}
+
+Dimostreremo che questa ipotesi è \textbf{FALSA}.
+
+\hypertarget{il-colore}{%
+\subsubsection{Il colore}\label{il-colore}}
+
+\textbf{Non esiste una scala fisica per misurare il color}e. Questo perché il colore è una questione di \textbf{percezione} o \textbf{interpretazione soggettiva}.
+Il riconoscimento dei colori da parte dell'uomo è basato sulla \textbf{luce}, sugli \textbf{oggetti} che riflettono la luce e sugli \textbf{occhi} e il \textbf{cervello} dell'osservatore.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{differenze-di-colore}{%
+\subsubsection{Differenze di colore}\label{differenze-di-colore}}
+
+Il colore \textbf{non è una proprietà assoluta} di un oggetto, ma il risultato dell'interazione tra \textbf{luce}, \textbf{oggetto} e \textbf{osservatore}. Per questo lo stesso oggetto può apparire diverso in situazioni differenti.
+
+\begin{itemize}
+\item
+  \textbf{Differenze di sorgenti luminose}
+
+  Il colore percepito dipende molto dal \textbf{tipo di luce} che illumina l'oggetto.
+
+  La luce solare contiene uno spettro ampio e abbastanza uniforme, mentre lampade a incandescenza, neon o LED hanno spettri diversi.
+
+  Un oggetto può quindi apparire:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    più caldo (tendente al rosso) sotto una lampada a incandescenza
+  \item
+    più freddo o alterato sotto luce al neon
+  \end{itemize}
+
+  Questo fenomeno spiega perché un vestito sembra di un colore in negozio e diverso a casa.
+\item
+  \textbf{Differenze di osservatore}
+
+  Persone diverse \textbf{non percepiscono i colori allo stesso modo}.
+
+  Le differenze possono dipendere da:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    sensibilità dei coni
+  \item
+    età
+  \item
+    affaticamento visivo
+  \item
+    difetti della vista (come il daltonismo)
+  \end{itemize}
+
+  Quindi lo stesso colore fisico può essere interpretato in modo leggermente diverso da osservatori differenti.
+\item
+  \textbf{Differenze di dimensioni (effetto area)}
+
+  Un colore che ricopre \textbf{una superficie molto ampia} appare più \textbf{luminoso e saturo} rispetto allo stesso colore applicato su una piccola area.
+
+  Questo è chiamato \textbf{effetto area}.
+
+  Esempio:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    un piccolo quadrato rosso può sembrare meno intenso
+  \item
+    una grande parete dello stesso rosso appare più viva e brillante
+  \end{itemize}
+
+  Il colore è lo stesso, cambia solo la superficie che lo contiene.
+\item
+  \textbf{Differenze di sfondo (effetto contrasto)}
+
+  Il colore percepito dipende anche dal \textbf{colore dello sfondo} su cui è osservato.
+
+  Questo fenomeno è noto come \textbf{effetto contrasto}.
+
+  In particolare:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    su sfondo scuro, un colore appare più brillante
+  \item
+    su sfondo chiaro, lo stesso colore appare più spento o cupo
+  \end{itemize}
+
+  Il colore non cambia fisicamente, ma cambia la \textbf{percezione relativa}.
+\item
+  \textbf{Differenze di direzione}
+
+  Alcuni materiali (come vernici lucide o metallizzate) hanno \textbf{caratteristiche direzionali}:
+
+  il colore percepito varia in base:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    all'angolo di osservazione
+  \item
+    all'angolo di illuminazione
+  \end{itemize}
+
+  Per questo, nelle misure del colore, è importante mantenere \textbf{costanti gli angoli di osservazione e di illuminazione}, altrimenti il colore misurato risulta diverso.
+\end{itemize}
+
+\hypertarget{composizione-dei-colori}{%
+\subsubsection{Composizione dei colori}\label{composizione-dei-colori}}
+
+Immaginiamo di illuminare una superficie bianca che ha il 100\% di coefficiente di riflessione: questo significa che la superficie dell'oggetto non assorbe nessuna parte della luce che riflette, ma si comporta come uno specchio che rimanda indietro tutto ciò che la colpisce.
+
+Se proiettiamo su questa superficie una o più di tre luci colorate pure, chiamate luci monocromatiche perché composte da una sola lunghezza d'onda, quello che i nostri vedono è il risultato della loro unione. Questo processo si chiama \textbf{Sintesi Additiva}.
+
+Per capire come funziona la sintesi additiva, immaginiamo di partire dal buio totale (il nero) e di aggiungere più strati di luce: più luce aggiungi, più il risultato si avvicina al bianco.
+Qualsiasi luce che ha uno spettro complesso può essere ottenuta come ``somma'' di tre luci monocromatiche agenti simultaneamente.
+
+Sulla base di quest'ultimo concetto, la CIE ha scelto le tre radiazioni primarie in modo che le lunghezze d'onda siano il più possibile distanziate nello spettro.
+
+\begin{longtable}[]{@{}ll@{}}
+\toprule\noalign{}
+Rosso & 700.0 nm \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+Verde & 546.1 nm \\
+Blu & 435.8 nm \\
+\end{longtable}
+
+\hypertarget{colorimetria}{%
+\subsubsection{Colorimetria}\label{colorimetria}}
+
+Il concetto di base è che, se vogliamo trattare il colore in informatica, dobbiamo smettere di considerarlo un'emozione vaga e iniziare a vederlo come il risultato di una misura fatta da un sensore biologico: \textbf{l'occhio umano}
+
+L'occhio non è solo un organo, ma il nostro vero strumento di misura, e la sua capacità di vedere i colori dipende dalla \textbf{retina}, una membrana che funziona come il sensore di una fotocamera digitale, ma con una particolarità: contiene \textbf{tre tipi di coni}, ognuno specializzato nel catturare una specifica zona della luce.
+
+Abbiamo delle formule che definiscono tre valori X, Y e Z. Chiamati \textbf{valori del tristimolo}. Queste equazioni descrivono semplicemente un processo di ``somma totale'' dell'energia. Per capire meglio, immaginiamo che la luce sia composta da tantissime onde diverse, ognuna con la sua lunghezza d'onda (indicata con il simbolo lambda \(\lambda\)). Per ottenere il valore finale di un colore, la matematica moltiplica, punto per punto tutto lo spettro visibile, quanta energia emette la sorgente luminosa (\(L_{e}\)), quanto l'occhio è sensibile a quella specifica onda (usando le funzioni \(\overline{x}\), \(\overline{y}\), \(\overline{z}\)) e quanto l'oggetto riflette quella luce.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Il sistema fondamentale da ricordare è lo \textbf{spazio colorimetrico CIE 1931}. Questo standard è nato per tradurre la sensibilità biologica nelle tre coordinate numeriche universali: X, Y e Z.
+
+Y rappresenta la \textbf{luminanza}, ovvero la misura dell'energia che noi percepiamo effettivamente come intensità luminosa. (Quanto un colore ci sembra chiaro o scuro)
+
+X e Z sono legati alla percezione del colore puro, Y è il parametro che ``pesa'' quanto forte quella luce colpisce i nostri occhi,
+
+Pensa a una mela rossa. Il valore X sarà molto alto perché i coni sensibili alle onde lunghe (il rosso) stanno ricevendo molti dati; se la mela è sotto un riflettore potente, anche il valore Y (la luminanza) sarà alto perché la luce riflessa è molta. Se spegniamo quasi del tutto la luce, X e Z diminuiranno, ma sarà soprattutto il crollo di Y a dirci che la mela è diventata scura. In sintesi, la colorimetria serve a trasformare la ``sensazione'' di vedere una mela in una \textbf{terna di numeri (X, Y, Z)} che un computer può finalmente gestire senza ambiguità.
+
+\hypertarget{dati-colorimetrici}{%
+\subsubsection{Dati colorimetrici}\label{dati-colorimetrici}}
+
+Se vogliamo descrivere il colore di una mela in modo così preciso che un computer possa riprodurlo identico, non basta dire ``è rossa'', perché quel rosso dipende da troppi fattori. Per ottenere una misura oggettiva, dobbiamo combinare tre ingredienti fondamentali.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Il primo ingrediente è la \textbf{distribuzione energetica della luce}, chiamata anche \textbf{illuminante}. Ogni sorgente luminosa (il sole, una lampadina alogena, un neon) emette energia in modo diverso lungo tutto lo spettro. Se visualizzassimo questa energia su un grafico, vedremmo che una lampadina a incandescenza (Illuminante A) ha molta energia sulle onde lunghe (il rosso), mentre la luce del giorno (D65) è più bilanciata. Senza sapere esattamente che tipo di luce sta colpendo l'oggetto, non possiamo calcolarne il colore, perché un oggetto ``cambia'' tinta in base alla lampadina che lo illumina.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  Il secondo ingrediente è la \textbf{curva spettrale dell'oggetto}, detta anche \textbf{riflettanza}. Questa è una sorta di ``impronta digitale'' del materiale. Quando la luce colpisce la nostra mela, la buccia ne assorbe una parte e ne riflette un'altra. La curva di riflettanza ci dice, per ogni singola lunghezza d'onda, quanta luce viene rimbalzata verso i nostri occhi. Se la mela è rossa, la sua curva sarà molto alta nella zona dei 700 nm (il rosso) e molto bassa nelle altre zone, perché ha ``ucciso'' (assorbito) il blu e il verde.
+\item
+  Il terzo ingrediente è la \textbf{sensibilità dell'occhio umano}, rappresentata dalle funzioni di corrispondenza del colore (\textbf{CMF}) che abbiamo visto precedentemente (\(\bar{x}, \bar{y}, \bar{z}\)). Questo dato serve a spiegare come il nostro sensore biologico (la retina con i suoi coni) reagisce fisicamente a quell'energia che gli arriva.
+\end{enumerate}
+
+Una volta che abbiamo ottenuto la terna X, Y e Z: se abbiamo questi numeri, possiamo poi convertirli in altri spazi più intuitivi, come lo spazio *CIELAB (Lab)**, dove L* indica quanto il colore è chiaro e a\emph{, b} ne definiscono la tinta precisa. Ricorda: se manca anche solo uno di questi tre elementi (luce, oggetto o occhio), non è possibile effettuare una misurazione colorimetrica.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{visione-e-misura}{%
+\subsubsection{Visione e misura}\label{visione-e-misura}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{1. Visione Umana (Percezione Soggettiva)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Processo:} La luce riflessa dalla mela colpisce la \textbf{retina}, una membrana posta nella parte posteriore dell'occhio che funge da sensore biologico. Qui, circa 6-7 milioni di fotorecettori chiamati \textbf{coni} (di tipo S, M e L) si attivano in base alle lunghezze d'onda ricevute: i coni di tipo L sono particolarmente sensibili alle onde lunghe del rosso.
+\item
+  \textbf{Elaborazione:} Il nervo ottico trasmette questi impulsi al \textbf{cervello}, che interpreta i segnali basandosi non solo sull'intensità, ma anche su fattori soggettivi come lo sfondo e la memoria cromatica.
+\item
+  \textbf{Risultato:} Identificazione del colore: \textbf{Rosso}.
+\end{itemize}
+
+\textbf{2. Colorimetro (Metodo del Tristimolo)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Processo:} Lo strumento utilizza il \textbf{metodo del tristimolo}, impiegando un set di \textbf{tre sensori filtrati} progettati per imitare quasi esattamente la sensibilità spettrale dell'occhio umano. Questi sensori misurano l'energia radiante riflessa dall'oggetto.
+\item
+  \textbf{Elaborazione:} Le informazioni vengono inviate a un \textbf{microcomputer} che determina le coordinate numeriche del colore (X, Y, Z). Questi valori possono essere convertiti in diversi spazi colore.
+\item
+  \textbf{Dati numerici (esempio CIELAB):} \textbf{001 L 43.31, a+47.63, b+14.12}. (Nota: L indica la luminanza, mentre a e b indicano la \textbf{tinta} e la \textbf{saturazione} del colore).
+\end{itemize}
+
+\textbf{3. Spettrofotometro (Metodo Spettrofotometrico)}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Processo:} Una \textbf{sorgente allo Xenon} illumina uniformemente la mela. La luce riflessa passa attraverso un sistema di lenti e colpisce un \textbf{sensore spettrale multiplo}. Un \textbf{reticolo di diffrazione} scompone la luce nelle sue singole lunghezze d'onda, che vengono poi convertite in segnali elettrici da una \textbf{array di fotodiodi}.
+\item
+  \textbf{Elaborazione:} Il microcomputer analizza i dati per determinare la \textbf{riflettanza spettrale}, ovvero l'impronta digitale cromatica della mela per ogni singola banda dello spettro visibile. I risultati possono essere visualizzati come grafici spettrali o valori numerici assoluti.
+\item
+  \textbf{Dati numerici:} \(L^* = 43.31\), \(a^*= 47.63\), \(b^* = 14.12\).
+\end{itemize}
+
+\hypertarget{sintesi-additiva-e-sintesi-sottrattiva}{%
+\subsubsection{Sintesi Additiva e Sintesi Sottrattiva}\label{sintesi-additiva-e-sintesi-sottrattiva}}
+
+Il fisico inglese \textbf{Isaac Newton}, nella seconda metà del \textbf{Seicento}, scomponendo un raggio di luce con un \textbf{prisma}, scoprì che la \textbf{luce solare}, che vediamo \textbf{bianca}, è in realtà composta da \textbf{diversi colori}.
+
+Oggi sappiamo che esistono moltissime \textbf{onde elettromagnetiche} e che l'occhio umano è sensibile solo a una porzione molto piccola di esse, ossia quelle con \textbf{lunghezza d'onda compresa tra i 700 e i 400 nanometri}, che costituiscono appunto lo \textbf{spettro visibile}, dove \textbf{ogni lunghezza d'onda corrisponde a un colore} e \textbf{tutte assieme vengono percepite come luce bianca}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Le cose che ci circondano quindi sono \textbf{colorate} perché hanno la facoltà di \textbf{riflettere onde elettromagnetiche di diversa lunghezza d'onda}. Questo significa che quando noi percepiamo una superficie \textbf{bianca} è perché questa ci riflette \textbf{l'intera gamma delle onde visibili}; quando invece percepiamo una superficie \textbf{colorata} è perché questa \textbf{trattiene ogni onda luminosa tranne quella del colore che vediamo}, che ci viene riflessa.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+La superficie \textbf{nera}, invece, \textbf{assorbe tutte le onde luminose senza rifletterne alcuna}; ed è per questo che d'estate, a vestirsi di \textbf{nero}, si soffre il caldo, perché un materiale nero è un materiale che \textbf{assorbe tutte queste onde luminose}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Sostanzialmente l'\textbf{esperimento di Newton}, dimostrando che la \textbf{luce bianca è scomponibile in raggi luminosi e colorati}, ci dice che \textbf{tutti i raggi colorati assieme danno il bianco}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Questa sintesi, secondo cui \textbf{tutti i colori assieme danno il bianco}, è chiamata \textbf{sintesi additiva}. In questa sintesi i \textbf{colori fondamentali} con cui si possono formare tutti gli altri sono \textbf{rosso, verde e blu}, e dai nomi inglesi del rosso, verde e blu deriva l'acronimo \textbf{RGB}, utilizzato per indicare questo \textbf{profilo colore}, cioè questo \textbf{metodo di definizione del colore usato in digitale}, dove \textbf{ogni colore è definito da una percentuale di rosso, di verde e di blu}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+È invece inversa la \textbf{sintesi sottrattiva}, secondo cui \textbf{l'unione di tutti i colori forma il nero}. In questo caso i \textbf{colori fondamentali}, la cui percentuale definisce tutti gli altri, sono \textbf{ciano, magenta e giallo}. Questa è la sintesi di riferimento quando non si parla di \textbf{impulsi luminosi} ma di \textbf{sostanze colorate su un supporto}, quindi è quella che viene usata per \textbf{dipingere e per stampare}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Infatti nelle \textbf{stampanti} ci sono le cartucce di \textbf{ciano, magenta e giallo}, con l'aggiunta del \textbf{nero}, sia per \textbf{non sprecare le cartucce colorate} e poi perché, per la verità, \textbf{tutti i colori assieme non danno un nero pieno}; quindi si aggiunge l'\textbf{inchiostro nero}, che nell'acronimo di questo profilo colore è simboleggiato dalla \textbf{K di \emph{black}}, per non confonderlo con la \textbf{B di \emph{blue}}.
+
+Essenzialmente ci sono delle \textbf{sostanze} che hanno l'intrinseca capacità di \textbf{riflettere determinate onde luminose}: con queste sostanze si fanno i \textbf{pigmenti}, e con i pigmenti si fanno i \textbf{materiali per dipingere}, per \textbf{disegnare} e gli \textbf{inchiostri per stampare}.
+
+Quindi, quando si ragiona in \textbf{digitale}, si usa il \textbf{profilo colore RGB}, perché ovviamente lo \textbf{schermo emette luce} e quindi ragiona per \textbf{impulsi luminosi}, ossia per \textbf{sintesi additiva}. Quando poi si passa in fase di \textbf{stampa}, il colore viene convertito nel \textbf{profilo colore CMYK}, in maniera da renderlo adatto alla \textbf{sintesi sottrattiva}, che ragiona in termini di \textbf{colore sulla carta} che assorbe o riflette i \textbf{raggi luminosi}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{osservatori-standard-e-le-cmf}{%
+\subsubsection{\texorpdfstring{\textbf{Osservatori Standard e le CMF}}{Osservatori Standard e le CMF}}\label{osservatori-standard-e-le-cmf}}
+
+Poiché ogni persona vede i colori in modo leggermente diverso a causa della sensibilità della propria retina, la scienza ha creato un \textbf{Osservatore Standard}, ovvero un ``occhio matematico'' medio.
+
+Le \textbf{CMF (Color-Matching Functions)} sono tre curve, chiamate \(\overline{x}(\lambda)\), \(\overline{y}(\lambda)\) e \(\overline{z}(\lambda)\), che descrivono la \textbf{sensibilità spettrale} di questo osservatore ideale.
+
+\begin{itemize}
+\tightlist
+\item
+  Queste curve rappresentano come l'occhio risponde alle componenti del rosso, del verde e del blu per ogni lunghezza d'onda.
+\item
+  Vengono utilizzate per calcolare i \textbf{valori di tristimolo X, Y, Z}, che sono le coordinate numeriche finali di un colore.
+\end{itemize}
+
+\hypertarget{cie-1931-e-cie-1964-qual-uxe8-la-differenza}{%
+\subsubsection{\texorpdfstring{\textbf{CIE 1931 e CIE 1964: Qual è la differenza?}}{CIE 1931 e CIE 1964: Qual è la differenza?}}\label{cie-1931-e-cie-1964-qual-uxe8-la-differenza}}
+
+La differenza principale tra questi due standard riguarda quanto spazio occupa l'oggetto che stiamo guardando nel nostro campo visivo, espresso come \textbf{angolo di osservazione}.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{CIE 1931 (Osservatore a 2°):} È stato progettato studiando la visione umana su un angolo di soli \textbf{2 gradi}. Immagina di guardare la punta di un dito a circa 50 cm di distanza: in quell'area piccolissima della retina (la fovea) siamo molto sensibili ai dettagli, ma vediamo meno superficie. È adatto per oggetti visti da lontano o molto piccoli.
+\item
+  \textbf{CIE 1964 (Osservatore supplementare a 10°):} Poiché l'occhio si comporta diversamente quando guarda superfici più ampie, nel 1964 è stato introdotto un osservatore basato su un angolo di \textbf{10 gradi}. Immagina di guardare un oggetto grande quanto un'arancia a 50 cm di distanza. Questo standard è più accurato per misurare il colore di superfici estese.
+\end{itemize}
+
+\hypertarget{diagramma-cromatico-cie-o-spazio-xyz}{%
+\subsubsection{Diagramma cromatico CIE o Spazio XYZ}\label{diagramma-cromatico-cie-o-spazio-xyz}}
+
+Il Diagramma Cromatico CIE è una rappresentazione visiva che mostra la composizione dei colori in funzione delle coordinate bidimensionali x e y. Lungo il bordo curvo del grafico, chiamato ``\emph{Spectral Energy Locus}'', troviamo le lunghezze d'onda dei colori puri espresse in nanometri. Al centro si trova il ``\emph{Punto di Uguale Energia}'' (il bianco teorico) e la curva delle temperature di colore (da ``\emph{Warm White}'' a ``\emph{Daylight}'').
+
+Esistono tre regole fondamentali per interpretare le mescolanze su questo grafico:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Coppie di colori}: Se si uniscono due punti di colore si una linea retta, tutti i colori che giacciono su quella linea sono ottenibili miscelando i due colori di partenza.
+\item
+  \textbf{Saturazione e Tinta}: Unendo un punto di colore qualsiasi con il punto di bianco centrale, la linea rappresenta tutte le tonalità (tints) di quel colore, ovvero i vari gradi di saturazione
+\item
+  \textbf{Triadi di colori}: Se si scelgono tre colori primari e si uniscono per formare un triangolo, tutti i colori situati lungo i bordi e all'interno del triangolo sono riproducibili mescolando quei tre colori.
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Il Color Gamut (Monitor vs Stampa)}.
+Il concetto di mescolanza a triangolo è la base per capire il \emph{Gamut}, ovvero la gamma di colori riproducibili da un dispositivo. Unendo i punti corrispondenti al Rosso (R), Verde (G) e Blu (B), si ottiene un triangolo che rappresenta il gamut dei monitor. E' importante ricordare che questo triangolo non copre l'intera area del diagramma CIE; ciò significa che esistono colori visibili all'occhio umano che il monitor non può riprodurre, (che quindi riflette), mentre la stampa usa la sintesi sottrattiva (inchiostri, che quindi assorbe).
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Dallo Spazio 3D al Piano 2D (Formule)}.
+Il diagramma piatto che vediamo è in realtà solo una ``fetta'' o proiezione di uno spazio tridimensionale più complesso: lo spazio dei colori \textbf{CIE XYZ} (1931), basato su valori di tristimolo determinati sperimentalmente.
+
+Per passare dalle coordinate tridimensionali (X, Y, Z) al grafico bidimensionale (x, y), si utilizzano i coefficienti tricomatici calcolati con queste relazioni matematiche:
+
+\[
+x = \frac{X}{X + Y + Z}
+\]
+
+\[
+y = \frac{Y}{X+Y+Z}
+\]
+
+Il valore di z non viene rappresentato sul grafico perché è dipendente dagli altri due, essendo la somma delle proporzioni sempre uguale a 1, esso si calcola direttamente come:
+
+\[
+z = 1 - (x + y)
+\]
+
+\hypertarget{modelli-del-colore}{%
+\subsubsection{Modelli del Colore}\label{modelli-del-colore}}
+
+Un \textbf{Modello del Colore} (chiamato anche spazio o sistema dei colori) è un metodo standardizzato per specificare i colori in modo univoco.
+
+Funziona geometricamente: poiché per definire un colore servono tre caratteristiche, il modello utilizza un \textbf{sistema di coordinate 3-D} (o un suo sotto-spazio). In questo spazio tridimensionale, ogni specifico colore è rappresentato da un singolo punto
+
+Non esiste un modello perfetto per tutto, quindi ne usiamo diversi in base al \textbf{lavoro che dobbiamo fare}:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Per l'Hardware (Monitor e Stampanti):} Si usano \textbf{RGB} e \textbf{CMY}. Servono a dire alla macchina \emph{come accendere i pixel} o \emph{quale inchiostro spruzzare}.
+\item
+  \textbf{Per la Trasmissione e Compressione (TV e JPEG):} Si usano \textbf{YUV} e \textbf{YCbCr}. Questi modelli separano la luminosità dal colore per risparmiare dati (fondamentale per lo streaming o i file leggeri).
+\item
+  \textbf{Per l'Analisi e l'Uomo:} Si usano \textbf{HSV} o \textbf{HSI}. Servono per descrivere il colore come lo vediamo noi (es. ``Che tinta è? Quanto è vivo? Quanto è luminoso?''), cosa difficile da fare con numeri RGB.
+\end{itemize}
+
+\hypertarget{cie-l-a-b}{%
+\subsubsection{\texorpdfstring{CIE \(L^* a^* b^*\)}{CIE L\^{}* a\^{}* b\^{}*}}\label{cie-l-a-b}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{quote}
+\textbf{Perché nasce il CIE \(L^* a^* b^*\)?}
+\end{quote}
+
+I primi spazio colore della CIE (come CIE XYZ) e modelli come RGB \textbf{non sono percettivamente uniformi per l'occhio umano}.
+Questo significa che:
+
+\begin{itemize}
+\tightlist
+\item
+  a \textbf{distanze di colore numericamente uguali (\(\Delta C\) uguale)}
+\item
+  \textbf{non corrispondono differenze visive uguali} per l'occhio umano
+\end{itemize}
+
+Questi due colori possono risultare:
+
+\begin{itemize}
+\tightlist
+\item
+  matematicamente distanti allo stesso modo
+\item
+  ma percepiti come piò o meno diversi a seconda della zona dello spazio colore
+\end{itemize}
+
+\begin{quote}
+\textbf{Variazione di colore (\(\Delta C\))}
+\end{quote}
+
+Un colore è visto come un \textbf{punto nello spazio cromatico}.
+
+\begin{figure}
+\centering
+{Gemini\_Generated\_Image\_ut67rfut67rfut67.png}
+\caption{Gemini\_Generated\_Image\_ut67rfut67rfut67.png}
+\end{figure}
+
+La \textbf{variazione di colore \(\Delta C\)} è:
+
+\begin{itemize}
+\tightlist
+\item
+  lo \textbf{spostamento} da un colore a un altro
+\item
+  un \textbf{vettore} che collega due punti nello spazio colore
+\end{itemize}
+
+Se:
+
+\begin{itemize}
+\tightlist
+\item
+  C1 è il colore iniziale
+\item
+  C3 è il colore finale
+\end{itemize}
+
+allora:
+
+\begin{itemize}
+\tightlist
+\item
+  \(\Delta C\) \textbf{è il vettore che va da C1 a C3}
+\item
+  il \textbf{verso} è definito automaticamente da: C1 verso C3
+\end{itemize}
+
+\begin{quote}
+\textbf{Il problema della non uniformità percettiva}
+\end{quote}
+
+Se applichiamo la stessa variazione \(\Delta C\) a due colori diversi:
+
+\begin{itemize}
+\tightlist
+\item
+  C3 = C1 + \(\Delta C\)
+\item
+  C4 = C2 + \(\Delta C\)
+\end{itemize}
+
+dal punto di vista matematico:
+
+\begin{itemize}
+\tightlist
+\item
+  le distanze sono \textbf{uguali}
+\end{itemize}
+
+dal punto di vista percettivo:
+
+\begin{itemize}
+\tightlist
+\item
+  le differenze \textbf{possono apparire diverse}
+\end{itemize}
+
+Questo accade \textbf{non perché il colore non cambi}, ma perché:
+
+\begin{itemize}
+\tightlist
+\item
+  l'occhio umano n\textbf{on percepisce i cambiamenti di colore in modo uniforme} in tutte le zone dello spazio cromatico.
+\end{itemize}
+
+\begin{quote}
+\textbf{Obiettivo del CIE} \(L^* a^* b^*\)
+\end{quote}
+
+Lo spazio colore \textbf{CIE L\emph{a}b}* è stato introdotto per:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{ridurre la non uniformità percettiva}
+\item
+  fare in modo che:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \textbf{uguali distanze numeriche ≈ uguali differenze percepite}
+  \end{itemize}
+\end{itemize}
+
+Non elimina completamente il problema, ma lo \textbf{mitiga fortemente}.
+
+\begin{quote}
+\textbf{Significato delle componenti}
+\end{quote}
+
+Nel CIE \(L^* a^* b^*\) ogni colore è descritto da tre coordinate:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{L}* → luminosità
+
+  \begin{itemize}
+  \tightlist
+  \item
+    da scuro a chiaro
+  \end{itemize}
+\item
+  \textbf{a}* → asse cromatico
+
+  \begin{itemize}
+  \tightlist
+  \item
+    verde ↔ rosso
+  \end{itemize}
+\item
+  \textbf{b}* → asse cromatico
+
+  \begin{itemize}
+  \tightlist
+  \item
+    blu ↔ giallo
+  \end{itemize}
+\end{itemize}
+
+Ogni colore è quindi un \textbf{punto tridimensionale} nello spazio L\emph{a}b*.
+
+\begin{quote}
+\textbf{Perché L\emph{a}b* è diverso da RGB}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{RGB} è pensato per dispositivi che \textbf{emettono luce}
+\item
+  \textbf{L\emph{a}b}* è pensato per \textbf{misurare e confrontare i colori come li percepisce l'uomo}
+\end{itemize}
+\end{quote}
+
+In RGB:
+
+\begin{itemize}
+\tightlist
+\item
+  differenze numeriche simili \textbf{non implicano} differenze visive simili
+\end{itemize}
+
+In L\emph{a}b*:
+
+\begin{itemize}
+\tightlist
+\item
+  le distanze sono progettate per essere \textbf{più coerenti con la percezione umana}
+\end{itemize}
+
+\hypertarget{formule}{%
+\subsubsection{Formule}\label{formule}}
+
+Le formule non servono a calcolare numeri a mano, ma a trasformare coordinate fisiche (XYZ) in coordinate percettive (L\emph{a}b*).
+
+Le formule sono:
+
+\[
+L^* = 116 \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} - 16
+\]
+
+\[
+a^* = 500 \left[ \left( \frac{X}{X_n} \right)^{\frac{1}{3}} - \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} \right]
+\]
+
+\[
+b^* = 200 \left[ \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} - \left( \frac{Z}{Z_n} \right)^{\frac{1}{3}} \right]
+\]
+
+In tutte le formule compaiono i rapporti:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X/X_n\)
+\item
+  \(Y/Y_n\)
+\item
+  \(Z/Z_n\)
+\end{itemize}
+
+Qui:
+
+\begin{itemize}
+\tightlist
+\item
+  \(X, Y, Z\) → colore da convertire
+\item
+  \(X_n, Y_n, Z_z\) → punto bianco di riferimento
+\end{itemize}
+
+Questa divisione serve a:
+
+\begin{itemize}
+\item
+  rendere il colore \textbf{indipendente dall'illuminazione assoluta. S}ignifica la \textbf{quantità reale di luce fisica} che colpisce un oggetto o viene misurata da un sensore, senza tener conto di alcun riferimento.
+  Esempio intuitivo:
+  lo \textbf{stesso foglio bianco}:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    sotto il sole a mezzogiorno
+  \item
+    in una stanza poco illuminata
+  \end{itemize}
+
+  riflette \textbf{quantità di luce molto diverse}, quindi i valori XYZ cambiano molto.
+  Questa è illuminazione \textbf{assoluta}.
+\item
+  confrontarlo rispetto a un bianco noto
+\end{itemize}
+
+Senza questa normalizzazione, L\emph{a}b* non funzionerebbe correttamente.
+
+In tutte e 3 le componenti appare:
+
+\[
+(\frac{X}{X_n})^\frac{1}{3},\space (\frac{Y}{Y_n})^\frac{1}{3},\space
+(\frac{Z}{Z_n})^\frac{1}{3}
+\]
+
+Questa non è una scelta matematica casuale.
+
+La radice cubica:
+
+\begin{itemize}
+\tightlist
+\item
+  introduce \textbf{non linearità}
+\item
+  modella la \textbf{risposta non lineare dell'occhio umano}
+\end{itemize}
+
+In pratica:
+
+\begin{itemize}
+\tightlist
+\item
+  grandi variazioni fisiche → variazioni percettive più piccole
+\item
+  piccole variazioni fisiche → variazioni percettive più evidenti
+\end{itemize}
+
+Adesso parliamo della formula di \(L^*\): la \textbf{luminosità}
+
+\[
+L^* = 116 \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} - 16
+\]
+
+Osservazioni importanti:
+
+\begin{itemize}
+\tightlist
+\item
+  usa \textbf{solo Y}
+\item
+  Y rappresenta la \textbf{luminanza}
+\end{itemize}
+
+Il coefficiente \textbf{116} e il termine \textbf{−16} servono a:
+
+\begin{itemize}
+\tightlist
+\item
+  scalare L* circa nell'intervallo \textbf{0--100}
+\item
+  far coincidere:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    L* = 0 → nero
+  \item
+    L* ≈ 100 → bianco
+  \end{itemize}
+\end{itemize}
+
+L* è \textbf{separato dal colore}, descrive solo la quantità di luce percepita.
+
+Adesso parliamo della formula di \(a^*\): \textbf{l'asse verde-rosso}
+
+\[
+a^* = 500 \left[ \left( \frac{X}{X_n} \right)^{\frac{1}{3}} - \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} \right]
+\]
+
+Qui:
+
+\begin{itemize}
+\tightlist
+\item
+  si fa la \textbf{differenza} tra due grandezze normalizzate
+\item
+  la differenza indica una \textbf{direzione cromatica}
+\end{itemize}
+
+Interpretazione:
+
+\begin{itemize}
+\tightlist
+\item
+  a* \textgreater{} 0 → spostamento verso il \textbf{rosso}
+\item
+  a* \textless{} 0 → spostamento verso il \textbf{verde}
+\end{itemize}
+
+Il fattore \textbf{500} serve solo a:
+
+\begin{itemize}
+\tightlist
+\item
+  amplificare il valore
+\item
+  rendere lo spazio numericamente comodo
+\end{itemize}
+
+Adesso parliamo della formula di \(b^*\): \textbf{l'asse blu-giallo}
+
+\[
+b^* = 200 \left[ \left( \frac{Y}{Y_n} \right)^{\frac{1}{3}} - \left( \frac{Z}{Z_n} \right)^{\frac{1}{3}} \right]
+\]
+
+Stessa logica di a*, ma su un altro asse:
+
+\begin{itemize}
+\tightlist
+\item
+  b* \textgreater{} 0 → \textbf{giallo}
+\item
+  b* \textless{} 0 → \textbf{blu}
+\end{itemize}
+
+Il coefficiente \textbf{200} è diverso da 500 per:
+
+\begin{itemize}
+\tightlist
+\item
+  bilanciare le scale dei due assi
+\item
+  rendere lo spazio più uniforme
+\end{itemize}
+
+Perché \(X/X_n, Y/Y_n e Z/Z_n\) devono essere \textgreater{} 0.01?
+Questa condizione serve a:
+
+\begin{itemize}
+\tightlist
+\item
+  evitare instabilità numeriche
+\item
+  evitare comportamenti anomali della radice cubica vicino allo zero
+\end{itemize}
+
+Una volta ottenute le coordinate L\emph{a}b*, la distanza è:
+
+\[
+\Delta E_{ab}^* = \sqrt{ (\Delta L^*)^2 + (\Delta a^*)^2 + (\Delta b^*)^2 }
+\]
+
+Questa formula definisce la \textbf{distanza tra due punti dello spazio L\emph{a}b}* e misura la \textbf{differenza percettiva} tra due colori
+
+💡
+
+Quindi:
+
+\begin{itemize}
+\tightlist
+\item
+  \(L^*\) rappresenta la \textbf{luminanza}
+\item
+  \(a^*\) e \(b^*\) rappresentano la \textbf{crominanza}
+\end{itemize}
+
+\hypertarget{l-c-h-color-space}{%
+\subsubsection{\texorpdfstring{\(L^* C^* h\) Color Space}{L\^{}* C\^{}* h Color Space}}\label{l-c-h-color-space}}
+
+\(L^*C^*h\) è uno \textbf{spazio derivato dal CIELAB}, dove invece di lavorare con a* e b*, usiamo due grandezze più intuitive.
+
+In colorimetria, i sistemi \(L^*a^*b^*\) (CIELAB) e \(L^* C^* h^*\) rappresentano lo stesso spazio colore, ma utilizzano coordinate geometriche diverse per descriverlo.
+
+Immagina lo spazio colore come un cilindro: il sistema \(L^*a^*b^*\) usa coordinate \textbf{cartesiane} (rettangolari), mentre \(L^* C^* h^*\) usa coordinate \textbf{polari} (circolari).
+
+\begin{itemize}
+\item
+  \textbf{\(L^* a^* b^*\) (Coordinate Cartesiane)}
+
+  E' il sistema più comune per calcolare le differenze di colore (\Delta E). Si basa su due assi perpendicolari che si incrociano al centro:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(L^*\) \textbf{(Luminosità)}: da 0 (nero) a (100) bianco.
+  \item
+    \(a^*\) \textbf{(Asse Verde-Rosso)}: Valori negativi verso il verde, positivi verso il rosso.
+  \item
+    \(b^*\) \textbf{(Asse Blu-Giallo)}: Valori negativi verso il blu, positivi verso il giallo.
+  \end{itemize}
+\item
+  \textbf{\(L^* c^* h\) (Coordinate Cartesiane)}
+
+  E' il sistema più comune per calcolare le differenze di colore (\Delta E). Si basa su due assi perpendicolari che si incrociano al centro:
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(L^*\) \textbf{(Luminosità)}: da 0 (nero) a (100) bianco.
+  \item
+    \(C^*\) \textbf{(Chroma - Saturazione)}: È la distanza dal centro. Al centro (\(C^* = 0\)) il colore è grigio; man mano che ci si allontana, il colore diventa più saturo e vivido.
+  \item
+    \(h\) \textbf{(Hue - Tinta)}: È l'angolo espresso in gradi (da 0° a 360°). Ad esempio, 0° è rosso, 90° è giallo, 180° è verde e 270° è blu.
+    h non ha l'asterisco perché è una coordinata angolare (quindi che si misura in gradi) che descrive la posizione circolare, non una grandezza scalare trasformata.
+  \end{itemize}
+\end{itemize}
+
+\hypertarget{il-bianco-e-il-nero-nello-spazio-colore}{%
+\subsubsection{Il bianco e il nero nello spazio colore}\label{il-bianco-e-il-nero-nello-spazio-colore}}
+
+Il \textbf{nero matematico} è definito dai tristimoli \textbf{X, Y e Z tutti uguali a zero}. Si tratta di un concetto teorico, perché \textbf{nessun oggetto reale assorbe completamente tutta la luce}. Nel mondo reale, il \textbf{nero fisico} dipende dal \textbf{fattore di riflessione del materiale} e riflette solo una piccola percentuale della luce incidente, tipicamente tra il \textbf{3 e il 5\%}. Tra i materiali più scuri, il \textbf{velluto nero} è quello con il fattore di riflessione più basso, risultando visivamente il \textbf{``nero più nero''}. Ad esempio, la \textbf{tavoletta nera standard NPL} riflette pochissimo e ha coordinate colorimetriche \textbf{xyY ≈ (0.2940, 0.3258, 0.47)} e \textbf{L\emph{a}b* ≈ (4.2, −0.9, −0.5)}, valori che cambiano se si varia la \textbf{geometria di illuminazione e osservazione}.
+
+Il \textbf{bianco}, invece, non è unico e dipende sia dall'\textbf{illuminante} sia dall'\textbf{osservatore}. Il \textbf{bianco equienergetico}, teorico, ha tutti i tristimoli uguali a uno e corrisponde a \textbf{xyY = (1/3, 1/3, 1)}. In realtà, il \textbf{bianco percepito} dipende dalla luce utilizzata: l'\textbf{illuminante D65}, che simula la luce diurna media, è lo standard più usato, ma luci diverse come quelle al neon o al tungsteno modificano la percezione del colore dell'oggetto. Anche l'\textbf{osservatore} scelto è fondamentale: l'\textbf{osservatore CIE 1931} è adatto per oggetti piccoli o visti da vicino, mentre l'\textbf{osservatore CIE 1964} è indicato per oggetti grandi o osservati da lontano. La \textbf{tavoletta bianca standard NPL} riflette circa l'\textbf{80--85\% della luce} e ha coordinate \textbf{xyY = (0.3145, 0.3318, 85.56)} e \textbf{L\emph{a}b* = (94.1, −0.4, +1.3)}.
+
+In sintesi, le grandezze \textbf{L\emph{a}b}* permettono di confrontare \textbf{nero e bianco} in modo \textbf{percettivamente più coerente} con l'occhio umano, tenendo conto di \textbf{illuminante e osservatore}. Il \textbf{nero} ha \textbf{L}* molto basso, attorno a \textbf{4}, mentre il \textbf{bianco} ha \textbf{L}* molto alto, intorno a \textbf{94}.
+
+\hypertarget{gli-spazi-di-colore}{%
+\subsubsection{Gli spazi di colore}\label{gli-spazi-di-colore}}
+
+La \textbf{percezione del colore non è una fotografia oggettiva della realtà fisica}. Il nostro cervello non è uno strumento di misura scientifico come uno spettrometro: due fasci di luce con \textbf{spettri energetici completamente diversi} possono generare \textbf{la stessa identica sensazione di colore}. Il colore, quindi, non è una proprietà assoluta della luce, ma una \textbf{costruzione percettiva}.
+
+Questo pone un problema fondamentale: se il colore è in parte un'illusione soggettiva, \textbf{come siamo riusciti a metterci d'accordo su cosa sia un colore?} Per poter comunicare, confrontare e replicare un colore in modo affidabile, serve un \textbf{linguaggio oggettivo}, che non dipenda da giudizi vaghi come ``mi sembra più chiaro''.
+
+Ogni sorgente luminosa possiede uno \textbf{spettro}, cioè una distribuzione di energia in funzione della lunghezza d'onda. Lo si può immaginare come un \textbf{equalizzatore audio}: per ogni frequenza sappiamo quanta energia è presente. Questo spettro è l'``impronta digitale'' fisica della luce. Tuttavia, di fronte a questa enorme quantità di informazioni, il nostro cervello compie una semplificazione drastica: \textbf{riduce tutto a poche sensazioni fondamentali}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Da qui nasce il concetto di \textbf{metameria}. Due luci con spettri molto diversi, se misurate strumentalmente, possono apparire \textbf{identiche all'occhio umano}. Questi due stimoli sono detti \textbf{metameri}: fisicamente diversi, percettivamente indistinguibili.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Per descrivere il colore come lo percepiamo, nasce quello che si può chiamare \textbf{modello del pittore}, basato su tre dimensioni percettive fondamentali. La prima è la \textbf{tinta (Hue)}, cioè il ``nome'' del colore: rosso, verde, blu, giallo. Dal punto di vista fisico è associata alla \textbf{lunghezza d'onda dominante}, ovvero alla zona dello spettro in cui l'energia è massima. È la ``nota principale'' dell'accordo luminoso.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+La seconda dimensione è la \textbf{saturazione}, che descrive quanto un colore è puro. Un colore molto saturo appare intenso e vivido; un colore poco saturo è più spento, perché contiene una maggiore componente di \textbf{bianco o grigio}. La saturazione misura quindi quanto il colore si discosta dalla scala dei grigi.
+
+La terza dimensione è il \textbf{valore o luminosità}, che indica quanta luce totale è presente. È ciò che distingue un colore chiaro da uno scuro. Due colori possono avere la stessa tinta e saturazione ma differire solo per il valore, come un marrone scuro e un beige chiaro. Fisicamente questa dimensione è legata all'\textbf{energia media totale dello spettro}.
+
+Graficamente, questo modello viene rappresentato come un \textbf{triangolo} per ogni tinta. In basso si trova il nero (valore zero), in alto il bianco (valore massimo e saturazione zero), e su un altro vertice il colore puro e saturo. Tutte le variazioni di quella tinta si collocano all'interno del triangolo.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Unendo tutti questi triangoli lungo l'asse comune dei grigi, si ottiene uno \textbf{spazio tridimensionale dei colori}, noto come \textbf{spazio HSV (Hue, Saturation, Value)}. In questo spazio ogni colore è identificato da tre coordinate: la posizione angolare determina la tinta, la distanza dall'asse centrale la saturazione, e la posizione verticale il valore. Questo modello è estremamente intuitivo ed è molto efficace per \textbf{scegliere colori su uno schermo}.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Tuttavia, lo spazio HSV presenta un limite fondamentale: \textbf{non è percettivamente uniforme}. Ciò significa che una variazione numerica uguale non corrisponde sempre a una variazione visiva uguale. Un passo di 10 unità nel verde non produce la stessa differenza percettiva di un passo di 10 unità nel blu. Questo può generare gradienti visivamente irregolari, con bande percepibili. La geometria perfetta dello spazio HSV è quindi una \textbf{semplificazione utile, ma ingannevole}.
+
+All'inizio del Novecento, \textbf{Albert Munsell} affrontò il problema da una prospettiva opposta. Invece di imporre una forma geometrica ideale allo spazio dei colori, condusse \textbf{esperimenti percettivi sistematici}, chiedendo alle persone di giudicare le differenze tra campioni cromatici. Lo spazio dei colori venne quindi costruito \textbf{a partire dalla percezione umana}, non dalla matematica.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Il risultato è uno spazio tridimensionale con componenti simili a quelle dell'HSV, ma con una forma \textbf{irregolare e asimmetrica}. La tinta è ancora disposta lungo un cerchio, la luminosità lungo un asse verticale, mentre la saturazione viene sostituita dal \textbf{croma}, che rappresenta l'intensità percettiva del colore. La forma ``bitorzoluta'' del solido di Munsell non è un difetto, ma la sua caratteristica più importante: riflette fedelmente la sensibilità dell'occhio umano.
+
+Grazie a questa struttura, il sistema di Munsell è diventato uno \textbf{standard internazionale}. Un colore può essere descritto con una notazione precisa, come ad esempio 5yr56, eliminando ogni ambiguità linguistica. In questo modo, due persone in luoghi diversi del mondo possono riferirsi \textbf{allo stesso identico colore}, senza dipendere da interpretazioni soggettive.
+
+\hypertarget{sintesi-additiva-e-sintesi-sottrattiva-1}{%
+\subsubsection{Sintesi Additiva e Sintesi Sottrattiva}\label{sintesi-additiva-e-sintesi-sottrattiva-1}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Quando parliamo di \textbf{sintesi additiva}, stiamo descrivendo un fenomeno puramente luminoso. Il colore nasce dalla \textbf{somma di luci} di diverso colore che arrivano contemporaneamente all'occhio. Il modello di riferimento è l'\textbf{RGB}, basato sui tre colori primari della luce: \textbf{Rosso (R), Verde (G) e Blu (B)}. Questi non sono scelti a caso: corrispondono, in modo approssimato, alla sensibilità dei recettori dell'occhio umano.
+
+Nel modello additivo, ogni colore visibile sullo schermo è ottenuto variando l'intensità di queste tre componenti. Quando \textbf{nessuna luce è presente}, il risultato è il \textbf{nero}. Quando invece \textbf{tutte e tre le componenti sono al massimo}, la loro somma produce il \textbf{bianco}. Questo è un punto fondamentale: nella sintesi additiva il bianco nasce da una \textbf{somma}, non da un'assenza.
+
+La sovrapposizione di due luci primarie genera i cosiddetti \textbf{colori secondari}. Rosso più verde produce \textbf{giallo}, rosso più blu produce \textbf{magenta}, verde più blu produce \textbf{ciano}. Questi colori non sono ``nuovi'' in senso fisico, ma il risultato della risposta del nostro sistema visivo alla combinazione delle lunghezze d'onda presenti.
+
+Su questo principio funzionano \textbf{monitor, televisori, smartphone e display in generale}. Ogni pixel emette luce, e il colore che percepiamo dipende da quanta luce rossa, verde e blu viene emessa.
+
+\textbf{Colori complementari e significato percettivo}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Due colori sono detti \textbf{complementari} quando, sommati tra loro nella sintesi additiva, producono il \textbf{bianco}. Questo non è solo un fatto matematico, ma anche percettivo. Il giallo è complementare del blu, il magenta del verde, il ciano del rosso. La complementarità indica che i due colori ``coprono'' insieme l'intero spettro percepito dall'occhio.
+
+Questo concetto diventa cruciale quando si passa dal mondo della luce al mondo dei materiali, perché ciò che si somma nella sintesi additiva viene invece \textbf{sottratto} nella sintesi sottrattiva.
+
+\textbf{Sintesi sottrattiva: il colore come assorbimento}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+La \textbf{sintesi sottrattiva} descrive come nasce il colore quando la luce \textbf{non viene emessa}, ma \textbf{riflessa} da una superficie. Qui non partiamo dal nero, ma dal \textbf{bianco}, cioè dalla luce bianca incidente che contiene tutte le lunghezze d'onda visibili.
+
+Un \textbf{filtro colorato} o un \textbf{pigmento} assorbe selettivamente una parte dello spettro e riflette il resto. Il colore che percepiamo è quindi la \textbf{radiazione complementare} a quella assorbita. Se un filtro assorbe il blu, ciò che rimane è giallo. Se assorbe il verde, ciò che vediamo è magenta.
+
+I colori primari della sintesi sottrattiva sono \textbf{Ciano (C), Magenta (M) e Giallo (Y)}. Sovrapponendo questi filtri lungo il cammino di un fascio di luce bianca, ogni nuovo filtro \textbf{toglie} una componente luminosa. Quando si sovrappongono tutti e tre, idealmente viene assorbita tutta la luce visibile e il risultato è il \textbf{nero}.
+
+In pratica, però, l'assorbimento non è mai perfetto. Per questo nella stampa reale si introduce un quarto inchiostro, il \textbf{nero K}, dando origine al modello \textbf{CMYK}. Il nero migliora il contrasto, la profondità delle ombre e riduce l'uso eccessivo degli altri inchiostri.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Applicazioni della sintesi sottrattiva}
+
+La sintesi sottrattiva è alla base della \textbf{fotografia a colori} e della \textbf{stampa}. Quando guardi un foglio stampato, non stai vedendo luce emessa, ma luce riflessa. Dove non c'è inchiostro, la carta riflette quasi tutta la luce e appare bianca. Dove sono presenti più inchiostri, una parte crescente dello spettro viene assorbita e il colore diventa più scuro.
+
+Questo spiega perché i sistemi sottrattivi sono detti \textbf{passivi}: non producono luce, ma la modificano togliendo informazione spettrale.
+
+\textbf{Il modello RGB come spazio geometrico}
+
+Nel modello RGB, ogni colore può essere visto come un \textbf{punto nello spazio tridimensionale}. Le tre componenti R, G e B sono considerate \textbf{indipendenti} e rappresentano tre assi perpendicolari. L'insieme di tutti i colori ottenibili forma un \textbf{cubo}, chiamato cubo RGB.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Il vertice in cui tutte le componenti sono zero rappresenta il \textbf{nero}, mentre il vertice opposto, con tutte le componenti al massimo, rappresenta il \textbf{bianco}. La retta che li unisce è detta \textbf{retta dei grigi}, perché lungo di essa le tre componenti hanno lo stesso valore e il colore non ha tinta, ma solo luminanza.
+
+Questa rappresentazione è estremamente comoda dal punto di vista computazionale, ma poco intuitiva dal punto di vista percettivo. Guardando un colore reale, è difficile immaginare immediatamente ``quanto rosso, quanto verde e quanto blu'' lo compongano.
+
+\textbf{Limiti percettivi di RGB e passaggio a HSV}
+
+Il modello RGB è uno standard di fatto, semplice da implementare e perfetto per l'hardware. Tuttavia, è \textbf{percettivamente scomodo}, perché non separa chiaramente concetti che per l'uomo sono distinti, come il tipo di colore, la sua intensità e la sua vividezza.
+
+Per questo motivo si introducono modelli alternativi come \textbf{HSV}, che riorganizzano lo stesso spazio cromatico in modo più vicino alla percezione umana. La tinta indica ``che colore è'', la saturazione quanto è puro o diluito nel bianco, e la luminanza quanto è chiaro o scuro.
+
+È importante capire che \textbf{RGB e HSV descrivono gli stessi colori}, ma con coordinate diverse. La trasformazione tra i due spazi è matematica, non fisica, ed è non lineare.
+
+In sintesi, la differenza fondamentale tra sintesi additiva e sottrattiva è che la prima \textbf{aggiunge luce}, mentre la seconda \textbf{toglie luce}. RGB descrive come funzionano i dispositivi emissivi, CMY e CMYK come funzionano i materiali colorati. Ogni modello ha senso solo nel suo contesto fisico e applicativo, e nessuno è ``più vero'' degli altri: sono strumenti diversi per descrivere lo stesso fenomeno, il colore, che è allo stesso tempo fisico, percettivo e computazionale.
+
+\hypertarget{colori-sicuri-per-il-web}{%
+\subsubsection{Colori sicuri per il web}\label{colori-sicuri-per-il-web}}
+
+Dei 256 colori usati per il web, solo 40 vengono processati in modo diverso da vari tipi di sistemi operativi. Mentre 216 sono colori che sono comuni alla maggior parte dei sistemi operativi. Questi \textbf{216 colori} sono diventati degli standard dei cosiddetti \textbf{colori sicuri}. Essi si usano \textbf{quando si vuole che i colori visti siano uguali per la maggior parte delle persone}.
+
+Ognuno di questi 216 colori sicuri è formato come sempre da tre valori RGB, ma ogni valore può essere solo in numeri in \textbf{esadecimale} 00, 33, 66, 99, CC, FF.
+
+Quindi sono colori sicuri tutti quelli che in esadecimale sono scritti usando terne con questi 6 valori, esempio:
+
+\begin{itemize}
+\tightlist
+\item
+  \#33CCFF è sicuro
+\item
+  \#12A3FE non è sicuro
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{rappresentazioni-luminanza-crominanza}{%
+\subsubsection{Rappresentazioni Luminanza-Crominanza}\label{rappresentazioni-luminanza-crominanza}}
+
+Partiamo da un'osservazione fondamentale: \textbf{il nostro occhio non percepisce tutte le informazioni visive allo stesso modo}. Siamo estremamente sensibili alle variazioni di luminosità, molto meno alle variazioni di colore. Questo fatto, che è biologico prima ancora che tecnologico, è la chiave di tutto quello che segue.
+
+Quando rappresentiamo un'immagine in RGB, ogni pixel è descritto da tre valori che mescolano insieme informazione di luce e informazione di colore. Questo è comodo per i display, ma è inefficiente dal punto di vista percettivo e computazionale. Stiamo ``sprecando'' risorse per descrivere dettagli cromatici che l'occhio fatica persino a notare.
+
+Da qui nasce l'idea delle \textbf{rappresentazioni luminanza--crominanza}: separare ciò che riguarda la quantità di luce da ciò che riguarda il colore vero e proprio. In questi spazi una componente descrive la \textbf{luminanza}, cioè una versione in scala di grigi dell'immagine, mentre le altre due descrivono la \textbf{crominanza}, cioè le informazioni di colore che si aggiungono alla luminanza.
+
+Questa separazione è cruciale soprattutto nella \textbf{compressione delle immagini e dei video}, perché permette di allocare più bit alla luminanza e meno alla crominanza senza che la qualità percepita ne risenta in modo significativo.
+
+\hypertarget{lo-spazio-yuv}{%
+\subsubsection{Lo spazio YUV}\label{lo-spazio-yuv}}
+
+Lo spazio \textbf{YUV} nasce esattamente con questo obiettivo: tenere separata la luminanza dalle componenti cromatiche. È importante chiarire subito un punto concettuale spesso fonte di confusione: \textbf{YUV non è uno spazio colore unico}, ma una \textbf{famiglia di spazi} che condividono la stessa filosofia. Uno degli esempi più noti è quello definito dallo standard \textbf{ITU-R BT.601}, storicamente usato per la televisione.
+
+Nel modello YUV, la componente \textbf{Y} rappresenta la luminanza, mentre \textbf{U} e \textbf{V} rappresentano la crominanza. In altre parole, Y dice ``quanto è chiaro o scuro il pixel'', U e V dicono ``di che colore è''.
+
+Questo tipo di rappresentazione è nato nel contesto dei sistemi analogici, ma ha avuto enorme successo anche nel digitale, tanto che molte sue varianti sono ancora oggi alla base della codifica video.
+
+\hypertarget{da-rgb-a-yuv}{%
+\subsubsection{Da RGB a YUV}\label{da-rgb-a-yuv}}
+
+La trasformazione da RGB a YUV non è arbitraria, ma si basa su come funziona la visione umana. I tre canali RGB non contribuiscono allo stesso modo alla percezione della luminosità. In particolare, \textbf{l'occhio è molto più sensibile al verde}, meno al rosso e ancora meno al blu.
+
+Per questo motivo la luminanza Y non è una semplice media di R, G e B, ma una \textbf{combinazione lineare pesata}. Una buona approssimazione della luminanza percepita si ottiene con la formula
+
+\textbf{\(Y = 0.299 R + 0.587 G + 0.114 B\)}
+
+Il peso maggiore del verde non è un dettaglio matematico, ma un riflesso diretto della fisiologia dell'occhio umano.
+
+Una volta calcolata la luminanza, la crominanza viene definita come \textbf{differenza rispetto a un bianco di riferimento con la stessa luminanza}. In pratica, U misura quanto il colore tende verso il blu rispetto a Y, mentre V misura quanto tende verso il rosso. Questo porta alle formule
+
+\textbf{\(U = 0.564 (B − Y)\)} e \textbf{\(V = 0.713 (R − Y)\)}, che possono anche essere riscritte come combinazioni lineari di R, G e B.
+
+Se i valori RGB sono normalizzati tra 0 e 1, allora Y rimane tra 0 e 1, mentre U e V assumono valori positivi o negativi compresi tra −0.5 e 0.5. Questo è un aspetto importante: \textbf{U e V non rappresentano intensità assolute}, ma scostamenti cromatici rispetto alla luminanza.
+
+Quando R, G e B sono uguali tra loro, il colore è un grigio. In questo caso U e V valgono zero, perché non c'è alcuna informazione cromatica. Rimane solo la luminanza.
+
+\hypertarget{la-luminanza}{%
+\subsubsection{La luminanza}\label{la-luminanza}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{La luminanza non è un canale qualunque}. È la componente che porta con sé la maggior parte dell'informazione visiva percepita. Se si guarda solo il canale Y di un'immagine, si ottiene una versione in scala di grigi che conserva quasi completamente forme, contorni e dettagli.
+
+Questo spiega perché nella formula della luminanza il contributo del verde è dominante. Il sistema visivo umano utilizza soprattutto i fotorecettori sensibili alle lunghezze d'onda verdi per percepire i dettagli spaziali. Dal punto di vista ingegneristico, questo giustifica il fatto che nei sistemi di compressione si protegga molto la Y e si possa degradare di più U e V.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{lo-standard-yc_bc_r}{%
+\subsubsection{\texorpdfstring{Lo standard \(YC_{b}C_{r}\)}{Lo standard YC\_\{b\}C\_\{r\}}}\label{lo-standard-yc_bc_r}}
+
+Nel contesto digitale, soprattutto quando si lavora con immagini a 8 bit per canale, lo spazio YUV ``puro'' non è comodissimo. Il motivo è che U e V possono assumere valori negativi, mentre i formati digitali preferiscono lavorare con intervalli interi positivi.
+Da qui nasce \(YC_{b}C_{r}\), che può essere visto come una versione digitalizzata e normalizzata di YUV.
+
+È possibile ottenere facilmente lo spazio \(YC_{b}C_{r}\) normalizzando ed eventualmente quantizzando i canali di YUV.
+
+\begin{itemize}
+\tightlist
+\item
+  La \emph{luminanza} può essere ottenuta attraverso una combinazione lineare delle intensità luminose dei canali rosso, verde e blu di RGB, un'approssimazione abbastanza fedele è la seguente:
+  \(𝑌 = 0.3 ∗ 𝑅 + 0.6 ∗ 𝐺 + 0.1 ∗ 𝐵\)
+\item
+  La luminanza Y resta la stessa, mentre U e V vengono traslati per farli rientrare nell'intervallo 0--255. In pratica si definiscono \(C_{b}\) e \(C_{r}\) rappresentano la crominanza del blu e del rosso, questa qui sotto è la traslazione o shifting:
+  𝐶𝑏 = 128 + 𝑈
+  𝐶𝑟 = 128 + 𝑉
+\end{itemize}
+
+In questo modo tutti e tre i canali sono rappresentabili con 8 bit senza segno. Y continua a rappresentare la luminanza, \(C_b\) la crominanza legata al blu e \(C_r\) quella legata al rosso.
+
+Lo spazio \(YC_{b}C_{r}\) è \textbf{fondamentale nella compressione}, ed è quello che si trova, ad esempio, nel formato \textbf{JPEG}. Anche qui il principio resta lo stesso: mantenere alta la qualità della luminanza e ridurre l'informazione cromatica dove possibile, sfruttando i limiti della percezione umana.
+
+\hypertarget{colori-e-memoria}{%
+\subsubsection{Colori e Memoria}\label{colori-e-memoria}}
+
+Quando un'immagine viene mostrata a schermo, il modo più diretto per rappresentare i colori è usare il modello RGB con \textbf{8 bit per ciascun canale}. Ogni pixel è descritto da 24 bit totali, cioè 3 byte, e questo permette di rappresentare circa \textbf{16 milioni di colori}, il cosiddetto \emph{true color}. Questo schema è naturale per la visualizzazione perché i monitor funzionano proprio mescolando luce rossa, verde e blu.
+
+Il problema nasce quando si passa dalla visualizzazione alla \textbf{memorizzazione su disco} o alla \textbf{compressione}. Salvare ogni pixel con 24 bit è costoso in termini di spazio, soprattutto considerando che le immagini digitali hanno milioni di pixel. È qui che entra in gioco un'osservazione fondamentale: nelle immagini reali, soprattutto quelle naturali, \textbf{i colori effettivamente presenti sono molti meno dei colori teoricamente possibili}.
+
+\textbf{Più colori teorici che pixel reali}
+Un'immagine grande può avere più di quattro milioni di pixel, ma questo non significa che abbia quattro milioni di colori diversi. Anzi, spesso accade il contrario: \textbf{molti pixel condividono esattamente lo stesso colore} o colori molto simili. Questo vale ancora di più per immagini con aree uniformi, come cieli, muri, sfondi o superfici naturali.
+
+Questa coerenza interna delle immagini porta a una domanda cruciale: ha senso ripetere le stesse terne RGB per ogni pixel? La risposta è no, ed è da qui che nasce l'idea dell'\textbf{indicizzazione dei colori}.
+
+\hypertarget{palette}{%
+\subsubsection{Palette}\label{palette}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Il concetto di palette è semplice ma potentissimo. Invece di memorizzare per ogni pixel il colore completo in RGB, si costruisce una \textbf{tabella di colori}, detta palette o LUT (Look-Up Table), che contiene un numero limitato di colori rappresentativi. Ogni pixel non memorizza più il colore, ma solo un \textbf{indice numerico} che punta a una voce della palette.
+
+In questo modo l'immagine viene divisa logicamente in due parti. Da un lato c'è la palette, che associa ogni indice a un colore RGB. Dall'altro c'è la matrice degli indici, cioè l'immagine vera e propria, dove ogni pixel contiene solo un numero piccolo invece di tre valori da 8 bit.
+
+Il risparmio di memoria è evidente: se una palette ha 256 colori, ogni pixel può essere rappresentato con \textbf{8 bit invece di 24}. Anche aggiungendo lo spazio occupato dalla palette stessa, il guadagno complessivo è enorme.
+
+\hypertarget{indicizzazione-di-immagini-true-color}{%
+\subsubsection{\texorpdfstring{\textbf{Indicizzazione di immagini true color}}{Indicizzazione di immagini true color}}\label{indicizzazione-di-immagini-true-color}}
+
+Quando si parte da un'immagine true color e la si converte in un'immagine indicizzata, possono verificarsi due casi. Se l'immagine contiene già meno di 256 colori, la palette può rappresentarli tutti senza perdita di informazione, e l'indicizzazione è perfetta. Se invece i colori sono più di 256, è necessario \textbf{ridurli}, scegliendo un insieme di colori rappresentativi che mantenga una buona qualità visiva.
+
+Questa scelta non è banale ed è affidata a algoritmi di \textbf{color quantization}, che cercano di minimizzare l'errore percettivo. Esistono palette personalizzate, ottimizzate sull'immagine specifica, e palette standard come quelle di Windows, Macintosh o la Web Safe. Le palette standard sono comode ma meno efficienti, perché includono colori che magari non vengono nemmeno usati nell'immagine.
+
+\hypertarget{numero-di-colori-e-qualituxe0-percettiva}{%
+\subsubsection{\texorpdfstring{\textbf{Numero di colori e qualità percettiva}}{Numero di colori e qualità percettiva}}\label{numero-di-colori-e-qualituxe0-percettiva}}
+
+Riducendo il numero di colori disponibili, la qualità visiva dell'immagine diminuisce progressivamente. Con 256 colori l'immagine può apparire ancora molto fedele all'originale, mentre con 16, 8 o 4 colori la perdita diventa evidente. Tuttavia, la percezione umana non è uniforme: alcuni errori cromatici sono più tollerabili di altri, ed è per questo che due palette con lo stesso numero di colori possono produrre risultati visivamente molto diversi.
+
+I software come Photoshop permettono di visualizzare e confrontare queste differenze, mostrando come una palette ottimizzata sull'immagine riesca a preservare meglio i dettagli rispetto a una palette generica.
+
+\hypertarget{il-re-indexing-e-il-ruolo-dellentropia}{%
+\subsubsection{\texorpdfstring{\textbf{Il re-indexing e il ruolo dell'entropia}}{Il re-indexing e il ruolo dell'entropia}}\label{il-re-indexing-e-il-ruolo-dellentropia}}
+
+Una volta scelta la palette, resta ancora un grado di libertà fondamentale: \textbf{l'ordine dei colori nella palette}. Cambiare l'ordine dei colori significa cambiare i numeri associati ai pixel, ma non i colori visualizzati. Questo dettaglio, che sembra irrilevante, è in realtà cruciale per la compressione.
+
+Se a pixel adiacenti vengono assegnati indici numericamente simili, le differenze tra indici consecutivi saranno piccole. Questo riduce l'\textbf{entropia} della matrice degli indici, cioè la quantità di informazione necessaria per descriverla. Una matrice a bassa entropia è molto più comprimibile, soprattutto quando si usano tecniche di codifica differenziale.
+
+Il problema è che trovare l'ordinamento perfetto della palette che minimizza l'entropia è computazionalmente proibitivo. Con M colori, le permutazioni possibili sono M fattoriale, un numero che cresce in modo esplosivo. Per questo il problema è detto \textbf{NP-hard}, e nella pratica si usano algoritmi euristici che cercano soluzioni buone, anche se non ottimali.
+
+\textbf{Perché tutto questo è importante}
+La gestione dei colori in memoria non è solo una questione tecnica, ma un compromesso continuo tra \textbf{qualità visiva, spazio occupato e facilità di compressione}. Le palette, l'indicizzazione e il re-indexing sono strumenti fondamentali per rendere le immagini efficienti da memorizzare e trasmettere, senza sacrificare inutilmente la percezione umana.
+
+\end{document}

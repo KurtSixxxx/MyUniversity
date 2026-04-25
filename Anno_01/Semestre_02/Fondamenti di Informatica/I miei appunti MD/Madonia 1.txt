@@ -1,0 +1,167 @@
+Linguaggi Formali
+Linguaggi Formali
+Created @March 4, 2024 11:46 AM
+rivisto
+Created
+rivisto
+@March 4, 2024 11:46 AM
+[]
+A differenza di quelli naturali, i linguaggi formali sono insiemi di parole costruite
+con regole ben precise
+A differenza di quelli naturali, i linguaggi formali sono insiemi di parole costruite
+con regole ben precise
+& ={a,b}
+Σ = {a, b}
+& ={a,b,c,d...}
+Σ = {a, b, c, d...}
+Σ = {0, 1}
+=={0,1}
+Sono insiemi di parole costruite a partire da un alfabeto finito, parole alfabeto
+sigma: {aab,abb,b,baaaa} — parole di lunghezza finita
+Le parole hanno lunghezza finita, ma hanno infinite combinazioni
+Sigma*=tutte le possibile parole costruibili a partire dall'alfabeto Sigma
+Se Sigma={a,b}
+Sono insiemi di parole costruite a partire da un alfabeto finito, parole alfabeto
+sigma: {aab,abb,b,baaaa} —> parole di lunghezza finita
+Le parole hanno lunghezza finita, ma hanno infinite combinazioni
+Sigma*=tutte le possibile parole costruibili a partire dall’alfabeto Sigma
+Se Sigma={a,b}
+ab ∈ Σ∗
+ϵ
+ab € >*
+c
+—
+a:
+Tutti gli elementi di Sigma*
+Tutti gli elementi di Sigma*
+(epsilon) la parola vuota, ovvero non
+contiene nessun simbolo
+(epsilon) la parola vuota, ovvero non
+contiene nessun simbolo
+A seguito da b indichiamo una concatenazione indicata da un “.” = a.b
+rye o*—>any= ry
+x.y ∈ Σ − >
+∗
+x.y = xy
+'y genere le lettere dell'alfabeto le indichiamo con a,b,c... le stringhe con x,y,Z..
+In genere le lettere dell’alfabeto le indichiamo con a,b,c… le stringhe con x,y,z..
+e ¢ X,ma,e€&*
+ϵ ∈/ Σ,ma, ϵ ∈ Σ∗
+A seguito da b indichiamo una concatenazione indicata da un “.” = a.b
+Linguaggi Formali
+Linguaggi [ut..iali
+1
+
+Non gode della proprietà commutativa
+Inoltre Epsilon è l’elemento neutro, e gode della proprietà associativa:
+x.y = y.x
+x.ϵ = ϵ.x
+(x.y).z = x.(y.z)
+Monoide Sintattico:
+Un linguaggio è un insieme di Parole
+Σ∗
+Un linguaggio L è un qualunque sottoinsieme di
+Definizione=un qualunque insieme finito di simboli è detto alfabeto ed è denotato
+da Sigma
+Definizione=Sia Sigma un alfabeto, una stringa(o parola) sull’alfabeto Sigma è così
+definita:
+-Epsilon è una stringa su Sigma(detta stringa vuota)
+-Se x è una stringa su Sigma e
+a ∈ Σ, allora, x.a
+è una
+stringa su
+Sigma
+-L’insieme di tutte le stringhe su Sigma è denotato:
+(Σ , ., ϵ)
+∗
+Σ∗
+Σ = a, b
+aab ∈ Σ ?∗
+ϵ ∈ Σ , a ∈
+∗
+Linguaggi Formali
+Σ− > ϵ.a ∈ Σ∗
+2
+
+a ∈ Σ , a ∈
+∗
+Σ,− > a.a ∈ Σ∗
+aa ∈ Σ , b ∈
+∗ Σ,− > aa.b ∈ Σ∗
+Definizione = sia Sigma alfabeto, l’operazione di concatenazione fra stringhe di
+Sigma* è denotata da “.” ed è cosi definita:
+. : Σ ×∗Σ − >∗ Σ∗
+Dato un insieme S il prodotto cartesiano è:
+S × S = {(x.y)∣x.y ∈ S}
+Definizione: sia Sigma alfabeto, un qualunque L sottoinsieme di Sigma*
+L ⊆ Σ∗
+Linguaggio vuoto che non contiene
+nessuna parola viene denotato con:
+ϵ ∈ Σ∗
+Λ ⊆ Σ∗
+Λ ∈/ ϵ
+Lambda non contiene Nulla
+Sigma* è un sottoinsieme di se stesso quindi è un linguaggio
+Esempi di Linguaggi
+Σ = {a, b}
+L1 = {ab, ba, bba, bbbb}
+Linguaggi Formali
+3
+è
+detto linguaggio
+x.y = xy
+Λ
+
+L
+Definizione:
+2 = {a, ab, abb, abbbb}
+x ∈ Σ∗
+la potenza n-
+esima di:
+nb
+x =0
+x =n
+ϵ
+x −n 1.x, ∀n > 0
+L3 = {a b ∣n ≥nn
+0} = {ab, aabb, ϵ...}
+a ∈/ L3
+x =1
+x =1
+x?, n = 1 > 0
+0
+x , x =
+ϵ.x = x
+L
+4 = {a b ∣n,m >
+n m
+0} = {(a = ab =0
+L
+5 = {a b ∣n,m ≥
+n m
+a.ϵ = a), b.ϵ}
+1} = {aabb, ab, aab}
+L1 ∪ Λ = L1
+L1 ∪ {ϵ} = L1, ϵ
+Σ = {a, b}
+L1 = {aa, ba}
+L2 = {b, bbba}
+L .L
+Definizione: siano
+1 =2 {aab, aabbba, bab, babbba}
+L
+è così definita:
+1 ⊆2 Σ∗
+.L
+Linguaggi Formali
+4
+
+La concatenazione di L1 con L2 è denotata da L1.L2 ed è cosi definita
+L
+1 =2 {x1 2 1 ∈ L , x1 ∈2 L2}
+.L
+.x ∣x
+L1 ∈ L .L12
+se, ϵ ∈ L2, x ∈ L1, x.ϵ ∈ L .L12
+Linguaggi Formali
+5

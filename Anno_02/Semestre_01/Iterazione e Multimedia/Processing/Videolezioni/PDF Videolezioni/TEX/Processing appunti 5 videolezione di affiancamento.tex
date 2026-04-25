@@ -1,0 +1,602 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+\documentclass[
+]{article}
+\usepackage{xcolor}
+\usepackage{amsmath,amssymb}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{color}
+\usepackage{fancyvrb}
+\newcommand{\VerbBar}{|}
+\newcommand{\VERB}{\Verb[commandchars=\\\{\}]}
+\DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+% Add ',fontsize=\small' for more characters per line
+\newenvironment{Shaded}{}{}
+\newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{#1}}
+\newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\BuiltInTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{#1}}
+\newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{#1}}}
+\newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{#1}}
+\newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{#1}}
+\newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{#1}}}
+\newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{#1}}}
+\newcommand{\ExtensionTok}[1]{#1}
+\newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{#1}}
+\newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{#1}}
+\newcommand{\ImportTok}[1]{\textcolor[rgb]{0.00,0.50,0.00}{\textbf{#1}}}
+\newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{#1}}}
+\newcommand{\NormalTok}[1]{#1}
+\newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{#1}}
+\newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{#1}}
+\newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{#1}}
+\newcommand{\RegionMarkerTok}[1]{#1}
+\newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{#1}}
+\newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{#1}}
+\newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{#1}}
+\newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{#1}}}}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\usepackage{bookmark}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\section{Lezione 5}\label{lezione-5}
+
+ripassare lerp(), ossia linear interpolation\\
+lerp(valore iniziale, valore finale, \%)\\
+lerp(A, B, 0.5)
+
+\paragraph{Shear}\label{shear}
+
+\texttt{shearX()} e \texttt{shearY()} sono funzioni di trasformazione
+utilizzate per inclinare o distorcere gli oggetti lungo gli assi
+cartesiani. Queste funzioni "fanno scivolare" i punti di una forma in
+una direzione specifica, creando un effetto simile a quello di un
+rettangolo che diventa un parallelogramma.
+
+Ecco come funzionano nello specifico:
+
+\begin{itemize}
+\item
+  \texttt{shearX(angle)}: Inclina il sistema di coordinate lungo
+  l\textquotesingle asse X. Immagina di spingere la parte superiore di
+  un quadrato verso destra o verso sinistra mentre la base rimane fissa.
+  Le linee verticali dell\textquotesingle oggetto diventeranno oblique,
+  mentre quelle orizzontali rimarranno parallele
+  all\textquotesingle asse X.
+\item
+  \texttt{shearY(angle)}: Inclina il sistema di coordinate lungo
+  l\textquotesingle asse Y. In questo caso, le linee orizzontali
+  dell\textquotesingle oggetto diventano oblique, mentre quelle
+  verticali rimangono parallele all\textquotesingle asse Y.
+\end{itemize}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{float}\NormalTok{ shX}\OperatorTok{,}\NormalTok{ shY}\OperatorTok{;}
+\DataTypeTok{float}\NormalTok{ scale}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+    \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+\NormalTok{    shX }\OperatorTok{=} \FloatTok{0.1}\OperatorTok{;}
+\NormalTok{    shY }\OperatorTok{=} \FloatTok{0.1}\OperatorTok{;}
+\NormalTok{    scale }\OperatorTok{=} \FloatTok{0.1}\OperatorTok{;}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+    \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+    \FunctionTok{strokeWeight}\OperatorTok{(}\DecValTok{5}\OperatorTok{);}
+    \FunctionTok{rectMode}\OperatorTok{(}\NormalTok{CENTER}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+    \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{);}
+    \CommentTok{//Per fare in modo che queste trasformazioni ricadano solo su una figura piuttosto che in tutte, bisogna usare pushMatrix() e popMatrix()}
+    \FunctionTok{pushMatrix}\OperatorTok{();}
+    \FunctionTok{translate}\OperatorTok{(}\DecValTok{150}\OperatorTok{,}\DecValTok{200}\OperatorTok{);}
+    \FunctionTok{shearX}\OperatorTok{(}\NormalTok{shX}\OperatorTok{);}
+    \FunctionTok{shearY}\OperatorTok{(}\NormalTok{shY}\OperatorTok{);}
+    \CommentTok{//scale(scale);}
+    \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{50}\OperatorTok{,}\DecValTok{50}\OperatorTok{);}
+    \FunctionTok{popMatrix}\OperatorTok{();}
+    \CommentTok{//scale+=0.1;}
+\NormalTok{    shX}\OperatorTok{+=}\FloatTok{0.1}\OperatorTok{;}
+\NormalTok{    shY}\OperatorTok{+=}\FloatTok{0.1}\OperatorTok{;}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+Adesso introduciamo le classi.\\
+Abbiamo l\textquotesingle oggetto Ball, e generiamo delle palline che
+premendo n spawnano e rimbalzano, con p mettiamo in pausa e con s
+facciamo ripartire.
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{// MAIN}
+\CommentTok{// Iniziamo dichiarando la lista. In C sarebbe come definire un puntatore a una struttura dinamica.}
+\CommentTok{// La dicitura \textless{}Ball\textgreater{} è il "filtro": diciamo alla lista che può contenere solo oggetti Ball o i suoi "figli".}
+\BuiltInTok{ArrayList} \OperatorTok{\textless{}}\NormalTok{Ball}\OperatorTok{\textgreater{}}\NormalTok{ ab}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{800}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+  
+  \CommentTok{// INIZIALIZZAZIONE: Qui creiamo fisicamente la "borsa" (la lista) in memoria.}
+  \CommentTok{// Senza il \textquotesingle{}new\textquotesingle{}, la variabile \textquotesingle{}ab\textquotesingle{} è vuota (NULL). È come fare una malloc in C: }
+  \CommentTok{// stiamo chiedendo lo spazio per far esistere la lista.}
+\NormalTok{  ab }\OperatorTok{=} \KeywordTok{new} \BuiltInTok{ArrayList} \OperatorTok{\textless{}}\NormalTok{Ball}\OperatorTok{\textgreater{}();} 
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \CommentTok{// EFFETTO SCIA (Trail): Invece di usare background() che pulisce tutto ogni volta, }
+  \CommentTok{// disegnamo un rettangolo nero grande quanto lo schermo ma quasi trasparente (opacità 40).}
+  \CommentTok{// I disegni precedenti rimangono sotto, ma vengono "velati" di nero un po\textquotesingle{} alla volta }
+  \CommentTok{// fino a sparire, creando l\textquotesingle{}illusione della scia.}
+  \FunctionTok{noStroke}\OperatorTok{();}
+  \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{40}\OperatorTok{);}
+  \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\NormalTok{width}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+
+  \CommentTok{// CICLO FOR{-}EACH: È un modo rapido per dire a Processing:}
+  \CommentTok{// "Prendi ogni pallina che trovi dentro la lista \textquotesingle{}ab\textquotesingle{}, chiamala \textquotesingle{}b\textquotesingle{} per un istante, }
+  \CommentTok{// e fagli fare quello che c\textquotesingle{}è scritto tra le graffe".}
+  \ControlFlowTok{for}\OperatorTok{(}\NormalTok{Ball b }\OperatorTok{:}\NormalTok{ ab}\OperatorTok{)\{}
+    \CommentTok{// Diciamo alla singola pallina \textquotesingle{}b\textquotesingle{} di attivare la sua routine di vita.}
+\NormalTok{    b}\OperatorTok{.}\FunctionTok{run}\OperatorTok{();}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{} 
+  \CommentTok{// Se premiamo \textquotesingle{}n\textquotesingle{} o \textquotesingle{}N\textquotesingle{}, fabbrichiamo una nuova pallina e la infiliamo nella borsa (add).}
+  \ControlFlowTok{if} \OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}n\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}N\textquotesingle{}}\OperatorTok{)\{}
+    \CommentTok{// Creiamo una pallina con posizione, dimensione e velocità casuali (random).}
+\NormalTok{    ab}\OperatorTok{.}\FunctionTok{add}\OperatorTok{(}\KeywordTok{new} \FunctionTok{Ball}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{25}\OperatorTok{,}\DecValTok{70}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{)));}
+  \OperatorTok{\}}
+  
+  \CommentTok{// Lo switch gestisce lo stato della canvas (Pausa o Riparti).}
+  \ControlFlowTok{switch}\OperatorTok{(}\NormalTok{key}\OperatorTok{)\{}
+    \ControlFlowTok{case} \CharTok{\textquotesingle{}p\textquotesingle{}} \OperatorTok{:\{} 
+      \FunctionTok{noLoop}\OperatorTok{();} \CommentTok{// Blocca il ciclo draw(): tutto si ferma come in un fermo immagine.}
+      \ControlFlowTok{break}\OperatorTok{;}
+    \OperatorTok{\}}
+    
+    \ControlFlowTok{case} \CharTok{\textquotesingle{}s\textquotesingle{}} \OperatorTok{:\{} 
+      \FunctionTok{loop}\OperatorTok{();}   \CommentTok{// Riattiva il ciclo draw(): il tempo ricomincia a scorrere.}
+      \ControlFlowTok{break}\OperatorTok{;}
+    \OperatorTok{\}}
+    
+    \KeywordTok{default}\OperatorTok{:\{\}}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\CommentTok{//{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+
+\CommentTok{// CLASSE BALL}
+\KeywordTok{class}\NormalTok{ Ball }\OperatorTok{\{}
+  \CommentTok{// ATTRIBUTI: Le caratteristiche fisiche che ogni pallina "sa" di avere.}
+  \DataTypeTok{float}\NormalTok{ posX}\OperatorTok{,}\NormalTok{ posY}\OperatorTok{,}\NormalTok{ size}\OperatorTok{;} 
+  \DataTypeTok{float}\NormalTok{ sx}\OperatorTok{,}\NormalTok{ sy}\OperatorTok{;} 
+
+  \CommentTok{// COSTRUTTORE PRINCIPALE: È il momento in cui la pallina "nasce".}
+  \CommentTok{// Prende i valori che arrivano da fuori e li salva dentro le sue variabili (this).}
+  \FunctionTok{Ball}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sx}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sy}\OperatorTok{)\{} 
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{posX} \OperatorTok{=}\NormalTok{ x}\OperatorTok{;} 
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{posY} \OperatorTok{=}\NormalTok{ y}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{size} \OperatorTok{=}\NormalTok{ s}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{sx} \OperatorTok{=}\NormalTok{ sx}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{sy} \OperatorTok{=}\NormalTok{ sy}\OperatorTok{;}
+  \OperatorTok{\}}
+  
+  \CommentTok{// SECONDO COSTRUTTORE (Overloading): Per creare palline ferme.}
+  \FunctionTok{Ball}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{)\{} 
+    \CommentTok{// TRUCCO: Questo \textquotesingle{}this(...)\textquotesingle{} dice a Processing di non riscrivere tutto il codice sopra,}
+    \CommentTok{// ma di usare il costruttore principale passando però 0 come velocità X e Y.}
+    \CommentTok{// È una scorciatoia per dire: "Fai tutto come sopra, ma forzala a stare immobile".}
+    \KeywordTok{this}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\NormalTok{s}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);} 
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{display}\OperatorTok{()\{} 
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{128}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{128}\OperatorTok{);} \CommentTok{// Viola}
+    \FunctionTok{noStroke}\OperatorTok{();} 
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{posX}\OperatorTok{,}\NormalTok{ posY}\OperatorTok{,}\NormalTok{ size}\OperatorTok{,}\NormalTok{ size}\OperatorTok{);} \CommentTok{// Disegna la forma usando le sue coordinate.}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{move}\OperatorTok{()\{} 
+    \CommentTok{// Aggiorniamo la posizione aggiungendo la velocità: lo spazio si percorre nel tempo.}
+\NormalTok{    posX }\OperatorTok{+=}\NormalTok{ sx}\OperatorTok{;}
+\NormalTok{    posY }\OperatorTok{+=}\NormalTok{ sy}\OperatorTok{;}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{bounce}\OperatorTok{()\{} 
+    \CommentTok{// RIMBALZO X: Se tocca il bordo sinistro (0) o destro (width), invertiamo la velocità X.}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{posX }\OperatorTok{\textless{}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2} \OperatorTok{||}\NormalTok{ posX }\OperatorTok{\textgreater{}}\NormalTok{ width }\OperatorTok{{-}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2}\OperatorTok{)\{} 
+\NormalTok{      sx }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{sx}\OperatorTok{;} 
+    \OperatorTok{\}}
+    
+    \CommentTok{// RIMBALZO Y: Se tocca il bordo alto (0) o basso (height), invertiamo la velocità Y.}
+    \CommentTok{// Usiamo size/2 perché la coordinata di una pallina è nel centro, quindi dobbiamo contare il raggio.}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{posY }\OperatorTok{\textless{}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2} \OperatorTok{||}\NormalTok{ posY }\OperatorTok{\textgreater{}}\NormalTok{ height }\OperatorTok{{-}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2}\OperatorTok{)\{} 
+\NormalTok{      sy }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{sy}\OperatorTok{;} 
+      \CommentTok{// Nota: Qui c\textquotesingle{}è il rischio teletrasporto se tocca il tetto, ma la logica è:}
+      \CommentTok{// "Se hai colpito un bordo verticale, cambia direzione!"}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{gravity}\OperatorTok{()\{}
+    \CommentTok{// La gravità è un\textquotesingle{}accelerazione: aggiunge costantemente un piccolo valore alla velocità Y.}
+    \CommentTok{// Più passa il tempo, più la pallina "cade" velocemente.}
+\NormalTok{    sy }\OperatorTok{+=} \FloatTok{0.2}\OperatorTok{;} 
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{run}\OperatorTok{()\{} 
+    \CommentTok{// Questo è il "Cervello": raggruppa tutte le azioni in ordine logico.}
+    \CommentTok{// Prima calcoliamo la fisica, poi mostriamo il risultato.}
+    \FunctionTok{gravity}\OperatorTok{();}
+    \FunctionTok{move}\OperatorTok{();}
+    \FunctionTok{bounce}\OperatorTok{();}
+    \FunctionTok{display}\OperatorTok{();}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+{[}Per la versione 1 dei commenti scritta da te vai al path:
+\emph{\texttt{C:\textbackslash{}Users\textbackslash{}giuli\textbackslash{}Desktop\textbackslash{}Desktop\textbackslash{}Universita\textbackslash{}2\ Anno\textbackslash{}1\ Semestre\textbackslash{}Iterazione\ e\ Multimedia\textbackslash{}Processing\textbackslash{}Esercizi\textbackslash{}Lezione\ 5\textbackslash{}Classi\ 1\textbackslash{}Prova\ 1\ old}}{]}
+
+Aggiungiamo la cosiddetta "Green Ball", che è semplicemente un immagine
+con aspetto diverso
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//Prova}
+\CommentTok{// Iniziamo dichiarando la lista. In C sarebbe come definire un puntatore a una struttura dinamica.}
+\CommentTok{// La dicitura \textless{}Ball\textgreater{} è il "filtro": diciamo alla lista che può contenere solo oggetti Ball o i suoi "figli".}
+\BuiltInTok{ArrayList} \OperatorTok{\textless{}}\NormalTok{Ball}\OperatorTok{\textgreater{}}\NormalTok{ ab}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{800}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+  
+  \CommentTok{// INIZIALIZZAZIONE: Qui creiamo fisicamente la "borsa" (la lista) in memoria.}
+  \CommentTok{// Senza il \textquotesingle{}new\textquotesingle{}, la variabile \textquotesingle{}ab\textquotesingle{} è vuota (NULL). È come fare una malloc in C: }
+  \CommentTok{// stiamo chiedendo lo spazio per far esistere la lista.}
+\NormalTok{  ab }\OperatorTok{=} \KeywordTok{new} \BuiltInTok{ArrayList} \OperatorTok{\textless{}}\NormalTok{Ball}\OperatorTok{\textgreater{}();} 
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \CommentTok{// EFFETTO SCIA (Trail): Invece di usare background() che pulisce tutto ogni volta, }
+  \CommentTok{// disegnamo un rettangolo nero grande quanto lo schermo ma quasi trasparente (opacità 40).}
+  \CommentTok{// I disegni precedenti rimangono sotto, ma vengono "velati" di nero un po\textquotesingle{} alla volta }
+  \CommentTok{// fino a sparire, creando l\textquotesingle{}illusione della scia.}
+  \FunctionTok{noStroke}\OperatorTok{();}
+  \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{40}\OperatorTok{);}
+  \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\NormalTok{width}\OperatorTok{,}\NormalTok{height}\OperatorTok{);}
+
+  \CommentTok{// CICLO FOR{-}EACH: È un modo rapido per dire a Processing:}
+  \CommentTok{// "Prendi ogni pallina che trovi dentro la lista \textquotesingle{}ab\textquotesingle{}, chiamala \textquotesingle{}b\textquotesingle{} per un istante, }
+  \CommentTok{// e fagli fare quello che c\textquotesingle{}è scritto tra le graffe".}
+  \ControlFlowTok{for}\OperatorTok{(}\NormalTok{Ball b }\OperatorTok{:}\NormalTok{ ab}\OperatorTok{)\{}
+    \CommentTok{// Diciamo alla singola pallina \textquotesingle{}b\textquotesingle{} di attivare la sua routine di vita.}
+\NormalTok{    b}\OperatorTok{.}\FunctionTok{run}\OperatorTok{();}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyPressed}\OperatorTok{()\{} 
+  \CommentTok{// Se premiamo \textquotesingle{}n\textquotesingle{} o \textquotesingle{}N\textquotesingle{}, fabbrichiamo una nuova pallina e la infiliamo nella borsa (add).}
+  \ControlFlowTok{if} \OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}n\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}N\textquotesingle{}}\OperatorTok{)\{}
+    \CommentTok{// Creiamo una pallina con posizione, dimensione e velocità casuali (random).}
+\NormalTok{    ab}\OperatorTok{.}\FunctionTok{add}\OperatorTok{(}\KeywordTok{new} \FunctionTok{Ball}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{25}\OperatorTok{,}\DecValTok{70}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{)));}
+  \OperatorTok{\}}
+  \ControlFlowTok{if} \OperatorTok{(}\NormalTok{key }\OperatorTok{==} \CharTok{\textquotesingle{}g\textquotesingle{}} \OperatorTok{||}\NormalTok{ key }\OperatorTok{==} \CharTok{\textquotesingle{}G\textquotesingle{}}\OperatorTok{)\{}
+    \CommentTok{// Creiamo una pallina con posizione, dimensione e velocità casuali (random).}
+\NormalTok{    ab}\OperatorTok{.}\FunctionTok{add}\OperatorTok{(}\KeywordTok{new} \FunctionTok{GreenBall}\OperatorTok{(}\FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{450}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{25}\OperatorTok{,}\DecValTok{70}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{),} \FunctionTok{random}\OperatorTok{(}\DecValTok{1}\OperatorTok{,}\DecValTok{10}\OperatorTok{)));}
+  \OperatorTok{\}}
+  
+  \CommentTok{// Lo switch gestisce lo stato della canvas (Pausa o Riparti).}
+  \ControlFlowTok{switch}\OperatorTok{(}\NormalTok{key}\OperatorTok{)\{}
+    \ControlFlowTok{case} \CharTok{\textquotesingle{}p\textquotesingle{}} \OperatorTok{:\{} 
+      \FunctionTok{noLoop}\OperatorTok{();} \CommentTok{// Blocca il ciclo draw(): tutto si ferma come in un fermo immagine.}
+      \ControlFlowTok{break}\OperatorTok{;}
+    \OperatorTok{\}}
+    
+    \ControlFlowTok{case} \CharTok{\textquotesingle{}s\textquotesingle{}} \OperatorTok{:\{} 
+      \FunctionTok{loop}\OperatorTok{();}   \CommentTok{// Riattiva il ciclo draw(): il tempo ricomincia a scorrere.}
+      \ControlFlowTok{break}\OperatorTok{;}
+    \OperatorTok{\}}
+    
+    \KeywordTok{default}\OperatorTok{:\{\}}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\CommentTok{//{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\CommentTok{//Ball}
+\KeywordTok{class}\NormalTok{ Ball }\OperatorTok{\{}
+  \CommentTok{// ATTRIBUTI: Le caratteristiche fisiche che ogni pallina "sa" di avere.}
+  \DataTypeTok{float}\NormalTok{ posX}\OperatorTok{,}\NormalTok{ posY}\OperatorTok{,}\NormalTok{ size}\OperatorTok{;} 
+  \DataTypeTok{float}\NormalTok{ sx}\OperatorTok{,}\NormalTok{ sy}\OperatorTok{;} 
+
+  \CommentTok{// COSTRUTTORE PRINCIPALE: È il momento in cui la pallina "nasce".}
+  \CommentTok{// Prende i valori che arrivano da fuori e li salva dentro le sue variabili (this).}
+  \FunctionTok{Ball}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sx}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sy}\OperatorTok{)\{} 
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{posX} \OperatorTok{=}\NormalTok{ x}\OperatorTok{;} 
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{posY} \OperatorTok{=}\NormalTok{ y}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{size} \OperatorTok{=}\NormalTok{ s}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{sx} \OperatorTok{=}\NormalTok{ sx}\OperatorTok{;}
+    \KeywordTok{this}\OperatorTok{.}\FunctionTok{sy} \OperatorTok{=}\NormalTok{ sy}\OperatorTok{;}
+  \OperatorTok{\}}
+  
+  \CommentTok{// SECONDO COSTRUTTORE (Overloading): Per creare palline ferme.}
+  \FunctionTok{Ball}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{)\{} 
+    \CommentTok{// TRUCCO: Questo \textquotesingle{}this(...)\textquotesingle{} dice a Processing di non riscrivere tutto il codice sopra,}
+    \CommentTok{// ma di usare il costruttore principale passando però 0 come velocità X e Y.}
+    \CommentTok{// È una scorciatoia per dire: "Fai tutto come sopra, ma forzala a stare immobile".}
+    \KeywordTok{this}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\NormalTok{s}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);} 
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{display}\OperatorTok{()\{} 
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);} \CommentTok{// Viola}
+    \FunctionTok{noStroke}\OperatorTok{();} 
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{posX}\OperatorTok{,}\NormalTok{ posY}\OperatorTok{,}\NormalTok{ size}\OperatorTok{,}\NormalTok{ size}\OperatorTok{);} \CommentTok{// Disegna la forma usando le sue coordinate.}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{move}\OperatorTok{()\{} 
+    \CommentTok{// Aggiorniamo la posizione aggiungendo la velocità: lo spazio si percorre nel tempo.}
+\NormalTok{    posX }\OperatorTok{+=}\NormalTok{ sx}\OperatorTok{;}
+\NormalTok{    posY }\OperatorTok{+=}\NormalTok{ sy}\OperatorTok{;}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{bounce}\OperatorTok{()\{} 
+    \CommentTok{// RIMBALZO X: Se tocca il bordo sinistro (0) o destro (width), invertiamo la velocità X.}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{posX }\OperatorTok{\textless{}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2} \OperatorTok{||}\NormalTok{ posX }\OperatorTok{\textgreater{}}\NormalTok{ width }\OperatorTok{{-}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2}\OperatorTok{)\{} 
+\NormalTok{      sx }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{sx}\OperatorTok{;} 
+    \OperatorTok{\}}
+    
+    \CommentTok{// RIMBALZO Y: Se tocca il bordo alto (0) o basso (height), invertiamo la velocità Y.}
+    \CommentTok{// Usiamo size/2 perché la coordinata di una pallina è nel centro, quindi dobbiamo contare il raggio.}
+    \ControlFlowTok{if}\OperatorTok{(}\NormalTok{posY }\OperatorTok{\textless{}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2} \OperatorTok{||}\NormalTok{ posY }\OperatorTok{\textgreater{}}\NormalTok{ height }\OperatorTok{{-}}\NormalTok{ size}\OperatorTok{/}\DecValTok{2}\OperatorTok{)\{} 
+\NormalTok{      sy }\OperatorTok{=} \OperatorTok{{-}}\NormalTok{sy}\OperatorTok{;} 
+      \CommentTok{// Nota: Qui c\textquotesingle{}è il rischio teletrasporto se tocca il tetto, ma la logica è:}
+      \CommentTok{// "Se hai colpito un bordo verticale, cambia direzione!"}
+    \OperatorTok{\}}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{gravity}\OperatorTok{()\{}
+    \CommentTok{// La gravità è un\textquotesingle{}accelerazione: aggiunge costantemente un piccolo valore alla velocità Y.}
+    \CommentTok{// Più passa il tempo, più la pallina "cade" velocemente.}
+\NormalTok{    sy }\OperatorTok{+=} \FloatTok{0.2}\OperatorTok{;} 
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{run}\OperatorTok{()\{} 
+    \CommentTok{// Questo è il "Cervello": raggruppa tutte le azioni in ordine logico.}
+    \CommentTok{// Prima calcoliamo la fisica, poi mostriamo il risultato.}
+    \FunctionTok{gravity}\OperatorTok{();}
+    \FunctionTok{move}\OperatorTok{();}
+    \FunctionTok{bounce}\OperatorTok{();}
+    \FunctionTok{display}\OperatorTok{();}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+
+\CommentTok{//{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}{-}}
+\CommentTok{//GreenBall}
+\KeywordTok{class}\NormalTok{ GreenBall }\KeywordTok{extends}\NormalTok{ Ball}\OperatorTok{\{} \CommentTok{//GreenBall sta ereditanto i medoti di Ball. Ball è la classe madre, e di conseguenza GreeBall è la classe figlia}
+
+  \CommentTok{//1° Costruttore}
+  \FunctionTok{GreenBall}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sx}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ sy}\OperatorTok{)\{}
+  \CommentTok{//Richiamiamo il costruttore della classe madre con "super"}
+  \KeywordTok{super}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\NormalTok{s}\OperatorTok{,}\NormalTok{sx}\OperatorTok{,}\NormalTok{sy}\OperatorTok{);}
+  \OperatorTok{\}}
+  
+  \CommentTok{//2° Costruttore}
+  \FunctionTok{GreenBall}\OperatorTok{(}\DataTypeTok{float}\NormalTok{ x}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ y}\OperatorTok{,} \DataTypeTok{float}\NormalTok{ s}\OperatorTok{)\{}
+    \KeywordTok{super}\OperatorTok{(}\NormalTok{x}\OperatorTok{,}\NormalTok{y}\OperatorTok{,}\NormalTok{s}\OperatorTok{);}
+  \OperatorTok{\}}
+  
+  \DataTypeTok{void} \FunctionTok{display}\OperatorTok{()\{}
+    \FunctionTok{fill}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+    \FunctionTok{strokeWeight}\OperatorTok{(}\DecValTok{5}\OperatorTok{);}
+    \FunctionTok{stroke}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{255}\OperatorTok{);}
+    \FunctionTok{ellipse}\OperatorTok{(}\NormalTok{posX}\OperatorTok{,}\NormalTok{posY}\OperatorTok{,}\NormalTok{size}\OperatorTok{,}\NormalTok{size}\OperatorTok{);}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\subsubsection{Manipolazione di
+un\textquotesingle immagine}\label{manipolazione-di-unimmagine}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\NormalTok{PImage im}\OperatorTok{;} \CommentTok{//PImage è il tipo di dato delle immagini}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{600}\OperatorTok{,}\DecValTok{600}\OperatorTok{);}
+\NormalTok{  im}\OperatorTok{=}\FunctionTok{loadImage}\OperatorTok{(}\StringTok{"lena.png"}\OperatorTok{);}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"Larghezza: "}\OperatorTok{+}\NormalTok{im}\OperatorTok{.}\FunctionTok{width}\OperatorTok{);} \CommentTok{//im.width preleva la larghezza dell\textquotesingle{}immagine}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"Altezza: "}\OperatorTok{+}\NormalTok{im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{);}
+\OperatorTok{\}}
+
+\CommentTok{//per vedere l\textquotesingle{}immagine la carichiamo nel draw}
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+  \FunctionTok{image}\OperatorTok{(}\NormalTok{im}\OperatorTok{,} \DecValTok{0}\OperatorTok{,} \DecValTok{0}\OperatorTok{);} \CommentTok{//prende in input il nome della variabile immagine, e la posizione x, y. Un po\textquotesingle{} come per il testo}
+\OperatorTok{\}}
+
+\CommentTok{//Ora vediamo come possiamo modificare l\textquotesingle{}immagine}
+\CommentTok{//Facciamo che ad un clic l\textquotesingle{}immagine è grande esattamente la metà}
+
+\DataTypeTok{void} \FunctionTok{mouseClicked}\OperatorTok{()\{}
+  \CommentTok{// 1. IL CONTROLLO (La Guardia): Verifichiamo SUBITO se l\textquotesingle{}immagine è già troppo piccola.}
+  \CommentTok{// Se la condizione è vera, stampiamo il messaggio ed ESCIAMO immediatamente.}
+  \ControlFlowTok{if}\OperatorTok{((}\NormalTok{im}\OperatorTok{.}\FunctionTok{width} \OperatorTok{\textless{}=} \DecValTok{100}\OperatorTok{)} \OperatorTok{||} \OperatorTok{(}\NormalTok{im}\OperatorTok{.}\FunctionTok{height} \OperatorTok{\textless{}=} \DecValTok{100}\OperatorTok{))\{}
+    \FunctionTok{println}\OperatorTok{(}\StringTok{"Limite raggiunto! Non rimpicciolisco più."}\OperatorTok{);}
+    \ControlFlowTok{return}\OperatorTok{;} \CommentTok{// ??? {-}\textgreater{} "Eject": Fermati qui, non leggere le righe sotto e torna al draw().}
+  \OperatorTok{\}}
+
+  \CommentTok{// 2. L\textquotesingle{}AZIONE: Questa parte viene letta SOLO SE non siamo usciti con il return sopra.}
+  \CommentTok{// Se arriviamo qui, significa che l\textquotesingle{}immagine era ancora \textgreater{} 100.}
+\NormalTok{  im}\OperatorTok{.}\FunctionTok{resize}\OperatorTok{(}\NormalTok{im}\OperatorTok{.}\FunctionTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{);} 
+
+  \CommentTok{// Stampiamo i nuovi valori per conferma}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"Nuova Larghezza: "} \OperatorTok{+}\NormalTok{ im}\OperatorTok{.}\FunctionTok{width} \OperatorTok{+} \StringTok{" Nuova Altezza: "} \OperatorTok{+}\NormalTok{ im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyTyped}\OperatorTok{()\{}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}s\textquotesingle{}}\OperatorTok{)\{} \CommentTok{//con s stiamo dicendo di salvare il nostro file con un nome in una cartella}
+    \FunctionTok{println}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"lenaPiccola.png"}\OperatorTok{));} \CommentTok{//così ci stampa il path dove salviamo la foto}
+\NormalTok{    im}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"lenaPiccola.png"}\OperatorTok{));} \CommentTok{//così la salva e gli da un nome}
+    \CommentTok{//im.save(savePath("data/lenaPiccola.png")); //così la salva nella cartella "data" e gli da un nome}
+  \OperatorTok{\}}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}c\textquotesingle{}}\OperatorTok{)\{}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"salvo la canvas..."}\OperatorTok{);}
+  \FunctionTok{saveFrame}\OperatorTok{(}\StringTok{"lenaCanvas.png"}\OperatorTok{);} \CommentTok{//così salviamo l\textquotesingle{}ultimo frame della canvas}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+  \FunctionTok{size}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);}
+ 
+  \FunctionTok{rectMode}\OperatorTok{(}\NormalTok{CENTER}\OperatorTok{);}
+  
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{translate}\OperatorTok{(}\NormalTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{);}
+  \FunctionTok{rotate}\OperatorTok{(}\FunctionTok{radians}\OperatorTok{(}\NormalTok{frameCount}\OperatorTok{\%}\DecValTok{360}\OperatorTok{));}
+  
+  \FunctionTok{translate}\OperatorTok{(}\DecValTok{50}\OperatorTok{,}\DecValTok{50}\OperatorTok{);}
+  \FunctionTok{rotate}\OperatorTok{(}\FunctionTok{radians}\OperatorTok{(}\NormalTok{frameCount}\OperatorTok{*}\DecValTok{10}\OperatorTok{\%}\DecValTok{360}\OperatorTok{));}
+  
+  \FunctionTok{fill}\OperatorTok{(}\NormalTok{frameCount }\OperatorTok{*} \DecValTok{3} \OperatorTok{\%} \DecValTok{255}\OperatorTok{,}\NormalTok{ frameCount }\OperatorTok{*} \DecValTok{5} \OperatorTok{\%} \DecValTok{255}\OperatorTok{,}
+\NormalTok{      frameCount }\OperatorTok{*} \DecValTok{7} \OperatorTok{\%} \DecValTok{255}\OperatorTok{);}
+  \FunctionTok{rect}\OperatorTok{(}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{100}\OperatorTok{,}\DecValTok{100}\OperatorTok{);}
+  \FunctionTok{saveFrame}\OperatorTok{(}\StringTok{"frame{-}\#\#\#.png"}\OperatorTok{);} \CommentTok{//i questo modo salviamo tutti i frame dell\textquotesingle{}animazione, e inoltre con }\AlertTok{\#\#\#}\CommentTok{ vengono numerati (il numero di cancelletti corrisponde al numero di cifre nel nome file)}
+\OperatorTok{\}}
+
+\CommentTok{/*}
+\CommentTok{Una volta aver esportato tutti i frame possiamo realizzare un video dell\textquotesingle{}animazione}
+\CommentTok{Andiamo su Strumenti \textgreater{} Creatore di filmati \textgreater{} Crea Filmato}
+\CommentTok{E cosi realizzerà un file .mov della nostra animazione}
+\CommentTok{Per salvare i frame in cartella in maiera più ordinata possiamo scrivere il comando saveFrame() così:}
+\CommentTok{saveFrame("frames/}\AlertTok{\#\#\#}\CommentTok{.png");}
+\CommentTok{*/}
+\end{Highlighting}
+\end{Shaded}
+
+Filtri immagini
+
+\begin{Shaded}
+\begin{Highlighting}[]
+\CommentTok{//Come caricare immagini dal web}
+\CommentTok{//e applicare filtro in scala di grigio}
+\NormalTok{PImage im}\OperatorTok{;}
+\NormalTok{PImage subIm}\OperatorTok{;}
+
+\DataTypeTok{void} \FunctionTok{setup}\OperatorTok{()\{}
+ \FunctionTok{size}\OperatorTok{(}\DecValTok{600}\OperatorTok{,}\DecValTok{600}\OperatorTok{);}
+\NormalTok{ im }\OperatorTok{=} \FunctionTok{loadImage}\OperatorTok{(}\StringTok{"https://i.pinimg.com/736x/0c/6e/73/0c6e738c750dfe7dddc61404490fa94a.jpg"}\OperatorTok{);}
+ \FunctionTok{println}\OperatorTok{(}\StringTok{"Larghezza: "}\OperatorTok{+}\NormalTok{im}\OperatorTok{.}\FunctionTok{width}\OperatorTok{);}
+ \FunctionTok{println}\OperatorTok{(}\StringTok{"Altezza: "}\OperatorTok{+}\NormalTok{im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{);}
+ \FunctionTok{background}\OperatorTok{(}\DecValTok{255}\OperatorTok{,}\DecValTok{255}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+\NormalTok{ im}\OperatorTok{.}\FunctionTok{resize}\OperatorTok{(}\DecValTok{500}\OperatorTok{,}\DecValTok{500}\OperatorTok{);} \CommentTok{//per ridimensionare la foto}
+\NormalTok{ im}\OperatorTok{.}\FunctionTok{filter}\OperatorTok{(}\NormalTok{GRAY}\OperatorTok{);} \CommentTok{//per applcare il filtro}
+\CommentTok{// im.save() restituisce TRUE se il file viene scritto correttamente sul disco.}
+  \ControlFlowTok{if} \OperatorTok{(}\NormalTok{im}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"donna.png"}\OperatorTok{)))} \OperatorTok{\{}
+    \FunctionTok{println}\OperatorTok{(}\StringTok{"Foto salvata con successo nel percorso!"}\OperatorTok{);}
+  \OperatorTok{\}} \ControlFlowTok{else} \OperatorTok{\{}
+    \FunctionTok{println}\OperatorTok{(}\StringTok{"Errore nel salvataggio!"}\OperatorTok{);} \CommentTok{// In C: perror("Errore");}
+  \OperatorTok{\}}
+ \FunctionTok{image}\OperatorTok{(}\NormalTok{im}\OperatorTok{,}\DecValTok{0}\OperatorTok{,}\DecValTok{0}\OperatorTok{);}
+ \CommentTok{//ora salviamo metà immagine}
+\NormalTok{ subIm}\OperatorTok{=}\NormalTok{im}\OperatorTok{.}\FunctionTok{get}\OperatorTok{(}\DecValTok{100}\OperatorTok{,}\DecValTok{100}\OperatorTok{,}\DecValTok{120}\OperatorTok{,}\DecValTok{120}\OperatorTok{);} \CommentTok{//Vai al punto 100,100 e taglia un quadrato di dimensione 120x120}
+\NormalTok{ subIm}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"donnaGray.png"}\OperatorTok{));}
+\OperatorTok{\}}
+
+\CommentTok{//per vedere l\textquotesingle{}immagine la carichiamo nel draw}
+\DataTypeTok{void} \FunctionTok{draw}\OperatorTok{()\{}
+  \FunctionTok{background}\OperatorTok{(}\DecValTok{0}\OperatorTok{);}
+\OperatorTok{\}}
+
+\CommentTok{//Ora vediamo come possiamo modificare l\textquotesingle{}immagine}
+\CommentTok{//Facciamo che ad un clic l\textquotesingle{}immagine è grande esattamente la metà}
+
+\DataTypeTok{void} \FunctionTok{mouseClicked}\OperatorTok{()\{}
+  \CommentTok{// 1. IL CONTROLLO (La Guardia): Verifichiamo SUBITO se l\textquotesingle{}immagine è già troppo piccola.}
+  \CommentTok{// Se la condizione è vera, stampiamo il messaggio ed ESCIAMO immediatamente.}
+  \ControlFlowTok{if}\OperatorTok{((}\NormalTok{im}\OperatorTok{.}\FunctionTok{width} \OperatorTok{\textless{}=} \DecValTok{100}\OperatorTok{)} \OperatorTok{||} \OperatorTok{(}\NormalTok{im}\OperatorTok{.}\FunctionTok{height} \OperatorTok{\textless{}=} \DecValTok{100}\OperatorTok{))\{}
+    \FunctionTok{println}\OperatorTok{(}\StringTok{"Limite raggiunto! Non rimpicciolisco più."}\OperatorTok{);}
+    \ControlFlowTok{return}\OperatorTok{;} \CommentTok{// ??? {-}\textgreater{} "Eject": Fermati qui, non leggere le righe sotto e torna al draw().}
+  \OperatorTok{\}}
+
+  \CommentTok{// 2. L\textquotesingle{}AZIONE: Questa parte viene letta SOLO SE non siamo usciti con il return sopra.}
+  \CommentTok{// Se arriviamo qui, significa che l\textquotesingle{}immagine era ancora \textgreater{} 100.}
+\NormalTok{  im}\OperatorTok{.}\FunctionTok{resize}\OperatorTok{(}\NormalTok{im}\OperatorTok{.}\FunctionTok{width}\OperatorTok{/}\DecValTok{2}\OperatorTok{,}\NormalTok{ im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{/}\DecValTok{2}\OperatorTok{);} 
+
+  \CommentTok{// Stampiamo i nuovi valori per conferma}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"Nuova Larghezza: "} \OperatorTok{+}\NormalTok{ im}\OperatorTok{.}\FunctionTok{width} \OperatorTok{+} \StringTok{" Nuova Altezza: "} \OperatorTok{+}\NormalTok{ im}\OperatorTok{.}\FunctionTok{height}\OperatorTok{);}
+\OperatorTok{\}}
+
+\DataTypeTok{void} \FunctionTok{keyTyped}\OperatorTok{()\{}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}s\textquotesingle{}}\OperatorTok{)\{} \CommentTok{//con s stiamo dicendo di salvare il nostro file con un nome in una cartella}
+    \FunctionTok{println}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"lenaPiccola.png"}\OperatorTok{));} \CommentTok{//così ci stampa il path dove salviamo la foto}
+\NormalTok{    im}\OperatorTok{.}\FunctionTok{save}\OperatorTok{(}\FunctionTok{savePath}\OperatorTok{(}\StringTok{"lenaPiccola.png"}\OperatorTok{));} \CommentTok{//così la salva e gli da un nome}
+    \CommentTok{//im.save(savePath("data/lenaPiccola.png")); //così la salva nella cartella "data" e gli da un nome}
+  \OperatorTok{\}}
+  \ControlFlowTok{if}\OperatorTok{(}\NormalTok{key}\OperatorTok{==}\CharTok{\textquotesingle{}c\textquotesingle{}}\OperatorTok{)\{}
+  \FunctionTok{println}\OperatorTok{(}\StringTok{"salvo la canvas..."}\OperatorTok{);}
+  \FunctionTok{saveFrame}\OperatorTok{(}\StringTok{"lenaCanvas.png"}\OperatorTok{);} \CommentTok{//così salviamo l\textquotesingle{}ultimo frame della canvas}
+  \OperatorTok{\}}
+\OperatorTok{\}}
+\end{Highlighting}
+\end{Shaded}
+
+
+\end{document}

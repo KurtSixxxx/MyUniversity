@@ -1,0 +1,1240 @@
+% Options for packages loaded elsewhere
+\PassOptionsToPackage{unicode}{hyperref}
+\PassOptionsToPackage{hyphens}{url}
+%
+\documentclass[
+]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{iftex}
+\ifPDFTeX
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+  \usepackage{textcomp} % provide euro and other symbols
+\else % if luatex or xetex
+  \usepackage{unicode-math} % this also loads fontspec
+  \defaultfontfeatures{Scale=MatchLowercase}
+  \defaultfontfeatures[\rmfamily]{Ligatures=TeX,Scale=1}
+\fi
+\usepackage{lmodern}
+\ifPDFTeX\else
+  % xetex/luatex font selection
+\fi
+% Use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+\IfFileExists{microtype.sty}{% use microtype if available
+  \usepackage[]{microtype}
+  \UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\makeatletter
+\@ifundefined{KOMAClassName}{% if non-KOMA class
+  \IfFileExists{parskip.sty}{%
+    \usepackage{parskip}
+  }{% else
+    \setlength{\parindent}{0pt}
+    \setlength{\parskip}{6pt plus 2pt minus 1pt}}
+}{% if KOMA class
+  \KOMAoptions{parskip=half}}
+\makeatother
+\usepackage{xcolor}
+\setlength{\emergencystretch}{3em} % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{-\maxdimen} % remove section numbering
+\ifLuaTeX
+  \usepackage{selnolig}  % disable illegal ligatures
+\fi
+\IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
+\IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
+\urlstyle{same}
+\hypersetup{
+  hidelinks,
+  pdfcreator={LaTeX via pandoc}}
+
+\author{}
+\date{}
+
+\begin{document}
+
+\hypertarget{lezione-9-operatori-locali-e-convoluzione}{%
+\section{Lezione 9: Operatori locali e Convoluzione}\label{lezione-9-operatori-locali-e-convoluzione}}
+
+\hypertarget{base-canonica}{%
+\subsubsection{Base Canonica}\label{base-canonica}}
+
+La \textbf{base canonica} è l'insieme dei vettori più semplici che esistono per costruire tutti gli altri vettori di uno spazio. In pratica, sono i ``mattoncini fondamentali'' dove ogni mattoncino ha il valore \textbf{1} in una posizione e \textbf{0} in tutte le altre.
+Dato un vettore di lunghezza N, scomponiamo andando a moltiplicare il numero per una base formata da tutti zeri tranne il numero 1 che si trova nella posizione equivalente a dov'era il numero prima:
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Base canonica è una possibile base, ne esistono anche altre tipo la base della trasformata del coseno.
+
+\textbf{Lo stesso ragionamento vale anche per le immagini}, immaginiamo una matrice 3x3 che rappresenta la nostra immagine. Ad ogni cella viene associato un numero, e poi si fa la stessa applicazione che viene fatta per il vettore. Ossia: la cella che equivale alla posizione del numero che stiamo analizzando, vale 1, tutte le altre zero.
+Dunque abbiamo una \textbf{somma di prodotti}.
+Il processo da fare è:
+individuare il numero e sostituirlo con 1, in tutte le altre mettere 0, e moltiplicare per il numero, poi sommare con gli altri prodotti degli altri numeri. Come vedi nella immagine qui sotto:
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{operatori-locali}{%
+\subsubsection{Operatori locali}\label{operatori-locali}}
+
+Sono quegli operatori in cui il valore di un pixel in output, un solo pixel, dipende dall'equivalente valore del pixel di input, ma anche dell'\textbf{intorno} di questo pixel; quindi dei pixel che gli stanno vicini.
+Quanto deve essere grande l'intorno? Dipende dall'operatore. Vi sono operatori 3x3, 5x5, 7x7, 3x5, 5x3. La dimensione è legata all'operatore che utilizziamo.
+Noi studieremo operatori che utilizzano \textbf{dimensioni dispari}, perché è più facile \textbf{trovare il centro e dunque tutti i pixel che stanno intorno ad esso}.
+{[}fare esempio con disegno di matrice 2x2 dove non c'è il centro e una 3x3 dove c'è il centro{]}
+Quello che a noi interessa è prendere il pixel centrale della matrice, che è il perno su cui si basa l'operazione.
+
+Una osservazione importante da fare è che se l'operatore locale che utilizziamo è 3x3 o 5x5 non cambia nulla nel tipo di operazione che voglio fare io, cambierà solo il risultato. L'unica differenza sta nell'intorno che usiamo: se abbiamo una matrice 3x3 abbiamo un intorno di 9px, se abbiamo una matrice 5x5 abbiamo un intorno di 25px.
+
+\hypertarget{operatori-lineari}{%
+\subsubsection{Operatori Lineari}\label{operatori-lineari}}
+
+Parliamo di operatori lineari ma facciamo una premessa: Prendiamo un operatore lineare, ma non è detto che gli operatori non lineari non siano buoni o non sono operatori locali, lo sono pure.
+
+Un operatore è lineare, se presa la funzione \(F : V \rightarrow W\), scrivere:
+
+\[
+F(a \cdot v_1 + b \cdot v_2) = a \cdot F(v_1) + b \cdot F(v_2)
+\]
+
+\(v_1\) e \(v_ 2\) sono una coppia di vettori in \(V\), e \(a,b\) sono una coppia di scalari.
+
+Uno \textbf{scalare} è semplicemente un numero, che ha il compito di ``scalare'' le cose. Se hai un vettore (o una lista di pixel) e lo moltiplichi per uno scalare (ad esempio 2), quel vettore diventa ``in scala'' due volte più grande.
+
+Quella a cui faremo rifermento noi è questa:
+
+\[
+a \cdot f(x_1,y_1)+b \cdot f(x_2,y_2)=f(ax_1+bx_2,ay_1+by_2)
+\]
+
+Cosa vuol dire ``\textbf{lineare}''? Pensala come una \textbf{trasformazione onesta e prevedibile}.
+Immagina di avere due punti su un foglio. Se li sommi (o li combini) e POI applichi la trasformazione, dovresti ottenere lo stesso risultato che otterresti applicando prima la trasformazione a ciascuno e POI sommandoli. Se la regola è ``onesta'', il risultato deve essere lo stesso in entrambi i casi.
+
+La formula significa che l'uguaglianza deve essere soddisfatto. Quindi primo e secondo membro devono avere uguale valore
+
+\textbf{Esempi:}
+1° Esempio: la funzione \(f(x,y) = (\frac{x}{2}, \frac{y}{3})\) è lineare? SI
+Per essere lineare dovrebbe verificarsi l'uguaglianza:
+
+\[
+a \cdot f(x_1,y_1)+b \cdot f(x_2,y_2)=f(ax_1+bx_2,ay_1+by_2)
+\]
+
+L'obiettivo è dimostrare che il \textbf{Primo Membro} e il \textbf{Secondo Membro} dell'uguaglianza di linearità sono identici.
+
+\textbf{Step 1: Capire la funzione \(f(x,y)\)}
+La funzione prende una coppia \((x, y)\) e:
+
+\begin{itemize}
+\tightlist
+\item
+  Divide il primo numero per \(2\).
+\item
+  Divide il secondo numero per \(3\).
+  Esempio: se l'input è \((10, 30)\), l'output è \((\frac{10}{2}, \frac{30}{3}) = (5, 10)\).
+\end{itemize}
+
+\textbf{Step 2: Analisi del Primo Membro \(a \cdot f(x_1, y_1) + b \cdot f(x_2, y_2)\)}
+Questo significa: ``applica la funzione ai punti separatamente, moltiplicali per \(a\) e \(b\), e poi somma tutto''.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Applichiamo la funzione ai due punti:
+  \(f(x_1, y_1) = (\frac{x_1}{2}, \frac{y_1}{3})\)
+  \(f(x_2, y_2) = (\frac{x_2}{2}, \frac{y_2}{3})\)
+\item
+  Moltiplichiamo per \(a\) e \(b\):
+  \(a \cdot (\frac{x_1}{2}, \frac{y_1}{3}) = (\frac{a \cdot x_1}{2}, \frac{a \cdot y_1}{3}) \\ b \cdot (\frac{x_2}{2}, \frac{y_2}{3}) = (\frac{b \cdot x_2}{2}, \frac{b \cdot y_2}{3})\)
+\item
+  Sommiamo i risultati (primo con primo, secondo con secondo):
+  \((\frac{a \cdot x_1}{2} + \frac{b \cdot x_2}{2}, \quad \frac{a \cdot y_1}{3} + \frac{b \cdot y_2}{3})\)
+  \textbf{{[}Risultato del Primo Membro{]}}
+\end{enumerate}
+
+\textbf{Step 3: Analisi del Secondo Membro \(f(a x_1 + b x_2, a y_1 + b y_2)\)}
+Questo significa: ``combina prima i punti e poi applica la funzione all'intero blocco''.
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  L'input unico per la funzione è la coppia: \((a x_1 + b x_2, \quad a y_1 + b y_2)\).
+\item
+  La funzione f deve dividere il primo blocco per \(2\) e il secondo blocco per \(3\):
+  \(f( \text{blocco1}, \text{blocco2} ) = ( \frac{\text{blocco1}}{2}, \frac{\text{blocco2}}{3} )\)
+\item
+  Inseriamo i nostri blocchi:
+  \((\frac{a x_1 + b x_2}{2}, \quad \frac{a y_1 + b y_2}{3})\)
+  \textbf{{[}Risultato del Secondo Membro{]}}
+\end{enumerate}
+
+\textbf{Step 4: Il confronto finale (Perché sono uguali?)}
+Dobbiamo capire se le due espressioni dicono la stessa cosa. Usiamo una regola delle frazioni: \(\frac{A+B}{C} = \frac{A}{C} + \frac{B}{C}\).
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Secondo Membro:} \((\frac{a x_1 + b x_2}{2}, \quad \frac{a y_1 + b y_2}{3})\)
+\item
+  Se ``spezziamo'' le frazioni del Secondo Membro otteniamo:
+  \((\frac{a x_1}{2} + \frac{b x_2}{2}, \quad \frac{a y_1}{3} + \frac{b y_2}{3})\)
+\end{itemize}
+
+Questo è \textbf{esattamente identico} al risultato che abbiamo ottenuto nello Step 2 (il Primo Membro).
+
+\textbf{Risposta finale}
+Poiché il Primo Membro \(a \cdot f(x_1, y_1) + b \cdot f(x_2, y_2)\) produce lo stesso identico risultato del Secondo Membro \(f(ax_1+bx_2, ay_1+by_2)\), la condizione di linearità è soddisfatta. La funzione è \textbf{lineare}.
+
+Il concetto chiave è la \textbf{Linearità}. Una funzione è lineare se ``rispetta'' le somme e le moltiplicazioni per costanti.
+
+In termini semplici:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Omogeneità:} Se raddoppi l'input, il risultato raddoppia. \(\frac{2x}{2}\) è uguale a \(2 \cdot \frac{x}{2}\).
+\item
+  \textbf{Additività:} Il risultato della somma è uguale alla somma dei risultati. \(\frac{x_1+x_2}{2}\) è uguale a \(\frac{x_1}{2} + \frac{x_2}{2}\).
+\end{enumerate}
+
+2° Esempio: La funzione \(f(x,y)=(255-x,255-y)\) è lineare? NO
+Per essere lineare dovrebbe verificarsi l'uguaglianza:
+a \$cdot f(x\_1,y\_1)+b \cdot f(x\_2,y\_2)=f(ax\_1+bx\_2,ay\_1+by\_2)\$
+
+\textbf{Smontiamo i simboli:}
+
+\begin{itemize}
+\tightlist
+\item
+  \(f\): La tua ``macchina'' di trasformazione.
+\item
+  \((x_₁, y_₁)\) e \((x_₂, y_₂)\): Sono due punti qualsiasi. Pensali come due pixel in posizioni diverse, ognuno con le sue coordinate di colore.
+\item
+  \(a\) e \(b\): Sono due numeri qualsiasi (pesi). Servono per fare combinazioni (ad esempio, se \(a=1\) e \(b=1\), stai sommando; se \(a=0.5\) e \(b=0.5\), stai facendo una media).
+\item
+  Il \textbf{PRIMO MEMBRO} (\(a\cdot f(x_₁,y_₁) + b \cdot f(x_₂,y_₂)\)): Significa: \textbf{``Applica la funzione \(f\) a ciascun punto SEPARATAMENTE, poi combina i risultati usando \(a\) e \(b\).''}
+\item
+  Il \textbf{SECONDO MEMBRO} (\(f(a \cdot x_₁+b \cdot x_₂, a \cdot y_₁+b \cdot y_₂)\)): Significa: \textbf{``PRIMA combina i due punti originali usando \(a\) e \(b\), e POI applica la funzione \(f\) UNA sola volta al risultato combinato.''}
+\end{itemize}
+
+Se l'uguaglianza è vera, la funzione è lineare. Se è falsa, non lo è.
+
+Ora verifichiamolo per la funzione: \(f(x, y) = (255 - x, 255 - y)\).
+
+\textbf{PASSAGGIO 1: Calcoliamo il PRIMO MEMBRO}
+
+Partiamo da: \(a \cdot f(x_₁, y_₁) + b \cdot f(x_₂, y_₂)\)
+
+\textbf{Sottopassaggio 1A: Calcoliamo \(f(x_₁, y_₁)\) e \(f(x_₂, y_₂)\)}
+
+\begin{itemize}
+\tightlist
+\item
+  Per definizione, \(f(x_₁, y_₁) = (255 - x_₁, 255 - y_₁)\).
+\item
+  Allo stesso modo, \(f(x_₂, y_₂) = (255 - x_₂, 255 - y_₂)\).
+\end{itemize}
+
+\textbf{Sottopassaggio 1B: Moltiplichiamo per \(a\) e \(b\)}
+Moltiplicare una coppia per un numero significa moltiplicare \textbf{entrambi} i numeri nella coppia.
+
+\begin{itemize}
+\tightlist
+\item
+  \(a \cdot f(x_₁, y_₁) = a \cdot (255 - x_₁, 255 - y_₁) = (a\cdot(255 - x_₁), a\cdot(255 - y_₁))\)
+  Ora applichiamo la \textbf{proprietà distributiva} (il numero \(a\) ``entra'' in entrambi i termini dentro la parentesi):
+
+  \begin{itemize}
+  \tightlist
+  \item
+    \(a \cdot (255 - x_₁)\) diventa \(a \cdot 255 - a \cdot x_₁\)
+  \item
+    \(a \cdot (255 - y_₁)\) diventa \(a \cdot 255 - a \cdot y_₁\)
+    Quindi: \(a \cdot f(x_₁, y_₁) = (a\cdot 255 - a\cdot x_₁, a \cdot 255 - a\cdot y_₁)\)
+  \end{itemize}
+\item
+  Allo stesso modo: \(b \cdot f(x_₂, y_₂) = (b\cdot255 - b\cdot x_₂, b\cdot255 - b\cdot y_₂)\)
+\end{itemize}
+
+\textbf{ESEMPIO NUMERICO (per fissare l'idea):}
+Poniamo \(a=2\), \(x_₁=10\), \(y_₁=20\).
+\(2 \cdot f(10, 20) = 2 \cdot (255-10, 255-20) = 2 \cdot (245, 235) = (2\cdot245, 2\cdot235) = (490, 470)\).
+Usando la formula con la distributiva: \((2\cdot255 - 2\cdot10, 2\cdot255 - 2\cdot20) = (510 - 20, 510 - 40) = (490, 470)\). È lo stesso!
+
+\textbf{Sottopassaggio 1C: Sommiamo i due risultati}
+Per sommare due coppie, sommiamo i primi componenti tra loro e i secondi componenti tra loro.
+
+Primo membro = \((a\cdot255 - a\cdot x_₁, a\cdot255 - a\cdot y_₁) + (b\cdot255 - b\cdot x_₂, b\cdot255 - b\cdot y_₂)\)
+= \((a\cdot255 - a\cdot x_₁ + b\cdot255 - b\cdot x_₂, a\cdot255 - a\cdot y_₁ + b\cdot255 - b\cdot y_₂)\)
+
+Raggruppiamo i termini con \(255\):
+\textbf{PRIMO MEMBRO FINALE:} \((a\cdot255 + b\cdot255 - a\cdot x_₁ - b\cdot x_₂, a\cdot255 + b\cdot255 - a\cdot y_₁ - b\cdot y_₂)\)
+
+\textbf{PASSAGGIO 2: Calcoliamo il SECONDO MEMBRO}
+
+Partiamo da: \(f(a\cdot x_₁ + b\cdot x_₂, a\cdot y_₁ + b\cdot y_₂)\)
+
+\textbf{Sottopassaggio 2A: Capiamo l'input della funzione}
+L'input non è più un semplice \(x\) e \(y\). È una \textbf{combinazione}:
+
+\begin{itemize}
+\tightlist
+\item
+  Il primo input è: \((a\cdot x_₁ + b\cdot x_₂)\)
+\item
+  Il secondo input è: \((a\cdot y_₁ + b\cdot y_₂)\)
+\end{itemize}
+
+\textbf{Sottopassaggio 2B: Applichiamo la regola \(f\) a questo input}
+La regola \(f\) dice: prendi il primo input, calcola \(255 - (\text{primo input})\). Prendi il secondo input, calcola \(255 - (\text{secondo input})\).
+
+Quindi:
+\(f(a\cdot x_₁ + b \cdot x_₂, a \cdot y_₁ + b \cdot y_₂) = (255 - (a \cdot x_₁ + b \cdot x_₂), 255 - (a*y_₁ + b \cdot y_₂))\)
+
+\textbf{Sottopassaggio 2C: Semplifichiamo (togliamo le parentesi interne)}
+\(255 - (a\cdot x_₁ + b \cdot x_₂)\) significa \(255 - a\cdot x_₁ - b \cdot x_₂\). Il segno \(-\) davanti alla parentesi cambia il segno di TUTTI i termini dentro.
+Stessa cosa per l'altro componente: \(255 - (a\cdot y_₁ + b\cdot y_₂) = 255 - a \cdot y_₁ - b \cdot y_₂\).
+
+\textbf{SECONDO MEMBRO FINALE:} \((255 - a \cdot x_₁ - b \cdot x_₂, 255 - a \cdot y_₁ - b \cdot y_₂)\)
+
+\textbf{PASSAGGIO 3: Confrontiamo i Due Membri}
+
+Mettiamoli uno sotto l'altro:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Primo Membro:} \((a\cdot255 + b\cdot255 - a\cdot x_₁ - b\cdot x_₂, a\cdot255 + b\cdot255 - a\cdot y_₁ - b \cdot y_₂)\)
+\item
+  \textbf{Secondo Membro:} \((255 - a\cdot x_₁ - b\cdot x_₂, 255 - a \cdot y_₁ - b\cdot y_₂)\)
+\end{itemize}
+
+\textbf{Osserva la differenza CHIAVE:}
+Nel primo membro, davanti a \(255\) ci sono \(a\) e \(b\) che lo moltiplicano: \(a\cdot255 + b\cdot255\).
+Nel secondo membro, il \(255\) è solo, \textbf{non è moltiplicato per \(a\) e \(b\)}.
+
+\textbf{Conclusione:} I due membri \textbf{NON sono uguali}. Perché? Perché nel primo membro la ``costante 255'' viene pesata con \(a\) e \(b\), mentre nel secondo membro la ``costante 255'' compare una volta sola, indipendentemente da \(a\) e \(b\).
+
+\textbf{Esempio Numero Finale per Distruggere Ogni Dubbio:}
+Poniamo \(a=1\), \(b=1\), \(x_₁=0\), \(y_₁=0\), \(x_₂=0\), \(y_₂=0\).
+
+\begin{itemize}
+\tightlist
+\item
+  Primo Membro: \((1\cdot 255 + 1\cdot 255 - 0 - 0, 1\cdot 255 + 1\cdot 255 - 0 - 0) = (510, 510)\)
+\item
+  Secondo Membro: \((255 - 0 - 0, 255 - 0 - 0) = (255, 255)\)
+\end{itemize}
+
+\textbf{510 è diverso da 255!} Basta questo controesempio per dire che l'uguaglianza non è vera per tutti i numeri. Quindi, \textbf{la funzione NON È LINEARE}.
+
+\textbf{IL SIGNIFICATO: Perché il ``255'' la Rende Non Lineare?}
+
+Quel \(255\) è una \textbf{traslazione} (uno spostamento). Le funzioni lineari ``pure'' passano sempre per l'origine (0,0). La tua funzione, invece, fa questo:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Prende il punto \((x, y)\).
+\item
+  Lo ``ribalta'' cambiandone il segno (da \(x\) a \(x\)).
+\item
+  Poi lo \textbf{sposta} di 255 unità (fa \(x + 255\)).
+\end{enumerate}
+
+Il metodo:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Scrivi i due membri dell'uguaglianza.
+\item
+  Sostituisci la definizione di \(f\).
+\item
+  Sviluppa i calcoli con molta pazienza (distributiva, somma di coppie).
+\item
+  Confronta. Se vedi che i termini costanti (come \(255\)) si comportano in modo diverso, la funzione non è lineare.
+\end{enumerate}
+
+\hypertarget{invariate-per-traslazione-shift-invariant}{%
+\subsubsection{Invariate per traslazione (shift invariant)}\label{invariate-per-traslazione-shift-invariant}}
+
+Un operatore si dice \textbf{invariante per traslazione} quando il suo comportamento sulle immagini impulsive è sempre il medesimo indipendentemente dalla posizione in cui si trova il pixel.
+
+Immagina di avere un filtro che ``sfoca'' l'immagine.
+
+\begin{itemize}
+\tightlist
+\item
+  Se applichi il filtro a un volto che si trova in \textbf{alto a sinistra}, ottieni un volto sfocato.
+\item
+  Se sposti (\textbf{trasli}) quel volto in \textbf{basso a destra} e applichi lo stesso filtro, ti aspetti di ottenere lo stesso identico risultato, solo in una posizione diversa.
+\end{itemize}
+
+Se il filtro si comporta \textbf{sempre nello stesso modo} a prescindere da dove si trova l'oggetto, allora si dice \textbf{Invariante per Traslazione}.
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Esempio di operatore NON invariante:} Un filtro che sfoca tantissimo i bordi dell'immagine ma lascia nitido il centro. Qui il comportamento \textbf{varia} a seconda della posizione (se sei al centro o se sei al bordo). Questo è difficile da studiare perché devi conoscere una regola diversa per ogni punto dell'immagine.
+\item
+  \textbf{Operatore Invariante (Quello ``buono''):} La regola è la stessa per tutti. Se sai cosa fa a un singolo pixel (l'impulso) al centro, sai cosa farà a tutti gli altri pixel in ogni posizione.
+\item
+  \textbf{Tutti gli operatori puntuali sono invarianti per traslazione (anche se non sono lineari).}
+\end{itemize}
+
+Ricordiamo l'operatore puntuale per fare il negativo di un'immagine, consiste nell'associare al valore \(f(x,y)\) del pixel il valore \(255-f(x,y)\).
+Cosa fa? L'operatore prende il valore di grigio nel punto \((x,y)\) e lo sottrae a \(255\). Questo comportamento è sempre lo stesso per tutti i medesimi livelli, indipendentemente dalla posizione che occupano nell'immagine. Quindi è invariante per traslazione.
+
+ATTENZIONE. La funzione \(f(x,y)=(255-x,255-y)\) NON è la funzione negativo!
+
+\hypertarget{schema-di-descrizione-di-f}{%
+\subsubsection{Schema di descrizione di F}\label{schema-di-descrizione-di-f}}
+
+\begin{itemize}
+\tightlist
+\item
+  F lineare: per descriverlo basta conoscere il comportamento su tutte le immagini impulsive.
+\item
+  F shift invariant: si comporta allo stesso modo su tutti gli impulsi, indipendentemente dalla loro posizione
+\item
+  F lineare e shift invariant: per descriverlo basta conoscere come si comporta su un solo impulso.
+\end{itemize}
+
+La ``\textbf{risposta all'impulso}'' o ``\textbf{point spread function}'' di F è la carta di indentità di tale operatore.
+
+\textbf{Cos'è un ``Impulso''?}
+I\textbf{Impulso} (o PSF: point spread funciont) è un altro modo per chiamare un elemento della base canonica.
+• \textbf{L'idea visiva:} Immagina un'immagine completamente nera (tutti 0) dove all'improvviso, in un solo punto, c'è un pixel bianco (valore 1). Quel singolo pixel bianco ``acceso'' è l'impulso.
+• \textbf{A cosa serve?} Si usa per testare i filtri. È come dare un colpetto (un impulso) a una campana per sentire come suona. Se diamo un ``impulso'' (un pixel bianco) a un filtro, vediamo come quel filtro ``risponde'' distribuendo quel bianco intorno.
+
+Ad ogni operatore lineare e shift variant corrisponde una \textbf{maschera}, e viceversa, ossia che ad ogni maschera corrisponde un simile operatore.
+
+\textbf{Esempio}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Tale ``risposta all'impulso'' o PSF definisce completamente un operatore lineare e invariante per traslazioni F. Spesso un operatore su una immagine prende il nome di ``\textbf{filtro}''.
+
+Tale maschera si chiama spesso \textbf{kernel} o \textbf{maschera di convoluzione}.
+Il kernel, o maschera, è come una piccola tabella che viene applicata all'immagine durante la convoluzione. È proprio quella che definisce come verranno modificati i pixel, ad esempio per sfocare, accentuare i contorni o altro.
+La grandezza del kernel può variare fino ad essere infinito, ma per ragioni pratiche vengono usati solo kernel di dimensioni finite.
+Le dimensioni del kernel influenzano la complessità dell'operatore di filtraggio.
+È importante sapere che la complessità dipende anche dal numero di pixel dell'immagine
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{convoluzione}{%
+\subsection{Convoluzione}\label{convoluzione}}
+
+È un'operazione matematica, e in pratica, combina due funzioni per crearne una nuova, mostrandoti come la forma di una influisce sull'altra.
+
+I filtri lineari e invarianti per traslazione vengono chiamati anche filtri convolutivi.
+Esistono infatti le operazioni di convoluzione per capire come un filtro può essere calcolato.
+
+\hypertarget{proprietuxe0-della-convoluzione}{%
+\subsubsection{Proprietà della convoluzione:}\label{proprietuxe0-della-convoluzione}}
+
+Per indicare l'operazione di convoluzione di usa la notazione:
+
+\[
+g = f \otimes h
+\]
+
+E' commutativa
+
+\[
+f \otimes h = h \otimes f
+\]
+
+E' associativa
+
+\[
+(f \otimes h) \otimes h1 = f \otimes (h \otimes h1)
+\]
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{formula-del-kernel-nel-caso-di-dimensioni-finite}{%
+\subsubsection{Formula del Kernel (nel caso di dimensioni finite)}\label{formula-del-kernel-nel-caso-di-dimensioni-finite}}
+
+Prima di analizzare le formule, ecco cosa rappresenta ogni termine:
+
+\begin{itemize}
+\item
+  \textbf{\(g_{m,n}\)}: Il valore del pixel nell'immagine di \textbf{output} (il risultato) alla posizione \((m, n)\).
+\item
+  \textbf{\(f\)}: L'immagine di \textbf{input} originale.
+\item
+  \textbf{\(h\)}: Il \textbf{kernel} (o maschera), ovvero la matrice di pesi che scorre sull'immagine.
+\item
+  \(s,t\): Le dimensioni del kernel (rispettivamente altezza e larghezza).
+\item
+  \textbf{\(\sum\)}: Il simbolo di \textbf{sommatoria} (Sigma), che indica di sommare tutti i risultati delle moltiplicazioni.
+\item
+  \textbf{\(\lfloor \dots \rfloor\)}: Funzione \textbf{Floor} (arrotonda per difetto).
+\item
+  \textbf{\(\lceil \dots \rceil\)}: Funzione \textbf{Ceiling} (arrotonda per eccesso).
+\item
+  Se il kernel \(h\) ha dimensioni \(s \times t\) la formula va riscritta nella seguente maniera e se gli indici del kernel sono disposti in modo da avere il punto di coordinate (0,0) nella posizione centrale, la
+  formula va riscritta nella seguente maniera
+\end{itemize}
+
+\[
+g_{m,n} = \sum_{i = \left\lfloor s/2 \right\rfloor}^{\left\lceil s/2 \right\rceil-1} \sum_{j = -\left\lfloor t/2 \right\rfloor }^{\left\lceil t/2 \right\rceil -1} (h_{i,j} \space \cdot \space f_{m+i,n + j})
+\]
+
+\textbf{Spiegazione:}
+
+• \textbf{Intervallo della somma:} Gli indici \(i\) e \(j\) variano da valori negativi a valori positivi (ad esempio da \(-1\) a \(+1\) per un kernel \(3 \times 3\)). Questo permette di ``esplorare'' l'intorno del pixel centrale.
+• \textbf{Il calcolo:} Per calcolare il nuovo pixel \(g\) in posizione \((m, n)\), la formula prende il kernel \(h\) e lo moltiplica per i pixel dell'immagine \(f\) spostandosi di \(i\) e \(j\) passi rispetto alla posizione corrente.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{itemize}
+\tightlist
+\item
+  Se il kernel \(h\) ha dimensioni \(s \times t\) la formula va riscritta nella seguente maniera e se gli indici del kernel sono disposti partendo da 1 fino ad arrivare a \(s\) e \(t\).
+\end{itemize}
+
+\[
+g_{m,n} = \sum_{i=1, \space j=1}^{s, t}\space h_{i,j} \space \cdot \space f_m+(i-s+\left\lfloor s/2 \right\rfloor), n  + (j-t + \left\lfloor t/2 \right\rfloor)
+\]
+
+\textbf{Spiegazione:}
+• \textbf{Intervallo della somma:} Qui \(i\) e \(j\) vanno semplicemente da \(1\) fino alla dimensione massima del kernel (\(s\) e \(t\)).
+• \textbf{Il termine correttivo (Offset):} La parte complessa dentro la \(f\), ovvero \((i - s + \lfloor s/2 \rfloor)\), serve a traslare l'indice. Poiché il kernel parte da \(1\) invece che da un valore negativo, dobbiamo sottrarre una costante per assicurarci che il centro del kernel sia comunque allineato con il pixel \(f_{m,n}\) che stiamo elaborando.
+
+Entrambe le formule eseguono quella che viene chiamata \textbf{Somma di Prodotti Pesati}. Immagina di sovrapporre la mascherina (kernel) all'immagine:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Moltiplichi ogni numero della mascherina per il pixel che ci sta sotto.
+\item
+  Sommi tutti questi prodotti tra loro.
+\item
+  Il totale diventa il nuovo valore del pixel centrale.
+\end{enumerate}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Esempi}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Queste \textbf{quattro} immagini sono una sequenza che spiega, passo dopo passo, il ``movimento'' matematico della convoluzione. Immaginale come i fotogrammi di un video che mostra come viene costruita l'immagine finale.
+
+Nel primo riquadro, quello rosso, il kernel (la maschera \(3 \times 3\)) viene ``appoggiato'' nell'angolo in alto a sinistra della matrice originale.
+Le linee rosse tratteggiate collegano ogni numero della matrice con il corrispondente numero del kernel. Si moltiplicano i numeri tra loro e si somma tutto. Il risultato è \textbf{30.} Questo ``30'' viene scritto nella prima cella utile della matrice di output (quella a destra).
+
+Nel secondo riquadro, quello verde, l'algoritmo sposta il kernel di \textbf{una colonna verso destra}. Adesso il kernel sta ``guardando'' una porzione di immagine leggermente diversa, spostata di un pixel. \textbf{Il calcolo:} Si rifà la stessa operazione (moltiplicazioni e somma). Il nuovo risultato è \textbf{45}. \textbf{Il risultato:} Il ``45'' viene scritto a fianco al 30 nella matrice di output.
+
+Nel terzo riquadro, quello giallo, continua il movimento, e quindi il kernel si sposta ancora di una colonna verso destra. Seguendo la stessa logica, il risultato dell'operazione in questa nuova posizione è di nuovo \textbf{30}. Viene riempita la terza cella della prima riga nell'output.
+
+Dopo aver finito la prima riga, il kernel torna a sinistra e scende di una riga (lo vedi dal riquadro rosa tratteggiato). In quella posizione il calcolo dà \textbf{46.} I colori diversi (rosso, verde, giallo, viola, marrone, ecc.) mostrano che \textbf{ogni singolo numero} nella matrice finale (a destra) corrisponde a una diversa posizione del kernel sulla matrice originale (a sinistra).
+
+È grazie a questo ``scorrimento'' che il computer riesce a esaminare tutta l'immagine pezzetto per pezzetto, cercando bordi, forme o colori.
+
+\hypertarget{problemi-nellimplementazione-della-convoluzione}{%
+\subsubsection{Problemi nell'implementazione della convoluzione}\label{problemi-nellimplementazione-della-convoluzione}}
+
+Un problema è quello dei bordi: come fare la convoluzione e il filtraggio ai bordi?
+POSSIBILI SOLUZIONI:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Filtrare solo le zone centrali dell'immagine
+\item
+  Supporre che tutto intorno all'immagine ci sia 0
+\item
+  Assumere una topologia ``toroidale'': quando si ``sfora a destra'' si rientra a sinistra, quando si ``sfora'' in basso di rientra in alto e viceversa;
+\item
+  Aggiungere una riga all'inizio uguale alle riga precedente, una riga alla fine uguale all'ultima riga, una colonna all'inizio uguale alla colonna iniziale, e una colonna alla fine uguale alla colonna finale.
+\end{enumerate}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{esempi-di-operatori-locali}{%
+\subsubsection{Esempi di operatori locali}\label{esempi-di-operatori-locali}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Mediano}
+\end{itemize}
+
+È un filtro non lineare che fornisce in uscita il valore mediano dell'intorno del pixel. Consiste in un effetto di smoothing dell'immagine.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{itemize}
+\item
+  \textbf{Minimo}
+
+  È un filtro che fornisce in uscita il valore minimo dell'intorno del pixel. Consiste in uno oscuramento dell'immagine. Preso un intorno \(m\times m\) di un pixel (con \(m\) generalmente dispari), sostituiscono il valore del pixel con il valore minimo di tutti i valori osservati in tale intorno.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Massimo}
+
+  È un filtro che fornisce in uscita il valore massimo dell'intorno del pixel. Consiste in uno schiarimento dell'immagine. Preso un intorno \(m \times m\) di un pixel (con \(m\) generalmente dispari), sostituiscono il valore del pixel con il valore massimo di tutti i valori osservati in tale intorno.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{N-box (o di media)}
+
+  Sono definiti da kernel \(N \times N\) con ogni elemento pari a \(\frac{1}{N^2}\). Si sceglie generalmente un valore N dispari. Hanno l'effetto di sfocare le immagini. La sfocatura è molto forte in orizzontale e verticale ma meno in diagonale.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{N-binomiale}
+
+  Sono filtri di smussamento con kernel derivati dalla distribuzione binomiale. Poiché tale distribuzione è una approssimazione discreta della distribuzione gaussiana sono anche detti filtri
+  gaussiani. Hanno il pregio di smussare egualmente in tutte le direzioni. Smussano meno vigorosamente degli n-box.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\hypertarget{conservazione-dellenergia-nei-filtri}{%
+\subsubsection{Conservazione dell'energia nei filtri}\label{conservazione-dellenergia-nei-filtri}}
+
+Si dice che un filtro ``conserva l'energia'' se la somma dei suoi pesi fa 1. Tutti i filtri di smoothing visti prima sono ``\emph{energy preserving}'': la somma dei valori totali della luminanza nella immagine non cambia. Esistono anche filtri ``\emph{non energy preserving}''.
+
+\hypertarget{noise-cleaning-e-smoothing}{%
+\subsubsection{Noise cleaning e smoothing}\label{noise-cleaning-e-smoothing}}
+
+I filtri appena visti servono anche a ridurre il rumore (noise) in una immagine. In questo caso, più è grande il kernel e migliore sarà il risultato anche se si rischia di aumentare la sfocatura
+
+I filtri N-box e N-binomiali sono anche usati per sfocare l'immagine (smoothing). In questo caso, più è grande il kernel e maggiore sarà la sfocatura ma si riduce meglio il rumore.
+
+\hypertarget{il-rumore}{%
+\subsection{Il rumore}\label{il-rumore}}
+
+Ci sono due tipi principali di rumore:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Rumore impulsivo}, detto anche ``\textbf{sale e pepe}''. Viene caratterizzato dalla frazione dell'immagine modificata (in \%);
+\item
+  \textbf{Rumore gaussiano bianco}. Viene caratterizzato dalla media e dalla varianza.
+\end{enumerate}
+
+Analizziamoli nel dettaglio:
+
+\hypertarget{rumore-impulsivo-sale-e-pepe}{%
+\subsubsection{Rumore impulsivo (sale e pepe)}\label{rumore-impulsivo-sale-e-pepe}}
+
+\[
+p(z) = \begin{cases} P_a & \text{per } z = a \\P_b & \text{per } z = b \\0 & \text{altrimenti}\end{cases}
+\]
+
+Se \(a\) e \(b\) sono valore «saturi» cioè sono uguali ai valori di massimo e di minimo dell'immagine (solitamente \(a=0\) e \(b=255\)), abbiamo il rumore sale e pepe.
+
+\begin{figure}
+\centering
+{Esempi di rumore «sale e pepe» con 1\% di pixel danneggiati}
+\caption{Esempi di rumore «sale e pepe» con 1\% di pixel danneggiati}
+\end{figure}
+
+Esempi di rumore «sale e pepe» con 1\% di pixel danneggiati
+
+\begin{figure}
+\centering
+{Esempi di rumore «sale e pepe» con 10\% di pixel danneggiati}
+\caption{Esempi di rumore «sale e pepe» con 10\% di pixel danneggiati}
+\end{figure}
+
+Esempi di rumore «sale e pepe» con 10\% di pixel danneggiati
+
+\begin{figure}
+\centering
+{Esempi di rumore «sale e pepe» con 20\% di pixel danneggiati}
+\caption{Esempi di rumore «sale e pepe» con 20\% di pixel danneggiati}
+\end{figure}
+
+Esempi di rumore «sale e pepe» con 20\% di pixel danneggiati
+
+\textbf{Riduzione del rumore sale e pepe:}
+
+\begin{itemize}
+\tightlist
+\item
+  Sia il filtro media che il mediano hanno dimensioni 3x3
+\item
+  Per questo tipo di rumore il filtro \textbf{mediano} funziona meglio
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{rumore-gaussiano}{%
+\subsubsection{Rumore gaussiano}\label{rumore-gaussiano}}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\[
+p(z) = \frac{1}{\sqrt{2\pi \sigma}} e^{-\frac{(z - \bar{z})^2}{2\sigma^2}}
+\]
+
+\begin{itemize}
+\tightlist
+\item
+  \(z\) rappresenta l'intensità
+\item
+  \(\bar{z}\) è il valore medio (media) di \(z\)
+\item
+  \(\sigma\) è la derivazione standard
+\item
+  La derivazione standard al quadrato di \(\sigma^2\) è detta varianza di \(z\)
+\end{itemize}
+
+\textbf{Riduzione del rumore gaussiano:}
+
+\begin{itemize}
+\item
+  Sia il filtro media che il mediano hanno dimensioni 3x3
+\item
+  Per questo tipo di rumore il filtro \textbf{media} funziona meglio
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\hypertarget{dimensioni-del-kernel}{%
+\subsubsection{Dimensioni del kernel}\label{dimensioni-del-kernel}}
+
+Un kernel più grande (come il \(5 \times 5\)) ``vede'' un'area più vasta e media un numero maggiore di pixel (\(25\) contro i \(9\) di un \(3 \times 3\)). Questo porta a una drastica riduzione del rumore, ma causa una perdita di dettagli fini (bordi e texture) perché spalma i valori su una zona troppo ampia.
+
+Applicare due volte un kernel \(3 \times 3\) permette di ottenere un effetto di pulizia profonda ma con una ``gradualità'' diversa. Matematicamente, due passate di un kernel di media sono simili a un'unica passata con un kernel più grande che ha pesi diversi (più alti al centro), preservando meglio la struttura originale dell'immagine.
+
+\textbf{Caso Studio: Rumore ``Sale e Pepe'' al 20\%:
+Rumore:} Pixel bianchi e neri sparsi casualmente.
+
+\begin{itemize}
+\item
+  \textbf{Test \(3 \times 3\) (x2):} Elimina i puntini di disturbo mantenendo una nitidezza accettabile.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\item
+  \textbf{Test \(5 \times 5\) (x1):} Elimina il rumore, ma l'immagine sembra vista attraverso un vetro smerigliato.
+
+  \begin{figure}
+  \centering
+  {image.png}
+  \caption{image.png}
+  \end{figure}
+\end{itemize}
+
+\hypertarget{media-vs-mediano}{%
+\subsubsection{Media vs Mediano}\label{media-vs-mediano}}
+
+Perché i filtri mediani danno risultati migliori rispetto a quelli di media?
+
+\begin{itemize}
+\tightlist
+\item
+  Il filtro \textbf{media} tende a \textbf{creare dei livelli di grigio prima non esistenti.}
+\item
+  Il filtro di \textbf{media non attenua solo il rumore ma anche tutte le alte frequenze} spaziali in maniera indiscriminata dando origine a immagini sfocate.
+\item
+  Il filtro \textbf{mediano non deteriora i lati}, ma elimina i picchi con base piccola rispetto al kernel.
+\end{itemize}
+
+\hypertarget{altri-filtri-per-la-riduzione-del-rumore-non-lineari}{%
+\subsubsection{Altri filtri per la riduzione del rumore (non lineari)}\label{altri-filtri-per-la-riduzione-del-rumore-non-lineari}}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Outlier}: il valore del pixel centrale viene confrontato con il valore della media dei suoi 8 vicini. Se il valore assoluto della differenza è maggiore di una certa soglia, allora il punto viene sostituito dal valore medio, altrimenti non viene modificato.
+\item
+  \textbf{Olimpico}: da un dato intorno si scartano i valori massimo e minimo e sul resto si fa la media.
+\end{itemize}
+
+\hypertarget{estrazione-di-contorni}{%
+\subsubsection{Estrazione di contorni}\label{estrazione-di-contorni}}
+
+Gli operatori locali ci aiutano ad estrarre i contorni da una immagine.
+I contorni sono definiti come delle discontinuità locali della luminanza.
+Gli \textbf{\emph{edge detector}} forniscono immagini in cui sono preservate le variazioni di luminanza ed eliminate tutte le altre informazioni.
+
+\begin{center}\rule{0.5\linewidth}{0.5pt}\end{center}
+
+Per capire se un pixel fa parte di un ``contorno'' (il bordo di un oggetto), non puoi guardare solo lui; devi guardare i suoi vicini per vedere se c'è un ``salto'' di colore. Se tutti i vicini sono bianchi, sei in una zona piatta. Se tu sei nero e il vicino è bianco, sei su un bordo. Questo concetto di ``salto'' o variazione improvvisa di luminosità è ciò che definiamo tecnicamente una \textbf{discontinuità locale della luminanza}.
+
+Per visualizzare matematicamente questo salto utilizziamo dei grafici. Immagina di camminare lungo una linea dell'immagine e di tracciare un grafico della luminosità. Se passi da una zona scura a una chiara bruscamente, il grafico fa un gradino (chiamato \textbf{Step Edge}). Se il passaggio è sfumato, il grafico sale come una rampa (\textbf{Ramp Edge}). Se c'è una linea sottile, il grafico sale e scende subito (\textbf{Line Edge} o \textbf{Roof Edge}).
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Qui entra in gioco la matematica delle derivate per scovare questi punti
+La \textbf{Derivata Prima} misura la ``velocità'' con cui cambia la luminosità. Immagina di guidare sul grafico della luminosità: se la strada è piatta (colore uniforme), la velocità è zero. Quando incontri una rampa (il bordo), la tua ``velocità di salita'' aumenta. Quindi, nel grafico della derivata prima (\(f'(x)\)), il bordo corrisponde esattamente al \textbf{picco massimo}. Dove la derivata è più alta, lì c'è il bordo più netto.
+
+Esiste però un secondo metodo, basato sulla \textbf{Derivata Seconda} (\(f''(x)\)), che misura l'``accelerazione'', ovvero come cambia la pendenza. Quando inizi a salire sul bordo, hai un'accelerazione positiva (spinta in avanti); quando finisci la salita e torni in piano, hai una decelerazione (frenata). Questo crea un grafico che va prima su e poi giù, attraversando lo zero esattamente nel centro del bordo. Questo passaggio per lo zero si chiama \textbf{Zero-crossing} ed è un metodo precisissimo per localizzare il contorno.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Come facciamo a calcolare queste derivate su un computer che conosce solo griglie di pixel? Usiamo i \textbf{Kernel} o maschere, che funzionano come finestre che scorrono sull'immagine.
+I filtri più famosi per la derivata prima sono \textbf{Prewitt} e \textbf{Sobel}. Poiché l'immagine è 2D, dobbiamo cercare i bordi in due direzioni separate.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Cosa fanno queste matrici (\(Sobel_x\) e \(Prewitt_x\))?
+
+Queste matrici con gli \textbf{zeri nella riga centrale} servono a trovare i \textbf{LATI ORIZZONTALI} (come le tapparelle o l'orizzonte).
+
+\textbf{Perché? Guarda la matematica:}
+Prendiamo la matrice \(Sobel_x\):
+
+\$\$
+
+\begin{bmatrix}
+-1 & -2 & -1 \\
+0 & 0 & 0 \\
+1 & 2 & 1
+\end{bmatrix}
+
+\$\$
+
+Quando questa ``finestra'' si sovrappone ai pixel dell'immagine, fa questa operazione:
+\((\text{Riga Sotto} \times \text{positivi}) - (\text{Riga Sopra} \times \text{negativi})\)
+
+\begin{itemize}
+\tightlist
+\item
+  Sta calcolando la differenza tra \textbf{Sotto} e \textbf{Sopra}.
+\item
+  Se c'è una \textbf{linea orizzontale}, i pixel sopra saranno diversi da quelli sotto \(\rightarrow\) Il risultato è un numero alto (bordo rilevato).
+\item
+  Se c'è una linea verticale, i pixel sopra e sotto sono uguali \(\rightarrow\) Il risultato è zero (bordo ignorato).
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{E per i lati verticali? (\(Sobel_y\))}
+
+Per trovare i \textbf{LATI VERTICALI}, la fonte usa le matrici ruotate di 90 gradi (slide), chiamate \(Sobel_y\):
+
+\[
+\begin{bmatrix}
+-1 & 0 & 1 \\
+-2 & 0 & 2 \\
+-1 & 0 & 1
+\end{bmatrix}
+\]
+
+\begin{itemize}
+\tightlist
+\item
+  Qui gli zeri sono nella \textbf{colonna centrale}.
+\item
+  Questa matrice calcola la differenza tra \textbf{Destra} e \textbf{Sinistra}.
+\item
+  Quindi rileva bordi verticali (come un palo della luce).
+\end{itemize}
+
+Per trovare le linee orizzontali, dobbiamo usare il filtro \textbf{Sobel Y}. La matrice è identica ma ruotata di 90 gradi: i \(-1\) sono sopra e gli \(1\) sono sotto. Questo calcola la differenza tra i pixel sopra e quelli sotto, facendo ``accendere'' nel risultato visivo solo i bordi orizzontali, come le tapparelle o i raggi orizzontali della ruota.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Analogamente abbiamo \(Prewitt_x\) e \(Prewitt_y\)}
+
+\textbf{Prewitt X (Lati Orizzontali)}
+
+La matrice è questa: \(\begin{bmatrix} -1 & -1 & -1 \\ 0 & 0 & 0 \\ 1 & 1 & 1 \end{bmatrix}\)
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Cosa cambia rispetto a Sobel:} Vedi che non c'è il \texttt{2} o il \texttt{2} al centro? Qui tutti i numeri sono \texttt{1} o \texttt{1}.
+\item
+  \textbf{Cosa fa:} Tratta tutti i pixel vicini allo stesso modo, senza dare più importanza a quello centrale.
+\item
+  \textbf{Il calcolo:} Fa la somma di tutta la riga \textbf{sotto} e sottrae la somma di tutta la riga \textbf{sopra}.
+\item
+  \textbf{Risultato:} Rileva i \textbf{lati orizzontali} (dove c'è differenza tra sopra e sotto), ma in modo leggermente più ``grezzo'' rispetto a Sobel.
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{Prewitt Y (Lati Verticali)}
+
+La matrice è ruotata di 90 gradi: \(\begin{bmatrix} -1 & 0 & 1 \\ -1 & 0 & 1 \\ -1 & 0 & 1 \end{bmatrix}\)
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Struttura:} Gli zeri sono nella colonna centrale.
+\item
+  \textbf{Il calcolo:} Fa la somma della colonna di \textbf{destra} e sottrae la somma della colonna di \textbf{sinistra}.
+\item
+  \textbf{Risultato:} Rileva i \textbf{lati verticali} (dove c'è differenza tra sinistra e destra).
+\end{itemize}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\textbf{In sintesi:} Mentre Sobel è più preciso perché ``pesa'' di più il pixel centrale (quello più vicino al punto che stiamo analizzando), Prewitt è una media semplice.
+
+\hypertarget{magnitudo}{%
+\subsubsection{Magnitudo}\label{magnitudo}}
+
+A questo punto abbiamo due immagini parziali: una con i bordi verticali e una con quelli orizzontali. Per ottenere l'immagine finale completa dei contorni, dobbiamo unirle. Non possiamo fare una somma semplice; dobbiamo calcolare la \textbf{Magnitudo} (o modulo) del gradiente. Immagina che il bordo verticale sia un cateto e quello orizzontale l'altro cateto di un triangolo: la forza totale del bordo è l'ipotenusa. La formula usata è proprio il Teorema di Pitagora: radice quadrata di Sobel X al quadrato più Sobel Y al quadrato. Il risultato è un'immagine dove tutti i contorni, in qualsiasi direzione, sono visibili
+
+Serve a unire le due immagini parziali (bordi orizzontali \(X\)e verticali \(Y\)) in \textbf{un'unica immagine finale} completa.
+
+\textbf{La Formula (Teorema di Pitagora):}
+\(Magnitudo = \sqrt{Sobel_x^2 + Sobel_y^2}\)
+
+\textbf{Come funziona:}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Eleva al quadrato:} Elimina i numeri negativi, così i bordi opposti non si annullano a vicenda.
+\item
+  \textbf{Somma e Radice:} Combina l'intensità orizzontale e verticale in un unico valore di forza del contorno.
+\end{enumerate}
+
+\textbf{Il tocco finale (Soglia):}
+L'immagine risultante è spesso ``sporca''. Si applica una \textbf{soglia} (es. \textgreater{} 50): i pixel deboli diventano neri, quelli forti diventano bianchi. Il risultato è una mappa pulita dei contorni.
+
+\hypertarget{migliori-risultati}{%
+\subsubsection{Migliori risultati}\label{migliori-risultati}}
+
+Un buon algoritmo deve:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Trovare tutto} (Sensibilità) senza inventare nulla (Specificità).
+\item
+  Essere \textbf{sottile} (1 pixel di spessore) e \textbf{preciso}.
+\item
+  Essere \textbf{continuo} (linee unite, non tratteggiate)
+\end{itemize}
+
+\textbf{Sobel (Lineare): Perché non basta?}
+
+I filtri lineari basati solo sulla convoluzione del gradiente hanno 3 difetti:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  \textbf{Bordi ``grassi'':} La sfocatura naturale del kernel crea linee spesse.
+\item
+  \textbf{Debolezza al rumore:} Ogni sbalzo di pixel viene scambiato per un bordo.
+\item
+  \textbf{Soglia rigida:} O perdi bordi veri o trovi troppo rumore.
+\end{enumerate}
+
+\textbf{Cosa sono gli algoritmi ``non lineari''?}
+
+Un'operazione ``lineare'' è semplice e prevedibile: se raddoppio l'input, raddoppia esattamente l'output. Esempio: moltiplicare tutti i pixel per 2.
+
+Un'operazione~\textbf{non lineare}~rompe questa regola semplice. Esempi:
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Valore assoluto}: \textbar x\textbar{} non è lineare perché \textbar-2\textbar{} = 2, ma -\textbar2\textbar{} = -2
+\item
+  \textbf{Quadrato}: x² non è lineare perché (2\emph{3)² = 36, ma 2}(3²) = 18
+\item
+  \textbf{Soglia}: ``Se il valore è \textgreater{} 100, mettilo a 255, altrimenti a 0''
+\end{itemize}
+
+\textbf{Esempi di ``strategie più intelligenti'':}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Algoritmo di Canny}: Come già accennato, non si limita a calcolare il gradiente. Fa tre operazioni extra intelligenti:
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    \textbf{Soppressione dei non-massimi}: Per ogni pixel, guarda la direzione del gradiente. Se lungo quella linea il pixel corrente non è il più forte, lo azzera. Risultato: bordi sottilissimi.
+  \item
+    \textbf{Isteresi a doppia soglia}: Usa due soglie (alta e bassa). I pixel sopra la soglia alta sono bordo sicuro. Quelli sotto la soglia bassa non sono bordo. Quelli in mezzo diventano bordo SOLO se toccano un pixel bordo-sicuro. Questo unisce linee spezzate.
+  \item
+    \textbf{Collegamento dei bordi}: Cerca di tracciare linee continue seguendo la direzione del gradiente.
+  \end{enumerate}
+\item
+  \textbf{Algoritmi basati su modelli}: Cercano di riconoscere pattern specifici di bordi (ad esempio, cercano linee dritte, curve, ecc.)
+\item
+  \textbf{Algoritmi adattativi}: Cambiano i loro parametri in base alle caratteristiche locali dell'immagine (ad esempio, usano soglie diverse per zone scure e zone chiare)
+\end{itemize}
+
+\textbf{Perché questi metodi danno risultati migliori?}
+
+Facciamo un'analogia:
+
+\begin{itemize}
+\tightlist
+\item
+  Il metodo Sobel semplice è come cercare i bordi con una torcia che illumina solo un punto alla volta, senza criterio.
+\item
+  L'algoritmo di Canny è come cercare i bordi con un detective che:
+
+  \begin{enumerate}
+  \def\labelenumi{\arabic{enumi}.}
+  \tightlist
+  \item
+    Usa una lente d'ingrandimento per vedere i dettagli (soppressione non-massimi)
+  \item
+    Ha due livelli di certezza: ``sono sicuro'' e ``forse'' (isteresi)
+  \item
+    Segue le tracce per ricostruire il percorso completo (collegamento)
+  \end{enumerate}
+\end{itemize}
+
+Il detective trova bordi più precisi, continui e con meno errori.
+
+\textbf{In sintesi estrema}
+
+\begin{itemize}
+\tightlist
+\item
+  \textbf{Sobel = Torcia:} Illumina tutto ciò che cambia, ma in modo sfocato e confuso.
+\item
+  \textbf{Canny = Detective:} Analizza i dettagli, scarta i falsi indizi e segue le tracce per ricostruire il percorso intero.
+\end{itemize}
+
+\hypertarget{kernel-notevoli-il-laplaciano}{%
+\subsubsection{Kernel notevoli: il Laplaciano}\label{kernel-notevoli-il-laplaciano}}
+
+Il filtro più diffuso per calcolare la derivata seconda è detto \textbf{Laplaciano}, ed è definito dalla maschera:
+
+\[
+\begin{matrix}-1 & 0 & -1\\0 & 4 & 0 \\-1 & 0 & -1 \end{matrix}
+\]
+
+Il Laplaciano è un~\textbf{misuratore di ``picchi'' e ``buchi''}~in un'immagine. Ti dice se un pixel è una~\textbf{montagnetta}~(più chiaro dei vicini) o una~\textbf{buca}~(più scuro dei vicini) rispetto all'area circostante.
+
+Pensa a quando tocchi la superficie di uno stagno:
+
+\begin{itemize}
+\tightlist
+\item
+  Se fai un piccolissimo splash (un ``picco''), l'acqua intorno si alza e poi scende
+\item
+  Se fai un piccolo buco (una ``depressione''), l'acqua intorno scende e poi si rialza
+\item
+  Se la superficie è piatta, non succede nulla
+\end{itemize}
+
+Il Laplaciano fa esattamente questo: misura quanto quel punto è ``diverso'' dalla media dei suoi dintorni.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+Dopo aver applicato l'operatore Laplaciano è necessario che si verifichi la condizione di \textbf{\emph{Zero-crossing}}. Cioè, deve sempre accadere che rispetto al punto in questione ci sia nel suo intorno un valore positivo e un valore negativo.
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\hypertarget{filtri-di-sharpening}{%
+\subsubsection{Filtri di sharpening}\label{filtri-di-sharpening}}
+
+I filtri di sharpening sono filtri il cui scopo è quello di aumentare la nitidezza di una immagine aumetandone il contrasto locale. Ovviamente questa è una operazione opposta allo
+sfocamento, in quanto ``accentua'' i dettagli.
+
+Per ottenere tale effetto si può adottare una maschera che, derivata dal Laplaciano, ``rinforza'' i lati presenti nell'immagine. Purtroppo essa rinforza anche il rumore
+presente nella immagine!
+
+\begin{figure}
+\centering
+{image.png}
+\caption{image.png}
+\end{figure}
+
+\end{document}

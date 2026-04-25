@@ -1,0 +1,99 @@
+Università di Catania
+Dipartimento di Matematica e Informatica
+Corso di Studio in Informatica, A.A. 2022-2023
+Prova di laboratorio
+8 Febbraio 2023
+B
+Descrizione del programma
+Scrivere un programma in C che:
+●
+
+●
+
+●
+
+●
+●
+
+A. Prenda come argomenti da riga di comando il nome IN di un
+file di testo di input (es. “input.txt”) e il nome OUT di un
+file di testo di output (es. “output.txt”). Si assuma che i
+nomi dei file non superino i 255 caratteri.
+B. Si assuma che il file di input contenga un numero n di
+righe di testo e che ogni riga contenga un numero m di valori
+in virgola mobile separati da spazi; il programma allochi una
+matrice di puntatori a double di dimensioni n x m, che
+punteranno ai numeri contenuti nel file di input;
+C. Elimini dalla matrice i valori di A che sono inferiori ai
+valori medi delle righe corrispondenti (i corrispondenti
+puntatori dovranno puntare a NULL con conseguente liberazione
+della memoria occupata dai corrispondenti double);
+D Inserisca i valori puntati dai puntatori non nulli in A in
+un array di double;
+E scriva i valori dell’array sul file di output il cui nome
+e’ stato specificato a linea di comando.
+
+Specifiche
+Il programma potrà essere articolato in un unico file sorgente, ma
+dovrà
+contenere
+almeno
+le
+seguenti funzioni con opportuni
+parametri formali:
+●
+
+●
+●
+●
+●
+
+readParameters: funzione che permetta di leggere i parametri
+da riga di comando, verificando che rispettino i criteri
+specificati nel punto A, gestendo eventuali messaggi di
+errore e terminando il programma ove opportuno;
+createMatrix: funzione che permetta di creare la matrice A di
+puntatori a double a partire dal nome del file di input;
+sparsify: funzione che permetta di mettere a NULL gli
+opportuni puntatori di A (come da punto C);
+collect: funzione che permetta di creare e riempire l’array
+di double come descritto nel punto D;
+writeToFile: funzione che permetta di scrivere gli elementi
+dell’array su file.
+
+Note
+Durata della prova: 120 minuti
+Generazione di numeri pseudocasuali:
+●
+
+Si consideri la seguente funzione get_random() per la
+generazione di numeri pseudo-casuali interi positivi (qualora
+necessaria):
+https://pastebin.com/f6eAKNQy
+unsigned int get_random() {
+static unsigned int m_w = 123456;
+static unsigned int m_z = 789123;
+m_z = 36969 * (m_z & 65535) + (m_z >> 16);
+m_w = 18000 * (m_w & 65535) + (m_w >> 16);
+return (m_z << 16) + m_w;
+}
+
+NB: Ai fini della eventuale generazione di numeri in virgola
+mobile, si faccia uso della costante UINT_MAX (<limits.h>)
+unitamente alla funzione get_random().
+
+È VIETATO usare variabili globali.
+OUTPUT DI CONTROLLO:
+Input.txt:
+1.200000 3.400000 5.600000 7.800000 9.000000
+1.200000 3.400000 5.600000 7.800000 9.000000
+1.200000 3.400000 5.600000 7.800000 9.000000
+1.200000 3.400000 5.600000 7.800000 9.000000
+1.200000 3.400000 5.600000 7.800000 9.000000
+6.500000 9.000000 6.600000 1.300000 5.600000
+Output (contenuto del file di output):
+5.600000 7.800000 9.000000 5.600000 7.800000 9.000000 5.600000
+7.800000 9.000000 5.600000 7.800000 9.000000 5.600000 7.800000
+9.000000 6.500000 9.000000 6.600000
+
+
