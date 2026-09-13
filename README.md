@@ -8,6 +8,7 @@ Repository di appunti, dispense ed esercizi organizzati per il corso di laurea i
 *   [Secondo Anno](./Anno_02)
 *   [Terzo Anno](./Anno_03)
 *   [Link e Fonti Esterne](./Risorse%20Universitarie/Link%20e%20Fonti)
+*   [The Concise TypeScript Book](https://gibbok.github.io/typescript-book/it-it/) - Guida gratuita e open source per imparare TypeScript.
 
 ---
 
