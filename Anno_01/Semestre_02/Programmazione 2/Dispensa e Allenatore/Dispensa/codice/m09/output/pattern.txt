@@ -1,0 +1,24 @@
+Creo le figure:
+  [costruttore Figura]
+  [costruttore Rettangolo]
+  [costruttore Figura]
+  [costruttore Cerchio]
+  [costruttore Figura]
+  [costruttore Rettangolo]
+  [costruttore Quadrato]
+
+Stampo (polimorfismo: stesso messaggio, comportamenti diversi):
+rettangolo, area 12
+cerchio, area 3.14159
+quadrato, area 4
+    (e' anche un rettangolo 2x2)
+Area totale: 19.1416
+
+Distruggo:
+  [distruttore Rettangolo]
+  [distruttore Figura rettangolo]
+  [distruttore Cerchio]
+  [distruttore Figura cerchio]
+  [distruttore Quadrato]
+  [distruttore Rettangolo]
+  [distruttore Figura quadrato]

@@ -1,0 +1,6 @@
+altezza: 3
+8 e' al livello 0
+10 e' al livello 1
+6 e' al livello 2
+13 e' al livello 3
+99 e' al livello -1

@@ -1,0 +1,5 @@
+delete tramite puntatore alla base, distruttore NON virtual:
+  ~BaseSbagliata
+delete tramite puntatore alla base, distruttore virtual:
+  ~DerivataGiusta (libero il buffer)
+  ~BaseGiusta

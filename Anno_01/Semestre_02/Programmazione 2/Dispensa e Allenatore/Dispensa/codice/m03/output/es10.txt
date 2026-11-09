@@ -1,0 +1,8 @@
+  [capacita' -> 4]
+  [capacita' -> 8]
+n=5 cap=8: 10 20 30 40 50 
+n=7 cap=8: 5 10 20 25 30 40 50 
+posizione 99 non valida
+  [capacita' -> 4]
+  [capacita' -> 2]
+n=1 cap=2: 50 

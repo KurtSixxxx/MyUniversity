@@ -1,0 +1,4 @@
+(4, 5) all'indirizzo 0xbef87ff790
+p e q stesse coordinate? true
+p e q stesso oggetto?    false
+p e r stesso oggetto?    true

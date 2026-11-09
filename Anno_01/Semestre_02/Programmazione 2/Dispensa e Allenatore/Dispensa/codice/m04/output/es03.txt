@@ -1,0 +1,6 @@
+all'inizio: 0
+dopo a, b: 2
+nel blocco: 4
+dopo il blocco: 2
+  dentro perValore: vivi = 3
+dopo perValore: 2 (creati in tutto: 5)

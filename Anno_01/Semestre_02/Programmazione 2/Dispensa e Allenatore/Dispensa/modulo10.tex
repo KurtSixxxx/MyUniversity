@@ -1,0 +1,578 @@
+% =====================================================================
+\chapter{Modulo 10 -- Sovraccaricamento degli Operatori}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Il problema: scrivere come con i numeri}
+
+Con gli \cc|int| scrivi \cc|a + b|, \cc|a == b|, \cc|cout << a|. Con una tua classe
+\cc|Frazione|, finora, avresti dovuto scrivere \cc|a.somma(b)|, \cc|a.uguale(b)|,
+\cc|a.stampa()|. Funziona, ma è scomodo e poco leggibile: \cc|(a.somma(b)).prodotto(c)|
+invece di \cc|(a + b) * c|.
+
+Il C++ permette di \textbf{insegnare} alle tue classi il significato degli operatori:
+è il \textbf{sovraccaricamento} (\emph{overloading}) \textbf{degli operatori}. L'idea
+è semplice: un operatore è solo una funzione con un nome speciale. Quando scrivi
+\cc|a + b|, il compilatore lo traduce in una chiamata a una funzione che si chiama
+\cc|operator+|. Se tu scrivi quella funzione per le tue classi, \cc|a + b| funziona.
+
+\begin{analogia}[: il traduttore automatico]
+Il compilatore è un traduttore che conosce le parole \q{+}, \q{==}, \q{<<} solo per
+i tipi di base. Quando incontra \cc|frazione1 + frazione2| cerca nel ``dizionario''
+una funzione chiamata \cc|operator+| che accetti due \cc|Frazione|. Se la trova, la
+usa; se non la trova, si ferma con \emph{no match for 'operator+'}. Sovraccaricare un
+operatore significa aggiungere una voce al dizionario.
+\end{analogia}
+
+Le regole del gioco:
+\begin{itemize}
+  \item si possono sovraccaricare quasi tutti gli operatori:
+        \cc|+ - * / % == != < > <= >= << >> [] () = += -= ++ -- !| e altri;
+  \item \textbf{non} si possono sovraccaricare \cc|::|, \cc|.|, \cc|.*|, \cc|?:| e
+        \cc|sizeof|;
+  \item non si possono inventare operatori nuovi (niente \cc|**|), né cambiare la
+        \textbf{precedenza} (\cc|*| resta più forte di \cc|+|) o il numero di operandi;
+  \item almeno un operando deve essere di un tipo definito da te: non puoi ridefinire
+        \cc|+| tra due \cc|int|;
+  \item \textbf{buon senso}: \cc|+| deve fare qualcosa di simile a una somma. Un
+        operatore che fa cose sorprendenti rende il codice illeggibile.
+\end{itemize}
+
+\subsection*{Due modi di scriverlo: metodo o funzione esterna}
+
+Per un operatore binario come \cc|a + b| ci sono due possibilità.
+
+\textbf{1. Come metodo della classe.} L'operando di \textbf{sinistra} è l'oggetto su
+cui viene chiamato il metodo (\cc|*this|), quello di destra è il parametro.
+\cc|a + b| diventa \cc|a.operator+(b)|.
+\begin{lstlisting}
+class Punto {
+    int x, y;
+public:
+    bool operator==(const Punto& p) const { return x == p.x && y == p.y; }
+};
+// a == b   equivale a   a.operator==(b)
+\end{lstlisting}
+
+\textbf{2. Come funzione esterna.} Entrambi gli operandi sono parametri. \cc|a + b|
+diventa \cc|operator+(a, b)|. Se ha bisogno degli attributi privati, la classe la
+dichiara \cc|friend| (amica):
+\begin{lstlisting}
+class Frazione {
+    int num, den;
+public:
+    friend Frazione operator+(const Frazione& a, const Frazione& b);  // dichiarazione di amicizia
+};
+Frazione operator+(const Frazione& a, const Frazione& b) {           // NON è un metodo
+    return Frazione(a.num * b.den + b.num * a.den, a.den * b.den);   // ma può leggere num e den
+}
+\end{lstlisting}
+Come visto nelle slide, \cc|friend| non viola l'information hiding: è la classe stessa
+a decidere, nella propria dichiarazione, chi sono i suoi amici. Nessuno può
+``dichiararsi amico'' da fuori.
+
+\begin{passopasso}[: metodo o esterno? La regola pratica]
+\begin{enumerate}
+  \item \cc|=|, \cc|[]|, \cc|()| e gli operatori composti (\cc|+=|, \cc|-=|\ldots):
+        \textbf{sempre metodi} (per \cc|=|, \cc|[]| e \cc|()| è obbligatorio).
+  \item \cc|<<| e \cc|>>| con gli stream: \textbf{sempre esterni} (di solito
+        \cc|friend|), perché a sinistra c'è \cc|cout| o \cc|cin|, non il tuo oggetto, e
+        non puoi aggiungere metodi alla classe \cc|ostream|.
+  \item Operatori aritmetici simmetrici (\cc|+|, \cc|-|, \cc|*|, \cc|==|):
+        \textbf{meglio esterni}. Così funzionano anche le conversioni sull'operando di
+        sinistra: \cc|2 + z| diventa \cc|operator+(Complesso(2), z)| (Esercizio~10.3),
+        mentre con un metodo \cc|2.operator+(z)| non avrebbe senso.
+  \item Unari (\cc|-x|, \cc|++x|, \cc|!x|): di solito metodi.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Gli operatori più importanti, uno per uno}
+
+\textbf{Aritmetici: \texttt{+ - *}.} Prendono i due operandi per \textbf{reference
+costante} (non li modificano e non li copiano) e restituiscono un \textbf{oggetto nuovo
+per valore}: \cc|a + b| non deve cambiare né \cc|a| né \cc|b|. Non restituire mai una
+reference a una variabile locale: muore al \cc|return| (Modulo 3).
+
+\textbf{Composti: \texttt{+= -= *=}.} Modificano l'oggetto di sinistra e restituiscono
+\textbf{\texttt{*this} per reference}, così \cc|(a += b) += c| funziona come con gli int.
+Trucco molto usato: si scrive \cc|+=| come metodo e poi \cc|+| riusandolo, così il
+codice della somma esiste in un solo posto:
+\begin{lstlisting}
+Frazione& Frazione::operator+=(const Frazione& b) { /* somma qui */ return *this; }
+Frazione operator+(const Frazione& a, const Frazione& b) { Frazione r = a; r += b; return r; }
+\end{lstlisting}
+
+\textbf{Confronto: \texttt{== != < >}.} Restituiscono \cc|bool| e non modificano nulla
+(\cc|const|). Di solito si scrive bene \cc|==| e si definisce
+\cc|!=| come \cc|!(a == b)|. Per ordinare (Modulo 7) e per i template (Modulo 5) basta
+spesso il solo \cc|<|.
+
+\textbf{Stampa: \texttt{<<}.} È l'operatore più richiesto all'esame. Ha sempre questa
+forma, da imparare a memoria:
+\begin{lstlisting}
+friend ostream& operator<<(ostream& os, const Frazione& f) {
+    os << f.num << "/" << f.den;      // scrivo su os, NON su cout
+    return os;                        // restituisco lo stream
+}
+\end{lstlisting}
+Perché restituisce \cc|ostream&|? Perché \cc|cout << a << b| si legge
+\cc|(cout << a) << b|: il risultato di \cc|cout << a| deve essere di nuovo \cc|cout|,
+per poterci attaccare \cc|<< b|. Perché scrivere su \cc|os| e non su \cc|cout|? Perché
+così lo stesso operatore funziona anche con \cc|cerr|, con i file, con gli
+\cc|stringstream|.
+
+\textbf{Lettura: \texttt{>>}.} Forma speculare, con \cc|istream&| e l'oggetto
+\textbf{senza} \cc|const| (va modificato). Se l'input non è valido, si segnala come fa
+\cc|cin|: \cc|is.setstate(ios::failbit);|. Così chi chiama può scrivere
+\cc|while (cin >> f)| (pattern ed Esercizio~10.7).
+
+\textbf{Indicizzazione: \texttt{[]}.} Permette \cc|v[i]| sui tuoi contenitori (è nelle
+slide sulla classe \cc|Array|). Deve restituire una \textbf{reference} all'elemento,
+altrimenti \cc|v[3] = 7| modificherebbe una copia. Se ne scrivono due versioni:
+\begin{lstlisting}
+int& operator[](int i) { return dati[i]; }             // su oggetti modificabili: lettura e scrittura
+int operator[](int i) const { return dati[i]; }        // su oggetti const: solo lettura
+\end{lstlisting}
+Il compilatore sceglie da solo quella giusta in base al fatto che l'oggetto sia
+\cc|const| o no. È il punto giusto per controllare l'indice e lanciare
+\cc|out_of_range|.
+
+\textbf{Assegnamento: \texttt{=}.} Già visto nel Modulo 4 (Regola dei Tre): è un
+operatore come gli altri, sempre metodo, restituisce \cc|*this| per reference.
+
+\textbf{Incremento: \texttt{++} prefisso e postfisso.} Come fa il compilatore a
+distinguere \cc|++a| da \cc|a++|? Per convenzione il postfisso ha un parametro
+\cc|int| finto, che non si usa:
+\begin{lstlisting}
+Frazione& operator++()    { /* +1 */ return *this; }   // ++a: incrementa e restituisce SE STESSO
+Frazione  operator++(int) {                            // a++: restituisce il valore VECCHIO
+    Frazione vecchia = *this;
+    ++(*this);
+    return vecchia;                                    // una copia: per valore
+}
+\end{lstlisting}
+
+\textbf{Chiamata: \texttt{()}.} Si può sovraccaricare con qualunque numero di parametri:
+utile per accedere a una matrice con \cc|m(i, j)| (Esercizio~10.6).
+
+\subsection*{Conversioni automatiche}
+
+Un costruttore che si può chiamare con un solo argomento funziona anche da
+\textbf{conversione automatica}: con \cc|Frazione(int n = 0, int d = 1)|, scrivere
+\cc|a + 1| fa diventare \cc|1| una \cc|Frazione(1)| da solo. Spesso è comodo; quando
+invece è pericoloso (\cc|Vettore v = 5;| che crea un vettore di 5 elementi!) si mette
+\cc|explicit| davanti al costruttore, e la conversione automatica viene vietata.
+
+\begin{inparole}
+\begin{itemize}
+  \item \cc|a + b| è solo un altro modo di scrivere una chiamata a \cc|operator+|.
+  \item Metodo: sinistra = \cc|*this|. Esterno: entrambi parametri, \cc|friend| se
+        serve accedere ai privati.
+  \item \cc|<<| e \cc|>>|: esterni, \cc|friend|, restituiscono lo stream per reference.
+  \item \cc|+|: parametri \cc|const&|, restituisce un oggetto nuovo per valore.
+        \cc|+=|: metodo, restituisce \cc|*this| per reference.
+  \item \cc|[]|: restituisce una reference (più la versione \cc|const|).
+  \item \cc|++a| restituisce \cc|*this|; \cc|a++| ha il parametro \cc|int| finto e
+        restituisce la copia vecchia.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Come il compilatore traduce gli operatori.}
+\begin{center}
+\begin{tikzpicture}
+  \node[processo,text width=3cm] (s1) at (0,1.2) {\texttt{a == b}};
+  \node[file,text width=5.6cm,fill=green!15!sfondo] (t1) at (6.4,1.2) {a.operator==(b)\\ \footnotesize (metodo: sinistra = *this)};
+  \node[processo,text width=3cm] (s2) at (0,0) {\texttt{a + b}};
+  \node[file,text width=5.6cm,fill=green!15!sfondo] (t2) at (6.4,0) {operator+(a, b)\\ \footnotesize (esterno, friend)};
+  \node[processo,text width=3cm] (s3) at (0,-1.2) {\texttt{cout << a << b}};
+  \node[file,text width=5.6cm,fill=green!15!sfondo,font=\footnotesize\ttfamily] (t3) at (6.4,-1.2) {operator<<(operator<<(cout, a), b)};
+  \foreach \i in {1,2,3} \draw[freccia] (s\i.east) -- node[above,etichetta]{diventa} (t\i.west);
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Perché \texttt{<<} restituisce lo stream: la catena.} Ogni \cc|<<| ``consuma'' un
+oggetto e restituisce \cc|cout|, che fa da operando sinistro per il successivo.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (c0) at (0,0) {cout};
+  \node[cella,fill=heapcol] (a) at (2.6,0) {a};
+  \node[cella,fill=stackcol] (c1) at (5.6,0) {cout};
+  \node[cella,fill=heapcol] (b) at (8.2,0) {b};
+  \node[cella,fill=stackcol] (c2) at (11.2,0) {cout};
+  \draw[freccia] (c0) -- node[above,font=\ttfamily\small]{<<} (a);
+  \draw[freccia] (a) -- node[below=4pt,etichetta]{restituisce} (c1);
+  \draw[freccia] (c1) -- node[above,font=\ttfamily\small]{<<} (b);
+  \draw[freccia] (b) -- node[below=4pt,etichetta]{restituisce} (c2);
+  \node[etichetta,below=0.7cm of c1,text width=9cm,align=center] {se \texttt{operator<<} restituisse \texttt{void}, la catena si spezzerebbe dopo il primo \texttt{<<}};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Perché \texttt{operator[]} restituisce una reference.} Con \cc|int&| l'assegnamento
+arriva nella cella vera dell'array nello heap; con \cc|int| arriverebbe in una copia
+temporanea, persa subito dopo.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (v) at (0,0) {v.dati};
+  \foreach \x [count=\i from 0] in {10,20,30,40}
+    \node[cellina,fill=heapcol] (h\i) at (2.4+\i*0.75,0) {\x};
+  \draw[freccia] (v) -- (h0);
+  \node[font=\ttfamily\small] (r) at (2.4+2*0.75,1.4) {v[2] = 99};
+  \draw[freccia,green!50!black] (r) -- node[right,etichetta,text=green!45!black]{int\&: scrive QUI} (h2.north);
+  \node[cellina,fill=sfondo,dashed] (tmp) at (8.4,0) {30};
+  \node[etichetta,below=0.1cm of tmp] {copia temporanea};
+  \draw[frecciarossa,dashed] (r) to[bend left=20] node[above right,etichetta,text=red!75!black]{int: scriverebbe qui} (tmp.north);
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+La classe \cc|Frazione| delle slide, completa: \cc|+=| e unari come metodi;
+\cc|+|, \cc|*|, \cc|==|, \cc|<|, \cc|<<| e \cc|>>| come funzioni esterne \cc|friend|;
+\cc|!=| esterna senza \cc|friend| (usa solo \cc|==|); \cc|+| scritta riusando
+\cc|+=|. Alla fine legge frazioni da tastiera nel formato \texttt{n/d} finché l'input è valido.
+
+\codice{codice/m10/pattern.cpp}
+\ingresso{codice/m10/input/pattern.txt}
+\uscita{codice/m10/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item \cc|c(2, 4)| viene stampata \cc|1/2|: il costruttore semplifica, quindi
+        \cc|a == c| è vero confrontando solo numeratori e denominatori.
+  \item \cc|x = a++| prende il valore \emph{vecchio} (5/6), \cc|y = ++a| quello
+        \emph{nuovo}.
+  \item La lettura si ferma a \texttt{5/0}: \cc|>>| imposta il \emph{failbit} e il
+        \cc|while (cin >> letta)| termina, esattamente come con un \cc|int| sbagliato.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: operator<< come metodo]
+\cc|ostream& operator<<(ostream& os) const| scritto \emph{dentro} la classe come metodo
+si userebbe come \cc|f << cout|, al contrario. \cc|<<| e \cc|>>| vanno scritti come
+funzioni esterne (\cc|friend|) con lo stream come primo parametro.
+\end{trappola}
+
+\begin{trappola}[: dimenticare return os]
+Senza \cc|return os;|, \cc|cout << a << b| non compila, oppure (se il tipo di ritorno è
+sbagliato) si comporta in modo strano. Lo stream va sempre restituito \textbf{per
+reference}: gli stream non si possono copiare.
+\end{trappola}
+
+\begin{trappola}[: scrivere su cout dentro operator<<]
+\cc|cout << f.num| dentro \cc|operator<<| funziona finché usi \cc|cout|, ma con
+\cc|cerr| o un file scriverebbe nel posto sbagliato. Si scrive sempre su \cc|os|.
+\end{trappola}
+
+\begin{trappola}[: + che modifica l'operando]
+\cc|Frazione operator+(Frazione& b) { num += ...; return *this; }| modifica \cc|a| quando
+scrivi \cc|a + b|. È \cc|+=| travestito da \cc|+|. L'operatore \cc|+| deve creare un
+oggetto nuovo e prendere i parametri per \cc|const&|.
+\end{trappola}
+
+\begin{trappola}[: operator{[]} che restituisce per valore]
+\cc|int operator[](int i)| (senza \cc|&|) compila, ma \cc|v[2] = 99| non modifica il
+vettore: scrive in una copia. Serve \cc|int&|.
+\end{trappola}
+
+\begin{trappola}[: friend e metodi]
+Una funzione \cc|friend| \textbf{non} è un metodo: non ha \cc|this|, non si chiama con
+il punto e, se definita fuori dalla classe, \textbf{non} si scrive
+\cc|Frazione::operator+|. Si scrive semplicemente \cc|Frazione operator+(...)|.
+\end{trappola}
+
+\begin{consiglio}[: scrivi << per primo]
+In ogni esercizio con le classi, la prima cosa da scrivere dopo il costruttore è
+\cc|operator<<|: ti permette di stampare e controllare tutto il resto. Ricorda la
+formula: \cc|friend ostream& operator<<(ostream& os, const X& x) { ...; return os; }|.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Quale di questi operatori \textbf{non} può essere sovraccaricato in C++?}
+  \item \texttt{[]}
+  \item \texttt{<<}
+  \item \texttt{::}
+  \item \texttt{()}
+\end{quiz}
+
+\begin{quiz}{Perché \texttt{operator<<} per la stampa è definito come funzione esterna (spesso \texttt{friend}) e non come metodo?}
+  \item perché i metodi non possono restituire reference
+  \item perché l'operando di sinistra è lo stream, non un oggetto della classe
+  \item perché \texttt{friend} è obbligatorio per tutti gli operatori
+  \item perché gli operatori non possono essere metodi
+\end{quiz}
+
+\begin{quiz}{Qual è la firma corretta di \texttt{operator<<} per stampare un \texttt{Punto}?}
+  \item \texttt{void operator<<(ostream os, Punto p)}
+  \item \texttt{ostream\& operator<<(ostream\& os, const Punto\& p)}
+  \item \texttt{Punto\& operator<<(const Punto\& p, ostream\& os)}
+  \item \texttt{ostream operator<<(ostream\& os, Punto\& p) const}
+\end{quiz}
+
+\begin{quiz}{Perché \texttt{operator<<} restituisce \texttt{ostream\&}?}
+  \item per poter concatenare più stampe, come \texttt{cout << a << b}
+  \item perché è obbligatorio per tutte le funzioni friend
+  \item per poter modificare l'oggetto stampato
+  \item per velocità: altrimenti la stampa sarebbe più lenta
+\end{quiz}
+
+\begin{quiz}{Come si distingue l'operatore di incremento postfisso (\texttt{a++}) da quello prefisso?}
+  \item il postfisso ha un parametro fittizio di tipo \texttt{int}
+  \item il postfisso si dichiara con \texttt{operator++post}
+  \item non si distinguono: il compilatore usa sempre il prefisso
+  \item il postfisso deve essere \texttt{friend}
+\end{quiz}
+
+\begin{quiz}{Che tipo dovrebbe restituire \texttt{operator[]} per permettere \texttt{v[3] = 7;}?}
+  \item \texttt{int}
+  \item \texttt{int\&}
+  \item \texttt{void}
+  \item \texttt{const int}
+\end{quiz}
+
+\begin{quiz}{L'operatore \texttt{+=} definito come metodo dovrebbe restituire:}
+  \item \texttt{void}
+  \item una copia dell'oggetto, per valore
+  \item \texttt{*this} per reference
+  \item \texttt{bool}
+\end{quiz}
+
+\begin{quiz}{Una funzione dichiarata \texttt{friend} all'interno di una classe:}
+  \item è un metodo della classe e ha il puntatore \texttt{this}
+  \item non è un metodo, ma può accedere ai membri privati della classe
+  \item può essere dichiarata amica da qualunque altra classe, senza il consenso della classe
+  \item può accedere solo ai membri \texttt{public}
+\end{quiz}
+
+\begin{quiz}{La classe \texttt{Complesso} ha il costruttore \texttt{Complesso(double re = 0, double im = 0)} e \texttt{operator+} definito come \textbf{metodo}. Quale espressione \textbf{non} compila?}
+  \item \texttt{z + w}
+  \item \texttt{z + 2}
+  \item \texttt{2 + z}
+  \item \texttt{z + z}
+\end{quiz}
+
+\begin{quiz}{Quale affermazione sull'overloading degli operatori è vera?}
+  \item si può cambiare la precedenza di un operatore
+  \item si possono creare nuovi operatori, come \texttt{**}
+  \item almeno un operando deve essere di un tipo definito dall'utente
+  \item si può ridefinire \texttt{+} tra due \texttt{int}
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{C}. Non si sovraccaricano \cc|::|, \cc|.|, \cc|.*|, \cc|?:|, \cc|sizeof|.
+  \item \textbf{B}. Un metodo avrebbe l'oggetto a sinistra (\cc|p << cout|).
+  \item \textbf{B}. Stream per reference (non si copia), oggetto per reference costante.
+  \item \textbf{A}. \cc|(cout << a) << b|.
+  \item \textbf{A}. \cc|operator++(int)|.
+  \item \textbf{B}. Con \cc|int| si modificherebbe una copia.
+  \item \textbf{C}. Come gli \cc|int|: \cc|(a += b) += c|.
+  \item \textbf{B}. È la classe a concedere l'amicizia (C falsa).
+  \item \textbf{C}. Con un metodo l'operando di sinistra deve essere già un
+        \cc|Complesso|; \cc|z + 2| funziona perché \cc|2| (a destra) viene convertito.
+        Con \cc|operator+| esterno funzionerebbero tutte.
+  \item \textbf{C}.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: la classe Vettore]
+Implementare una classe \cc|Vettore| che gestisce un array dinamico di interi di
+dimensione fissata alla costruzione e che si usa con la stessa naturalezza di un array
+(come la classe \cc|Array| delle slide), arricchita da operatori per confronto, somma,
+stampa e lettura.
+\end{traccia}
+
+\begin{step}{stampa}
+Scrivi la classe (array dinamico \cc|int* dati| e dimensione \cc|n|, costruttore
+\cc|explicit| che azzera gli elementi, distruttore) e \cc|operator<<| che stampa
+\texttt{[ 0 0 0 0 ]}.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|friend ostream& operator<<|.
+\end{step}
+
+\begin{step}{indicizzazione}
+Scrivi \cc|operator[]| in due versioni (\cc|int&| e \cc|const|), entrambe con
+controllo dell'indice che lancia \cc|out_of_range|. Riempi il vettore con \cc|a[i] = ...|
+e leggi un elemento da una copia \cc|const|.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|operator[]|, versione \cc|const|.
+\end{step}
+
+\begin{step}{confronto}
+Scrivi \cc|operator==| (stessa dimensione e stessi elementi, come nelle slide) e
+\cc|operator!=| che riusa \cc|==|.\\[0.3em]
+\textbf{Concetto nuovo:} operatori di confronto.
+\end{step}
+
+\begin{step}{somma}
+Scrivi \cc|operator+=| come metodo (somma elemento per elemento, lancia
+\cc|invalid_argument| se le dimensioni differiscono) e \cc|operator+| esterno che lo
+riusa.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|+=| restituisce \cc|*this|, \cc|+| un oggetto nuovo.
+\end{step}
+
+\begin{step}{copia e assegnamento}
+Completa la Regola dei Tre (costruttore di copia e \cc|operator=|) e verifica che una
+copia modificata non cambi l'originale.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|operator=| come operatore a tutti gli effetti.
+\end{step}
+
+\begin{step}{lettura e concatenazione}
+Scrivi \cc|operator>>| che legge la dimensione e poi gli elementi (modificando il
+vettore solo se la lettura riesce) e un operatore \cc{|} che restituisce la
+concatenazione di due vettori.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|operator>>|, \cc|setstate(ios::failbit)|.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m10/lab.cpp}
+\ingresso{codice/m10/input/lab.txt}
+\uscita{codice/m10/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|copiaCostante[2]| usa la versione \cc|const| di \cc|[]|: su un oggetto
+        \cc|const| la versione che restituisce \cc|int&| non si potrebbe chiamare.
+  \item In \cc|operator>>| il vettore letto viene costruito in un temporaneo e copiato
+        in \cc|v| solo alla fine: se la lettura fallisce a metà, \cc|v| resta com'era.
+  \item \cc|explicit| sul costruttore impedisce che \cc|Vettore v = 5;| crei per sbaglio
+        un vettore di 5 elementi.
+  \item L'operatore \cc{|} per concatenare è una scelta ``creativa'': lecita, ma
+        all'esame usa operatori dal significato ovvio, oppure un metodo con un nome chiaro.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è l'overloading degli operatori?]
+È la possibilità di definire il comportamento degli operatori del linguaggio
+(\cc|+|, \cc|==|, \cc|<<|, \cc|[]|, \ldots) quando gli operandi sono oggetti di classi
+definite dall'utente, così da usarli con la stessa sintassi dei tipi predefiniti. Un
+operatore è una funzione con un nome speciale, \cc|operator|$\otimes$: l'espressione
+\cc|a + b| viene tradotta in \cc|a.operator+(b)| se l'operatore è un metodo, o in
+\cc|operator+(a, b)| se è una funzione esterna. Non si possono creare nuovi operatori
+né cambiarne precedenza o numero di operandi, e alcuni (\cc|::|, \cc|.|, \cc|?:|,
+\cc|sizeof|) non si possono sovraccaricare.
+\end{orale}
+
+\begin{orale}[D2. Quando un operatore va definito come metodo e quando come funzione esterna?]
+Come metodo, l'operando sinistro è l'oggetto stesso (\cc|*this|): è obbligatorio per
+\cc|=|, \cc|[]| e \cc|()|, e naturale per gli operatori composti e unari. Come funzione
+esterna entrambi gli operandi sono parametri: è necessario quando l'operando sinistro
+non è un oggetto della classe, come per \cc|<<| e \cc|>>| con gli stream, ed è preferibile
+per gli operatori simmetrici, perché consente conversioni implicite su entrambi gli
+operandi. Se la funzione esterna deve accedere ai membri privati, la classe la dichiara
+\cc|friend|.
+\end{orale}
+
+\begin{orale}[D3. Cosa sono le funzioni friend? Violano l'incapsulamento?]
+Una funzione \cc|friend| è una funzione non membro a cui una classe concede l'accesso ai
+propri membri privati e protetti, dichiarandola con la parola \cc|friend| all'interno
+della propria definizione. Non viola l'incapsulamento, perché è la classe stessa a
+decidere chi sono i suoi amici: nessuna funzione esterna può dichiararsi amica da sola.
+L'uso tipico è l'overloading degli operatori di input/output, che uniforma l'interfaccia
+della classe a quella degli stream standard.
+\end{orale}
+
+\begin{orale}[D4. Perché operator<< restituisce un riferimento allo stream?]
+Perché l'espressione \cc|cout << a << b| viene valutata come \cc|(cout << a) << b|: il
+risultato della prima chiamata è l'operando sinistro della seconda. Restituendo lo stesso
+stream ricevuto si permette la concatenazione. Si restituisce per riferimento perché gli
+stream non sono copiabili e perché la scrittura deve avvenire sempre sullo stesso stream.
+\end{orale}
+
+\begin{orale}[D5. Come si distinguono ++ prefisso e postfisso?]
+Il prefisso \cc|++a| si dichiara \cc|T& operator++()|: incrementa l'oggetto e restituisce
+l'oggetto stesso per riferimento. Il postfisso \cc|a++| si dichiara
+\cc|T operator++(int)|: il parametro \cc|int| è fittizio e serve solo al compilatore per
+distinguere le due versioni; salva una copia del valore corrente, incrementa l'oggetto e
+restituisce la copia per valore. Per questo il postfisso è leggermente meno efficiente.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Punto confrontabile}{facile}
+Classe \cc|Punto| con \cc|==| e \cc|!=| come metodi (\cc|!=| che riusa \cc|==|) e
+\cc|<<| come \cc|friend| nel formato \texttt{(x, y)}. Verifica che più \cc|<<| si possano
+concatenare.
+\end{esercizio}
+
+\begin{esercizio}{Durate}{facile}
+Classe \cc|Durata| che memorizza i secondi totali, con costruttore da ore, minuti e
+secondi, \cc|+| come metodo \cc|const| e \cc|<<| nel formato \texttt{hh:mm:ss} con gli
+zeri iniziali. Somma tre durate in una sola espressione.
+\end{esercizio}
+
+\begin{esercizio}{Numeri complessi}{facile}
+Classe \cc|Complesso| con getter e operatori \textbf{esterni senza friend} \cc|+|,
+\cc|-|, \cc|*| e \cc|<<| (formato \texttt{3+2i}). Verifica che $i \cdot i = -1$ e che
+\cc|2 + z| compili.
+\end{esercizio}
+
+\begin{esercizio}{Contatore}{facile}
+Classe \cc|Contatore| con \cc|++| e \cc|--|, sia prefissi sia postfissi (non sotto
+zero). Mostra la differenza tra \cc|a = c++| e \cc|b = ++c|.
+\end{esercizio}
+
+\begin{esercizio}{Ordinare frazioni}{medio}
+Definisci solo \cc|operator<| e \cc|operator<<| per una classe \cc|Frazione| e ordina un
+array di frazioni con un template \cc|ordina| (insertion sort che usa solo \cc|<|).
+Attenzione alle frazioni negative.
+\end{esercizio}
+
+\begin{esercizio}{Matrice 2x2}{medio}
+Classe \cc|Matrice2| con \cc|operator()(int i, int j)| in due versioni (scrittura e
+lettura \cc|const|), prodotto \cc|*|, \cc|==| e \cc|<<|. Verifica che $A \cdot I = A$ e
+che $A \cdot B \neq B \cdot A$.
+\end{esercizio}
+
+\begin{esercizio}{Leggere studenti}{medio}
+Scrivi \cc|operator>>| per una classe \cc|Studente| che legge \texttt{nome voto} e
+imposta il \emph{failbit} se il voto non è un numero tra 18 e 30. Nel \cc|main| leggi
+fino a fine input saltando le righe non valide.
+\end{esercizio}
+
+\begin{esercizio}{MiaStringa con operatori}{medio}
+Riprendi \cc|MiaStringa| dell'Esercizio~4.8 e aggiungi \cc|operator[]| (con controllo),
+\cc|+| (concatenazione), \cc|==| e \cc|<<|.
+\end{esercizio}
+
+\begin{esercizio}{Insiemi}{difficile}
+Classe \cc|Insieme| di interi senza duplicati su array dinamico (Regola dei Tre), con
+\cc|+= x| (aggiunge un elemento), \cc|+| (unione), \cc|*| (intersezione), \cc|-|
+(differenza), \cc|==| (stessi elementi in qualunque ordine) e \cc|<<| nel formato
+\texttt{\{1, 2, 3\}}.
+\end{esercizio}
+
+\begin{esercizio}{Date}{difficile}
+Classe \cc|Data| con \cc|++| (giorno successivo, con mesi di lunghezza diversa e anni
+bisestili), \cc|<|, \cc|==|, \cc|-| (numero di giorni tra due date) e \cc|<<| nel formato
+\texttt{gg/mm/aaaa}. Calcola quanti giorni mancano al tuo esame.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m10/}.

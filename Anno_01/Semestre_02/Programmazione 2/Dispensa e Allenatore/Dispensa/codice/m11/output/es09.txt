@@ -1,0 +1,4 @@
+eliminati: 3 6 2 7 5 1 
+sopravvive il 4
+eliminati: 2 4 6 8 10 3 7 1 9 
+sopravvive il 5

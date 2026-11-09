@@ -1,0 +1,4 @@
+dopo la passata 1: 37 10 14 29 13 
+dopo la passata 2: 37 29 14 10 13 
+dopo la passata 3: 37 29 14 10 13 
+dopo la passata 4: 37 29 14 13 10 

@@ -1,0 +1,4 @@
+97 primo        lento: 95       veloce: 8
+9973 primo      lento: 9971     veloce: 98
+999983 primo    lento: 999981   veloce: 998
+Primi fino a 100000: 9592

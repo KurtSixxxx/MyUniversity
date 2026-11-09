@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="it" data-tema="hacker">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Allenatore Prog2</title>
+<link rel="stylesheet" href="stile.css">
+<link rel="stylesheet" href="hacker.css">
+<link rel="stylesheet" href="gioco.css">
+<script>
+  // tema e colore prima del primo disegno, per evitare il lampo di colore
+  // (tema-iniziale.js è scritto da app.py all'avvio; il parametro evita la cache)
+  document.write('<script src="tema-iniziale.js?' + Date.now() + '"><\/script>');
+</script>
+<script>
+  (function () {
+    var t = window.TEMA_INIZIALE, d = document.documentElement;
+    if (t === 'hacker' || !t) d.dataset.tema = 'hacker';
+    else if (t === 'scuro' || (t !== 'chiaro' && window.matchMedia('(prefers-color-scheme: dark)').matches)) d.dataset.tema = 'scuro';
+    else d.dataset.tema = 'chiaro';
+  })();
+</script>
+</head>
+<body>
+  <div id="avvio" class="avvio">
+    <div class="avvio-logo"><span>{ }</span></div>
+    <div class="avvio-nome">Allenatore Prog2</div>
+    <div class="avvio-barra"><i></i></div>
+  </div>
+
+  <div id="app" class="app" hidden>
+    <aside class="barra">
+      <div class="marchio">
+        <div class="logo"><span>{ }</span></div>
+        <div>
+          <div class="marchio-nome">Prog2</div>
+          <div class="marchio-sotto" id="marchio-sotto">Allenatore d'esame</div>
+        </div>
+        <button class="riduci-barra" data-azione="barra-riduci" id="riduci-barra" title="Riduci il pannello (Ctrl+B)"></button>
+      </div>
+      <nav class="menu" id="menu"></nav>
+      <div class="barra-piede">
+        <div id="pet-mini"></div>
+        <div class="musica-mini" id="musica-mini"></div>
+        <div class="conto-mini" id="conto-mini"></div>
+        <button class="voce-menu" data-azione="impostazioni" id="voce-impostazioni"></button>
+      </div>
+    </aside>
+    <main class="contenuto" id="contenuto">
+      <section id="v-oggi" class="vista" hidden></section>
+      <section id="v-quiz" class="vista" hidden></section>
+      <section id="v-orale" class="vista" hidden></section>
+      <section id="v-codice" class="vista vista-piena" hidden></section>
+      <section id="v-bit" class="vista" hidden></section>
+    </main>
+  </div>
+
+  <div id="musica-dock"></div>
+  <div id="foglio" class="foglio-sfondo" hidden></div>
+  <div id="avvisi" class="avvisi" aria-live="polite"></div>
+  <script src="config.js"></script>
+  <script src="gioco.js"></script>
+  <script src="musica.js"></script>
+  <script src="intro.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

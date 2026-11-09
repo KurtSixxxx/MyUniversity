@@ -1,0 +1,7 @@
+Esempio: somma massima 10 / 10 / 10  (segmento S[2..5])
+Passi: 120 / 36 / 8
+
+n       O(n^3)          O(n^2)          O(n)    risultati uguali?
+10      220             55              10      si
+100     171700          5050            100     si
+1000    167167000       500500          1000    si

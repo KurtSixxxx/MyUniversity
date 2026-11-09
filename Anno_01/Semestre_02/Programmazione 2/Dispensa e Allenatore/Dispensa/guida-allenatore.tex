@@ -1,0 +1,357 @@
+% =====================================================================
+%  PRIMA DI INIZIARE: la dispensa e l'Allenatore (capitolo non numerato,
+%  così i moduli restano Capitolo 1..14 e gli esercizi N.k non cambiano)
+% =====================================================================
+\chapter*{Prima di iniziare: dispensa e Allenatore}
+\addcontentsline{toc}{chapter}{Prima di iniziare: dispensa e Allenatore}
+\markboth{Prima di iniziare}{Prima di iniziare}
+
+Questo materiale è un \textbf{kit} pensato per preparare l'esame di Programmazione 2
+dall'inizio alla fine. È fatto di due parti che lavorano insieme:
+\begin{itemize}
+  \item la \textbf{dispensa} che stai leggendo, con il volume separato delle
+        \textbf{Soluzioni}: è dove si \emph{capisce} (teoria, disegni della memoria,
+        codice commentato);
+  \item l'\textbf{Allenatore}, un'app per Windows con la versione per telefono (Android e
+        iPhone): è dove si \emph{allena} quello che si è capito. Legge i quiz, le
+        domande d'orale e gli esercizi \textbf{direttamente da questa dispensa}, compila il
+        tuo codice con \cc|g++| come in laboratorio, tiene traccia dei progressi e ti
+        accompagna con un piccolo compagno, \textbf{Bit}, che cresce con te.
+\end{itemize}
+Leggere senza allenarsi dà l'illusione di sapere; allenarsi senza aver capito è
+frustrante. Questo capitolo spiega come installare tutto e come usare le due parti
+insieme, giorno per giorno.
+
+% ---------------------------------------------------------------------
+\section*{Cosa c'è nel kit}
+\addcontentsline{toc}{section}{Cosa c'è nel kit}
+% ---------------------------------------------------------------------
+
+\begin{center}
+\begin{tabular}{p{4.6cm}p{9.6cm}}
+\toprule
+\textbf{File o cartella} & \textbf{A cosa serve} \\
+\midrule
+\texttt{dispensa-light.pdf} & la dispensa su sfondo bianco, da stampare \\
+\texttt{dispensa-dark.pdf} & la stessa su sfondo scuro, da leggere a schermo \\
+\texttt{soluzioni-*.pdf} & le soluzioni (light e dark) dei 10 esercizi di ogni modulo e della simulazione \\
+\texttt{Dispensa/codice/} & tutti i programmi della dispensa, divisi per modulo (\texttt{m01}\ldots\texttt{m14}), con input e output reali \\
+\texttt{Allenatore Prog2.exe} & l'app per Windows (si scarica dalla pagina del progetto) \\
+versione per telefono & un indirizzo web che si apre dal telefono e si installa come un'app \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section*{Installare l'Allenatore su Windows}
+\addcontentsline{toc}{section}{Installare l'Allenatore su Windows}
+% ---------------------------------------------------------------------
+
+\begin{passopasso}[: installazione]
+\begin{enumerate}
+  \item Scarica \texttt{Allenatore Prog2.exe} dalle \emph{Releases} del repository
+        \url{https://github.com/KurtSixxxx/MyUniversity/releases} e mettilo \textbf{accanto alla cartella} \texttt{Dispensa}:
+        \begin{center}\ttfamily
+        \begin{tabular}{l}
+        Prog2/ \\
+        \quad Allenatore Prog2.exe \\
+        \quad Dispensa/ \quad (con modulo01.tex \ldots\ e codice/)
+        \end{tabular}
+        \end{center}
+        Così l'app legge la dispensa \q{dal vivo}. Se la cartella non c'è, usa una copia
+        dei contenuti inclusa nell'eseguibile: funziona lo stesso.
+  \item Fai doppio clic. La prima volta Windows può mostrare \q{Windows ha protetto il
+        PC} (SmartScreen): è normale per i programmi non firmati. Scegli \textbf{Ulteriori
+        informazioni} $\to$ \textbf{Esegui comunque}.
+  \item Al primo avvio l'app chiede nome, data dell'appello, docente, colore e il nome
+        del tuo compagno. Tutto si cambia quando vuoi in \textbf{Impostazioni}
+        (\texttt{Ctrl+,}).
+  \item Installa il compilatore (passo successivo): senza \cc|g++| quiz e orale
+        funzionano, ma gli esercizi non si possono eseguire.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Il compilatore g++ (MSYS2)}
+
+All'esame si compila con \cc|g++|. Su Windows il modo più semplice per averlo è MSYS2.
+\begin{passopasso}[: installare g++]
+\begin{enumerate}
+  \item Scarica l'installatore da \texttt{msys2.org} e installalo nella cartella proposta
+        (\cc|C:\msys64|).
+  \item Apri dal menu Start il terminale \textbf{MSYS2 UCRT64} e scrivi:
+\begin{lstlisting}[language=bash]
+pacman -S mingw-w64-ucrt-x86_64-gcc
+\end{lstlisting}
+        Conferma con Invio quando chiede.
+  \item Aggiungi \cc|C:\msys64\ucrt64\bin| alla variabile di sistema \texttt{Path}:
+        cerca \q{variabili d'ambiente} nel menu Start $\to$ \emph{Variabili d'ambiente}
+        $\to$ \texttt{Path} $\to$ \emph{Modifica} $\to$ \emph{Nuovo}.
+  \item Apri un nuovo Prompt dei comandi e verifica con \cc|g++ --version|. Poi
+        riavvia l'Allenatore: in Impostazioni $\to$ Sistema vedrai \q{g++ trovato}.
+\end{enumerate}
+\end{passopasso}
+
+\begin{consiglio}[: VS Code, facoltativo]
+L'editor dell'app basta per tutti gli esercizi. Se preferisci VS Code (all'esame potresti
+trovarlo), in Impostazioni $\to$ Esercizi in VS Code l'app crea una cartella con un file
+\texttt{.cpp} per ogni esercizio, con la consegna già scritta in commento.
+\texttt{Ctrl+Shift+B} compila ed esegue; poi nell'app premi \textbf{Importa da VS Code}
+per confrontare l'output con la soluzione.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section*{Le cinque schermate}
+\addcontentsline{toc}{section}{Le cinque schermate}
+% ---------------------------------------------------------------------
+
+\begin{description}
+  \item[Oggi (\texttt{Ctrl+1}).] Il conto alla rovescia verso l'appello, il
+        \textbf{giorno del piano di studio} (Appendice \q{Verso l'esame}) con i pulsanti
+        \emph{Quiz di oggi} ed \emph{Esercizi di oggi}, le missioni del giorno, i tuoi
+        progressi per modulo e i \textbf{consigli}: l'app guarda dove sbagli e ti propone
+        cosa rifare (le risposte sbagliate, il modulo più debole, il prossimo
+        laboratorio).
+  \item[Quiz (\texttt{Ctrl+2}).] Le domande a crocette di tutti i moduli, prese dalla
+        sezione 5 di ogni capitolo, con lo stesso commento della soluzione. Quattro
+        modalità: \emph{Allenamento} (correzione subito; le domande sbagliate o mai viste
+        escono più spesso), \emph{Da correggere}, \emph{Mai viste} ed \emph{Esame}
+        (30 domande in 60 minuti, correzione solo alla consegna, soglia 18). Si risponde
+        anche da tastiera: \texttt{A}--\texttt{D}, Invio per andare avanti.
+  \item[Orale (\texttt{Ctrl+3}).] Le domande della sezione 7 come \textbf{flashcard}.
+        Rispondi \textbf{ad alta voce} (c'è un cronometro da 90 secondi), poi guarda la
+        risposta modello e valutati: \emph{Non la sapevo}, \emph{In parte}, \emph{La
+        sapevo}. Ogni domanda sale di livello (da 0 a 4) quando la sai: quelle a livello
+        basso tornano più spesso. È la ripetizione distanziata dell'appendice sul metodo.
+  \item[Codice (\texttt{Ctrl+4}).] Per ogni modulo: il \emph{pattern} da riscrivere a
+        memoria, il \emph{laboratorio a step} e i 10 esercizi, più la simulazione
+        d'esame. Scrivi nell'editor, premi \texttt{Ctrl+Invio}: l'app compila con
+        \cc|g++ -Wall -Wextra| come in laboratorio, segna in rosso le righe con errori e
+        mostra l'output. \emph{Confronta} lo mette a fianco dell'output della soluzione;
+        \emph{Soluzione} la mostra (dopo una conferma: prima provaci davvero).
+  \item[Bit (\texttt{Ctrl+5}).] Il tuo compagno di studio, il livello, le missioni, i
+        traguardi e da dove vengono i tuoi punti (sezione successiva).
+\end{description}
+
+% ---------------------------------------------------------------------
+\section*{Come usare dispensa e Allenatore insieme}
+\addcontentsline{toc}{section}{Come usare dispensa e Allenatore insieme}
+% ---------------------------------------------------------------------
+
+Ogni modulo della dispensa ha le stesse otto sezioni, e ognuna ha il suo posto nell'app.
+La regola è sempre la stessa: \textbf{prima capisci sulla dispensa, poi ti alleni
+nell'app, poi torni sulla dispensa dove l'app ti dice che sbagli}.
+
+\begin{center}\small
+\begin{tabular}{p{4.3cm}p{4.2cm}p{5.6cm}}
+\toprule
+\textbf{Sezione del modulo} & \textbf{Dove la alleni} & \textbf{Come} \\
+\midrule
+1. Teoria \& analogia & dispensa, con carta e penna & leggi, poi chiudi e riscrivi l'idea a parole tue \\
+2. Disegni della memoria & dispensa & ridisegnali a mano, senza guardare \\
+3. Pattern di codice & Codice $\to$ Pattern & riscrivilo a memoria finché compila e l'output coincide \\
+4. Trappole d'esame & dispensa & rileggile prima dei quiz del modulo \\
+5. Quiz a crocette & Quiz $\to$ Allenamento & solo il modulo; rifai le sbagliate il giorno dopo \\
+6. Laboratorio a step & Codice $\to$ Laboratorio & uno step alla volta, compilando sempre \\
+7. Domande dell'orale & Orale & ad alta voce, con il cronometro \\
+8. Esercizi al PC & Codice $\to$ Esercizi & in ordine di difficoltà; Confronta, poi Soluzione \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Una giornata tipo}
+
+\begin{passopasso}[: dispensa + app in una giornata]
+\begin{enumerate}
+  \item Apri l'app su \textbf{Oggi}: ti dice l'argomento del piano (se hai impostato la
+        data dell'appello) e le tre missioni del giorno.
+  \item \textbf{Teoria} sulla dispensa (sezioni 1--4 del modulo del giorno).
+  \item \textbf{Quiz di oggi} dall'app: 10--20 domande del modulo. Per ogni risposta
+        sbagliata rileggi il commento e, se serve, il paragrafo della dispensa.
+  \item \textbf{Codice}: il pattern a memoria, poi laboratorio ed esercizi. Questa è la
+        parte più lunga e più importante: il laboratorio è la prova più selettiva.
+  \item \textbf{Orale}: 5--10 domande ad alta voce, anche dei moduli passati.
+  \item Nei tempi morti (autobus, pause) usa il \textbf{telefono}: quiz, orale e
+        \q{Prevedi l'output}. A fine giornata sincronizza i progressi con il PC.
+  \item Una volta a settimana, e ogni giorno nell'ultima settimana, fai la
+        \textbf{simulazione del quiz} (30 domande, 60 minuti) e il laboratorio della
+        simulazione d'esame.
+\end{enumerate}
+\end{passopasso}
+
+\begin{trappola}[: i punti non sono il voto]
+XP, livelli e traguardi servono a darti costanza, non a misurare la preparazione. La
+misura vera è la simulazione: punta a superare stabilmente le 22 risposte giuste su 30 e
+a scrivere il laboratorio della simulazione in due ore, senza guardare la soluzione.
+\end{trappola}
+
+% ---------------------------------------------------------------------
+\section*{XP, livelli, missioni e il compagno Bit}
+\addcontentsline{toc}{section}{XP, livelli, missioni e il compagno Bit}
+% ---------------------------------------------------------------------
+
+Ogni cosa che fai nell'app vale \textbf{punti esperienza} (XP). I punti non si comprano e
+non si perdono: sono calcolati dai tuoi progressi, e infatti dopo la sincronizzazione PC e
+telefono mostrano sempre lo stesso numero.
+\begin{center}\small
+\begin{tabular}{lr@{\qquad}lr}
+\toprule
+\textbf{Attività} & \textbf{XP} & \textbf{Attività} & \textbf{XP} \\
+\midrule
+risposta giusta al quiz & 10 & esercizio al PC completato & 60 \\
+risposta sbagliata (ci hai provato) & 2 & pattern riscritto & 50 \\
+domanda d'orale ripassata & 3 & laboratorio a step & 200 \\
+ogni livello di una domanda d'orale & 15 & laboratorio della simulazione & 400 \\
+output indovinato (telefono) & 25 & simulazione del quiz & 5 a risposta \\
+missione del giorno & 40 & simulazione superata & +150 \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ogni domanda dà punti solo per i primi cinque tentativi: ripetere all'infinito la stessa
+domanda non paga, affrontarne di nuove sì.
+
+\begin{description}
+  \item[Livelli.] Il livello $L$ richiede $50 \cdot L \cdot (L-1)$ XP (100, 300, 600,
+        1000, \ldots): all'inizio si sale in fretta, poi serve costanza. Ogni fascia ha un
+        titolo, da \emph{Hello World} a \emph{Leggenda di Prog2}.
+  \item[Missioni.] Ogni giorno tre missioni (una sul quiz, una sull'orale, una sul
+        codice), uguali su PC e telefono: 40 XP l'una, 60 in più se le completi tutte.
+  \item[Serie.] I giorni consecutivi in cui hai studiato. Non si azzera finché non salti
+        un giorno intero.
+  \item[Traguardi.] 25 obiettivi da sbloccare: la prima simulazione superata, tutti i
+        laboratori, 7 giorni di fila, 30/30 alla simulazione\ldots
+  \item[Bit.] Il compagno in pixel art: nasce da un uovo e si evolve con i livelli (Bit,
+        Byte, Kilobyte, Megabyte, Gigabyte), ogni volta con forma e accessori nuovi e un
+        lampo di evoluzione. Il corpo prende il colore che hai scelto. Respira, sbatte le
+        palpebre e salta quando guadagni XP. Si nutre degli XP di oggi rispetto al tuo
+        \emph{obiettivo giornaliero} (Impostazioni): se non studi per due giorni ha fame
+        e lo stomaco gli brontola, dopo quattro si addormenta (con le Z che fluttuano).
+        Ogni tanto ti dà un consiglio sull'esame. Puoi rinominarlo.
+\end{description}
+
+% ---------------------------------------------------------------------
+\section*{Musica e colori}
+\addcontentsline{toc}{section}{Musica e colori}
+% ---------------------------------------------------------------------
+
+Il lettore musicale si apre dalla barra laterale (sotto il livello) o da Impostazioni.
+Tre sorgenti:
+\begin{itemize}
+  \item \textbf{Colonna sonora originale}: tre brani composti per l'app e generati dal
+        vivo dal computer (\emph{Concentrazione}, lo-fi; \emph{Codice notturno},
+        synthwave; \emph{Deep focus}, ambient). Non servono Internet né account.
+  \item \textbf{Spotify}: il lettore ufficiale incorporato. Parte con la playlist del
+        progetto; incolla il link di una tua playlist (in Spotify: Condividi $\to$ Copia
+        link) e premi \emph{Usa}. Per ascoltare i brani interi premi \textbf{Accedi a
+        Spotify} e fai l'accesso con email e password (senza accesso Spotify fa sentire
+        30 secondi per brano). L'accesso resta valido ai riavvii.
+  \item \textbf{YouTube}: per chi non ha Spotify. La playlist suona in sottofondo da una
+        piccola miniatura, anche con il lettore chiuso.
+\end{itemize}
+\texttt{Ctrl+M} toglie e rimette l'audio ovunque ti trovi. In Impostazioni scegli se far
+partire la musica all'avvio e se sentire gli effetti sonori di XP e livelli.
+
+Il \textbf{colore} del terminale (verde fosforo all'inizio) si cambia in Impostazioni
+$\to$ Aspetto: otto colori pronti o uno a scelta dalla tavolozza. Lo stesso colore vale
+sul telefono, se sincronizzi.
+
+% ---------------------------------------------------------------------
+\section*{L'Allenatore sul telefono (Android e iPhone)}
+\addcontentsline{toc}{section}{L'Allenatore sul telefono (Android e iPhone)}
+% ---------------------------------------------------------------------
+
+La versione per telefono è una pagina web che si installa come un'app: niente store,
+niente account. Contiene quiz, orale, \textbf{Prevedi l'output} (leggi un programma,
+scrivi su carta cosa stampa, poi controlla: è il tipo di domanda \q{qual è l'output?}
+del quiz d'esame), gli esercizi in lettura con la soluzione, Bit e la musica. Non
+compila: il codice si scrive al PC.
+
+\begin{passopasso}[: installarla]
+\begin{enumerate}
+  \item Apri dal telefono \url{https://kurtsixxxx.github.io/MyUniversity/} (oppure
+        inquadra il codice QR in Impostazioni $\to$ Telefono dell'app per PC).
+  \item \textbf{iPhone / iPad}: in \textbf{Safari} tocca \emph{Condividi} (il quadrato
+        con la freccia) $\to$ \textbf{Aggiungi alla schermata Home} $\to$ \emph{Aggiungi}.
+  \item \textbf{Android}: in \textbf{Chrome} tocca il menu \emph{$\vdots$} $\to$
+        \textbf{Installa app} (su alcuni telefoni: \emph{Aggiungi a schermata Home}).
+        Se compare il pulsante \emph{Installa l'app} nelle impostazioni dell'app, basta
+        quello.
+  \item Da quel momento si apre dall'icona, a schermo intero, e funziona anche
+        \textbf{senza connessione} (tranne Spotify e YouTube).
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Sincronizzare PC e telefono}
+
+I progressi restano sul dispositivo in cui li fai: nessun server, nessun account. Per
+unirli si usa un \textbf{codice} di testo che inizia con \texttt{P2:}.
+\begin{itemize}
+  \item \textbf{Dal PC al telefono}: nell'app per PC, Impostazioni $\to$ Telefono $\to$
+        \emph{Copia il codice per il telefono}; mandatelo (per esempio con un messaggio a
+        te stesso), poi sul telefono Impostazioni $\to$ \emph{Dal PC al telefono} $\to$
+        incolla $\to$ \emph{Unisci}.
+  \item \textbf{Dal telefono al PC}: il percorso inverso (\emph{Copia il codice} sul
+        telefono, \emph{Unisci i progressi del telefono} sul PC).
+\end{itemize}
+Le due cronologie vengono \textbf{unite}, non sovrascritte: per ogni domanda vale il
+tentativo più recente. Il codice porta con sé anche nome, appello, docente e colore, che
+riempiono i campi ancora vuoti dall'altra parte.
+
+% ---------------------------------------------------------------------
+\section*{Scorciatoie da tastiera (PC)}
+\addcontentsline{toc}{section}{Scorciatoie da tastiera (PC)}
+% ---------------------------------------------------------------------
+
+\begin{center}\small
+\begin{tabular}{ll@{\qquad}ll}
+\toprule
+\texttt{Ctrl+1}\ldots\texttt{5} & cambia schermata & \texttt{Ctrl+Invio} / \texttt{F5} & compila ed esegue \\
+\texttt{Ctrl+,} & impostazioni & \texttt{Ctrl+S} & salva il codice \\
+\texttt{Ctrl+M} & audio sì/no & \texttt{Ctrl+K} & cerca un esercizio \\
+\texttt{Ctrl+B} & riduce la barra laterale & \texttt{Ctrl+E} & nasconde l'elenco esercizi \\
+\texttt{A}--\texttt{D}, Invio & rispondi e vai avanti (quiz) & \texttt{Ctrl+I} & importa da VS Code \\
+Spazio, \texttt{1}--\texttt{3} & mostra e valuta (orale) & \texttt{Ctrl+/} & commenta le righe \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section*{Problemi frequenti}
+\addcontentsline{toc}{section}{Problemi frequenti}
+% ---------------------------------------------------------------------
+
+\begin{description}
+  \item[\q{Non trovo il compilatore g++}.] Rifai il passo del \texttt{Path} e
+        \textbf{riavvia} l'app (e se non basta il PC): il \texttt{Path} viene letto solo
+        all'avvio.
+  \item[L'esecuzione dice \q{Permission denied} o non parte.] Spesso è l'antivirus che
+        blocca il programma appena compilato scambiandolo per sospetto. Riprova; se
+        succede sempre con lo stesso esercizio, cambia un po' il codice (anche solo il
+        nome di una variabile) e ricompila.
+  \item[\q{Non trovo i contenuti}.] L'app non trova la cartella \texttt{Dispensa}: in
+        Impostazioni $\to$ Sistema premi \emph{Scegli la cartella della dispensa}.
+  \item[Spotify suona solo 30 secondi.] Manca l'accesso: \emph{Accedi a Spotify} nel
+        lettore. Usa email e password: i pulsanti \q{Continua con Google/Apple} aprono il
+        browser e l'accesso non arriva all'app.
+  \item[YouTube salta un video.] Alcuni autori vietano la riproduzione fuori da YouTube:
+        il lettore passa al successivo.
+  \item[Dove sono i miei progressi?] Sul PC in \cc|%APPDATA%\Allenatore Prog2| (Impostazioni
+        $\to$ I tuoi dati $\to$ Apri la cartella): copiala per fare un backup. Sul telefono
+        nella memoria del browser: non cancellare i dati del sito, e ogni tanto copia il
+        codice \texttt{P2:} in un posto sicuro.
+  \item[Uso Mac o Linux.] L'eseguibile è solo per Windows, ma la versione per telefono
+        funziona in qualunque browser, anche sul computer. Chi ha Python può avviare l'app
+        dai sorgenti (\cc|python app.py| nella cartella \texttt{Allenatore}, dopo
+        \cc|pip install pywebview|).
+\end{description}
+
+\begin{consiglio}[: migliorare il kit]
+Hai trovato un errore nella dispensa, una domanda ambigua o un esercizio che non compila?
+Segnalalo nella pagina del progetto: i sorgenti \LaTeX\ della dispensa e il codice
+dell'app sono pubblici, e ogni correzione aiuta chi studierà dopo di te. Per ricompilare
+i PDF serve una distribuzione \LaTeX\ (per esempio MiKTeX): doppio clic su
+\texttt{compila.bat} nella cartella \texttt{Dispensa}.
+\end{consiglio}
+
+\subsection*{Crediti}
+Dispensa e Allenatore Prog2 sono un progetto di \textbf{Giulio Casella}, realizzato con
+l'aiuto di Claude (Anthropic) e messo a disposizione di tutti gli studenti del corso.

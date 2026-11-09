@@ -1,0 +1,3 @@
+Il C++ e un linguaggio orientato agli oggetti
+
+   tre   parole   qui

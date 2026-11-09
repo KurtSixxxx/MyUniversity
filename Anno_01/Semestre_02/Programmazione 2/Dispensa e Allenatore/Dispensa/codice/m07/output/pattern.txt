@@ -1,0 +1,6 @@
+bubble:    3 9 10 27 27 38 43 82 
+selection: 3 9 10 27 27 38 43 82 
+insertion: 3 9 10 27 27 38 43 82 
+merge:     3 9 10 27 27 38 43 82 
+quick:     3 9 10 27 27 38 43 82 
+43 in posizione 6, 50 in posizione -1

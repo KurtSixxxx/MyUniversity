@@ -1,0 +1,5 @@
+99 non c'e'
+avanti:   5 10 20 25 30 40 50 
+indietro: 50 40 30 25 20 10 5 
+dopo aver tolto 50, 5 e 30: 10 20 25 40 
+indietro: 40 25 20 10 

@@ -1,0 +1,3 @@
+Svuoto p: 60 50 40 30 20 10 
+La copia ha ancora 6 elementi, in cima 60
+Errore: pop su pila vuota

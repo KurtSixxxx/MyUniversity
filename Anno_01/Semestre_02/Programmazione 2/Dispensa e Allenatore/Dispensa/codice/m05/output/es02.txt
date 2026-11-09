@@ -1,0 +1,3 @@
+2 3 1
+verde blu rosso
+-1.5 1.5

@@ -1,0 +1,695 @@
+% =====================================================================
+\chapter{Modulo 11 -- Liste Concatenate}
+% =====================================================================
+
+\tikzset{
+  nodoL/.style={draw,rectangle split,rectangle split horizontal,rectangle split parts=2,
+                fill=heapcol,font=\ttfamily\small,minimum height=0.65cm,
+                rectangle split part fill={heapcol,heapcol!60!sfondo}},
+  nullo/.style={font=\ttfamily\footnotesize,text=black!60},
+}
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Da questo modulo in poi costruiamo le \textbf{strutture dati dinamiche}: liste,
+pile, code, alberi. All'esame vanno scritte \textbf{da zero}, con nodi allocati con
+\cc|new| e collegati da puntatori, senza la STL. Servono tutto il Modulo 3
+(puntatori, \cc|new|/\cc|delete|), il Modulo 4 (distruttore e Regola dei Tre) e il
+Modulo 5 (template). Se qualcosa ti sembra oscuro, torna lì.
+
+\subsection*{Perché le liste: il limite degli array}
+
+Un array è una fila di case \textbf{attaccate} l'una all'altra (Modulo 3). È
+comodissimo per l'\textbf{accesso diretto}: \cc|v[i]| si raggiunge subito, perché il
+suo indirizzo si calcola. Ma ha due difetti:
+\begin{itemize}
+  \item la dimensione è fissa: per farlo crescere bisogna allocare un nuovo blocco e
+        ricopiare tutto (lo abbiamo fatto con il raddoppio);
+  \item inserire o togliere un elemento \emph{in mezzo} obbliga a spostare tutti quelli
+        dopo (Esercizio~3.10): $O(n)$.
+\end{itemize}
+
+Una \textbf{lista concatenata} risolve il problema rinunciando alla contiguità. Ogni
+elemento, il \textbf{nodo}, vive dove capita nello heap e contiene due cose: il
+\textbf{valore} e l'\textbf{indirizzo del nodo successivo}. Basta conoscere
+l'indirizzo del primo nodo, la \textbf{testa}, per raggiungere tutti gli altri
+seguendo le frecce. L'ultimo nodo ha come successivo \cc|nullptr|: ``qui finisce''.
+
+\begin{analogia}[: la caccia al tesoro]
+Un array è una fila di armadietti numerati: vai direttamente al numero 7. Una lista è
+una caccia al tesoro: hai solo il primo biglietto (la testa), che contiene un premio
+(il valore) e l'indicazione per trovare il biglietto successivo (il puntatore). Per
+arrivare al settimo devi seguire i primi sei (accesso \textbf{sequenziale}, $O(i)$).
+In compenso, aggiungere un biglietto in mezzo è facilissimo: basta cambiare
+l'indicazione scritta su quello prima.
+\end{analogia}
+
+\begin{center}\small
+\begin{tabular}{p{5.4cm}p{3.6cm}p{5.4cm}}
+\toprule
+\textbf{Operazione} & \textbf{Array} & \textbf{Lista concatenata} \\
+\midrule
+accesso all'elemento $i$-esimo & $O(1)$ & $O(i)$ \\
+inserimento/rimozione in testa & $O(n)$ (sposto tutti) & $O(1)$ \\
+inserimento/rimozione dopo un nodo noto & $O(n)$ & $O(1)$ \\
+inserimento in coda & $O(1)$ se c'è posto & $O(n)$, oppure $O(1)$ con puntatore alla coda \\
+ricerca di un valore & $O(n)$ ($O(\log n)$ se ordinato) & $O(n)$ (anche se ordinata) \\
+memoria & solo i valori & valore + un puntatore per nodo \\
+\bottomrule
+\end{tabular}
+\end{center}
+Nota l'ultima riga della ricerca: su una lista ordinata \textbf{non} si può fare la
+ricerca binaria, perché non si può saltare a metà.
+
+\subsection*{Il nodo e la lista}
+
+Le slide definiscono il nodo con una \cc|struct| o una \cc|class| con attributi
+pubblici: è un semplice ``pacchetto'' di dati, senza regole da proteggere.
+\begin{lstlisting}
+template <typename T>
+struct Nodo {
+    T valore;
+    Nodo<T>* succ;                                  // indirizzo del successivo
+    Nodo(T v, Nodo<T>* s = nullptr) : valore(v), succ(s) {}
+};
+\end{lstlisting}
+Attenzione: \cc|Nodo<T>* succ| è un \emph{puntatore} a un nodo, non un nodo. Un nodo
+che contenesse un altro nodo intero sarebbe infinito (e il compilatore lo vieta).
+
+La \textbf{lista} vera e propria è una classe che custodisce il puntatore alla testa
+(ed eventualmente alla coda e il numero di nodi) e offre i metodi. Gli utenti della
+lista non toccano mai i nodi direttamente: information hiding.
+\begin{lstlisting}
+template <typename T>
+class Lista {
+    Nodo<T>* testa;
+public:
+    Lista() : testa(nullptr) {}     // lista vuota: testa nulla
+    ...
+};
+\end{lstlisting}
+
+\subsection*{Scorrere una lista: il ``for'' delle liste}
+
+Questo è lo schema che userai \textbf{ovunque}. Memorizzalo:
+\begin{lstlisting}
+for (Nodo<T>* p = testa; p != nullptr; p = p->succ) {
+    // qui p punta a un nodo: p->valore è il suo valore
+}
+\end{lstlisting}
+\cc|p| è un ``dito'' che parte dalla testa e a ogni giro salta al nodo successivo, finché
+non cade fuori dalla lista (\cc|nullptr|). Non si muove mai \cc|testa|: se lo facessi,
+perderesti l'inizio della lista per sempre.
+
+\subsection*{Le operazioni fondamentali, passo per passo}
+
+Per ognuna, nella prossima sezione c'è il disegno. Il segreto delle liste è
+\textbf{disegnare prima di scrivere codice}: scatolette con frecce, e quali frecce
+cambiano in quale ordine.
+
+\textbf{Inserimento in testa} --- $O(1)$, il più semplice:
+\begin{lstlisting}
+testa = new Nodo<T>(v, testa);   // il nuovo nodo punta alla vecchia testa e diventa la testa
+\end{lstlisting}
+Funziona anche con la lista vuota (la vecchia testa è \cc|nullptr|, quindi il nuovo
+nodo diventa l'unico).
+
+\textbf{Inserimento dopo un nodo \texttt{p}} --- $O(1)$, l'ordine conta:
+\begin{lstlisting}
+Nodo<T>* nuovo = new Nodo<T>(v);
+nuovo->succ = p->succ;   // 1. il nuovo punta a quello che seguiva p
+p->succ = nuovo;         // 2. p punta al nuovo
+\end{lstlisting}
+Se inverti le due righe, \cc|p->succ| viene sovrascritto prima di essere copiato: perdi
+tutto il resto della lista.
+
+\textbf{Inserimento in coda} --- si cammina fino all'\emph{ultimo} nodo (quello con
+\cc|succ == nullptr|) e lo si aggancia lì. Attenzione al caso lista vuota. Con un
+attributo \cc|coda| che punta sempre all'ultimo nodo diventa $O(1)$, ma va aggiornato
+in \emph{tutte} le operazioni che possono cambiare l'ultimo nodo.
+
+\textbf{Inserimento ordinato} --- si cerca il nodo \cc|p| dopo il quale inserire
+(l'ultimo con valore minore) e si inserisce dopo \cc|p|. Se il nuovo valore va prima
+della testa, è un inserimento in testa.
+
+\textbf{Rimozione di un valore} --- la parte più delicata. Per togliere un nodo devo
+far ``scavalcare'' quel nodo dal suo \textbf{precedente}: quindi mentre cerco tengo due
+puntatori, \cc|ant| (il precedente) e \cc|pos| (il corrente), come nelle slide:
+\begin{passopasso}[: rimuovere il nodo con valore v]
+\begin{enumerate}
+  \item scorri con \cc|ant| e \cc|pos| finché \cc|pos| non punta al nodo con \cc|v|
+        (o diventa \cc|nullptr|: non trovato);
+  \item se \cc|ant == nullptr| il nodo da togliere è la testa: \cc|testa = pos->succ;|
+  \item altrimenti scavalca: \cc|ant->succ = pos->succ;|
+  \item \textbf{solo ora} \cc|delete pos;|
+\end{enumerate}
+\end{passopasso}
+
+\textbf{Distruzione della lista} --- il distruttore deve liberare \emph{ogni} nodo.
+Salva il successivo \textbf{prima} di cancellare il corrente, altrimenti leggeresti
+\cc|p->succ| da un nodo già liberato:
+\begin{lstlisting}
+while (testa != nullptr) {
+    Nodo<T>* tmp = testa;
+    testa = testa->succ;   // prima avanzo...
+    delete tmp;            // ...poi cancello quello che ho lasciato
+}
+\end{lstlisting}
+
+\textbf{Inversione in loco} --- giro tutte le frecce senza creare nodi, con tre
+puntatori \cc|prec|, \cc|corr|, \cc|succ| che avanzano insieme. È una domanda d'esame
+classica:
+\begin{lstlisting}
+Nodo<T>* prec = nullptr;
+Nodo<T>* corr = testa;
+while (corr != nullptr) {
+    Nodo<T>* succ = corr->succ;   // 1. ricordo dove andare
+    corr->succ = prec;            // 2. giro la freccia
+    prec = corr;                  // 3. avanzo i due puntatori
+    corr = succ;
+}
+testa = prec;
+\end{lstlisting}
+
+\begin{consiglio}[: i tre casi da controllare SEMPRE]
+Ogni operazione su una lista va provata (a mente o con un \cc|main|) su: \textbf{lista
+vuota}, \textbf{un solo nodo}, \textbf{operazione sulla testa} (e sulla coda). Il 90\%
+dei bug delle liste sta in uno di questi tre casi.
+\end{consiglio}
+
+\subsection*{La lista possiede i suoi nodi: Regola dei Tre}
+
+I nodi sono nello heap e li ha creati la lista: è la lista a doverli distruggere. Quindi
+servono distruttore, costruttore di copia (che crea nodi \emph{nuovi} con gli stessi
+valori: copia profonda) e \cc|operator=| (Modulo 4). Se non vuoi permettere la copia,
+puoi vietarla esplicitamente:
+\cc|Lista(const Lista&) = delete;| (lo fa il laboratorio): così un tentativo di copia
+è un errore di compilazione invece di un crash.
+
+\subsection*{Varianti}
+
+\begin{itemize}
+  \item \textbf{Lista doppiamente concatenata}: ogni nodo ha anche il puntatore al
+        \textbf{precedente} (\cc|prec|). Costa un puntatore in più per nodo, ma si può
+        scorrere all'indietro e rimuovere un nodo conoscendo solo il suo indirizzo
+        (il precedente è \cc|pos->prec|). In ogni inserimento o rimozione vanno
+        aggiornate \textbf{quattro} frecce invece di due. È la lista del codice del prof
+        (Esercizio~11.7).
+  \item \textbf{Lista circolare}: l'ultimo nodo punta di nuovo al primo. Non c'è
+        \cc|nullptr|: lo scorrimento si ferma quando si torna al punto di partenza.
+        Utile per i problemi ``a giro'' (Esercizio~11.9).
+  \item \textbf{Lista con sentinella}: un nodo speciale, sempre presente, che non
+        contiene dati e marca inizio e fine. In una lista doppia circolare con
+        sentinella il primo elemento è \cc|s->succ| e l'ultimo è \cc|s->prec|, entrambi
+        raggiungibili in $O(1)$, e \textbf{scompaiono tutti i casi speciali}
+        (lista vuota, testa, coda): ogni nodo ha sempre un precedente e un successivo
+        (Esercizio~11.10).
+\end{itemize}
+
+\begin{inparole}
+\begin{itemize}
+  \item Nodo = valore + puntatore al successivo. Lista = puntatore alla testa.
+  \item Scorrere: \cc|for (p = testa; p != nullptr; p = p->succ)|. Non muovere mai \cc|testa|.
+  \item In testa: \cc|testa = new Nodo(v, testa);|. Dopo \cc|p|: prima
+        \cc|nuovo->succ = p->succ|, poi \cc|p->succ = nuovo|.
+  \item Rimuovere: serve il precedente (\cc|ant|); caso speciale se è la testa;
+        \cc|delete| per ultimo.
+  \item Distruggere: salva il successivo, poi \cc|delete|.
+  \item Prova sempre: lista vuota, un nodo, testa/coda.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Una lista di tre nodi.} Ogni nodo ha una parte \emph{valore} e una parte
+\emph{succ}; la freccia parte dalla parte succ. I nodi stanno nello heap in posizioni
+qualunque, non contigue.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (t) at (0,0) {testa};
+  \node[nodoL] (a) at (2.6,0) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL] (b) at (5.0,0) {3 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c) at (7.4,0) {7 \nodepart{two} \phantom{x}};
+  \node[nullo] (z) at (9.4,0) {nullptr};
+  \draw[freccia] (t) -- (a);
+  \draw[freccia] (a.two) -- (b.west);
+  \draw[freccia] (b.two) -- (c.west);
+  \draw[freccia] (c.two) -- (z.west);
+  \node[etichetta,below=0.15cm of a] {valore | succ};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Inserimento dopo un nodo \texttt{p}} (inserisco 5 dopo il 3). Le frecce
+numerate vanno impostate \textbf{in quell'ordine}.
+\begin{center}
+\begin{tikzpicture}
+  \node[nodoL] (a) at (0,0) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL] (b) at (2.6,0) {3 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c) at (7.8,0) {7 \nodepart{two} \phantom{x}};
+  \node[nodoL,fill=green!25!sfondo,rectangle split part fill={green!25!sfondo,green!15!sfondo}] (n) at (5.2,-1.4) {5 \nodepart{two} \phantom{x}};
+  \node[etichetta,above=0.1cm of b] {p};
+  \node[etichetta,below=0.1cm of n] {nuovo};
+  \draw[freccia] (a.two) -- (b.west);
+  \draw[freccia,dashed,black!40] (b.two) -- node[above,etichetta]{vecchia freccia (sostituita)} (c.west);
+  \draw[freccia,green!50!black] (n.two) to[out=0,in=-110] node[right,etichetta,text=green!45!black,pos=0.6]{1. nuovo->succ = p->succ} (c.south);
+  \draw[freccia,green!50!black] (b.two) to[out=-60,in=180] node[left,etichetta,text=green!45!black,pos=0.4]{2. p->succ = nuovo} (n.west);
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Rimozione del nodo \texttt{pos}} (tolgo il 3): \cc|ant| lo scavalca, poi lo si
+cancella.
+\begin{center}
+\begin{tikzpicture}
+  \node[nodoL] (a) at (0,0) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL,fill=red!20!sfondo,rectangle split part fill={red!20!sfondo,red!12!sfondo}] (b) at (2.8,0) {3 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c) at (5.6,0) {7 \nodepart{two} \phantom{x}};
+  \node[etichetta,above=0.1cm of a] {ant};
+  \node[etichetta,above=0.1cm of b] {pos};
+  \draw[freccia,dashed,black!40] (a.two) -- (b.west);
+  \draw[freccia] (b.two) -- (c.west);
+  \draw[freccia,green!50!black] (a.two) to[out=-50,in=-130] node[below,etichetta,text=green!45!black]{1. ant->succ = pos->succ} (c.south);
+  \node[etichetta,text=red!75!black,anchor=west] at (7,0) {2. delete pos};
+\end{tikzpicture}
+\end{center}
+
+\needspace{7cm}
+\textbf{Inversione in loco}: tre momenti del ciclo. Le frecce già girate puntano a
+sinistra.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \r/\lab in {0/{inizio},1/{dopo 1 giro},2/{fine}} \node[etichetta,anchor=east] at (-0.8,-\r*1.3) {\lab};
+  % riga 0
+  \node[nodoL] (a0) at (0.6,0) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL] (b0) at (3,0) {2 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c0) at (5.4,0) {3 \nodepart{two} \phantom{x}};
+  \draw[freccia] (a0.two) -- (b0.west); \draw[freccia] (b0.two) -- (c0.west);
+  \node[nullo,right=0.4cm of c0] (z0) {nullptr}; \draw[freccia] (c0.two) -- (z0);
+  \node[etichetta,above=0.05cm of a0] {corr};
+  % riga 1
+  \node[nodoL] (a1) at (0.6,-1.3) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL] (b1) at (3,-1.3) {2 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c1) at (5.4,-1.3) {3 \nodepart{two} \phantom{x}};
+  \node[nullo] (z1) at (-0.6,-1.95) {nullptr};
+  \draw[freccia,green!50!black] (a1.two) to[out=-90,in=0] (z1);
+  \draw[freccia] (b1.two) -- (c1.west);
+  \node[etichetta,above=0.05cm of a1] {prec};
+  \node[etichetta,above=0.05cm of b1] {corr};
+  % riga 2
+  \node[nodoL] (a2) at (0.6,-2.6) {1 \nodepart{two} \phantom{x}};
+  \node[nodoL] (b2) at (3,-2.6) {2 \nodepart{two} \phantom{x}};
+  \node[nodoL] (c2) at (5.4,-2.6) {3 \nodepart{two} \phantom{x}};
+  \node[nullo] (z2) at (-0.6,-3.25) {nullptr};
+  \draw[freccia,green!50!black] (a2.two) to[out=-90,in=0] (z2);
+  \draw[freccia,green!50!black] (b2.two) to[out=-110,in=-60] (a2.south);
+  \draw[freccia,green!50!black] (c2.two) to[out=-110,in=-60] (b2.south);
+  \node[etichetta,above=0.05cm of c2] {testa = prec};
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Lista doppia e lista circolare con sentinella.}
+\begin{center}
+\begin{tikzpicture}
+  % doppia
+  \node[nullo] (zn) at (-1.2,0) {nullptr};
+  \foreach \v/\x [count=\i] in {a/0.6,b/2.6,c/4.6}
+    \node[cella,fill=heapcol,minimum width=1.2cm] (d\i) at (\x,0) {\v};
+  \node[nullo] (zf) at (6.4,0) {nullptr};
+  \draw[freccia] ($(d1.east)+(0,0.12)$) -- ($(d2.west)+(0,0.12)$);
+  \draw[freccia] ($(d2.west)+(0,-0.12)$) -- ($(d1.east)+(0,-0.12)$);
+  \draw[freccia] ($(d2.east)+(0,0.12)$) -- ($(d3.west)+(0,0.12)$);
+  \draw[freccia] ($(d3.west)+(0,-0.12)$) -- ($(d2.east)+(0,-0.12)$);
+  \draw[freccia] (d1.west) -- (zn); \draw[freccia] (d3.east) -- (zf);
+  \node[etichetta,above=0.1cm of d2] {doppia: succ e prec};
+  % circolare con sentinella
+  \node[cella,fill=black!15!sfondo,minimum width=1.2cm] (s) at (9.6,0.6) {S};
+  \node[cella,fill=heapcol,minimum width=1.2cm] (e1) at (11.4,-0.6) {a};
+  \node[cella,fill=heapcol,minimum width=1.2cm] (e2) at (7.8,-0.6) {b};
+  \draw[freccia] (s) to[bend left=20] (e1);
+  \draw[freccia] (e1) to[bend left=20] (e2);
+  \draw[freccia] (e2) to[bend left=20] (s);
+  \node[etichetta,above=0.1cm of s] {sentinella: primo = S->succ, ultimo = S->prec};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+La lista semplice generica completa: \cc|Nodo<T>| con costruttore, classe \cc|Lista<T>|
+con Regola dei Tre, inserimento in testa, in coda e ordinato, ricerca, rimozione con
+\cc|ant|/\cc|pos|, inversione in loco e \cc|operator<<| \cc|friend| scritto dentro la
+classe (la forma più semplice con i template).
+
+\codice{codice/m11/pattern.cpp}
+\uscita{codice/m11/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item \cc|rimuovi(42)| restituisce \cc|false| e non fa danni: il valore non c'è.
+  \item Dopo \cc|l.inverti()| la copia è rimasta \texttt{[3 -> 5 -> 7]}: il costruttore
+        di copia ha creato nodi nuovi.
+  \item \cc|operator=| usa un trucco elegante: crea una copia, scambia le teste e lascia
+        che il distruttore della copia liberi i vecchi nodi. Anche la classica versione a
+        sei passi del Modulo 4 va benissimo.
+  \item Lo stesso codice funziona con \cc|string|: \cc|inserisciOrdinato| usa solo
+        \cc|<|.
+\end{itemize}
+
+\begin{consiglio}[: operator<< con i template, due modi]
+Il modo più semplice (usato qui) è scrivere la funzione \cc|friend| \emph{dentro} la
+classe. Il codice del prof la dichiara invece come template separato:
+\cc|template <typename U> friend ostream& operator<<(ostream&, const ListaDoppiaT<U>&);|
+e la definisce fuori con \cc|template <typename U>|. Funzionano entrambi.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: usare un nodo dopo il delete]
+\cc|delete p; p = p->succ;| legge da memoria già liberata: comportamento indefinito,
+spesso un crash solo ``ogni tanto''. Salva sempre \cc|p->succ| \emph{prima} del
+\cc|delete|.
+\end{trappola}
+
+\begin{trappola}[: perdere la lista]
+\cc|p->succ = nuovo;| prima di \cc|nuovo->succ = p->succ;| fa perdere tutti i nodi dopo
+\cc|p| (memory leak, e la lista è troncata). L'ordine delle assegnazioni conta:
+disegna.
+\end{trappola}
+
+\begin{trappola}[: muovere la testa per scorrere]
+\cc|while (testa) { cout << testa->valore; testa = testa->succ; }| stampa la lista e
+poi... la lista è persa: \cc|testa| è \cc|nullptr|. Per scorrere usa un puntatore
+ausiliario \cc|p|.
+\end{trappola}
+
+\begin{trappola}[: lista vuota e primo nodo]
+\cc|testa->succ| con \cc|testa == nullptr| è un crash. Le operazioni in coda, la
+rimozione e l'inserimento ordinato hanno quasi sempre un caso speciale per la lista
+vuota e per la testa.
+\end{trappola}
+
+\begin{trappola}[: la funzione che cambia la testa]
+Una funzione esterna \cc|void inserisciTesta(Nodo* testa, int v)| modifica solo la sua
+copia del puntatore: il chiamante non vede nulla. Serve \cc|Nodo*& testa| (Modulo 3) o
+restituire la nuova testa. Dentro una classe il problema non c'è, perché \cc|testa| è
+un attributo.
+\end{trappola}
+
+\begin{trappola}[: distruttore mancante]
+Senza distruttore, alla fine dello scope tutti i nodi restano nello heap. E con il
+distruttore ma senza costruttore di copia, copiare una lista porta a un doppio
+\cc|delete|. Regola dei Tre, oppure \cc|= delete| sulla copia.
+\end{trappola}
+
+\begin{consiglio}[: stampa la lista dopo ogni operazione]
+Mentre sviluppi, stampa la lista dopo \emph{ogni} inserimento e rimozione: un errore
+nei puntatori si vede subito (nodi spariti, ripetuti, ciclo infinito nella stampa).
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Qual è il costo dell'accesso all'$i$-esimo elemento in una lista concatenata semplice?}
+  \item $O(1)$
+  \item $O(\log i)$
+  \item $O(i)$
+  \item $O(i^2)$
+\end{quiz}
+
+\begin{quiz}{Qual è il costo dell'inserimento in testa in una lista concatenata?}
+  \item $O(1)$
+  \item $O(\log n)$
+  \item $O(n)$
+  \item dipende dal valore inserito
+\end{quiz}
+
+\begin{quiz}{Si può applicare la ricerca binaria a una lista concatenata ordinata ottenendo $O(\log n)$?}
+  \item sì, come con gli array
+  \item no, perché non si può accedere in tempo costante all'elemento centrale
+  \item sì, ma solo con le liste doppie
+  \item no, perché le liste non possono essere ordinate
+\end{quiz}
+
+\begin{quiz}{Per inserire un nodo \texttt{nuovo} dopo il nodo \texttt{p}, quale sequenza è corretta?}
+  \item \texttt{p->succ = nuovo; nuovo->succ = p->succ;}
+  \item \texttt{nuovo->succ = p->succ; p->succ = nuovo;}
+  \item \texttt{nuovo->succ = p; p->succ = nuovo;}
+  \item \texttt{p = nuovo; nuovo->succ = p;}
+\end{quiz}
+
+\begin{quiz}{Per rimuovere un nodo da una lista concatenata semplice, di quale nodo serve conoscere l'indirizzo, oltre a quello da rimuovere?}
+  \item del successivo
+  \item del precedente
+  \item dell'ultimo
+  \item di nessuno
+\end{quiz}
+
+\begin{quiz}{Cosa c'è di sbagliato in \texttt{while (p) \{ delete p; p = p->succ; \}}?}
+  \item niente
+  \item si legge \texttt{p->succ} da un nodo già liberato
+  \item non libera l'ultimo nodo
+  \item \texttt{delete} non si può usare in un ciclo
+\end{quiz}
+
+\begin{quiz}{Quale vantaggio ha una lista doppiamente concatenata rispetto a una semplice?}
+  \item occupa meno memoria
+  \item permette l'accesso diretto all'$i$-esimo elemento
+  \item permette di scorrere la lista in entrambe le direzioni e di rimuovere un nodo noto senza cercare il precedente
+  \item non richiede il puntatore alla testa
+\end{quiz}
+
+\begin{quiz}{In una lista circolare semplice, come si capisce di aver finito di scorrerla?}
+  \item quando si trova \texttt{nullptr}
+  \item quando si torna al nodo di partenza
+  \item quando il valore è zero
+  \item non si può scorrere
+\end{quiz}
+
+\begin{quiz}{A cosa serve il nodo sentinella in una lista doppia circolare?}
+  \item a contenere il numero di elementi
+  \item a eliminare i casi speciali (lista vuota, testa, coda) e ad accedere a primo e ultimo in $O(1)$
+  \item a rendere la lista ordinata
+  \item a impedire le copie della lista
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità dell'inversione in loco di una lista di $n$ nodi?}
+  \item $O(1)$
+  \item $O(\log n)$
+  \item $O(n)$ in tempo e $O(1)$ di memoria aggiuntiva
+  \item $O(n)$ in tempo e $O(n)$ di memoria aggiuntiva
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{C}. Accesso sequenziale: bisogna seguire $i$ frecce.
+  \item \textbf{A}. Un nodo nuovo e due assegnazioni.
+  \item \textbf{B}. Raggiungere il centro costa $O(n)$.
+  \item \textbf{B}. Prima si copia \cc|p->succ|, poi lo si sovrascrive.
+  \item \textbf{B}. Il precedente deve scavalcare il nodo rimosso.
+  \item \textbf{B}. Va salvato il successivo prima del \cc|delete|.
+  \item \textbf{C}. Costa invece \emph{più} memoria (A falsa).
+  \item \textbf{B}. Non c'è nessun \cc|nullptr|.
+  \item \textbf{B}.
+  \item \textbf{C}. Tre puntatori ausiliari, indipendenti da $n$.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: rettangoli in una lista (dalle slide)]
+Definire una semplice classe \cc|Rettangolo| e una lista concatenata generica scritta da
+zero. Definire un metodo statico che legge da input un numero arbitrario di rettangoli e
+li inserisce nella lista, e un metodo statico che elimina dalla lista tutti i rettangoli
+con area compresa tra due valori dati.
+\end{traccia}
+
+\begin{step}{la lista minima}
+\cc|template <typename T> struct Nodo| e \cc|class Lista| con \cc|inserisciTesta|,
+\cc|operator<<| e distruttore. Vieta la copia con \cc|= delete|. Provala con degli
+interi.\\[0.3em]
+\textbf{Concetto nuovo:} nodo, testa, scorrimento, distruzione.
+\end{step}
+
+\begin{step}{la coda}
+Aggiungi un attributo \cc|coda| (puntatore all'ultimo nodo), \cc|inserisciCoda| in
+$O(1)$ e \cc|size()|. Aggiorna \cc|coda| anche in \cc|inserisciTesta| quando la lista era
+vuota.\\[0.3em]
+\textbf{Concetto nuovo:} mantenere più puntatori coerenti.
+\end{step}
+
+\begin{step}{rimozione multipla}
+Scrivi \cc|int rimuoviSe(bool (*condizione)(const T&, double, double), double a, double b)|,
+che toglie \textbf{tutti} i nodi per cui la condizione è vera e restituisce quanti ne ha
+tolti. Attenzione: dopo una rimozione \cc|ant| non avanza; e se togli l'ultimo nodo,
+aggiorna \cc|coda|.\\[0.3em]
+\textbf{Concetto nuovo:} rimozione durante lo scorrimento, puntatore a funzione.
+\end{step}
+
+\begin{step}{i rettangoli}
+Scrivi \cc|Rettangolo| (con \cc|area()| e \cc|operator<<|) e una classe \cc|Gestore| con i
+metodi statici \cc|leggi(Lista<Rettangolo>&)| (legge il numero di rettangoli e poi le
+coppie base altezza) ed \cc|eliminaTra(Lista<Rettangolo>&, double a, double b)|.\\[0.3em]
+\textbf{Concetto nuovo:} lista di oggetti, metodi statici, la traccia delle slide.
+\end{step}
+
+\begin{step}{lista ordinata}
+Aggiungi \cc|operator<| a \cc|Rettangolo| (per area) e \cc|inserisciOrdinato| alla lista,
+e costruisci una lista di rettangoli ordinata per area.\\[0.3em]
+\textbf{Concetto nuovo:} inserimento ordinato.
+\end{step}
+
+\begin{step}{inversione}
+Scrivi \cc|inverti()| in loco, aggiornando correttamente \cc|coda| (la vecchia testa).
+Verifica con un \cc|inserisciCoda| dopo l'inversione.\\[0.3em]
+\textbf{Concetto nuovo:} manipolazione di tutti i puntatori.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m11/lab.cpp}
+\ingresso{codice/m11/input/lab.txt}
+\uscita{codice/m11/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item In \cc|rimuoviSe| il puntatore \cc|pos| avanza \emph{prima} del \cc|delete|,
+        e \cc|ant| avanza solo quando il nodo resta.
+  \item Il test finale dello step 6 (un inserimento in coda dopo l'inversione) serve
+        proprio a scoprire se \cc|coda| è stata aggiornata: se puntasse ancora al vecchio
+        ultimo nodo, il nuovo rettangolo finirebbe nel posto sbagliato.
+  \item Il \cc|Gestore| non ha attributi: è solo un contenitore di metodi statici, come
+        chiede la traccia.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Differenze tra array e lista concatenata?]
+Nell'array gli elementi occupano locazioni contigue, quindi l'accesso all'$i$-esimo è
+diretto, in $O(1)$; la dimensione però è fissa, e inserimenti e rimozioni in mezzo
+richiedono di spostare elementi, in $O(n)$. Nella lista ogni nodo contiene il valore e il
+puntatore al successivo, e i nodi possono stare ovunque in memoria: l'accesso è
+sequenziale, in $O(i)$, ma la dimensione cresce e cala dinamicamente e
+inserimenti e rimozioni, noto il punto in cui farli, costano $O(1)$. La lista occupa più
+memoria per via dei puntatori e non permette la ricerca binaria.
+\end{orale}
+
+\begin{orale}[D2. Come si rimuove un elemento da una lista semplice?]
+Si scorre la lista con due puntatori: \cc|pos| sul nodo corrente e \cc|ant| sul
+precedente, finché \cc|pos| non punta al nodo da rimuovere. Se \cc|ant| è nullo il nodo
+è la testa, e la testa diventa \cc|pos->succ|; altrimenti si fa puntare \cc|ant->succ| a
+\cc|pos->succ|, scavalcando il nodo. Infine si libera la memoria del nodo con
+\cc|delete|. La ricerca costa $O(n)$; lo scollegamento $O(1)$.
+\end{orale}
+
+\begin{orale}[D3. Cos'è una lista doppiamente concatenata? Vantaggi e svantaggi?]
+È una lista in cui ogni nodo contiene, oltre al valore, due puntatori: al successivo e
+al precedente. Permette di scorrere la lista in entrambe le direzioni e di rimuovere un
+nodo di cui si conosce l'indirizzo in $O(1)$, senza cercarne il predecessore. Gli
+svantaggi sono la memoria per il puntatore aggiuntivo e il fatto che ogni inserimento o
+rimozione richiede di aggiornare più collegamenti.
+\end{orale}
+
+\begin{orale}[D4. Cos'è una lista circolare con sentinella?]
+In una lista circolare l'ultimo nodo è collegato al primo. La sentinella è un nodo
+speciale, sempre presente, che non contiene informazione utile e marca l'inizio e la fine
+della lista. In una lista doppia circolare con sentinella il primo elemento è il
+successore della sentinella e l'ultimo il suo predecessore, entrambi accessibili in
+$O(1)$; inoltre ogni nodo ha sempre un precedente e un successivo, per cui spariscono i
+casi particolari di lista vuota, inserimento in testa e in coda.
+\end{orale}
+
+\begin{orale}[D5. Perché una classe lista ha bisogno della Regola dei Tre?]
+Perché possiede risorse dinamiche: i nodi allocati con \cc|new|. Il distruttore deve
+scorrere la lista e liberare ogni nodo. Senza un costruttore di copia e un operatore di
+assegnamento scritti a mano, la copia generata dal compilatore copierebbe solo il
+puntatore alla testa: le due liste condividerebbero i nodi e alla distruzione si avrebbe
+una doppia deallocazione. La copia corretta crea nuovi nodi con gli stessi valori; in
+alternativa si può vietare la copia dichiarando quei metodi \cc|= delete|.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+Per ogni esercizio, \textbf{prima} disegna su carta i nodi e le frecce che cambiano.
+
+\begin{esercizio}{La prima lista, a mano}{facile}
+Senza classi: dichiara \cc|struct Nodo { int valore; Nodo* succ; };|, costruisci la lista
+$4 \to 3 \to 5$ inserendo in testa (come nelle slide), aggiungi 8 in coda, scorrila
+contando i nodi e sommando i valori, poi libera tutti i nodi.
+\end{esercizio}
+
+\begin{esercizio}{Ricerca e modifica}{facile}
+Scrivi \cc|Nodo* ricerca(Nodo* testa, int x)| e \cc|int posizione(Nodo* testa, int x)|.
+Usa il puntatore restituito da \cc|ricerca| per modificare il valore del nodo
+direttamente nella lista.
+\end{esercizio}
+
+\begin{esercizio}{Massimo}{facile}
+Scrivi il massimo di una lista non vuota in versione iterativa e in versione ricorsiva
+(caso base: un solo nodo).
+\end{esercizio}
+
+\begin{esercizio}{Togliere in testa e in coda}{facile}
+Scrivi \cc|bool rimuoviTesta(Nodo*& testa)| e \cc|bool rimuoviCoda(Nodo*& testa)| (che
+si ferma sul \emph{penultimo} nodo). Perché la testa va passata per reference? Svuota una
+lista a forza di \cc|rimuoviCoda|.
+\end{esercizio}
+
+\begin{esercizio}{Lista ordinata senza duplicati}{medio}
+Classe template \cc|ListaOrdinata<T>| (con il nodo come \cc|struct| interna) con
+\cc|bool inserisci(const T&)| che mantiene l'ordine e rifiuta i duplicati, e
+\cc|bool rimuovi(const T&)| che sfrutta l'ordinamento per fermarsi prima.
+\end{esercizio}
+
+\begin{esercizio}{Invertire}{medio}
+Inverti una lista in loco in due modi: iterativo con tre puntatori e ricorsivo
+(inverti il resto, poi aggancia il nodo corrente in fondo). Le due funzioni
+restituiscono la nuova testa.
+\end{esercizio}
+
+\begin{esercizio}{Lista doppia del prof}{medio}
+Completa la \cc|ListaDoppiaT| del codice del prof: aggiungi \cc|inserisci(T valPrec, T val)|,
+che inserisce \cc|val| come \textbf{precedente} del nodo che contiene \cc|valPrec| (se
+esiste), una rimozione che sfrutta \cc|prec|, e la stampa in avanti e all'indietro
+(tieni un puntatore alla coda).
+\end{esercizio}
+
+\begin{esercizio}{Fusione di liste ordinate}{medio}
+Fondi due liste ordinate in una lista ordinata \textbf{senza creare nodi}, ricollegando
+quelli esistenti. Usa un nodo ``finto'' locale come appoggio per evitare il caso speciale
+della testa.
+\end{esercizio}
+
+\begin{esercizio}{Il problema di Giuseppe}{difficile}
+$n$ persone sono in cerchio, numerate da 1 a $n$. Partendo dalla prima, si conta fino a
+$k$ e la persona contata esce; si riprende a contare dalla successiva. Con una lista
+\textbf{circolare} simula il gioco, stampa l'ordine di uscita e trova il sopravvissuto per
+$n = 7, k = 3$ e $n = 10, k = 2$.
+\end{esercizio}
+
+\begin{esercizio}{Lista con sentinella}{difficile}
+Classe template di lista doppia circolare con sentinella: costruttore (la sentinella
+punta a se stessa), \cc|inserisciTesta| e \cc|inserisciCoda| in $O(1)$ scritti usando
+un'unica funzione privata \cc|inserisciDopo|, \cc|rimuovi|, distruttore e \cc|<<| che
+stampa in avanti e all'indietro.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m11/}.

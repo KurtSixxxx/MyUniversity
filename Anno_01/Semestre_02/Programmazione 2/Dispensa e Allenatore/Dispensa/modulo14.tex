@@ -1,0 +1,966 @@
+% =====================================================================
+\chapter{Modulo 14 -- Grafi}
+% =====================================================================
+
+\tikzset{
+  vert/.style={circle,draw,thick,fill=heapcol,font=\small\bfseries,minimum size=7mm,inner sep=1pt},
+  arco/.style={thick},
+  arcoO/.style={-{Stealth[length=2.4mm]},thick},
+  albArco/.style={line width=2pt,green!50!black},
+  nodoG/.style={draw,rectangle split,rectangle split horizontal,rectangle split parts=2,
+                fill=heapcol,font=\ttfamily\small,minimum height=0.6cm,
+                rectangle split part fill={heapcol,heapcol!60!sfondo}},
+  grigio/.style={fill=black!25!sfondo},
+  nero/.style={fill=black!65!sfondo,text=sfondo},
+}
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Dagli alberi ai grafi}
+
+Ricapitoliamo il percorso delle strutture dati. In una \textbf{lista} ogni nodo ha un
+solo successivo: una fila indiana. In un \textbf{albero} ogni nodo può avere più figli,
+ma \textbf{un solo padre}, e non si torna mai indietro: una gerarchia. Ora togliamo
+anche quest'ultimo vincolo: in un \textbf{grafo} ogni nodo può essere collegato a
+\textbf{qualunque} altro nodo, quanti ne vuole, anche formando dei giri chiusi.
+
+\begin{analogia}[: la cartina stradale]
+Pensa alla cartina della Sicilia. Le \textbf{città} sono i nodi; le \textbf{strade} che
+le collegano direttamente sono gli archi. Da Catania si va a Siracusa, a Messina, a
+Enna; da Enna a Palermo; da Palermo a Messina\ldots{} Non c'è una ``radice'', nessuna
+città è ``padre'' di un'altra, e partendo da Catania si può tornare a Catania facendo un
+giro (Catania, Enna, Palermo, Messina, Catania). Un grafo è esattamente questo: un
+insieme di luoghi e di collegamenti diretti tra coppie di luoghi.
+\end{analogia}
+
+Altri grafi che usi ogni giorno senza saperlo: la rete di amicizie di un social (persone
+e amicizie), la metropolitana (stazioni e tratte), Internet (computer e cavi), le pagine
+web (pagine e link), i prerequisiti degli esami (esami e propedeuticità). Per questo le
+slide dicono che i grafi sono strutture ``di fondamentale importanza'', con centinaia di
+problemi legati a loro. Al corso ne vediamo i più elementari: \textbf{come si memorizza}
+un grafo e \textbf{come lo si visita}.
+
+\subsection*{Il vocabolario}
+
+\begin{definizione}[: grafo]
+Un \textbf{grafo} $G = (V, E)$ è formato da:
+\begin{itemize}
+  \item un insieme $V$ di \textbf{vertici} (o nodi);
+  \item un insieme $E$ di \textbf{archi}: ogni arco è una coppia di vertici $(u, v)$.
+\end{itemize}
+Se $(u, v)$ è un arco, si dice che $v$ è \textbf{adiacente} a $u$.
+\end{definizione}
+
+La lettera $V$ viene da \emph{vertex}, la $E$ da \emph{edge} (arco, in inglese). Con
+$|V|$ si indica il \textbf{numero} di vertici e con $|E|$ il numero di archi: le
+barrette vogliono solo dire ``quanti sono''. Spesso si scrive più semplicemente $n$ per
+i vertici e $m$ per gli archi.
+
+Ci sono due famiglie di grafi, e la differenza è importante per tutto il resto:
+\begin{itemize}
+  \item \textbf{Grafo orientato} (o \emph{direzionato}): gli archi hanno un verso, come
+        le strade a senso unico. L'arco $(u, v)$ va \emph{da} $u$ \emph{a} $v$: è
+        \textbf{uscente} da $u$ ed \textbf{entrante} in $v$. Da $u$ si arriva a $v$, ma
+        non è detto il contrario. Si disegna con una freccia. Esempio: ``A segue B'' su un
+        social, ``l'esame X è propedeutico a Y''.
+  \item \textbf{Grafo non orientato}: gli archi non hanno verso, come le strade a doppio
+        senso. $(u, v)$ e $(v, u)$ sono lo stesso arco, e l'adiacenza è
+        \textbf{simmetrica}: se $v$ è adiacente a $u$, anche $u$ è adiacente a $v$. Si
+        disegna con una linea semplice. Esempio: ``A è amico di B'' (l'amicizia è
+        reciproca). Nelle slide i grafi non orientati non hanno \textbf{cappi}
+        (\emph{self-loop}), cioè archi da un vertice a sé stesso.
+\end{itemize}
+
+Altre parole che ricorrono nei quiz:
+\begin{itemize}
+  \item \textbf{Grado} di un vertice: quanti archi lo toccano. In un grafo non orientato
+        è il numero dei suoi vicini. In un grafo orientato si distinguono \textbf{grado
+        entrante} (frecce che arrivano) e \textbf{grado uscente} (frecce che partono), e
+        il grado è la loro somma.
+  \item \textbf{Cammino} da $u$ a $v$: una sequenza di vertici $v_0, v_1, \ldots, v_k$
+        con $v_0 = u$, $v_k = v$, in cui ogni coppia di vertici consecutivi è un arco. La
+        sua \textbf{lunghezza} è il numero di archi, $k$. Se esiste un cammino da $u$ a
+        $v$, si dice che $v$ è \textbf{raggiungibile} da $u$. Il cammino è
+        \textbf{semplice} se non passa due volte dallo stesso vertice.
+  \item \textbf{Ciclo}: un cammino che torna al punto di partenza ($v_0 = v_k$). Un
+        grafo senza cicli è \textbf{aciclico}. Un grafo orientato aciclico si chiama
+        \textbf{DAG} (\emph{Directed Acyclic Graph}).
+  \item Un grafo non orientato è \textbf{connesso} se ogni coppia di vertici è unita da un
+        cammino: ``da ogni città si arriva a ogni altra''. Se non lo è, si spezza in
+        \textbf{componenti connesse}: i gruppi di vertici che si raggiungono tra loro
+        (pensa alle isole: la Sicilia e le Eolie sono due componenti, se contano solo le
+        strade).
+  \item In un grafo orientato si parla di \textbf{fortemente connesso} se per ogni coppia
+        $u, v$ c'è un cammino da $u$ a $v$ \emph{e} uno da $v$ a $u$.
+  \item Un grafo non orientato è \textbf{completo} se ogni coppia di vertici distinti è
+        adiacente: con $n$ vertici ha $n(n-1)/2$ archi (Esercizio~14.1).
+  \item $G' = (V', E')$ è un \textbf{sottografo} di $G$ se prende solo alcuni dei vertici e
+        alcuni degli archi di $G$.
+\end{itemize}
+
+\textbf{Un albero è un grafo particolare}: non orientato, connesso e senza cicli. Tutto
+quello che diremo sui grafi vale anche per gli alberi; il viceversa no.
+
+\subsection*{Come si memorizza un grafo: due modi}
+
+Dentro il computer i vertici sono di solito \textbf{numerati} da $0$ a $n - 1$: il
+vertice ``Catania'' diventa, ad esempio, il numero 2. Si tiene un array di chiavi
+(\cc|chiavi[2] = "Catania"|) e da lì in poi si lavora con gli indici, che sono comodi
+per indicizzare array. Restano da memorizzare gli archi, e qui le strade sono due.
+
+\paragraph{1. Matrice di adiacenza.}
+Una tabella $n \times n$ di \cc|bool|: la cella \cc|adj[i][j]| vale \cc|true| (1) se c'è
+l'arco da $i$ a $j$, \cc|false| (0) altrimenti.
+
+\begin{analogia}[: la tabella delle distanze dell'atlante stradale]
+Negli atlanti stradali c'è una tabella con le città sia sulle righe sia sulle colonne:
+all'incrocio tra la riga ``Catania'' e la colonna ``Palermo'' leggi la distanza. La
+matrice di adiacenza è la stessa tabella, ma invece della distanza c'è solo un sì o un
+no: ``c'è una strada diretta?''. Per rispondere basta andare all'incrocio giusto, senza
+cercare: un'operazione istantanea, $O(1)$.
+\end{analogia}
+
+Proprietà:
+\begin{itemize}
+  \item in un grafo \textbf{non orientato} la matrice è \textbf{simmetrica} rispetto alla
+        diagonale: ogni arco si scrive due volte, in \cc|adj[i][j]| e in \cc|adj[j][i]|;
+  \item la somma della riga $i$ è il grado del vertice $i$;
+  \item occupa sempre $n \times n$ celle, anche se gli archi sono pochissimi: spazio
+        $O(|V|^2)$. Con 10\,000 vertici sono 100 milioni di celle, quasi tutte zero;
+  \item per trovare i vicini di $u$ bisogna scorrere tutta la riga: $n$ passi, anche se
+        i vicini sono due.
+\end{itemize}
+
+In C++ è un array dinamico di array dinamici, come le matrici del Modulo 3. È la
+rappresentazione usata dal codice del professore (\cc|bool** adj|):
+\begin{lstlisting}
+bool** adj = new bool*[n];             // un array di n puntatori a riga
+for (int i = 0; i < n; i++)
+    adj[i] = new bool[n]{};            // ogni riga: n celle a false
+adj[i][j] = true;                      // aggiungo l'arco (i, j)
+adj[j][i] = true;                      // ...e (j, i) se il grafo NON è orientato
+\end{lstlisting}
+
+\paragraph{2. Liste di adiacenza.}
+Un array di $n$ \textbf{liste concatenate}, una per vertice: la lista \cc|adj[u]| contiene
+i vertici adiacenti a $u$ (i suoi vicini). Ogni elemento è un nodo dinamico come quelli
+del Modulo 11:
+\begin{lstlisting}
+struct Arco {
+    int dest;          // indice del vertice di arrivo
+    Arco* succ;        // prossimo vicino nella lista
+};
+Arco** adj = new Arco*[n];             // n teste di lista
+for (int i = 0; i < n; i++) adj[i] = nullptr;      // all'inizio nessun vicino
+adj[u] = new Arco{v, adj[u]};          // arco (u, v): inserimento in testa, O(1)
+adj[v] = new Arco{u, adj[v]};          // ...e (v, u) se il grafo NON è orientato
+\end{lstlisting}
+
+\begin{analogia}[: la rubrica degli amici]
+Ognuno ha la sua rubrica con i soli numeri dei propri amici. Per sapere chi sono gli
+amici di Anna apri la rubrica di Anna e la leggi tutta: è lunga quanto il numero dei suoi
+amici, non quanto il numero di abitanti della città. Ma per sapere se Anna conosce Bruno
+devi sfogliarla tutta, perché non c'è una casella ``Bruno'' già pronta.
+\end{analogia}
+
+Proprietà (dalle slide):
+\begin{itemize}
+  \item in un grafo \textbf{non orientato} ogni arco compare in \textbf{due} liste, quindi
+        la somma delle lunghezze di tutte le liste è $2|E|$; in un grafo
+        \textbf{orientato} ogni arco compare una volta sola, e la somma è $|E|$;
+  \item spazio: l'array di $|V|$ teste più i nodi delle liste, cioè $O(|V| + |E|)$. È
+        molto meglio della matrice per i grafi \textbf{sparsi} (con pochi archi), che nella
+        pratica sono la maggioranza;
+  \item scorrere i vicini di $u$ costa quanto il numero dei vicini: il meglio possibile;
+  \item sapere se $(u, v)$ è un arco costa la lunghezza della lista di $u$.
+\end{itemize}
+
+\begin{center}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Operazione} & \textbf{Matrice} & \textbf{Liste} \\
+\midrule
+spazio occupato                    & $O(|V|^2)$     & $O(|V| + |E|)$ \\
+\q{c'è l'arco $(u,v)$?}            & $O(1)$         & $O(\text{grado di } u)$ \\
+scorrere i vicini di $u$           & $O(|V|)$       & $O(\text{grado di } u)$ \\
+aggiungere un arco                 & $O(1)$         & $O(1)$ (in testa) \\
+visita BFS o DFS completa          & $O(|V|^2)$     & $O(|V| + |E|)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+\textbf{Regola pratica}: grafo piccolo o ``denso'' (quasi tutti collegati con tutti) e
+tante domande ``$u$ e $v$ sono collegati?'' $\Rightarrow$ matrice. Grafo grande e
+sparso, e algoritmi che scorrono i vicini (le visite) $\Rightarrow$ liste. Le slide
+assumono le liste per BFS e DFS.
+
+\subsection*{Visitare un grafo: perché serve ``ricordarsi'' dove si è già stati}
+
+Visitare un grafo significa, come per gli alberi, raggiungere tutti i vertici partendo da
+uno. Ma c'è una differenza enorme: \textbf{nei grafi ci sono i cicli}. Se da A vado a B,
+da B a C e da C di nuovo ad A, senza un promemoria continuerei a girare in tondo per
+sempre. Negli alberi questo problema non esisteva, perché scendendo non si torna mai
+indietro.
+
+La soluzione delle slide è \textbf{colorare} i vertici:
+\begin{itemize}
+  \item \textbf{bianco}: non ancora scoperto (non l'ho mai visto);
+  \item \textbf{grigio}: scoperto, ma non ho ancora finito di esaminare i suoi vicini (è
+        la ``frontiera'' tra il noto e l'ignoto);
+  \item \textbf{nero}: scoperto e completamente esaminato.
+\end{itemize}
+Un vertice si visita solo se è \textbf{bianco}. Così ogni vertice viene scoperto
+\textbf{una volta sola}, e la visita termina sempre. Per molti esercizi bastano due colori
+(un \cc|bool visitato[]|); il grigio serve in casi come la ricerca di cicli
+(Esercizio~14.8).
+
+\begin{analogia}[: il gesso nel labirinto]
+Chi esplora una grotta segna col gesso ogni incrocio in cui passa. Arrivato a un incrocio
+già segnato, sa di esserci già stato e non lo riesplora. Il colore dei vertici è il gesso.
+\end{analogia}
+
+Esistono due strategie di visita, che differiscono nell'\textbf{ordine} in cui si
+esplora: in \textbf{ampiezza} (BFS) e in \textbf{profondità} (DFS).
+
+\subsection*{BFS: la visita in ampiezza (\emph{Breadth-First Search})}
+
+\begin{analogia}[: il sasso nello stagno, o il passaparola]
+Lanci un sasso in uno stagno: le onde si allargano in cerchi. Prima viene raggiunto
+tutto ciò che sta a distanza 1, poi tutto ciò che sta a distanza 2, e così via. Oppure
+pensa a una notizia: la dici ai tuoi amici (distanza 1), loro la dicono ai loro amici
+(distanza 2, gli ``amici di amici''), e così via. La BFS visita il grafo \textbf{a
+cerchi concentrici} attorno alla sorgente.
+\end{analogia}
+
+Per realizzare i cerchi serve una \textbf{coda} (FIFO, Modulo 12): chi è scoperto prima
+viene esaminato prima. È esattamente la visita per livelli degli alberi del Modulo 13, con
+in più i colori per non ripassare dagli stessi vertici. Ecco l'algoritmo delle slide,
+$\text{BFS}(G, s)$ con sorgente $s$:
+
+\begin{passopasso}[: BFS(G, s)]
+\begin{enumerate}
+  \item Ogni vertice $u$ diventa \textbf{bianco}, con distanza $d[u] = \infty$ (``non
+        so ancora'') e predecessore $\text{pred}[u] = \text{NULL}$.
+  \item La sorgente $s$ diventa \textbf{grigia}, con $d[s] = 0$. Metti $s$ nella coda.
+  \item Finché la coda non è vuota:
+  \begin{enumerate}
+    \item estrai dalla testa della coda un vertice $u$;
+    \item per ogni vicino $v$ di $u$ (scorri la lista \cc|adj[u]|): se $v$ è
+          \textbf{bianco}, l'hai appena scoperto: coloralo di grigio, poni
+          $d[v] = d[u] + 1$ (è un passo più lontano di $u$), $\text{pred}[v] = u$ (``ci
+          sono arrivato da $u$''), e mettilo in fondo alla coda;
+    \item $u$ diventa \textbf{nero}: hai finito con lui.
+  \end{enumerate}
+\end{enumerate}
+\end{passopasso}
+
+Le slide fanno notare l'\textbf{invariante}: in ogni momento la coda contiene esattamente
+i vertici grigi. E poiché la coda è FIFO, i vertici escono in ordine di distanza: prima
+tutti quelli a distanza 0, poi quelli a distanza 1, poi a distanza 2\ldots
+
+\textbf{Cosa calcola la BFS}, oltre all'ordine di visita:
+\begin{itemize}
+  \item $d[v]$ è la \textbf{distanza minima} da $s$ a $v$, cioè il minimo numero di archi
+        da percorrere. Vale per i grafi \textbf{non pesati} (archi tutti ``uguali''): se le
+        strade avessero lunghezze diverse servirebbero altri algoritmi (Dijkstra, fuori
+        programma);
+  \item i puntatori $\text{pred}[v]$ formano un albero, il \textbf{breadth-first tree}:
+        risalendo da $v$ con i pred si torna a $s$ lungo un \textbf{cammino minimo};
+  \item i vertici rimasti bianchi (con $d = \infty$) \textbf{non sono raggiungibili} da $s$.
+\end{itemize}
+
+Per stampare il cammino minimo da $s$ a $v$ le slide danno una procedura
+\textbf{ricorsiva}, \emph{Print-Path}: il cammino fino a $v$ è ``il cammino fino a
+$\text{pred}[v]$, seguito da $v$''. Le tre domande del Modulo 8: caso base $v = s$
+(stampo $s$); se $\text{pred}[v]$ è NULL non c'è cammino; altrimenti chiamo su
+$\text{pred}[v]$ e \textbf{dopo} stampo $v$ (la stampa dopo la chiamata rovescia l'ordine,
+come nel Modulo 8). Costo $O(|V|)$: ogni chiamata accorcia il cammino di un vertice.
+\begin{lstlisting}
+void stampaCammino(int s, int v) {
+    if (v == s) cout << chiavi[s];
+    else if (pred[v] == -1) cout << "nessun cammino";
+    else { stampaCammino(s, pred[v]); cout << " -> " << chiavi[v]; }
+}
+\end{lstlisting}
+
+\subsection*{DFS: la visita in profondità (\emph{Depth-First Search})}
+
+\begin{analogia}[: il filo di Arianna]
+Teseo nel labirinto: a ogni incrocio prende la prima strada non ancora esplorata e va
+\textbf{avanti più che può}, srotolando il filo. Quando arriva in un vicolo cieco (o in
+un posto già visitato) \textbf{torna indietro} seguendo il filo fino all'ultimo incrocio
+che ha ancora strade nuove, e riparte da lì. Questo ``tornare indietro'' si chiama
+\textbf{backtracking}.
+\end{analogia}
+
+Il ``filo'' è una \textbf{pila}: l'ultimo incrocio raggiunto è il primo a cui si torna
+(LIFO). E la pila più comoda che abbiamo è quella delle chiamate ricorsive (Modulo 8):
+per questo la DFS si scrive quasi sempre in modo \textbf{ricorsivo}, ed è cortissima.
+L'algoritmo delle slide ha due parti:
+
+\begin{passopasso}[: DFS(G) e DFS-Visit(u)]
+\textbf{DFS(G)}:
+\begin{enumerate}
+  \item ogni vertice diventa bianco, con pred NULL; poni $\text{tempo} = 0$;
+  \item per ogni vertice $u$, \textbf{se è ancora bianco}, chiama DFS-Visit($u$).
+\end{enumerate}
+\textbf{DFS-Visit(u)}:
+\begin{enumerate}
+  \item $u$ diventa grigio; $d[u] = \text{tempo}$\texttt{++} (istante di
+        \textbf{scoperta});
+  \item per ogni vicino $v$ di $u$: se $v$ è bianco, $\text{pred}[v] = u$ e chiama
+        \textbf{ricorsivamente} DFS-Visit($v$);
+  \item $u$ diventa nero; $f[u] = \text{tempo}$\texttt{++} (istante di \textbf{fine}).
+\end{enumerate}
+\end{passopasso}
+
+Tre osservazioni:
+\begin{itemize}
+  \item il ciclo esterno di DFS($G$) fa ripartire la visita da ogni vertice non ancora
+        raggiunto: così la DFS visita \textbf{tutto} il grafo, anche se non è connesso.
+        Ogni ripartenza produce un albero diverso: l'insieme dei pred forma una
+        \textbf{foresta} (\emph{depth-first forest}). La BFS invece parte da una sola
+        sorgente;
+  \item i \textbf{timestamp} $d[u]$ e $f[u]$ sono come le timbrature di entrata e uscita
+        di un cartellino: $d[u] < f[u]$ sempre, e se $v$ è scoperto dentro la visita di
+        $u$ allora il suo intervallo $[d[v], f[v]]$ sta dentro quello di $u$, proprio come
+        le chiamate ricorsive annidate;
+  \item la DFS \textbf{non} calcola le distanze minime: va lontano subito, e può
+        arrivare a un vicino della sorgente passando per una strada lunghissima.
+\end{itemize}
+
+Le slide classificano anche gli archi incontrati dalla DFS: \textbf{tree edge} (archi
+dell'albero, usati per scoprire un vertice), \textbf{back edge} (verso un antenato ancora
+grigio: segnalano un \textbf{ciclo}), \textbf{forward edge} (verso un discendente già
+finito), \textbf{cross edge} (tutti gli altri). Per l'esame basta ricordare che un arco
+verso un vertice \textbf{grigio} chiude un ciclo (Esercizio~14.8).
+
+\subsection*{Un'applicazione della DFS: l'ordinamento topologico}
+
+Hai un elenco di attività con dei vincoli ``A va fatta prima di B'': gli esami
+propedeutici, o l'esempio delle slide dei vestiti (le calze prima delle scarpe, la
+camicia prima della cravatta). Le attività sono i vertici, ogni vincolo è un arco
+\textbf{orientato} da A a B. Un \textbf{ordinamento topologico} è una disposizione in fila
+di tutti i vertici in cui ogni arco va \textbf{da sinistra a destra}: un ordine in cui
+fare le attività rispettando tutti i vincoli.
+
+Esiste solo se il grafo è un \textbf{DAG} (orientato e aciclico): se A richiede B e B
+richiede A, nessun ordine funziona. Il trucco delle slide:
+\begin{passopasso}[: TOPOLOGICAL-SORT(G)]
+\begin{enumerate}
+  \item esegui DFS($G$);
+  \item ogni volta che un vertice \textbf{finisce} (diventa nero), inseriscilo \textbf{in
+        testa} a una lista;
+  \item alla fine la lista contiene i vertici in ordine decrescente di tempo di fine $f$:
+        è un ordinamento topologico. Costo $O(|V| + |E|)$.
+\end{enumerate}
+\end{passopasso}
+Perché funziona? Un vertice finisce solo dopo che sono finiti tutti quelli raggiungibili
+da lui, cioè tutto ciò che ``viene dopo''. Inserendolo in testa finisce \emph{davanti} a
+tutti loro. Lo vedrai al lavoro nello Step 6 del laboratorio.
+
+Le slide accennano infine alle \textbf{componenti fortemente connesse}, calcolabili con due
+DFS (una sul grafo, una sul grafo \textbf{trasposto} $G^T$, che ha tutti gli archi
+rovesciati, Esercizio~14.4). Basta sapere che esistono e che costano $O(|V|+|E|)$.
+
+\subsection*{Quanto costano le visite (senza formule)}
+
+Usiamo il contatore di passi del Modulo 6. Con le \textbf{liste di adiacenza}:
+\begin{itemize}
+  \item ogni vertice entra in coda (o viene visitato) \textbf{una volta sola}, grazie ai
+        colori: $|V|$ passi;
+  \item quando un vertice viene esaminato, si scorre la sua lista \textbf{una volta sola}:
+        in totale si scorrono tutte le liste, cioè $2|E|$ elementi (non orientato) o
+        $|E|$ (orientato).
+\end{itemize}
+Totale: circa $|V| + |E|$ passi, cioè $O(|V| + |E|)$, sia per BFS sia per DFS. In
+parole: \textbf{proporzionale alla grandezza del grafo}, il meglio possibile, visto che il
+grafo bisogna almeno leggerlo.
+
+Con la \textbf{matrice}, per trovare i vicini di un vertice bisogna scorrere tutta la sua
+riga ($|V|$ celle), e lo si fa per ogni vertice: $|V| \times |V|$ passi, $O(|V|^2)$.
+\begin{center}
+\begin{tabular}{lrr}
+\toprule
+\textbf{Grafo} & \textbf{Liste} ($\approx V + 2E$) & \textbf{Matrice} ($V \times V$) \\
+\midrule
+100 vertici, 300 archi           & 700 passi       & 10\,000 passi \\
+1\,000 vertici, 3\,000 archi     & 7\,000 passi    & 1\,000\,000 passi \\
+100\,000 vertici, 300\,000 archi & 700\,000 passi  & 10\,000\,000\,000 passi \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{BFS e DFS a confronto}
+\begin{center}
+\begin{tabular}{p{3.2cm}p{4.6cm}p{4.6cm}}
+\toprule
+ & \textbf{BFS (ampiezza)} & \textbf{DFS (profondità)} \\
+\midrule
+struttura di supporto & coda (FIFO)                     & pila / ricorsione (LIFO) \\
+ordine                & a cerchi, per distanza          & più lontano possibile, poi indietro \\
+cammini minimi        & sì (grafi non pesati)           & no \\
+parte da              & una sorgente $s$                & tutti i vertici (foresta) \\
+usi tipici            & distanze, \q{amici di amici}, labirinti & componenti, cicli, ordinamento topologico \\
+costo (liste)         & $O(|V| + |E|)$                  & $O(|V| + |E|)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{inparole}
+\begin{itemize}
+  \item Grafo = vertici + archi. Orientato (frecce, senso unico) o non orientato
+        (doppio senso, adiacenza simmetrica). Possono esserci cicli.
+  \item Matrice: tabella $n \times n$ di sì/no, spazio $V^2$, \q{c'è l'arco?} istantaneo.
+  \item Liste: per ogni vertice la lista dei vicini, spazio $V + E$, ideale per le visite.
+        Non orientato: ogni arco in due liste (somma $2E$).
+  \item Si colorano i vertici (bianco, grigio, nero) per non girare in tondo nei cicli.
+  \item BFS: coda, cerchi concentrici, distanze minime e cammini con pred + Print-Path.
+  \item DFS: ricorsione, va a fondo e torna indietro, tempi $d$/$f$, ripartenza da ogni
+        vertice bianco. Ordinamento topologico = vertici in testa a una lista quando
+        finiscono.
+  \item Entrambe costano $O(V + E)$ con le liste, $O(V^2)$ con la matrice.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Il grafo di esempio} (quello del pattern), non orientato, con 6 vertici e 7 archi,
+accanto a un piccolo grafo orientato.
+\begin{center}
+\begin{tikzpicture}
+  \node[vert] (A) at (0,0) {A};
+  \node[vert] (B) at (1.6,1) {B};
+  \node[vert] (C) at (1.6,-1) {C};
+  \node[vert] (D) at (3.2,1) {D};
+  \node[vert] (E) at (3.2,-1) {E};
+  \node[vert] (F) at (4.8,0) {F};
+  \draw[arco] (A)--(B) (A)--(C) (B)--(D) (C)--(D) (C)--(E) (D)--(F) (E)--(F);
+  \node[etichetta] at (2.4,-1.9) {non orientato: A--B è anche B--A};
+  \begin{scope}[xshift=7.5cm]
+    \node[vert] (1) at (0,1) {1};
+    \node[vert] (2) at (2,1) {2};
+    \node[vert] (3) at (0,-1) {3};
+    \node[vert] (4) at (2,-1) {4};
+    \draw[arcoO] (1)--(2);
+    \draw[arcoO] (2)--(4);
+    \draw[arcoO] (4)--(3);
+    \draw[arcoO] (3)--(1);
+    \draw[arcoO] (1)--(4);
+    \node[etichetta] at (1,-1.9) {orientato: c'è $1 \to 2$ ma non $2 \to 1$};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+Nel grafo orientato il vertice 4 ha grado entrante 2 (da 2 e da 1) e uscente 1 (verso 3);
+il cammino $1 \to 2 \to 4 \to 3 \to 1$ è un ciclo.
+
+\needspace{7cm}
+\textbf{Lo stesso grafo nelle due rappresentazioni.} A sinistra la matrice (simmetrica:
+la parte sopra la diagonale è lo specchio di quella sotto). A destra l'array delle teste
+di lista: ogni cella punta alla catena dei vicini. Le liste sono in ordine alfabetico
+perché il pattern inserisce in fondo; inserendo in testa sarebbero rovesciate.
+\begin{center}
+\begin{tikzpicture}
+  % matrice
+  \foreach \c [count=\j from 0] in {A,B,C,D,E,F} {
+    \node[font=\ttfamily\small\bfseries] at (0.55*\j+0.55,0.5) {\c};
+    \node[font=\ttfamily\small\bfseries] at (0,-0.55*\j) {\c};
+  }
+  \foreach \riga [count=\i from 0] in {{0,1,1,0,0,0},{1,0,0,1,0,0},{1,0,0,1,1,0},{0,1,1,0,0,1},{0,0,1,0,0,1},{0,0,0,1,1,0}} {
+    \foreach \x [count=\j from 0] in \riga {
+      \ifnum\x=1
+        \node[draw,minimum size=5.5mm,font=\ttfamily\small,fill=green!25!sfondo] at (0.55*\j+0.55,-0.55*\i) {1};
+      \else
+        \node[draw,minimum size=5.5mm,font=\ttfamily\small,text=black!45!sfondo] at (0.55*\j+0.55,-0.55*\i) {0};
+      \fi
+    }
+  }
+  \node[etichetta] at (1.9,-3.6) {\texttt{bool** adj}: 36 celle};
+  % liste
+  \begin{scope}[xshift=5.2cm]
+    \foreach \v/\vicini [count=\i from 0] in {A/{B,C},B/{A,D},C/{A,D,E},D/{B,C,F},E/{C,F},F/{D,E}} {
+      \node[cellina,minimum height=0.55cm,minimum width=0.6cm] (t\i) at (0,-0.6*\i) {};
+      \node[font=\ttfamily\small\bfseries,anchor=east] at (-0.35,-0.6*\i) {\v};
+      \foreach \w [count=\k from 0] in \vicini {
+        \node[nodoG,minimum height=0.45cm] (n\i-\k) at (1.4+1.25*\k,-0.6*\i) {\w \nodepart{two} \phantom{x}};
+      }
+      \draw[freccia,{Circle[length=1.5mm]}-{Stealth[length=2mm]}] (t\i.center) -- (n\i-0.west);
+    }
+    \foreach \i/\k in {0/1,1/1,2/1,2/2,3/1,3/2,4/1,5/1} {
+      \pgfmathtruncatemacro{\km}{\k-1}
+      \draw[freccia,{Circle[length=1.5mm]}-{Stealth[length=2mm]}] (n\i-\km.two split south) ++(0.12,0.22) -- (n\i-\k.west);
+    }
+    \node[etichetta] at (2.3,-3.6) {\texttt{Arco** adj}: 6 teste + 14 nodi $= 2 \times 7$ archi};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+L'ultimo nodo di ogni lista ha \cc|succ = nullptr| (la parte destra vuota). Con 6 vertici
+le due rappresentazioni si equivalgono; con 1000 vertici e 3000 archi la matrice avrebbe
+un milione di celle, le liste 6000 nodi.
+
+\needspace{8cm}
+\textbf{La BFS da A, passo per passo.} A ogni riga: il vertice estratto dalla testa
+della coda, i vicini bianchi scoperti (con la loro distanza) e la coda dopo il passo.
+\begin{center}
+\begin{tabular}{clll}
+\toprule
+\textbf{Passo} & \textbf{Estraggo} & \textbf{Scopro (bianchi $\to$ grigi)} & \textbf{Coda dopo} \\
+\midrule
+0 & --- & A ($d=0$)                & [ A ] \\
+1 & A   & B ($d=1$), C ($d=1$)     & [ B, C ] \\
+2 & B   & D ($d=2$) \quad (A è già nero) & [ C, D ] \\
+3 & C   & E ($d=2$) \quad (A nero, D grigio) & [ D, E ] \\
+4 & D   & F ($d=3$)                & [ E, F ] \\
+5 & E   & --- \quad (C nero, F grigio) & [ F ] \\
+6 & F   & ---                      & [ ] fine \\
+\bottomrule
+\end{tabular}
+\end{center}
+Il risultato: i vertici disposti a ``cerchi'' di distanza, e in verde gli archi
+$\text{pred}$ che formano il breadth-first tree. I due archi grigi chiari (C--D ed E--F)
+non servono a scoprire nessuno: collegano vertici già scoperti.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \x/\t in {0/{$d=0$},2/{$d=1$},4/{$d=2$},6/{$d=3$}}
+    \node[etichetta] at (\x,1.8) {\t};
+  \foreach \x in {1,3,5} \draw[dashed,black!30!sfondo] (\x,1.5) -- (\x,-1.5);
+  \node[vert,nero] (A) at (0,0) {A};
+  \node[vert,nero] (B) at (2,0.8) {B};
+  \node[vert,nero] (C) at (2,-0.8) {C};
+  \node[vert,nero] (D) at (4,0.8) {D};
+  \node[vert,nero] (E) at (4,-0.8) {E};
+  \node[vert,nero] (F) at (6,0) {F};
+  \draw[arco,black!25!sfondo] (C)--(D) (E)--(F);
+  \draw[albArco] (A)--(B) (A)--(C) (B)--(D) (C)--(E) (D)--(F);
+  \node[etichetta,anchor=west,text width=5cm] at (7,0) {Cammino minimo A$\to$F: si risale con pred da F: F$\to$D$\to$B$\to$A, e Print-Path lo stampa al dritto: A -> B -> D -> F};
+\end{tikzpicture}
+\end{center}
+
+\needspace{7cm}
+\textbf{La DFS sullo stesso grafo}, con i timestamp $d/f$ scritti accanto a ogni vertice.
+Si parte da A, si va al primo vicino bianco (B), poi al primo vicino bianco di B (D), e
+così via finché si può; da F non c'è più niente di bianco e si torna indietro: F finisce
+per primo (6), poi E, C, D, B e infine A (11).
+\begin{center}
+\begin{tikzpicture}
+  \node[vert] (A) at (0,0) {A};
+  \node[vert] (B) at (1.8,1.1) {B};
+  \node[vert] (C) at (1.8,-1.1) {C};
+  \node[vert] (D) at (3.6,1.1) {D};
+  \node[vert] (E) at (3.6,-1.1) {E};
+  \node[vert] (F) at (5.4,0) {F};
+  \draw[arco,black!25!sfondo] (A)--(C) (D)--(F);
+  \draw[albArco,-{Stealth[length=3mm]}] (A)--(B);
+  \draw[albArco,-{Stealth[length=3mm]}] (B)--(D);
+  \draw[albArco,-{Stealth[length=3mm]}] (D)--(C);
+  \draw[albArco,-{Stealth[length=3mm]}] (C)--(E);
+  \draw[albArco,-{Stealth[length=3mm]}] (E)--(F);
+  \node[font=\footnotesize\ttfamily,left=1mm of A] {0/11};
+  \node[font=\footnotesize\ttfamily,above=1mm of B] {1/10};
+  \node[font=\footnotesize\ttfamily,above=1mm of D] {2/9};
+  \node[font=\footnotesize\ttfamily,below=1mm of C] {3/8};
+  \node[font=\footnotesize\ttfamily,below=1mm of E] {4/7};
+  \node[font=\footnotesize\ttfamily,right=1mm of F] {5/6};
+  \node[etichetta,anchor=west,text width=5.6cm] at (7,0.3) {In verde gli archi dell'albero DFS (A$\to$B$\to$D$\to$C$\to$E$\to$F): la DFS è andata \q{a fondo} lungo un solo ramo.};
+  \node[etichetta,anchor=west,text width=5.6cm] at (7,-1.0) {A--C e D--F sono archi all'indietro: arrivano a vertici ancora grigi.};
+\end{tikzpicture}
+\end{center}
+Confronta con la BFS: lì C era a distanza 1 da A; qui la DFS ci arriva dopo tre archi
+(A, B, D, C). Gli intervalli sono annidati: $[3, 8]$ di C sta dentro $[2, 9]$ di D, che sta
+dentro $[1, 10]$ di B, come le chiamate ricorsive.
+
+\needspace{6cm}
+\textbf{La pila delle chiamate} della DFS nel momento più profondo, quando si visita F
+(Modulo 8): sei chiamate aperte una dentro l'altra, tutte con il vertice grigio.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \v [count=\i from 0] in {A,B,D,C,E,F}
+    \node[cella,minimum width=3.4cm,fill=stackcol] at (0,0.62*\i) {dfsVisit(\v)};
+  \node[etichetta,anchor=west] at (1.9,3.1) {$\leftarrow$ cima: F non ha vicini bianchi, finisce ($f=6$)};
+  \node[etichetta,anchor=west] at (1.9,0) {$\leftarrow$ prima chiamata, dal ciclo di DFS(G)};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Due classi template. \cc|GrafoMatrice<T>| segue il codice del professore: un array di
+chiavi, una matrice \cc|bool**| e una ricerca lineare dalla chiave all'indice.
+\cc|Grafo<T>| usa le liste di adiacenza e implementa BFS con Print-Path e DFS con i
+timestamp esattamente come gli pseudocodici delle slide (colori compresi). Il \cc|main|
+costruisce il grafo A--F in entrambe e lo visita.
+
+\codice{codice/m14/pattern.cpp}
+\uscita{codice/m14/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item la matrice stampata è simmetrica, e ogni lista ha tanti elementi quanti sono gli 1
+        della riga corrispondente;
+  \item i valori stampati coincidono con le figure della sezione precedente: la BFS dà le
+        distanze 0, 1, 1, 2, 2, 3; la DFS i tempi da 0 a 11;
+  \item il cammino minimo verso F passa per B e non per C: dipende solo dall'ordine dei
+        vicini nella lista di A (B viene prima). Entrambi i cammini hanno lunghezza 3;
+  \item nella DFS la visita continua finché c'è qualcosa di bianco: se il grafo non fosse
+        connesso, il ciclo di \cc|DFS()| ripartirebbe da un altro vertice;
+  \item il distruttore libera prima i nodi di ogni lista, poi gli array: ogni \cc|new| ha
+        il suo \cc|delete|. Copia e assegnazione sono vietate con \cc|= delete| (Regola dei
+        Tre, Modulo 4).
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: dimenticare i vertici visitati]
+Una BFS o DFS senza colori (o \cc|visitato[]|) su un grafo con un ciclo non termina: la
+coda si riempie all'infinito o la ricorsione esaurisce lo stack. È l'errore più grave
+sui grafi.
+\end{trappola}
+
+\begin{trappola}[: marcare in BFS quando si estrae, invece che quando si inserisce]
+Il vertice va marcato (grigio) \textbf{nel momento in cui entra in coda}. Se lo marchi solo
+quando esce, nel frattempo un altro vicino può rimetterlo in coda: viene visitato due
+volte e le distanze possono uscire sbagliate.
+\end{trappola}
+
+\begin{trappola}[: grafo non orientato con un solo inserimento]
+In un grafo non orientato l'arco $(u,v)$ va scritto \textbf{due volte}: in
+\cc|adj[u][v]| e \cc|adj[v][u]|, oppure nella lista di $u$ e in quella di $v$. Altrimenti
+hai costruito un grafo orientato, e la visita non trova metà dei cammini.
+\end{trappola}
+
+\begin{trappola}[: chiave e indice]
+Il vertice \q{Catania} non è il numero 2: è \textbf{in posizione} 2. Le funzioni pubbliche
+ricevono chiavi, all'interno si lavora con indici. Controlla sempre che \cc|indice()| non
+restituisca $-1$ prima di usarlo per indicizzare un array.
+\end{trappola}
+
+\begin{trappola}[: una funzione che stampa dentro un \texttt{cout}]
+\cc|cout << "Gruppi: " << g.componenti();| con una \cc|componenti()| che stampa a sua volta
+produce un output mescolato: in pratica la funzione viene chiamata prima che la riga sia
+scritta. Chiama la funzione prima, salva il risultato in una variabile e stampalo dopo.
+È successo davvero scrivendo il laboratorio di questo modulo.
+\end{trappola}
+
+\begin{trappola}[: BFS da una sola sorgente su un grafo non connesso]
+Una BFS da $s$ raggiunge solo la componente di $s$. Per visitare tutto il grafo serve il
+ciclo esterno \q{per ogni vertice ancora bianco, riparti}, come in DFS($G$).
+\end{trappola}
+
+\begin{consiglio}[: lo schema fisso del distruttore]
+Per le liste di adiacenza: \cc|for| su ogni vertice, \cc|while| che stacca e cancella i
+nodi della sua lista, poi \cc|delete[]| di tutti gli array. Per la matrice: \cc|delete[]|
+di ogni riga, poi \cc|delete[]| dell'array di righe. Al contrario dell'ordine di creazione.
+\end{consiglio}
+
+\begin{consiglio}[: simulare a mano prima di scrivere]
+All'esame (e all'orale) ti chiederanno di eseguire a mano una BFS o una DFS. Usa la
+tabella del passo per passo di questo modulo: colonna \q{estraggo}, colonna
+\q{scopro}, colonna \q{coda}. Per la DFS, scrivi a matita $d/f$ accanto ai vertici.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Un grafo non orientato ha 5 archi e viene rappresentato con liste di adiacenza. Quanti nodi contengono, in totale, tutte le liste?}
+  \item 5
+  \item 10
+  \item 25
+  \item dipende dal numero di vertici
+\end{quiz}
+
+\begin{quiz}{Quanto spazio occupa la matrice di adiacenza di un grafo con $|V|$ vertici e $|E|$ archi?}
+  \item $O(|E|)$
+  \item $O(|V| + |E|)$
+  \item $O(|V|^2)$
+  \item $O(|V| \cdot |E|)$
+\end{quiz}
+
+\begin{quiz}{Quale struttura dati di supporto usa la visita in ampiezza (BFS)?}
+  \item una pila
+  \item una coda
+  \item un albero binario di ricerca
+  \item nessuna
+\end{quiz}
+
+\begin{quiz}{In quale rappresentazione si verifica in tempo costante se esiste l'arco $(u,v)$?}
+  \item liste di adiacenza
+  \item matrice di adiacenza
+  \item in entrambe
+  \item in nessuna delle due
+\end{quiz}
+
+\begin{quiz}{Nel grafo del pattern (A: B C; B: A D; C: A D E; D: B C F; E: C F; F: D E), in che ordine la BFS da A estrae i vertici dalla coda?}
+  \item A B D C E F
+  \item A B C D E F
+  \item A C E F D B
+  \item A B C F D E
+\end{quiz}
+
+\begin{quiz}{Perché durante una visita i vertici vengono colorati (o marcati come visitati)?}
+  \item per stampare il grafo a colori
+  \item per evitare di visitare più volte lo stesso vertice e di girare all'infinito nei cicli
+  \item per ordinare i vertici
+  \item perché la coda accetta solo vertici colorati
+\end{quiz}
+
+\begin{quiz}{La matrice di adiacenza di un grafo non orientato è sempre:}
+  \item diagonale
+  \item simmetrica
+  \item piena di 1
+  \item triangolare inferiore
+\end{quiz}
+
+\begin{quiz}{Cosa calcola la BFS da $s$ su un grafo non pesato?}
+  \item la distanza minima (in numero di archi) da $s$ a ogni vertice raggiungibile
+  \item l'ordinamento topologico
+  \item il ciclo più lungo
+  \item il vertice di grado massimo
+\end{quiz}
+
+\begin{quiz}{Su quali grafi esiste un ordinamento topologico?}
+  \item su tutti i grafi non orientati
+  \item sui grafi orientati aciclici (DAG)
+  \item solo sugli alberi binari
+  \item sui grafi completi
+\end{quiz}
+
+\begin{quiz}{Qual è il costo di una DFS su un grafo rappresentato con liste di adiacenza?}
+  \item $O(|V|)$
+  \item $O(|E|^2)$
+  \item $O(|V| + |E|)$
+  \item $O(|V|^2)$
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. Ogni arco compare in due liste: $2 \times 5 = 10$.
+  \item \textbf{C}. Sempre $|V| \times |V|$ celle, qualunque sia il numero di archi.
+  \item \textbf{B}. La DFS usa invece una pila (o la ricorsione).
+  \item \textbf{B}. Basta leggere \cc|adj[u][v]|; con le liste bisogna scorrere quella di $u$.
+  \item \textbf{B}. Vedi la tabella del passo per passo. La A è l'ordine della DFS.
+  \item \textbf{B}.
+  \item \textbf{B}. L'arco $(u,v)$ si scrive sia in \cc|adj[u][v]| sia in \cc|adj[v][u]|.
+  \item \textbf{A}.
+  \item \textbf{B}. Un ciclo renderebbe impossibile rispettare tutti i vincoli.
+  \item \textbf{C}. Ogni vertice visitato una volta, ogni lista scorsa una volta.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: rete di amicizie e piano di studi]
+Implementare una classe template \cc|Grafo<T>| con liste di adiacenza, orientato o non
+orientato a scelta del costruttore, senza usare la STL. Usarla per: (a) una rete di
+amicizie (grafo non orientato di nomi): numero di amici di una persona e persona più
+popolare, distanza tra due persone, catena di amicizie più corta, gruppi di persone
+collegate; (b) un piano di studi (grafo orientato di esami, arco da A a B se A è
+propedeutico a B): un ordine valido in cui sostenere tutti gli esami.
+\end{traccia}
+
+\begin{step}{la classe Grafo}
+Scrivi \cc|Grafo<T>| con l'array delle chiavi, l'array \cc|Arco**| delle teste di lista,
+il flag \cc|orientato|, \cc|indice|, \cc|aggiungiVertice|, \cc|aggiungiArco| (che restituisce
+\cc|false| se un vertice non esiste), \cc|stampa| e distruttore. Inserisci i vicini in
+testa.\\[0.3em]
+\textbf{Concetto nuovo:} array di liste concatenate.
+\end{step}
+
+\begin{step}{gradi}
+Scrivi \cc|grado(k)| (lunghezza della lista di $k$) e \cc|gradoMassimo()|, la persona con
+più amici.\\[0.3em]
+\textbf{Concetto nuovo:} leggere le informazioni dalle liste di adiacenza.
+\end{step}
+
+\begin{step}{distanza con la BFS}
+Scrivi una \cc|BFS| che riempie \cc|dist[]| e \cc|pred[]| usando una \cc|Coda<int>| su nodi
+dinamici, e \cc|distanza(a, b)|, che restituisce $-1$ se $b$ non è raggiungibile.\\[0.3em]
+\textbf{Concetto nuovo:} visita in ampiezza e distanze minime.
+\end{step}
+
+\begin{step}{catena più corta}
+Scrivi \cc|cammino(a, b)|, che dopo la BFS stampa la catena di amicizie da $a$ a $b$ e la
+sua lunghezza, usando una funzione ricorsiva privata sul modello di Print-Path.\\[0.3em]
+\textbf{Concetto nuovo:} ricostruire un cammino dai predecessori.
+\end{step}
+
+\begin{step}{gruppi con la DFS}
+Scrivi \cc|componenti()|, che stampa i gruppi di persone collegate (componenti connesse)
+con una DFS ricorsiva e ne restituisce il numero.\\[0.3em]
+\textbf{Concetto nuovo:} visita in profondità ripetuta da ogni vertice non visitato.
+\end{step}
+
+\begin{step}{ordinamento topologico}
+Costruisci il grafo orientato degli esami e scrivi \cc|ordinamentoTopologico()|: una DFS
+che, quando un vertice finisce, lo inserisce in testa a una lista concatenata; poi stampa
+e libera la lista.\\[0.3em]
+\textbf{Concetto nuovo:} usare il tempo di fine della DFS.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m14/lab.cpp}
+\uscita{codice/m14/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item Con l'inserimento in testa le liste risultano \textbf{rovesciate} rispetto
+        all'ordine degli archi (Anna: Carla Bruno). È per questo che la catena verso
+        Fabio passa per Carla e non per Bruno: entrambe sono lunghe 4, la BFS sceglie la
+        prima che trova.
+  \item Da Bruno a Carla la catena è lunga 2; ce ne sono due (via Anna o via Dario) e la
+        BFS ne restituisce una sola.
+  \item \cc|visitato[]|, \cc|dist[]| e \cc|pred[]| sono membri della classe, allocati una
+        volta nel costruttore e riusati a ogni visita: per questo ogni visita li
+        reinizializza all'inizio.
+  \item Nell'ordinamento topologico ogni esame compare \textbf{dopo} i suoi propedeutici
+        (Programmazione 1 prima di Programmazione 2, che viene prima di Basi di Dati e di
+        Algoritmi), anche se l'ordine di inserimento degli esami era quasi al contrario.
+        L'ordine non è unico: ne esistono molti validi.
+  \item Per verificare a mano: ogni arco della stampa del grafo orientato deve andare da
+        un esame a uno che compare più in basso nell'elenco finale.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è un grafo? Che differenza c'è tra orientato e non orientato?]
+Un grafo $G = (V, E)$ è formato da un insieme di vertici $V$ e da un insieme di archi $E$,
+ciascuno dei quali è una coppia di vertici. In un grafo orientato la coppia è ordinata:
+l'arco $(u, v)$ esce da $u$ ed entra in $v$, e non implica l'arco $(v, u)$. In un grafo non
+orientato le coppie non sono ordinate, quindi l'adiacenza è simmetrica, e nelle slide non
+sono ammessi cappi. Diversamente da un albero, un grafo può contenere cicli e non ha una
+radice; un albero è un caso particolare di grafo non orientato, connesso e aciclico.
+\end{orale}
+
+\begin{orale}[D2. Come si rappresenta un grafo in memoria? Quando conviene ciascuna rappresentazione?]
+Con la matrice di adiacenza, una matrice $|V| \times |V|$ in cui l'elemento $(i,j)$ vale 1
+se c'è l'arco da $i$ a $j$: occupa $O(|V|^2)$ e permette di sapere in tempo costante se
+due vertici sono adiacenti; per un grafo non orientato è simmetrica. Oppure con le liste
+di adiacenza, un array di $|V|$ liste in cui la lista del vertice $u$ contiene i suoi
+adiacenti: occupa $O(|V| + |E|)$, la somma delle lunghezze delle liste è $|E|$ per un
+grafo orientato e $2|E|$ per uno non orientato. Le liste convengono per grafi sparsi e per
+gli algoritmi che scorrono i vicini, come le visite; la matrice per grafi densi o quando
+servono molte verifiche di adiacenza.
+\end{orale}
+
+\begin{orale}[D3. Descriva la visita in ampiezza.]
+La BFS parte da una sorgente $s$ e scopre i vertici in ordine di distanza da $s$. Tutti i
+vertici sono inizialmente bianchi; $s$ diventa grigio con distanza 0 e viene messo in una
+coda. Finché la coda non è vuota si estrae un vertice $u$ e, per ogni suo adiacente
+bianco $v$, lo si colora di grigio, si pone $d[v] = d[u] + 1$ e $\text{pred}[v] = u$ e lo
+si accoda; finiti gli adiacenti, $u$ diventa nero. La coda contiene sempre i vertici
+grigi. Alla fine $d[v]$ è la lunghezza del cammino minimo da $s$ a $v$ e i predecessori
+formano il breadth-first tree, da cui la procedura ricorsiva Print-Path ricostruisce il
+cammino. Con le liste di adiacenza il costo è $O(|V| + |E|)$.
+\end{orale}
+
+\begin{orale}[D4. Descriva la visita in profondità e un suo uso.]
+La DFS esplora a partire dal vertice scoperto più di recente che ha ancora archi non
+esplorati; quando non ce ne sono più torna indietro (backtracking). Si implementa con una
+procedura ricorsiva DFS-Visit, chiamata da DFS($G$) su ogni vertice ancora bianco, per cui
+il risultato è una foresta. Ogni vertice riceve due timestamp: $d[v]$ quando viene
+scoperto e $f[v]$ quando ha finito di esaminare la sua lista. Il costo è
+$\Theta(|V| + |E|)$. Un uso è l'ordinamento topologico di un grafo orientato aciclico:
+si esegue la DFS e ogni vertice, quando finisce, viene inserito in testa a una lista; si
+ottengono i vertici in ordine decrescente di $f$, e ogni arco va da un vertice a uno
+successivo. Altri usi sono la ricerca di cicli e le componenti connesse.
+\end{orale}
+
+\begin{orale}[D5. Perché nelle visite di un grafo servono i colori, mentre negli alberi no?]
+Perché un grafo può contenere cicli e più cammini verso lo stesso vertice. Senza tenere
+traccia dei vertici già scoperti, la visita ripasserebbe più volte dagli stessi vertici e,
+in presenza di un ciclo, non terminerebbe. In un albero ogni nodo ha un solo padre e
+scendendo non si torna mai a un nodo già visto, quindi il problema non si pone. I colori
+garantiscono anche che ogni vertice venga esaminato una sola volta, da cui il costo
+lineare $O(|V| + |E|)$.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Matrice di adiacenza}{facile}
+Con una matrice statica \cc|bool m[5][5]| costruisci il grafo non orientato con archi 0--1,
+0--2, 1--2, 2--3, 3--4. Stampa la matrice con il grado di ogni vertice, il numero di
+archi, se 0 e 2 (e 0 e 4) sono adiacenti, e se il grafo è completo. Poi aggiungi tutti gli
+archi mancanti e verifica che diventi completo con $5 \cdot 4 / 2 = 10$ archi.
+\end{esercizio}
+
+\begin{esercizio}{Liste di adiacenza a mano}{facile}
+Con un array di 4 teste \cc|Arco*| costruisci lo stesso insieme di 4 archi una volta come
+grafo non orientato e una volta come orientato. Stampa le liste nella forma
+\texttt{0: -> 2 -> 1 -> null} e verifica che la somma delle lunghezze sia $2|E|$ nel primo
+caso e $|E|$ nel secondo. Libera tutta la memoria.
+\end{esercizio}
+
+\begin{esercizio}{Da matrice a liste e ritorno}{facile}
+Data la matrice di un grafo orientato, costruisci le liste di adiacenza in modo che i
+vicini risultino in ordine crescente (pur inserendo in testa). Poi ricostruisci la
+matrice dalle liste e controlla che sia uguale all'originale.
+\end{esercizio}
+
+\begin{esercizio}{Gradi e grafo trasposto}{medio}
+In un grafo orientato con liste di adiacenza calcola, con un solo passaggio su tutte le
+liste, il grado entrante e uscente di ogni vertice. Poi costruisci il grafo trasposto
+$G^T$, in cui ogni arco $(u,v)$ diventa $(v,u)$.
+\end{esercizio}
+
+\begin{esercizio}{Amici di amici}{medio}
+In una rete di 9 persone (una isolata), stampa con una BFS da \q{Tu} le persone raggruppate
+per distanza (\texttt{distanza 1: Ada Bea}, \ldots), e alla fine quelle non raggiungibili.
+Suggerimento: i vertici escono dalla coda in ordine di distanza; vai a capo quando la
+distanza cambia.
+\end{esercizio}
+
+\begin{esercizio}{Esiste un cammino?}{medio}
+Scrivi due funzioni che dicono se esiste un cammino da $s$ a $t$: una con la BFS e una con
+una DFS \textbf{iterativa} che usa una pila esplicita al posto della ricorsione. Stampa
+l'ordine di visita della DFS iterativa e provale su un grafo formato da due pezzi
+separati.
+\end{esercizio}
+
+\begin{esercizio}{Componenti connesse}{medio}
+Con una DFS ricorsiva che restituisce quanti vertici ha marcato, assegna a ogni vertice il
+numero della sua componente (\cc|comp[u]|). Stampa ogni componente con la sua dimensione,
+dì se il grafo è connesso e usa \cc|comp[]| per rispondere in $O(1)$ a domande come
+\q{4 e 8 sono collegati?}.
+\end{esercizio}
+
+\begin{esercizio}{C'è un ciclo?}{difficile}
+In un grafo orientato, cerca un ciclo con una DFS a tre colori: un arco verso un vertice
+\textbf{grigio} (antenato ancora aperto) chiude un ciclo; un arco verso un vertice
+\textbf{nero} no. Provala su un \q{rombo} senza cicli (0$\to$1, 0$\to$2, 1$\to$3, 2$\to$3,
+3$\to$4) e su un grafo con il ciclo 1$\to$2$\to$3$\to$1. Perché con due soli colori il
+rombo verrebbe giudicato ciclico?
+\end{esercizio}
+
+\begin{esercizio}{Uscire dal labirinto}{difficile}
+Un labirinto è una griglia di caratteri (\texttt{\#} muro, \texttt{.} libero). Ogni cella
+libera è un vertice, adiacente alle celle libere sopra, sotto, a destra e a sinistra: il
+grafo non va costruito, i vicini si calcolano al volo. Con una BFS trova il percorso più
+breve dall'angolo in alto a sinistra a quello in basso a destra e disegnalo con delle
+\texttt{o}. Suggerimento: numera la cella $(r, c)$ come $r \cdot C + c$.
+\end{esercizio}
+
+\begin{esercizio}{Grafo bipartito}{difficile}
+Un grafo è \textbf{bipartito} se si possono colorare i vertici con due colori in modo che
+ogni arco unisca vertici di colore diverso (esempio: studenti e corsi, con un arco
+quando uno studente segue un corso). Verificalo con una BFS che dà a ogni vertice scoperto
+il colore opposto a quello di chi lo ha scoperto, e si ferma se trova un arco con estremi
+dello stesso colore. Provala su un esagono (sì) e su un triangolo (no).
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m14/}.

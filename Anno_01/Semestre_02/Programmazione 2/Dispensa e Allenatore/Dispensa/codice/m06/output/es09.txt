@@ -1,0 +1,3 @@
+n = 1000        lineare: 1000   binaria: 9
+n = 100000      lineare: 100000 binaria: 16
+n = 1000000     lineare: 1000000        binaria: 19

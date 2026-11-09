@@ -1,0 +1,5 @@
+3 + 4 = 7
+10 / 4 = 2.5
+Errore: divisione per zero
+Operatore sconosciuto: x
+6 * 7 = 42

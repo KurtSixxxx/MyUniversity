@@ -1,0 +1,4 @@
+7 gia' presente
+42 gia' presente
+lista: 3 7 19 25 42 
+dopo aver tolto 3, 42 e 20: 7 19 25 

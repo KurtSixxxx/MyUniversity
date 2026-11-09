@@ -1,0 +1,3 @@
+scarto "abc"
+scarto "12abc"
+Somma = 8 (2 parole scartate)

@@ -1,0 +1,2 @@
+Superficiale: s1 = 99, s2 = 99  stesso blocco? SI
+Profonda:     p1 = 10, p2 = 99  stesso blocco? no

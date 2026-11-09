@@ -1,0 +1,3 @@
+Prelievo rifiutato: saldo insufficiente
+Mario -> saldo: 150 euro
+Lucia -> saldo: 0 euro

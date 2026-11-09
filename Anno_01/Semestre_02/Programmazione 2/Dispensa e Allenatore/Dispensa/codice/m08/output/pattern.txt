@@ -1,0 +1,12 @@
+fattoriale(4): non lo so ancora, chiedo fattoriale(3)
+    fattoriale(3): non lo so ancora, chiedo fattoriale(2)
+        fattoriale(2): non lo so ancora, chiedo fattoriale(1)
+            fattoriale(1): non lo so ancora, chiedo fattoriale(0)
+                fattoriale(0): caso base, restituisco 1
+            fattoriale(1): mi e' tornato 1, restituisco 1 * 1 = 1
+        fattoriale(2): mi e' tornato 1, restituisco 2 * 1 = 2
+    fattoriale(3): mi e' tornato 2, restituisco 3 * 2 = 6
+fattoriale(4): mi e' tornato 6, restituisco 4 * 6 = 24
+Risultato: 24
+
+fatt(5) = 120, fattIterativo(5) = 120

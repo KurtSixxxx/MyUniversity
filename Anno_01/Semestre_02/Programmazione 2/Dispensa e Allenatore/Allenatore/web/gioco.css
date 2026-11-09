@@ -1,0 +1,184 @@
+/* =====================================================================
+   Allenatore Prog2 — gioco e musica (condiviso tra PC e telefono)
+   Lettore musicale, compagno Bit, XP, traguardi, missioni.
+   Usa le variabili del tema: --fosforo, --fosforo-rgb, --testo, --linea...
+   ===================================================================== */
+:root { --fosforo: #33ff99; --fosforo-rgb: 51, 255, 153; }
+
+/* ------------------------------------------------------------ lettore musicale */
+.musica-dock {
+  position: fixed; z-index: 7000; left: 16px; bottom: 16px; width: 360px; max-width: calc(100vw - 32px);
+  background: var(--superficie, #000); color: var(--testo, #cfe); border: 1px solid var(--linea-forte, rgba(var(--fosforo-rgb), .34));
+  box-shadow: 0 0 0 1px rgba(var(--fosforo-rgb), .12), 0 18px 60px rgba(0, 0, 0, .55), 0 0 40px rgba(var(--fosforo-rgb), .1);
+  font-family: var(--mono, monospace); font-size: 13px; padding: 12px 14px 12px;
+  transform: translateY(calc(100% + 40px)); opacity: 0; pointer-events: none;
+  transition: transform .32s cubic-bezier(.2, .8, .2, 1), opacity .2s;
+}
+.musica-dock.aperto { transform: none; opacity: 1; pointer-events: auto; }
+.md-testa { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.md-titolo { letter-spacing: .2em; font-weight: 700; color: var(--fosforo); text-shadow: 0 0 8px rgba(var(--fosforo-rgb), .5); }
+.md-titolo::before { content: '> '; color: var(--testo-3, #2c6447); }
+.md-spazio { flex: 1; }
+.md-chiudi { background: none; border: 0; color: var(--testo-2); font-size: 20px; line-height: 1; cursor: pointer; padding: 0 4px; }
+.md-chiudi:hover { color: var(--fosforo); }
+.md-sorgenti { display: grid; grid-template-columns: repeat(4, 1fr); border: 1px solid var(--linea); margin-bottom: 12px; }
+.md-sorgenti button { background: none; border: 0; color: var(--testo-2); padding: 7px 2px; font: inherit; font-size: 11px; letter-spacing: .04em; text-transform: uppercase; cursor: pointer; }
+.md-sorgenti button + button { border-left: 1px solid var(--linea); }
+.md-sorgenti button.attivo { background: rgba(var(--fosforo-rgb), .14); color: var(--fosforo); box-shadow: inset 0 -2px 0 var(--fosforo); }
+.md-pannello { display: none; }
+.musica-dock[data-sorgente="colonna"] .md-colonna, .musica-dock[data-sorgente="nessuna"] .md-nessuna { display: block; }
+/* Spotify e YouTube restano nel documento anche nascosti: così la musica continua */
+.md-spotify, .md-youtube { display: block; height: 0; overflow: hidden; visibility: hidden; }
+.musica-dock[data-sorgente="spotify"] .md-spotify, .musica-dock[data-sorgente="youtube"] .md-youtube { height: auto; overflow: visible; visibility: visible; }
+.md-brani { display: flex; flex-direction: column; gap: 4px; }
+.md-brano { display: flex; align-items: center; gap: 12px; text-align: left; background: none; border: 1px solid transparent; color: var(--testo); font: inherit; padding: 7px 8px; cursor: pointer; }
+.md-brano:hover { border-color: var(--linea); }
+.md-brano.attivo { border-color: var(--fosforo); background: rgba(var(--fosforo-rgb), .08); }
+.md-brano b { display: block; font-weight: 600; }
+.md-brano small { color: var(--testo-2); font-size: 11px; }
+.md-num { color: var(--testo-3); font-size: 11px; }
+.md-brano.attivo .md-num { color: var(--fosforo); }
+.md-riga { display: flex; gap: 6px; margin-bottom: 8px; }
+.md-campo { flex: 1; min-width: 0; background: #000; border: 1px solid var(--linea); color: var(--testo); font: inherit; font-size: 12px; padding: 7px 8px; outline: none; }
+.md-campo:focus { border-color: var(--fosforo); }
+.md-btn { background: none; border: 1px solid var(--linea-forte); color: var(--testo); font: inherit; font-size: 11px; text-transform: uppercase; letter-spacing: .06em; padding: 6px 10px; cursor: pointer; }
+.md-btn:hover { border-color: var(--fosforo); color: var(--fosforo); }
+.md-link { background: none; border: 0; padding: 0; color: var(--testo-2); font: inherit; font-size: 11px; text-decoration: underline; cursor: pointer; }
+.md-nota { color: var(--testo-2); font-size: 11.5px; line-height: 1.5; margin-top: 8px; }
+.md-nota .md-btn { margin: 8px 8px 0 0; }
+.md-vuoto { color: var(--testo-2); padding: 14px 4px; font-size: 12px; }
+.md-embed iframe { display: block; border: 0; }
+.md-yt-riga { display: flex; gap: 10px; align-items: flex-start; }
+.md-yt-riga .md-embed { flex: none; width: 192px; min-height: 108px; background: #000; border: 1px solid var(--linea); }
+.md-yt-riga .md-nota { margin-top: 0; }
+.md-controlli { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--linea); }
+.md-tasto { background: none; border: 1px solid var(--linea); color: var(--testo); font: inherit; font-size: 12px; min-width: 36px; height: 32px; cursor: pointer; }
+.md-tasto:hover { border-color: var(--fosforo); color: var(--fosforo); }
+.md-tasto.grande { background: var(--fosforo); color: #000; border-color: var(--fosforo); font-weight: 700; min-width: 46px; box-shadow: 0 0 14px rgba(var(--fosforo-rgb), .4); }
+.md-tasto.attivo { color: var(--rosso, #ff5c77); border-color: currentColor; }
+.md-volume { flex: 1; min-width: 60px; accent-color: var(--fosforo); }
+
+/* lettore in miniatura (barra laterale del PC, scheda Bit del telefono) */
+.musica-mini { display: flex; align-items: center; gap: 4px; border: 1px solid var(--linea); font-family: var(--mono, monospace); font-size: 12px; min-width: 0; }
+.musica-mini button { background: none; border: 0; color: var(--testo-2); font: inherit; cursor: pointer; padding: 7px 8px; }
+.musica-mini button:hover { color: var(--fosforo); }
+.musica-mini .mm-play { color: var(--fosforo); font-weight: 700; min-width: 30px; }
+.musica-mini .mm-testo { flex: 1; min-width: 0; display: flex; align-items: center; gap: 8px; text-align: left; padding-left: 2px; }
+.musica-mini .mm-nome { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--testo); }
+.musica-mini .mm-muto.attivo { color: var(--rosso, #ff5c77); }
+.md-onde { color: var(--fosforo); letter-spacing: -1px; flex: none; text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .5); }
+
+/* ------------------------------------------------------------ Bit */
+.pet { font-family: var(--mono, monospace); }
+.pet-arte {
+  margin: 0; white-space: pre; line-height: 1.15; font-size: 15px; color: var(--fosforo);
+  text-shadow: 0 0 8px rgba(var(--fosforo-rgb), .55); animation: pet-respiro 3.2s ease-in-out infinite; display: inline-block;
+}
+.pet-arte.dorme { animation-duration: 6s; opacity: .7; }
+.pet-arte.euforico { animation: pet-salto .9s ease-in-out infinite; }
+@keyframes pet-respiro { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes pet-salto { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-9px); } 60% { transform: translateY(-9px); } }
+.pet-nuvola { position: relative; border: 1px solid var(--linea-forte); padding: 10px 12px; color: var(--testo); font-size: 13px; line-height: 1.45; }
+.pet-nuvola::before { content: ''; position: absolute; left: -7px; top: 18px; width: 12px; height: 12px; background: var(--superficie, #000); border-left: 1px solid var(--linea-forte); border-bottom: 1px solid var(--linea-forte); transform: rotate(45deg); }
+.pet-mini { display: flex; align-items: center; gap: 10px; border: 1px solid var(--linea); padding: 8px 10px; cursor: pointer; background: none; width: 100%; color: inherit; font: inherit; text-align: left; }
+.pet-mini:hover { border-color: var(--linea-forte); }
+.pet-mini .pet-faccia { color: var(--fosforo); font-family: var(--mono, monospace); font-size: 13px; text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .5); white-space: pre; }
+.pet-mini .pm-testo { flex: 1; min-width: 0; font-family: var(--mono, monospace); font-size: 11.5px; }
+.pet-mini .pm-livello { color: var(--fosforo); font-weight: 700; }
+.pet-mini .pm-sotto { color: var(--testo-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* barre di avanzamento in stile terminale: [#####.....] */
+.xp-barra { height: 8px; border: 1px solid var(--linea-forte); background: rgba(var(--fosforo-rgb), .05); position: relative; overflow: hidden; }
+.xp-barra i { position: absolute; inset: 0 auto 0 0; background: var(--fosforo); box-shadow: 0 0 12px rgba(var(--fosforo-rgb), .6); transition: width .8s cubic-bezier(.2, .8, .2, 1); }
+.xp-barra.sottile { height: 4px; border: 0; background: rgba(var(--fosforo-rgb), .12); }
+.xp-barra.cibo i { background: var(--arancio, #ffb000); box-shadow: 0 0 10px rgba(255, 176, 0, .5); }
+
+/* ------------------------------------------------------------ missioni e traguardi */
+.missioni { display: flex; flex-direction: column; gap: 8px; }
+.missione { display: grid; grid-template-columns: 30px 1fr auto; gap: 10px; align-items: center; font-family: var(--mono, monospace); font-size: 12.5px; }
+.missione .ms-casella { color: var(--testo-3); white-space: pre; }
+.missione.fatta .ms-casella { color: var(--fosforo); text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .6); }
+.missione.fatta .ms-testo { color: var(--testo-2); text-decoration: line-through; text-decoration-color: rgba(var(--fosforo-rgb), .5); }
+.missione .ms-conta { color: var(--testo-2); font-variant-numeric: tabular-nums; }
+.traguardi { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 10px; }
+.traguardo { border: 1px solid var(--linea); padding: 12px 10px 10px; text-align: center; font-family: var(--mono, monospace); position: relative; }
+.traguardo .tg-icona { font-size: 17px; font-weight: 700; color: var(--testo-3); letter-spacing: .04em; margin-bottom: 6px; }
+.traguardo .tg-nome { font-size: 12.5px; font-weight: 700; color: var(--testo-2); }
+.traguardo .tg-descr { font-size: 11px; color: var(--testo-3); margin-top: 4px; line-height: 1.35; }
+.traguardo .xp-barra { margin-top: 8px; }
+.traguardo.ok { border-color: rgba(var(--fosforo-rgb), .45); background: rgba(var(--fosforo-rgb), .05); }
+.traguardo.ok .tg-icona { color: var(--fosforo); text-shadow: 0 0 10px rgba(var(--fosforo-rgb), .7); }
+.traguardo.ok .tg-nome { color: var(--testo); }
+.traguardo.ok .tg-descr { color: var(--testo-2); }
+
+/* ------------------------------------------------------------ XP che sale, livello nuovo */
+.xp-volante {
+  position: fixed; z-index: 8500; pointer-events: none; font: 700 15px var(--mono, monospace); color: var(--fosforo);
+  text-shadow: 0 0 10px rgba(var(--fosforo-rgb), .8); animation: xp-sale 1.4s ease-out forwards; white-space: nowrap;
+}
+@keyframes xp-sale { 0% { opacity: 0; transform: translateY(8px) scale(.9); } 15% { opacity: 1; transform: none; } 100% { opacity: 0; transform: translateY(-46px); } }
+.livello-nuovo {
+  position: fixed; inset: 0; z-index: 8800; display: grid; place-items: center; background: rgba(0, 0, 0, .82);
+  font-family: var(--mono, monospace); color: var(--testo); animation: compari-lv .25s ease; cursor: pointer;
+}
+@keyframes compari-lv { from { opacity: 0; } to { opacity: 1; } }
+.livello-nuovo .ln-box { text-align: center; padding: 34px 44px; border: 1px solid var(--fosforo); background: #000; box-shadow: 0 0 60px rgba(var(--fosforo-rgb), .35); max-width: 90vw; }
+.livello-nuovo .ln-sopra { letter-spacing: .4em; color: var(--testo-2); font-size: 12px; }
+.livello-nuovo .ln-num { font-size: 84px; font-weight: 200; color: var(--fosforo); text-shadow: 0 0 30px rgba(var(--fosforo-rgb), .8); line-height: 1.1; animation: ln-colpo .7s ease-out; }
+@keyframes ln-colpo { 0% { transform: scale(1.6); filter: brightness(3); } 100% { transform: none; filter: none; } }
+.livello-nuovo .ln-titolo { font-size: 18px; text-transform: uppercase; letter-spacing: .12em; color: var(--fosforo); margin: 6px 0 18px; }
+.livello-nuovo .pet-arte { font-size: 16px; margin-bottom: 12px; }
+.livello-nuovo .ln-nota { color: var(--testo-2); font-size: 13px; max-width: 420px; margin: 0 auto; line-height: 1.5; }
+.livello-nuovo .ln-chiudi { margin-top: 18px; color: var(--testo-3); font-size: 11px; letter-spacing: .2em; }
+
+
+/* ------------------------------------------------------------ Bit in pixel art */
+.pet-svg { display: block; overflow: visible; image-rendering: pixelated;
+  filter: drop-shadow(0 0 3px var(--alone)) drop-shadow(0 0 12px color-mix(in srgb, var(--alone) 55%, transparent)); transition: filter .6s; }
+.pet-svg.umore-tranquillo { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--alone) 35%, transparent)); }
+.pet-svg.umore-dorme { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--alone) 40%, transparent)) saturate(.75) brightness(.85); }
+.pet-svg.umore-euforico { animation: pet-alone 1.6s ease-in-out infinite; }
+@keyframes pet-alone { 50% { filter: drop-shadow(0 0 4px var(--alone)) drop-shadow(0 0 22px var(--alone)); } }
+.pet-svg g, .pet-svg text { transform-box: fill-box; }
+/* respiro: il corpo si gonfia appena, appoggiato a terra */
+.pet-corpo { transform-origin: 50% 100%; animation: pet-respira 3.2s ease-in-out infinite; }
+@keyframes pet-respira { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.025, .965); } }
+.umore-dorme .pet-corpo { animation-duration: 5.5s; }
+.umore-euforico .pet-corpo { animation: pet-saltella .9s ease-in-out infinite; }
+@keyframes pet-saltella { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.06, .92); }
+  45% { transform: translateY(-2.5px) scale(.96, 1.05); } 75% { transform: translateY(0) scale(1.04, .95); } }
+/* palpebre */
+.pet-occhi.aperti { transform-origin: 50% 50%; animation: pet-palpebre 4.6s infinite; }
+@keyframes pet-palpebre { 0%, 91%, 97%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.12); } }
+/* l'uovo dondola */
+.stadio-0 .pet-tutto { transform-origin: 50% 90%; animation: pet-dondola 3.4s ease-in-out infinite; }
+@keyframes pet-dondola { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-7deg); } 84% { transform: rotate(6deg); } 92% { transform: rotate(-3deg); } }
+/* fame: lo stomaco brontola */
+.umore-affamato .pet-tutto { transform-origin: 50% 100%; animation: pet-brontola 2.8s infinite; }
+@keyframes pet-brontola { 0%, 62%, 100% { transform: translateX(0); } 66% { transform: translateX(-.6px); } 70% { transform: translateX(.6px); }
+  74% { transform: translateX(-.5px); } 78% { transform: translateX(.4px); } 82% { transform: translateX(0); } }
+.pet-grr { transform-origin: 0 50%; animation: pet-grr 2.8s infinite; opacity: 0; }
+@keyframes pet-grr { 0%, 60%, 100% { opacity: 0; transform: translateX(0); } 66%, 80% { opacity: 1; transform: translateX(1px); } }
+/* sonno */
+.pet-zzz { font: 700 5px/1 var(--mono, monospace); opacity: 0; animation: pet-zzz 3s linear infinite; }
+@keyframes pet-zzz { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: 1; }
+  100% { opacity: 0; transform: translate(5px, -9px) scale(1.25); } }
+/* euforico: scintille */
+.pet-scintilla { transform-origin: 50% 50%; animation: pet-scintilla 1.4s ease-in-out infinite; opacity: 0; }
+@keyframes pet-scintilla { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+/* salto quando arrivano XP (classe aggiunta da JS) */
+.pet-svg.salta .pet-tutto { animation: pet-salta .75s cubic-bezier(.3, 1.6, .5, 1) 1; }
+@keyframes pet-salta { 0% { transform: translateY(0) scale(1.1, .85); } 35% { transform: translateY(-6px) scale(.92, 1.1); }
+  70% { transform: translateY(0) scale(1.08, .9); } 100% { transform: translateY(0) scale(1); } }
+/* evoluzione: il vecchio stadio lampeggia e sparisce, il nuovo arriva in un lampo */
+.evoluzione { position: relative; display: grid; place-items: center; margin: 0 auto 12px; }
+.evoluzione > * { grid-area: 1 / 1; }
+.evoluzione .vecchio { animation: evo-via 1.8s forwards; }
+.evoluzione .nuovo { opacity: 0; animation: evo-arriva 1.8s forwards; }
+.evoluzione .lampo { width: 140%; height: 140%; border-radius: 50%; background: radial-gradient(circle, #fff 0, var(--fosforo) 35%, transparent 70%);
+  opacity: 0; animation: evo-lampo 1.8s forwards; pointer-events: none; }
+@keyframes evo-via { 0%, 12%, 26%, 40% { opacity: 1; filter: brightness(1); } 6%, 19%, 33% { filter: brightness(4); } 50%, 100% { opacity: 0; transform: scale(1.15); } }
+@keyframes evo-arriva { 0%, 48% { opacity: 0; transform: scale(1.5); filter: brightness(5); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; filter: none; } }
+@keyframes evo-lampo { 0%, 40% { opacity: 0; transform: scale(.3); } 52% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.4); } }
+.pet-mini .pet-svg { flex: none; }
+/* niente regola prefers-reduced-motion: le animazioni di Bit restano sempre attive (richiesta dello studente) */

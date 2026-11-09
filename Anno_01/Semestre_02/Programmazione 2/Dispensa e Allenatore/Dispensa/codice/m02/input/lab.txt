@@ -1,0 +1,12 @@
+tanti
+500
+5
+Rossi 28
+Bianchi trenta
+
+Verdi 31
+Neri 18
+Gialli 25 extra
+Blu 30
+fine
+42

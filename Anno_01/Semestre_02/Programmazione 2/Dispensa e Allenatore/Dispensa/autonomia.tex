@@ -1,0 +1,230 @@
+% =====================================================================
+\chapter{Diventare autonomi}
+% =====================================================================
+
+Questa appendice non parla di C++: parla di \textbf{come studiare e lavorare} da solo. In
+laboratorio, all'esame, sarai tu, un editor, un compilatore e una traccia: niente
+Internet, niente AI, niente dispensa. Le abitudini che costruisci in queste settimane
+decidono se in quel momento ti sentirai perso o a casa. E sono le stesse che, nel lungo
+periodo, separano chi \emph{usa} il codice degli altri da chi sa \emph{scriverlo}.
+
+% ---------------------------------------------------------------------
+\section{Come si studia la programmazione}
+% ---------------------------------------------------------------------
+
+\begin{analogia}[: la palestra]
+Guardare qualcuno che solleva pesi non ti fa venire i muscoli. Leggere codice scritto
+bene, o una spiegazione chiara (anche questa dispensa), ti dà la sensazione di aver
+capito: è la sensazione di chi guarda la palestra dalla vetrina. Il muscolo si forma
+solo quando \textbf{sei tu} a sollevare: a scrivere il codice da zero, a sbagliare, a
+capire perché.
+\end{analogia}
+
+\subsection*{Le cinque tecniche che funzionano davvero}
+
+\begin{passopasso}[: le tecniche]
+\begin{enumerate}
+  \item \textbf{Richiamo attivo (la pagina bianca).} Dopo aver studiato un argomento,
+        chiudi tutto e scrivi su un foglio bianco quello che ricordi: definizioni, un
+        disegno della memoria, il codice. Poi confronta. Quello che non sei riuscito a
+        scrivere è quello che non sai ancora. Rileggere sottolineando, al contrario, dà
+        l'illusione di sapere.
+  \item \textbf{Riscrivere da zero.} Il pattern di ogni modulo va scritto \emph{senza
+        guardarlo} finché non esce. La prima volta servono 40 minuti, la terza 10. A
+        quel punto in laboratorio la lista, la pila o il BST escono \q{dalle dita}, e la
+        testa resta libera per la parte nuova della traccia.
+  \item \textbf{Ripetizione distanziata.} Si dimentica in fretta ciò che si è visto una
+        volta sola. Ripassa un argomento dopo 1 giorno, poi dopo 3, poi dopo 7: per
+        questo il piano di studio ha ogni giorno 15 minuti di quiz dei moduli passati.
+  \item \textbf{Spiegare ad alta voce (tecnica di Feynman).} Spiega l'argomento come se
+        lo dovessi insegnare a un amico che non sa programmare. Dove ti incagli, lì c'è un
+        buco. È anche il miglior allenamento per l'orale.
+  \item \textbf{Mescolare.} Negli ultimi giorni non fare un modulo alla volta: alterna
+        quiz di argomenti diversi. All'esame le domande arrivano mescolate, e devi
+        riconoscere \emph{quale} strumento serve, non solo saperlo usare.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Carta e penna prima della tastiera}
+
+Prima di scrivere una funzione su liste, alberi o grafi, \textbf{disegna}: i nodi, i
+puntatori, cosa cambia passo per passo. Quasi tutti gli errori sulle strutture dinamiche
+sono puntatori aggiornati nell'ordine sbagliato, e su un disegno si vedono subito. Le
+figure TikZ di questa dispensa sono il modello: rifalle a mano.
+
+\subsection*{Studiare con poco tempo e molta stanchezza}
+
+\begin{itemize}
+  \item \textbf{Blocchi da 50 minuti} con 10 minuti di pausa vera (in piedi, lontano dallo
+        schermo). Dopo 4 blocchi, una pausa lunga. La concentrazione non dura 8 ore di
+        fila per nessuno.
+  \item \textbf{Il compito più difficile al mattino}: codice e tracce quando sei fresco;
+        quiz e ripasso quando sei stanco.
+  \item \textbf{Il sonno fa parte dello studio}: è di notte che la memoria si consolida.
+        Una notte in bianco prima dell'esame costa più di quanto rende.
+  \item \textbf{Telefono in un'altra stanza}. Ogni notifica costa minuti di concentrazione.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Usare l'AI il meno possibile (e bene)}
+% ---------------------------------------------------------------------
+
+L'AI è uno strumento potentissimo, e proprio per questo è pericolosa mentre si
+\emph{impara}: risolve il problema al posto tuo, e ti toglie esattamente lo sforzo che ti
+avrebbe insegnato qualcosa. All'esame non ci sarà. L'obiettivo di queste settimane è
+arrivare a non averne bisogno.
+
+\begin{analogia}[: il navigatore]
+Chi guida sempre con il navigatore, dopo anni non sa ancora come arrivare in centro. Chi
+ha girato qualche volta con la cartina e si è perso, la strada la conosce. Usa l'AI come
+la cartina che consulti quando sei davvero perso, non come la voce che ti dice
+\q{tra 200 metri gira a destra} a ogni incrocio.
+\end{analogia}
+
+\subsection*{La scala dell'autonomia: cosa fare quando sei bloccato}
+
+Prima di chiedere aiuto a chiunque (AI, un collega, la soluzione), sali questi gradini
+nell'ordine. Ognuno risolve da solo la maggior parte dei problemi.
+\begin{passopasso}[: quando sei bloccato]
+\begin{enumerate}
+  \item \textbf{Leggi l'errore del compilatore}, dall'\emph{alto}: il primo errore è
+        quello vero, gli altri spesso sono conseguenze. Guarda il numero di riga, e
+        anche la riga prima (il punto e virgola mancante si segnala sulla riga dopo).
+  \item \textbf{Riduci il problema}: commenta metà del codice. Se l'errore sparisce, è
+        nell'altra metà. Ripeti: è la ricerca binaria applicata ai bug (Modulo 7).
+  \item \textbf{Stampa}: un \cc|cout| prima e dopo il punto sospetto, con i valori delle
+        variabili e dei puntatori. Quasi ogni crash su liste e alberi è un
+        \cc|nullptr| dereferenziato: stampa i puntatori.
+  \item \textbf{Disegna} lo stato della memoria a quel punto, con carta e penna.
+  \item \textbf{Spiega il codice riga per riga ad alta voce}, anche a un oggetto (è la
+        famosa \q{tecnica della paperella di gomma}): a metà spiegazione, spesso, vedi
+        l'errore.
+  \item \textbf{Torna al modulo} della dispensa: il pattern di codice e le trappole.
+  \item \textbf{La regola dei 20 minuti}: se dopo 20 minuti di tentativi seri sei ancora
+        fermo, \emph{allora} puoi chiedere aiuto. Non prima (non hai provato abbastanza),
+        non molto dopo (stai solo perdendo tempo).
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Se usi l'AI, usala come un tutor, non come uno che fa i compiti}
+
+\begin{itemize}
+  \item Chiedi \textbf{un indizio}, non la soluzione: \q{non dirmi il codice: dove devo
+        guardare?}, \q{che cosa non ho capito di questo concetto?}.
+  \item Chiedi di \textbf{spiegarti l'errore}, non di correggerlo: \q{cosa significa
+        questo messaggio del compilatore?}.
+  \item Dopo aver ricevuto un aiuto, \textbf{chiudi la conversazione e riscrivi tutto da
+        solo}, senza guardare. Se non ci riesci, non l'hai ancora capito.
+  \item Usala per \textbf{interrogarti}: \q{fammi 5 domande d'orale sulla Regola dei Tre e
+        correggi le mie risposte}. Qui l'AI è un ottimo allenatore.
+  \item \textbf{Mai} copiare codice che non sapresti riscrivere e spiegare riga per
+        riga. All'orale ti chiederanno proprio quello.
+\end{itemize}
+
+\begin{trappola}[: l'illusione di competenza]
+Leggere una soluzione corretta (dell'AI o di una dispensa) produce la sensazione
+\q{sì, l'avrei fatto anch'io}. Quasi sempre è falsa. L'unica prova è riscriverla da zero,
+il giorno dopo, senza guardare.
+\end{trappola}
+
+\subsection*{Gli strumenti che rendono autonomi}
+
+\begin{itemize}
+  \item \textbf{Il compilatore con gli avvisi}: \texttt{g++ -Wall -Wextra}. Gli avvisi
+        sono errori futuri: variabili non inizializzate, confronti sbagliati, \cc|return|
+        mancanti. Tutto il codice di questa dispensa compila senza avvisi.
+  \item \textbf{Il debugger} (\texttt{gdb}, o quello dell'IDE): fermare il programma su una
+        riga, guardare le variabili, avanzare un'istruzione alla volta. Imparalo: 30
+        minuti spesi oggi risparmiano ore. Compila con \texttt{-g}.
+  \item \textbf{La documentazione}: \texttt{cppreference.com} per il C++. Leggere la
+        documentazione è un'abilità che si allena come le altre.
+  \item \textbf{Il tuo quaderno degli errori}: ogni volta che un bug ti fa perdere più di
+        10 minuti, scrivi in una riga cos'era e come l'hai trovato. Rileggilo prima
+        dell'esame: i tuoi errori tendono a ripetersi.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Superare l'esame}
+% ---------------------------------------------------------------------
+
+Strategie per ogni prova, piano minuto per minuto del laboratorio, checklist
+prima della consegna, aiuti disponibili e cosa fare se un appello va male sono
+raccolti nel capitolo \q{Superare l'esame: tutte le strade}, subito prima di
+questo. Qui resta solo il principio che li riassume tutti: \textbf{allenati nelle
+stesse condizioni dell'esame}, da solo, con il cronometro, senza Internet e senza AI.
+
+% ---------------------------------------------------------------------
+\section{Diventare un buon programmatore (nel lungo periodo)}
+% ---------------------------------------------------------------------
+
+L'esame è una tappa. Questi sono i consigli che valgono per i prossimi anni.
+
+\subsection*{Le abitudini}
+
+\begin{enumerate}
+  \item \textbf{Scrivi codice ogni giorno}, anche poco. Venti minuti al giorno battono
+        cinque ore la domenica. La programmazione è un'abilità, come uno strumento
+        musicale: si mantiene solo usandola.
+  \item \textbf{Costruisci progetti tuoi}. Gli esercizi insegnano gli strumenti; i progetti
+        (un gestionale per una cosa che ti interessa, un piccolo gioco, uno script che
+        automatizza un tuo lavoro noioso) insegnano a \emph{usarli insieme} e a decidere da
+        soli. È lì che si diventa autonomi davvero.
+  \item \textbf{Leggi codice scritto da altri}, bene: progetti open source, il codice dei
+        colleghi. Chiediti perché è scritto così. Si impara a scrivere leggendo.
+  \item \textbf{Scegli bene i nomi}. \cc|contaStudentiPromossi| invece di \cc|f2|.
+        Il codice si legge molte più volte di quante si scriva: chi lo leggerà tra sei
+        mesi sarai tu.
+  \item \textbf{Funzioni corte che fanno una cosa sola}. Se per descrivere una funzione
+        ti serve la parola \q{e}, probabilmente sono due funzioni.
+  \item \textbf{Prova il tuo codice}: pensa sempre ai casi limite (vuoto, uno solo,
+        duplicati, valori enormi) e scrivi piccoli test. Il codice non provato è codice
+        rotto che non lo sa ancora.
+  \item \textbf{Usa Git} fin da subito, anche per i progetti personali: salvi la storia
+        del tuo lavoro, puoi sperimentare senza paura e torni indietro quando rompi
+        qualcosa. È uno strumento che ti chiederanno ovunque.
+  \item \textbf{Prima fallo funzionare, poi rendilo bello, poi (se serve) veloce}. In
+        quest'ordine.
+\end{enumerate}
+
+\subsection*{Cosa studiare dopo}
+
+\begin{itemize}
+  \item \textbf{Algoritmi e strutture dati}: sono il fondamento di tutto, e questo corso
+        ne è l'inizio. Allenati con problemi di programmazione (siti di esercizi come
+        quelli delle gare di programmazione, o l'\emph{Advent of Code} ogni dicembre).
+  \item \textbf{Il C++ moderno}: smart pointer (\cc|unique_ptr|, \cc|shared_ptr|), la STL
+        che qui era vietata (\cc|vector|, \cc|map|), RAII. Ora che sai cosa c'è sotto, li
+        userai capendo cosa fanno.
+  \item \textbf{Un secondo linguaggio}, diverso (ad esempio Python): vedere le stesse idee
+        in un'altra forma le fa capire meglio. Ma uno alla volta, e solo dopo aver
+        consolidato il primo.
+  \item \textbf{Come funziona il computer}: sistemi operativi, reti, basi di dati. Sono i
+        corsi che verranno, e danno senso a tutto il resto.
+\end{itemize}
+
+\subsection*{Il rapporto con l'AI, dopo}
+
+Quando le basi sono solide, l'AI diventa un moltiplicatore: ti fa risparmiare il lavoro
+ripetitivo, e tu sai giudicare se quello che produce è giusto. Senza basi, invece, ti
+rende dipendente da qualcosa che non sai controllare. La regola resta la stessa:
+\textbf{non usare mai codice che non sapresti scrivere e spiegare da solo}. Chi capisce
+davvero il codice sarà sempre più prezioso di chi sa solo chiederlo.
+
+\begin{inparole}
+\begin{itemize}
+  \item Si impara scrivendo, non leggendo: pagina bianca, riscrivere da zero, spiegare
+        ad alta voce.
+  \item Quando sei bloccato: errore del compilatore, ridurre, stampare, disegnare,
+        spiegare, dispensa; solo dopo 20 minuti chiedi aiuto.
+  \item AI come tutor che ti interroga e ti dà indizi, mai come chi fa i compiti al posto
+        tuo.
+  \item Per l'esame: gerarchia + strutture dati a memoria, 5--6 tracce vere a tempo,
+        orale ad alta voce, sonno.
+  \item Per la carriera: codice ogni giorno, progetti tuoi, nomi chiari, test, Git.
+\end{itemize}
+\end{inparole}
+
+\vspace{1em}
+\begin{center}
+\large\itshape In bocca al lupo per l'esame!
+\end{center}

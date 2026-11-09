@@ -1,0 +1,3 @@
+Somma: 108
+Somma dei primi 3: 27
+Massimo: 42 in posizione 5

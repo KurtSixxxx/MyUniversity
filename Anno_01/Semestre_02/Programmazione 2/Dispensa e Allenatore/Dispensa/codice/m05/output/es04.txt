@@ -1,0 +1,4 @@
+30 compare 3 volte
+'A' compare 3 volte
+rosso compare 2 volte
+temperature sopra 20: 2

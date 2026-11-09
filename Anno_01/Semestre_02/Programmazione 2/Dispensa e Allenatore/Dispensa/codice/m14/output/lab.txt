@@ -1,0 +1,41 @@
+=== Rete di amicizie (grafo NON orientato) ===
+Zeno non esiste: arco rifiutato
+  Anna: Carla Bruno
+  Bruno: Dario Anna
+  Carla: Dario Anna
+  Dario: Elena Carla Bruno
+  Elena: Fabio Dario
+  Fabio: Elena
+  Giulia: Ivan
+  Ivan: Giulia
+Amici di Dario: 3
+Il piu' popolare: Dario
+Distanza Anna-Fabio: 4
+Distanza Anna-Ivan: -1
+Catene di amicizia:
+  Anna ~> Fabio: Anna -> Carla -> Dario -> Elena -> Fabio  (4 passaggi)
+  Bruno ~> Carla: Bruno -> Dario -> Carla  (2 passaggi)
+  Anna ~> Giulia: nessuna catena
+Gruppi:
+  gruppo 1: Anna Carla Dario Elena Fabio Bruno
+  gruppo 2: Giulia Ivan
+Numero di gruppi: 2
+
+=== Esami propedeutici (grafo ORIENTATO) ===
+  Analisi 2:
+  Fisica:
+  Algoritmi:
+  Basi di Dati:
+  Programmazione 2: Basi di Dati Algoritmi
+  Analisi 1: Fisica Analisi 2
+  Matematica Discreta: Algoritmi
+  Programmazione 1: Programmazione 2
+Un ordine valido per sostenerli:
+  1. Programmazione 1
+  2. Matematica Discreta
+  3. Analisi 1
+  4. Programmazione 2
+  5. Basi di Dati
+  6. Algoritmi
+  7. Fisica
+  8. Analisi 2

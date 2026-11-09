@@ -1,0 +1,10 @@
+D senza virtual:
+  costruisco A
+  costruisco A
+  B::x = 1, C::x = 2
+D2 con ereditarieta' virtual:
+  costruisco A2
+  d2.x = 5 (richiesta non piu' ambigua)
+Anatra:
+  volo
+  nuoto

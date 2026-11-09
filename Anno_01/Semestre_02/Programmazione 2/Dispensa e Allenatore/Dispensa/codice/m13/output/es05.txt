@@ -1,0 +1,2 @@
+degenere:   cercare 1000 costa 1000 confronti
+bilanciato: cercare 1000 costa 10 confronti

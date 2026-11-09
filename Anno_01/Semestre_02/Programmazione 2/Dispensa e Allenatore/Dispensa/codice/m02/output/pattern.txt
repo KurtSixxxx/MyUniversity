@@ -1,0 +1,9 @@
+Area cerchio r=2: 12.5664
+Area rettangolo 3x4: 12
+x locale = 5, x globale = 100
+x nel blocco = 7
+x locale di nuovo = 5
+Quanti anni hai? Errore: inserisci un numero intero!
+Quanti anni hai? Nome e cognome: Ciao Mario Rossi, hai 22 anni
+Mario | 22 | 1.8
+Codice generato: Utente-22

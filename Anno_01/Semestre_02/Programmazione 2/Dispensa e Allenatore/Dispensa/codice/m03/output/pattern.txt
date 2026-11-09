@@ -1,0 +1,12 @@
+n = 100, *p = 100
+dopo r = 5: n = 5
+valore:    x=1 y=2
+puntatore: x=2 y=1
+reference: x=1 y=2
+v[2] = 30, *(q+2) = 30
+sizeof(v) = 20 byte, elementi = 5
+media = 30
+0 1 4 9 16 25 
+*d = 3.14
+0       1       2       
+10      11      12      

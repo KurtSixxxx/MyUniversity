@@ -1,0 +1,6 @@
+lista:            [1 -> 3 -> 7 -> 9]  (4 nodi)
+ricerca(7):       trovato
+tolti 1, 9, 42:   [3 -> 7]
+inserito 5:       [3 -> 5 -> 7]
+invertita:        [7 -> 5 -> 3], la copia: [3 -> 5 -> 7]
+parole ordinate:  [kiwi -> mela -> pera -> uva]

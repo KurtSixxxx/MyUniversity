@@ -1,0 +1,4 @@
+22 = 7 + 15
+8 = 1 + 7
+2: nessuna coppia
+comuni: 3 7 12 

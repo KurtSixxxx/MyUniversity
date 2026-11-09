@@ -1,0 +1,3 @@
+prelievo di 50 eseguito
+[SaldoInsufficiente] saldo insufficiente, mancano 150 euro
+[ErroreBanca] conto bloccato

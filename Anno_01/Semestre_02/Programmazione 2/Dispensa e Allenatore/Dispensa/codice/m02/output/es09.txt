@@ -1,0 +1,3 @@
+Area cerchio r=1:     3.14159
+Perimetro cerchio r=1: 6.28319
+Area rettangolo 3x4:  12

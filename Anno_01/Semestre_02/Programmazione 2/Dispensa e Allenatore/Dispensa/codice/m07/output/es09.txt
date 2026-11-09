@@ -1,0 +1,4 @@
+Bea(19) Ada(22) Marco(31) Luca(45) 
+Ada(22) Bea(19) Luca(45) Marco(31) 
+Luca(45) Marco(31) Ada(22) Bea(19) 
+9 7 4 1 

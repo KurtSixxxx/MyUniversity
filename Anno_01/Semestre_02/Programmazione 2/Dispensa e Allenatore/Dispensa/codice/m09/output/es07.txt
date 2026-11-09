@@ -1,0 +1,3 @@
+auto 6, moto 4, camion 2
+ruote totali 56, assi dei camion 6
+nome del tipo secondo il compilatore: 4Auto

@@ -1,0 +1,4 @@
+Dentro: 3
+Dopo un'uscita: 2
+Impossibile scendere sotto zero
+Valore finale: 0

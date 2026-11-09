@@ -1,0 +1,5 @@
+Grafo 1:
+  ciclo? no
+Grafo 2:
+  arco all'indietro 3 -> 1
+  ciclo? si

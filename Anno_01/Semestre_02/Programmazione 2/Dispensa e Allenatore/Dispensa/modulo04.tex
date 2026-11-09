@@ -1,0 +1,873 @@
+% =====================================================================
+\chapter{Modulo 4 -- Classi e Oggetti: Costruttori, Distruttore, Regola dei Tre}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Nel Modulo 1 abbiamo visto \emph{cosa} sono classi e oggetti. In questo modulo
+vediamo \emph{come vivono}: come nascono, come muoiono, come si copiano. È il
+modulo che collega la OOP alla memoria dinamica del Modulo 3. Quando un oggetto
+possiede memoria nello heap, nascita, morte e copia vanno gestite a mano, ed è
+qui che si concentrano gli errori più gravi (e le domande d'orale più frequenti).
+
+\subsection*{Il ciclo di vita di un oggetto}
+
+Ogni oggetto attraversa tre fasi:
+\begin{enumerate}
+  \item \textbf{nasce}: viene riservata la memoria e viene eseguito
+        automaticamente il \textbf{costruttore};
+  \item \textbf{vive}: riceve messaggi, cambia stato;
+  \item \textbf{muore}: viene eseguito automaticamente il \textbf{distruttore},
+        poi la memoria viene restituita.
+\end{enumerate}
+\emph{Quando} avvengono nascita e morte dipende da dove l'oggetto è stato creato,
+con le stesse regole delle variabili del Modulo 3:
+\begin{center}\small
+\begin{tabular}{p{3.4cm}p{5.4cm}p{5.4cm}}
+\toprule
+\textbf{Oggetto} & \textbf{Nasce} & \textbf{Muore} \\
+\midrule
+globale & prima del \cc|main| & dopo la fine del \cc|main| \\
+locale (stack) & quando l'esecuzione arriva alla dichiarazione & alla \cc|}| del suo blocco \\
+dinamico (heap) & con \cc|new| & con \cc|delete| (se te ne dimentichi: mai) \\
+parametro per valore & all'ingresso nella funzione (è una copia) & all'uscita dalla funzione \\
+\bottomrule
+\end{tabular}
+\end{center}
+Gli oggetti locali di uno stesso blocco muoiono in \textbf{ordine inverso} rispetto
+a come sono nati: l'ultimo creato è il primo distrutto, come i piatti di una pila.
+L'Esercizio~4.2 lo mostra con dei messaggi stampati da costruttore e distruttore.
+
+\subsection*{Il costruttore}
+
+\begin{definizione}[: costruttore]
+Il \textbf{costruttore} è un metodo speciale che viene eseguito
+\textbf{automaticamente} quando un oggetto nasce. Ha \textbf{lo stesso nome della
+classe}, \textbf{nessun tipo di ritorno} (nemmeno \cc|void|) e può avere
+parametri. Il suo compito è portare l'oggetto in uno stato iniziale valido.
+\end{definizione}
+
+\begin{analogia}[: il collaudo in fabbrica]
+Un'auto non esce dalla fabbrica con il motore smontato e il serbatoio pieno di
+sabbia: prima della consegna c'è il collaudo, che la mette in condizioni di
+funzionare. Il costruttore è il collaudo: quando il programma riceve l'oggetto,
+questo è già pronto e coerente.
+\end{analogia}
+
+Una classe può avere \textbf{più costruttori} (overloading), purché abbiano
+parametri diversi per numero o tipo. Il compilatore sceglie quello giusto in base
+agli argomenti che scrivi:
+\begin{lstlisting}
+class Rettangolo {
+    double base, altezza;
+public:
+    Rettangolo() { base = 1; altezza = 1; }                  // costruttore di default
+    Rettangolo(double b, double h) { base = b; altezza = h; }
+};
+Rettangolo r1;            // chiama Rettangolo()
+Rettangolo r2(3, 4);      // chiama Rettangolo(double, double)
+Rettangolo* p = new Rettangolo(5, 2);   // anche new chiama il costruttore
+\end{lstlisting}
+
+\textbf{Il costruttore di default} è quello che si può chiamare \textbf{senza
+argomenti}. Se nella classe non scrivi \emph{nessun} costruttore, il compilatore
+ne genera uno vuoto, che \emph{non} inizializza gli attributi di tipo base
+(contengono valori casuali). Se invece scrivi almeno un costruttore con
+parametri, quello automatico \textbf{sparisce}, e \cc|Rettangolo r;| oppure
+\cc|Rettangolo v[10];| smettono di compilare. È la trappola del Modulo 1 sugli
+array di oggetti.
+
+\textbf{Parametri di default.} Un solo costruttore può coprire più casi dando un
+valore predefinito ai parametri finali:
+\cc|Rettangolo(double b = 1, double h = 1)| si può chiamare come
+\cc|Rettangolo()|, \cc|Rettangolo(4)| o \cc|Rettangolo(3, 4)|. I default vanno
+scritti da destra a sinistra: non puoi dare un default al primo parametro e non
+al secondo.
+
+\subsection*{La lista di inizializzazione}
+
+Dopo i parametri del costruttore, prima del corpo, si può scrivere una
+\textbf{lista di inizializzazione}, introdotta dai due punti:
+\begin{lstlisting}
+Rettangolo(double b, double h) : base(b), altezza(h) {
+    // corpo (qui gli attributi hanno già i loro valori)
+}
+\end{lstlisting}
+La differenza con l'assegnare nel corpo è sottile ma importante. Gli attributi
+vengono \textbf{creati} prima che inizi il corpo del costruttore: con la lista li
+crei direttamente con il valore giusto; con le assegnazioni nel corpo prima li crei
+``vuoti'', poi ci scrivi sopra. Per un \cc|int| non cambia quasi nulla, ma ci sono
+tre casi in cui la lista è \textbf{obbligatoria}:
+\begin{itemize}
+  \item attributi \cc|const| (non si possono assegnare dopo la nascita);
+  \item attributi reference (vanno legati alla nascita, Modulo 3);
+  \item attributi che sono \textbf{oggetti} di una classe senza costruttore di
+        default (vedi l'Esercizio~4.5 con \cc|Punto2D| dentro \cc|Rettangolo|).
+\end{itemize}
+Gli attributi vengono inizializzati nell'\textbf{ordine in cui sono dichiarati
+nella classe}, non nell'ordine in cui li scrivi nella lista. Conviene quindi
+scriverli nella lista nello stesso ordine, per non confondersi.
+
+Altri due modi di inizializzare, presenti nelle slide del corso:
+\begin{lstlisting}
+class MyClass {
+    int x = 18;            // inizializzazione nella dichiarazione (valore di partenza)
+    char c {'M'};          // inizializzazione uniforme con le graffe
+public:
+    MyClass(int a, char b) : x(a), c(b) {}
+    MyClass(char b) : MyClass(10, b) {}     // costruttore con DELEGA: ne riusa un altro
+};
+\end{lstlisting}
+
+\subsection*{Il distruttore}
+
+\begin{definizione}[: distruttore]
+Il \textbf{distruttore} è un metodo speciale eseguito \textbf{automaticamente}
+quando un oggetto muore. Si chiama come la classe preceduta da una tilde,
+\cc|~Rettangolo()|, non ha tipo di ritorno, \textbf{non ha parametri} e ce n'è
+\textbf{uno solo} per classe. Se non lo scrivi, il compilatore ne crea uno vuoto.
+\end{definizione}
+
+A cosa serve? Per un oggetto che contiene solo numeri e stringhe, a niente: quello
+generato dal compilatore va benissimo. Diventa \textbf{indispensabile} quando
+l'oggetto \textbf{possiede risorse}: memoria presa con \cc|new|, un file aperto,
+una connessione. La regola è: \textbf{quello che il costruttore prende, il
+distruttore restituisce}.
+\begin{lstlisting}
+class Vettore {
+    int* dati;
+    int n;
+public:
+    Vettore(int dim) : dati(new int[dim]), n(dim) {}   // prende memoria
+    ~Vettore() { delete[] dati; }                      // la restituisce
+};
+\end{lstlisting}
+Il grande vantaggio: chi usa \cc|Vettore| non deve mai ricordarsi di fare
+\cc|delete[]|. Quando l'oggetto esce dal suo blocco, il distruttore parte da solo,
+anche se si esce per un'eccezione. Questa idea (legare una risorsa alla vita di un
+oggetto) si chiama \textbf{RAII} ed è il modo C++ di evitare i memory leak.
+
+\begin{analogia}[: la camera d'albergo]
+Il costruttore è il check-in: ricevi la chiave della camera (la memoria). Il
+distruttore è il check-out: restituisci la chiave. Un oggetto senza distruttore,
+che però ha preso una camera con \cc|new|, è un cliente che se ne va con la chiave
+in tasca: la camera resta occupata per sempre (memory leak).
+\end{analogia}
+
+\subsection*{Il puntatore this}
+
+Il codice di un metodo esiste una volta sola, condiviso da tutti gli oggetti
+(Modulo 1). Allora, quando scrivi \cc|a.setX(3)|, come fa \cc|setX| a sapere di
+dover modificare la \cc|x| di \cc|a| e non quella di \cc|b|? Il compilatore passa
+al metodo, di nascosto, un parametro in più: l'\textbf{indirizzo dell'oggetto} su
+cui è stato chiamato. Dentro il metodo questo indirizzo si chiama \cc|this|.
+
+\begin{definizione}[: this]
+\cc|this| è un puntatore, disponibile dentro ogni metodo non statico, che contiene
+l'indirizzo dell'oggetto su cui il metodo è stato invocato. \cc|*this| è l'oggetto
+stesso.
+\end{definizione}
+
+Usi tipici:
+\begin{itemize}
+  \item \textbf{distinguere} un attributo da un parametro con lo stesso nome:
+        \cc|this->x = x;| (a sinistra l'attributo, a destra il parametro);
+  \item \textbf{restituire l'oggetto stesso} per concatenare le chiamate:
+        \cc|Punto& setX(int x) { this->x = x; return *this; }| permette
+        \cc|p.setX(3).setY(4);|. È lo stesso meccanismo di \cc|cout << a << b|;
+  \item \textbf{riconoscere se stesso}: \cc|if (this == &altro)| (stesso
+        indirizzo, quindi stesso oggetto). È indispensabile nell'operatore di
+        assegnamento, come vedremo.
+\end{itemize}
+
+\subsection*{Metodi e oggetti const}
+
+Lo abbiamo anticipato nel Modulo 1: un metodo \cc|const| promette di non
+modificare l'oggetto. Ora si capisce meglio il perché: dentro un metodo \cc|const|,
+\cc|this| è un puntatore a oggetto \emph{costante}, e il compilatore blocca ogni
+scrittura sugli attributi. Su un oggetto dichiarato \cc|const|
+(\cc|const Rettangolo r(2, 2);|) o ricevuto come \cc|const Rettangolo&| si possono
+chiamare \textbf{solo} i metodi \cc|const|.
+
+\subsection*{Membri static}
+
+Normalmente ogni oggetto ha la sua copia di ogni attributo. A volte però serve un
+dato che appartiene \textbf{alla classe intera} e non al singolo oggetto: quanti
+oggetti esistono, un contatore di codici progressivi, una costante comune.
+
+\begin{definizione}[: membro statico]
+Un attributo \cc|static| esiste in \textbf{una sola copia} condivisa da tutti gli
+oggetti della classe, ed esiste anche se non è stato creato nessun oggetto. Un
+metodo \cc|static| si può chiamare senza oggetto (\cc|Classe::metodo()|) e
+quindi \textbf{non ha \texttt{this}}: può usare solo gli attributi statici.
+\end{definizione}
+
+\begin{lstlisting}
+class Punto {
+    int x, y;
+    static int vivi;                        // dichiarazione (dentro la classe)
+public:
+    Punto() : x(0), y(0) { vivi++; }
+    ~Punto() { vivi--; }
+    static int getVivi() { return vivi; }
+};
+int Punto::vivi = 0;                        // definizione (fuori, una sola volta)
+cout << Punto::getVivi();                   // si chiama sulla classe
+\end{lstlisting}
+L'attributo statico va \textbf{definito} fuori dalla classe, in un \texttt{.cpp}:
+dimenticarlo dà un errore del \textbf{linker} (\emph{undefined reference to
+`Punto::vivi'}). Fanno eccezione le costanti intere (\cc|static const int MAX = 10;|),
+che si possono inizializzare direttamente nella classe.
+
+\subsection*{Copiare un oggetto: il problema}
+
+Gli oggetti si possono copiare, come le \cc|struct| del C: \cc|Vettore b = a;|
+oppure \cc|b = a;|. Se non scrivi nulla, il compilatore copia \textbf{membro a
+membro} (le slide dicono ``bit a bit''): ogni attributo di \cc|a| viene copiato
+nel corrispondente attributo di \cc|b|. Per numeri e \cc|string| è perfetto.
+Ma se un attributo è un \textbf{puntatore}, viene copiato il puntatore, cioè
+\textbf{l'indirizzo}, non il blocco a cui punta. Si ottengono così due oggetti che
+condividono lo stesso blocco di heap: è la \textbf{copia superficiale}
+(\emph{shallow copy}).
+
+Perché è un disastro?
+\begin{enumerate}
+  \item \textbf{Modifiche incrociate}: cambi un elemento di \cc|b| e cambia anche
+        \cc|a|, perché è lo stesso blocco (Esercizio~4.7).
+  \item \textbf{Doppio delete}: quando muoiono, \emph{entrambi} i distruttori fanno
+        \cc|delete[]| dello \emph{stesso} blocco. Il secondo \cc|delete[]| è
+        comportamento indefinito: spesso il programma va in crash alla fine.
+  \item \textbf{Dangling pointer}: se \cc|a| muore prima di \cc|b|, \cc|b| si
+        ritrova con un puntatore a memoria già liberata.
+\end{enumerate}
+La soluzione è la \textbf{copia profonda} (\emph{deep copy}): la copia si prende
+un blocco \textbf{tutto suo} e ci copia dentro gli elementi uno per uno. Per
+ottenerla bisogna scrivere due metodi speciali.
+
+\begin{analogia}[: la chiave e la casa]
+Copia superficiale = fare un duplicato della \textbf{chiave}: ora due persone
+entrano nella stessa casa. Se uno sposta i mobili, l'altro li trova spostati; se
+uno vende la casa, l'altro ha in mano una chiave che apre la casa di uno
+sconosciuto. Copia profonda = costruire una \textbf{casa identica} e dare
+all'altro la chiave della casa nuova.
+\end{analogia}
+
+\subsection*{Il costruttore di copia}
+
+\begin{definizione}[: costruttore di copia]
+È il costruttore che crea un oggetto \textbf{nuovo} come copia di uno esistente.
+Ha la forma \cc|Classe(const Classe& altro)|.
+\end{definizione}
+Viene chiamato automaticamente in tre situazioni:
+\begin{itemize}
+  \item quando un oggetto nasce da un altro: \cc|Vettore b = a;| oppure \cc|Vettore b(a);|
+        (attenzione: anche se c'è il simbolo \cc|=|, qui \cc|b| sta \emph{nascendo},
+        quindi è un costruttore e non un assegnamento);
+  \item quando un oggetto viene \textbf{passato per valore} a una funzione (il
+        parametro è una copia);
+  \item quando una funzione \textbf{restituisce un oggetto per valore} (il
+        compilatore spesso ottimizza ed evita la copia, ma la regola è questa).
+\end{itemize}
+Perché il parametro è una \textbf{reference}? Se fosse \cc|Classe(Classe altro)|,
+per passare \cc|altro| per valore servirebbe... una copia, cioè di nuovo il
+costruttore di copia, che richiederebbe un'altra copia, all'infinito. Il
+compilatore lo vieta. Perché \cc|const|? Perché copiare non deve modificare
+l'originale, e così si possono copiare anche oggetti costanti.
+
+\subsection*{L'operatore di assegnamento}
+
+\cc|b = a;| quando \cc|b| \textbf{esiste già} non chiama il costruttore di copia,
+ma l'\textbf{operatore di assegnamento} \cc|operator=|. La differenza è
+fondamentale: \cc|b| possiede già un suo blocco di heap, che va
+\textbf{restituito} prima di prenderne uno nuovo, altrimenti si perde (leak).
+
+\begin{passopasso}[: scrivere operator=]
+\begin{lstlisting}
+Vettore& operator=(const Vettore& altro) {
+    if (this == &altro) return *this;   // 1. a = a: non fare nulla
+    delete[] dati;                      // 2. libera il TUO vecchio blocco
+    n = altro.n;                        // 3. copia gli attributi semplici
+    dati = new int[n];                  // 4. prendi un blocco nuovo
+    for (int i = 0; i < n; i++)         // 5. copia gli elementi
+        dati[i] = altro.dati[i];
+    return *this;                       // 6. restituisci te stesso
+}
+\end{lstlisting}
+\begin{enumerate}
+  \item Il controllo di \textbf{autoassegnamento} serve perché, se \cc|this| e
+        \cc|altro| sono lo stesso oggetto, il passo 2 distruggerebbe proprio i dati
+        da copiare.
+  \item Si restituisce \cc|*this| per reference (\cc|Vettore&|) così funziona
+        \cc|a = b = c;|, che si legge \cc|a = (b = c);|.
+  \item Variante più sicura (usata nel laboratorio): prima si alloca e si copia
+        in un blocco nuovo, \emph{poi} si libera il vecchio. Così, se \cc|new|
+        fallisse, l'oggetto resterebbe intatto.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{La Regola dei Tre}
+
+\begin{definizione}[: Regola dei Tre]
+Se una classe ha bisogno di definire \textbf{uno} tra distruttore, costruttore di
+copia e operatore di assegnamento, quasi sicuramente ha bisogno di definirli
+\textbf{tutti e tre}.
+\end{definizione}
+Il motivo è che tutti e tre nascono dallo stesso fatto: la classe possiede una
+risorsa (di solito memoria dinamica). Se serve il distruttore per liberarla, le
+versioni automatiche di copia e assegnamento la condividerebbero (copia
+superficiale), e si torna ai disastri visti sopra. All'esame, ogni volta che vedi
+un attributo puntatore con \cc|new| nel costruttore, scrivi subito tutti e tre.
+
+\subsection*{Funzioni friend (anteprima)}
+
+Una funzione esterna dichiarata \cc|friend| dentro una classe può accedere ai
+membri privati di quella classe. Sembra una violazione dell'information hiding,
+ma non lo è: è la classe stessa a decidere chi sono i suoi ``amici'', nella sua
+dichiarazione. Si usa soprattutto per gli operatori \cc|<<|, \cc|>>|, \cc|==| e
+\cc|+|, che studieremo nel Modulo 10.
+
+\subsection*{Le eccezioni}
+
+Finora, quando un metodo riceveva dati sbagliati, li abbiamo corretti o abbiamo
+restituito \cc|false|. Non sempre si può: un costruttore non restituisce niente, e
+\cc|int get(int i)| non ha un valore ``speciale'' per dire ``indice sbagliato''.
+Fermare il programma con \cc|exit(1)| è brutale. Il C++ offre un meccanismo
+apposito: le \textbf{eccezioni}.
+
+\begin{itemize}
+  \item \cc|throw valore;| \textbf{lancia} un'eccezione: la funzione si interrompe
+        all'istante, e così tutte le funzioni chiamanti, finché qualcuno non la cattura.
+  \item \cc|try { ... }| delimita il codice ``sorvegliato'';
+  \item \cc|catch (const Tipo& e) { ... }| subito dopo il \cc|try| \textbf{cattura}
+        le eccezioni di quel tipo e le gestisce. Possono esserci più \cc|catch|,
+        provati in ordine; \cc|catch (...)| cattura qualunque cosa.
+\end{itemize}
+\begin{lstlisting}
+#include <stdexcept>
+void setOre(int h) {
+    if (h < 0 || h > 23) throw invalid_argument("ore valide: 0-23");
+    ore = h;
+}
+try {
+    t.setOre(100);                 // lancia
+    cout << "mai eseguito";        // saltato
+} catch (const invalid_argument& e) {
+    cout << "Errore: " << e.what(); // what() restituisce il messaggio
+}
+\end{lstlisting}
+La libreria \cc|<stdexcept>| fornisce eccezioni pronte: \cc|invalid_argument|
+(argomento non valido), \cc|out_of_range| (indice fuori dai limiti),
+\cc|underflow_error|, \cc|overflow_error|, \cc|runtime_error|. Sono tutte
+``figlie'' di \cc|exception| (Modulo 9): \cc|catch (const exception& e)| le prende
+tutte. Si catturano per \textbf{reference costante}, come consigliano le slide.
+
+Se un'eccezione esce da un \textbf{costruttore}, l'oggetto \textbf{non viene
+creato}: è il modo pulito per impedire la nascita di oggetti non validi.
+
+\begin{inparole}
+\begin{itemize}
+  \item Costruttore = collaudo (nasce l'oggetto); distruttore = check-out (muore).
+        Partono da soli.
+  \item Se scrivi un costruttore con parametri, quello senza parametri non esiste più.
+  \item Lista di inizializzazione \cc|: a(x), b(y)|: obbligatoria per \cc|const|,
+        reference e oggetti senza costruttore di default.
+  \item \cc|this| = indirizzo dell'oggetto su cui stai lavorando.
+  \item \cc|static| = uno solo per tutta la classe; va definito fuori.
+  \item Puntatore come attributo + \cc|new| nel costruttore $\Rightarrow$
+        \textbf{Regola dei Tre}: distruttore, costruttore di copia, \cc|operator=|.
+  \item \cc|Classe b = a;| $\to$ costruttore di copia; \cc|b = a;| con \cc|b| già
+        esistente $\to$ \cc|operator=|.
+  \item Errori che non si possono gestire lì: \cc|throw|; chi può gestirli:
+        \cc|try|/\cc|catch|.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Nascita e morte degli oggetti locali} (Esercizio~4.2): lo stack cresce
+quando gli oggetti nascono e si svuota in ordine inverso.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \nome/\y in {A/0,B/0.8,C/1.6}
+    \node[cella,fill=stackcol,minimum width=2.2cm] (o\nome) at (0,\y) {\nome};
+  \node[etichetta,below=0.15cm of oA] {stack del \texttt{main}};
+  \draw[freccia] (-2.4,-0.2) -- node[left,etichetta,text width=1.7cm,align=right]{nascono\\ A, B, C} (-2.4,1.8);
+  \draw[freccia] (2.4,1.8) -- node[right,etichetta,text width=2.6cm]{muoiono\\ C, B (fine blocco)\\ poi A (fine \texttt{main})} (2.4,-0.2);
+\end{tikzpicture}
+\end{center}
+
+\needspace{7cm}
+\textbf{Copia superficiale contro copia profonda.} A sinistra quello che fa il
+compilatore da solo, a destra quello che fa il costruttore di copia scritto da noi.
+\begin{center}
+\begin{tikzpicture}
+  % superficiale
+  \node[font=\bfseries\small] at (2.2,2.4) {SUPERFICIALE (sbagliata)};
+  \node[cella,fill=stackcol] (a1) at (0,1.2) {a.dati};
+  \node[cella,fill=stackcol] (b1) at (0,-0.2) {b.dati};
+  \foreach \v [count=\i] in {10,20,30}
+    \node[cellina,fill=heapcol] (h\i) at (2.6+\i*0.75,0.5) {\v};
+  \draw[freccia] (a1.east) -- (h1.north west);
+  \draw[frecciarossa] (b1.east) -- (h1.south west);
+  \node[etichetta,text=red!75!black,below=0.25cm of h2,text width=4cm,align=center]
+       {stesso blocco: modifiche incrociate e doppio \texttt{delete[]}};
+  % profonda
+  \node[font=\bfseries\small] at (10.2,2.4) {PROFONDA (giusta)};
+  \node[cella,fill=stackcol] (a2) at (8,1.2) {a.dati};
+  \node[cella,fill=stackcol] (b2) at (8,-0.2) {b.dati};
+  \foreach \v [count=\i] in {10,20,30}
+    \node[cellina,fill=heapcol] (p\i) at (10.6+\i*0.75,1.2) {\v};
+  \foreach \v [count=\i] in {10,20,30}
+    \node[cellina,fill=heapcol] (q\i) at (10.6+\i*0.75,-0.2) {\v};
+  \draw[freccia] (a2.east) -- (p1.west);
+  \draw[freccia] (b2.east) -- (q1.west);
+  \node[etichetta,below=0.25cm of q2,text width=4cm,align=center]
+       {ognuno il suo blocco: indipendenti};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Cosa fa \texttt{c = a;}} con \cc|operator=| scritto bene (\cc|c| aveva 5
+elementi, \cc|a| ne ha 3).
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (c) at (0,0) {c.dati};
+  \foreach \i in {1,...,5}
+    \node[cellina,fill=heapcol] (v\i) at (2+\i*0.75,0.9) {0};
+  \draw[red!75!black,thick] ($(v1.south west)+(-0.05,-0.05)$) -- ($(v5.north east)+(0.05,0.05)$);
+  \foreach \v [count=\i] in {10,20,30}
+    \node[cellina,fill=heapcol] (w\i) at (2+\i*0.75,-0.9) {\v};
+  \draw[freccia,dashed,black!50] (c.east) -- (v1.west);
+  \draw[freccia] (c.east) -- (w1.west);
+  \node[text width=6.6cm,font=\small,anchor=west] at (7.2,0) {%
+    \textbf{1.} \texttt{this != \&a}? sì, si procede\\
+    \textbf{2.} \texttt{delete[] dati} (vecchio blocco da 5, barrato)\\
+    \textbf{3--5.} \texttt{n = 3}, nuovo blocco da 3, copia\\
+    \textbf{6.} \texttt{return *this}};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Un attributo static è uno solo.} Ogni oggetto ha i suoi \cc|x| e \cc|y|;
+\cc|vivi| sta fuori dagli oggetti, nella memoria statica, condiviso da tutti.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \nome/\xx/\yy [count=\i] in {a/1/2,b/0/0,c/1/2}{
+    \node[cella,fill=privcol,minimum width=1.6cm] (x\i) at (\i*3,0.4) {x = \xx};
+    \node[cella,fill=privcol,minimum width=1.6cm,below=0cm of x\i] (y\i) {y = \yy};
+    \node[font=\small\bfseries,above=0cm of x\i] {\nome};
+  }
+  \node[cella,fill=green!15!sfondo,minimum width=2.4cm] (vivi) at (6,-2.3) {Punto::vivi = 3};
+  \node[etichetta,below=0.05cm of vivi] {memoria statica: una sola copia};
+  \foreach \i in {1,2,3} \draw[freccia,dashed] (y\i.south) -- (vivi.north);
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+La classe \cc|Vettore| è lo scheletro di \textbf{ogni} classe che possiede memoria
+dinamica: costruttore che alloca, distruttore che libera, costruttore di copia e
+\cc|operator=| profondi, accesso controllato con eccezioni. I messaggi tra
+parentesi quadre mostrano quale metodo speciale viene chiamato e quando.
+
+\codice{codice/m04/pattern.cpp}
+\uscita{codice/m04/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item \cc|Vettore b = a;| stampa \texttt{[costruttore di copia]}, non
+        \texttt{[operator=]}: \cc|b| sta nascendo.
+  \item Dopo \cc|b.set(0, 99)|, \cc|a| è rimasto \texttt{10 20 30}: la copia è
+        profonda.
+  \item \cc|c = a;| stampa \texttt{[operator=]}: \cc|c| esisteva già, con 5 elementi.
+  \item I tre distruttori partono da soli alla fine del \cc|main|, in ordine inverso
+        di creazione, e ciascuno libera il \emph{suo} blocco: nessun doppio \cc|delete|.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: costruttore di default sparito]
+Appena scrivi un costruttore con parametri, il compilatore non genera più quello
+senza parametri. \cc|Classe x;|, \cc|Classe v[10];| e \cc|new Classe[n]| smettono
+di compilare (\emph{no matching function for call to 'Classe::Classe()'}).
+Soluzione: aggiungi \cc|Classe()| o dai valori di default ai parametri.
+\end{trappola}
+
+\begin{trappola}[: la copia superficiale]
+Classe con un attributo puntatore e \cc|new| nel costruttore, ma senza costruttore
+di copia e \cc|operator=|: ogni copia condivide il blocco. Il sintomo tipico è un
+crash \textbf{alla fine del programma} (doppio \cc|delete|) o dopo aver passato
+l'oggetto \textbf{per valore} a una funzione. Regola dei Tre, sempre.
+\end{trappola}
+
+\begin{trappola}[: inizializzazione o assegnamento?]
+\cc|Classe b = a;| è una \textbf{inizializzazione} (costruttore di copia), anche se
+c'è un \cc|=|. \cc|Classe b; b = a;| è un \textbf{assegnamento} (\cc|operator=|).
+Domanda classicissima nei quiz.
+\end{trappola}
+
+\begin{trappola}[: operator= senza controllo e senza delete]
+Senza \cc|if (this == &altro)|, l'istruzione \cc|a = a;| libera i dati e poi prova a
+copiarli dal blocco appena liberato. Senza \cc|delete[]| del vecchio blocco, ogni
+assegnamento produce un memory leak.
+\end{trappola}
+
+\begin{trappola}[: parametro del costruttore di copia per valore]
+\cc|Classe(Classe altro)| non compila: per creare \cc|altro| servirebbe il
+costruttore di copia stesso (ricorsione infinita). Il parametro è sempre
+\cc|const Classe&|.
+\end{trappola}
+
+\begin{trappola}[: attributo static non definito]
+\cc|static int vivi;| dentro la classe è solo una \emph{dichiarazione}. Senza
+\cc|int Punto::vivi = 0;| fuori dalla classe, il linker dà \emph{undefined reference}.
+\end{trappola}
+
+\begin{trappola}[: nomi già usati dal sistema]
+Su MinGW un metodo chiamato \cc|alloca()| non compila con un errore
+incomprensibile (\emph{expected identifier before '(' token}): \cc|alloca| è già il
+nome di una funzione di sistema, definita come macro. È successo scrivendo
+l'Esercizio~4.9. Se un errore non ha senso su un nome semplice, prova a rinominarlo.
+\end{trappola}
+
+\begin{consiglio}[: stampare nei costruttori e nei distruttori]
+Quando non capisci cosa succede, aggiungi temporaneamente un \cc|cout| in
+costruttore, costruttore di copia, \cc|operator=| e distruttore, come nel pattern:
+vedrai esattamente quando nasce, si copia e muore ogni oggetto.
+\end{consiglio}
+
+\begin{consiglio}[: passare gli oggetti per const reference]
+\cc|void f(Vettore v)| fa una copia profonda a ogni chiamata (lento, e un disastro se
+manca il costruttore di copia). \cc|void f(const Vettore& v)| non copia niente.
+Per valore solo se la funzione ha davvero bisogno di una copia da modificare.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Quale affermazione sul costruttore è \textbf{falsa}?}
+  \item ha lo stesso nome della classe
+  \item restituisce \texttt{void}
+  \item può essere sovraccaricato (overloading)
+  \item viene eseguito automaticamente alla creazione dell'oggetto
+\end{quiz}
+
+\begin{quiz}{Una classe ha solo il costruttore \texttt{A(int x)}. Quale istruzione \textbf{non} compila?}
+  \item \texttt{A a(5);}
+  \item \texttt{A* p = new A(3);}
+  \item \texttt{A v[10];}
+  \item \texttt{A b = A(2);}
+\end{quiz}
+
+\begin{quiz}{Quante volte e con quanti parametri si può definire il distruttore di una classe?}
+  \item una volta sola, senza parametri
+  \item una volta per ogni costruttore
+  \item più volte, purché con parametri diversi
+  \item una volta sola, con un parametro di tipo \texttt{int}
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{Vettore a(3);} quale istruzione chiama il \textbf{costruttore di copia}?}
+  \item \texttt{Vettore b; b = a;}
+  \item \texttt{Vettore b = a;}
+  \item \texttt{a = a;}
+  \item \texttt{Vettore* p = \&a;}
+\end{quiz}
+
+\begin{quiz}{Perché il parametro del costruttore di copia è \texttt{const Classe\&} e non \texttt{Classe}?}
+  \item per motivi di velocità, ma funzionerebbe anche per valore
+  \item perché il passaggio per valore richiederebbe a sua volta una copia, causando una ricorsione infinita
+  \item perché i costruttori non possono ricevere oggetti
+  \item perché le reference sono obbligatorie in tutti i costruttori
+\end{quiz}
+
+\begin{quiz}{Cosa contiene \texttt{this} dentro un metodo?}
+  \item una copia dell'oggetto su cui il metodo è stato chiamato
+  \item l'indirizzo dell'oggetto su cui il metodo è stato chiamato
+  \item l'indirizzo della classe
+  \item l'indirizzo del metodo stesso
+\end{quiz}
+
+\begin{quiz}{Un attributo dichiarato \texttt{static} in una classe:}
+  \item è condiviso da tutti gli oggetti della classe
+  \item non può essere modificato
+  \item viene allocato nello stack di ogni oggetto
+  \item è accessibile solo dai metodi \texttt{const}
+\end{quiz}
+
+\begin{quiz}{Cosa afferma la Regola dei Tre?}
+  \item una classe deve avere al massimo tre costruttori
+  \item se serve uno tra distruttore, costruttore di copia e operatore di assegnamento, servono tutti e tre
+  \item ogni classe deve avere almeno tre metodi pubblici
+  \item un oggetto può essere copiato al massimo tre volte
+\end{quiz}
+
+\begin{quiz}{Una classe ha un attributo \texttt{int* dati} allocato con \texttt{new[]} nel costruttore e un distruttore che fa \texttt{delete[]}, ma \textbf{nessun} costruttore di copia. Cosa succede con \texttt{\{ Classe a; Classe b = a; \}}?}
+  \item niente di strano: il compilatore fa una copia profonda
+  \item \texttt{a} e \texttt{b} condividono il blocco e alla fine il blocco viene liberato due volte
+  \item errore di compilazione
+  \item \texttt{b} riceve un puntatore nullo
+\end{quiz}
+
+\begin{quiz}{Perché \texttt{operator=} controlla \texttt{if (this == \&altro)}?}
+  \item per evitare di copiare oggetti di classi diverse
+  \item perché nell'autoassegnamento il \texttt{delete} iniziale distruggerebbe i dati da copiare
+  \item per velocizzare la copia di oggetti uguali
+  \item perché il compilatore lo richiede
+\end{quiz}
+
+\begin{quiz}{Un costruttore lancia un'eccezione con \texttt{throw}. Cosa succede all'oggetto?}
+  \item viene creato con gli attributi a zero
+  \item viene creato normalmente, l'eccezione è solo un avviso
+  \item non viene creato
+  \item il programma termina sempre
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. Il costruttore non ha \emph{nessun} tipo di ritorno, nemmeno \cc|void|.
+  \item \textbf{C}. L'array richiede il costruttore senza parametri, che non esiste più.
+  \item \textbf{A}. Un solo distruttore, senza parametri e senza tipo di ritorno.
+  \item \textbf{B}. \cc|b| nasce da \cc|a|. La A e la C sono assegnamenti
+        (\cc|operator=|), la D copia solo un indirizzo.
+  \item \textbf{B}. È proprio un divieto, non una questione di velocità.
+  \item \textbf{B}. \cc|this| è un puntatore; \cc|*this| è l'oggetto.
+  \item \textbf{A}. Esiste in un'unica copia, nella memoria statica, anche senza oggetti.
+  \item \textbf{B}. I tre metodi gestiscono la stessa risorsa: o servono tutti o nessuno.
+  \item \textbf{B}. La copia automatica è superficiale: doppio \cc|delete[]| alla
+        chiusura del blocco. Compila senza problemi (C è falsa).
+  \item \textbf{B}. \cc|a = a|: \cc|delete[] dati| cancellerebbe proprio i dati di \cc|altro|.
+  \item \textbf{C}. Un oggetto la cui costruzione fallisce non esiste: è il modo pulito
+        per impedire la nascita di oggetti non validi. Il programma termina solo se
+        nessuno cattura l'eccezione.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: playlist musicale]
+Si vuole gestire una raccolta di playlist. Ogni playlist ha un nome e contiene un
+numero variabile di brani, memorizzati in un array dinamico (niente STL). Ogni brano
+ha titolo, artista e durata in secondi.
+\end{traccia}
+
+\begin{step}{la classe Brano}
+Scrivi \cc|Brano| con titolo, artista e durata. Prevedi: un costruttore di default
+(\q{?}, \q{?}, 0), un costruttore completo con \textbf{lista di inizializzazione}
+(durata negativa $\to$ 0) e un costruttore con solo il titolo che
+\textbf{delega} al completo con artista \q{Sconosciuto} e durata 180. Getter
+\cc|const| e \cc|stampa()| nel formato \texttt{Titolo - Artista (m:ss)}.\\[0.3em]
+\textbf{Concetto nuovo:} overloading dei costruttori, lista di inizializzazione, delega.
+\end{step}
+
+\begin{step}{la classe Playlist}
+\cc|Playlist| ha un nome e un array dinamico di \cc|Brano| (\cc|Brano* brani|), con
+\cc|n| brani presenti e capacità \cc|cap|. Il costruttore riceve il nome e alloca
+spazio per 2 brani; il \textbf{distruttore} libera l'array. Fai stampare a entrambi
+un messaggio.\\[0.3em]
+\textbf{Concetto nuovo:} distruttore, risorsa acquisita nel costruttore e
+rilasciata nel distruttore.
+\end{step}
+
+\begin{step}{aggiungere brani}
+Aggiungi \cc|void aggiungi(const Brano& b)|, che raddoppia la capacità quando
+serve tramite un metodo \textbf{privato} \cc|cresci()|, e \cc|int durataTotale() const|.\\[0.3em]
+\textbf{Concetto nuovo:} riallocazione dentro una classe, parametro \cc|const&|.
+\end{step}
+
+\begin{step}{copiare una playlist}
+Scrivi il \textbf{costruttore di copia} profondo: la copia ha come nome quello
+originale seguito da \q{ (copia)} e un array tutto suo. Nel \cc|main| crea una
+copia dentro un blocco \cc|{ }|, aggiungile un brano e verifica che l'originale
+non cambi e che la copia venga distrutta alla fine del blocco.\\[0.3em]
+\textbf{Concetto nuovo:} costruttore di copia, copia profonda.
+\end{step}
+
+\begin{step}{assegnare una playlist}
+Scrivi \cc|operator=| (che copia i brani ma \textbf{non} il nome), con controllo di
+autoassegnamento. Prova \cc|r = p;| e \cc|r = r;|.\\[0.3em]
+\textbf{Concetto nuovo:} operatore di assegnamento, \cc|this|, Regola dei Tre.
+\end{step}
+
+\begin{step}{contatore ed eccezioni}
+Aggiungi un attributo \cc|static int vive| che conta le playlist esistenti
+(aggiornato da costruttori e distruttore) e un metodo statico \cc|quanteVive()|.
+Aggiungi \cc|Brano& at(int i)|, che lancia \cc|out_of_range| se l'indice non è
+valido, e gestisci l'errore nel \cc|main| con \cc|try|/\cc|catch|.\\[0.3em]
+\textbf{Concetto nuovo:} membri \cc|static|, \cc|throw|, \cc|try|, \cc|catch|.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m04/lab.cpp}
+\uscita{codice/m04/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|new Brano[cap]| crea \cc|cap| brani con il costruttore di
+        \textbf{default}: senza \cc|Brano()| non compilerebbe.
+  \item Nello step 4 il messaggio \texttt{distrutta \q{Classici (copia)}} compare
+        \emph{alla chiusura del blocco}, prima dello step 5: è il distruttore che
+        parte da solo.
+  \item Alla fine del \cc|main| il contatore torna a 0: ogni costruttore (anche
+        quello di copia) incrementa, ogni distruttore decrementa.
+  \item In \cc|operator=| si alloca \emph{prima} e si libera \emph{dopo}: se la
+        copia fallisse, la playlist resterebbe intatta.
+  \item \cc|to_string(i)| (da \cc|<string>|) converte un numero in stringa per il
+        messaggio dell'eccezione.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cosa sono costruttore e distruttore?]
+Sono metodi speciali invocati automaticamente. Il costruttore viene eseguito
+quando un oggetto viene creato: ha lo stesso nome della classe, nessun tipo di
+ritorno, può avere parametri e può essere sovraccaricato; serve a portare
+l'oggetto in uno stato iniziale valido. Il distruttore viene eseguito quando
+l'oggetto viene distrutto (fine del blocco, \cc|delete|, fine del programma): si
+chiama come la classe preceduto da \texttt{\textasciitilde}, non ha parametri né
+tipo di ritorno ed è unico. Serve a rilasciare le risorse acquisite dall'oggetto,
+tipicamente la memoria dinamica allocata nel costruttore.
+\end{orale}
+
+\begin{orale}[D2. Differenza tra copia superficiale e copia profonda?]
+Se una classe non definisce il costruttore di copia, il compilatore copia gli
+attributi membro a membro. Se un attributo è un puntatore viene copiato
+l'indirizzo, e i due oggetti condividono lo stesso blocco di heap: è la copia
+superficiale. Le conseguenze sono modifiche incrociate, dangling pointer e doppia
+deallocazione da parte dei distruttori. La copia profonda alloca invece per la
+copia un nuovo blocco e vi copia il contenuto, rendendo i due oggetti indipendenti;
+si ottiene definendo il costruttore di copia e l'operatore di assegnamento.
+\end{orale}
+
+\begin{orale}[D3. Quando viene chiamato il costruttore di copia e quando operator=?]
+Il costruttore di copia viene chiamato quando un oggetto \textbf{nasce} come copia di
+un altro: inizializzazione (\cc|Classe b = a;| o \cc|Classe b(a);|), passaggio di
+un oggetto per valore e restituzione per valore. L'operatore di assegnamento viene
+chiamato quando a un oggetto \textbf{già esistente} se ne assegna un altro
+(\cc|b = a;|). Per questo \cc|operator=| deve prima liberare le risorse che
+l'oggetto possiede già e deve gestire l'autoassegnamento.
+\end{orale}
+
+\begin{orale}[D4. Cos'è la Regola dei Tre?]
+Afferma che se una classe ha bisogno di definire esplicitamente uno tra
+distruttore, costruttore di copia e operatore di assegnamento, allora deve
+definirli tutti e tre. Il motivo è che la necessità nasce dalla gestione di una
+risorsa, tipicamente memoria dinamica: il distruttore la rilascia, e le versioni
+generate dal compilatore di copia e assegnamento la condividerebbero, causando
+copie superficiali e doppie deallocazioni.
+\end{orale}
+
+\begin{orale}[D5. Cos'è il puntatore this e quando si usa?]
+\cc|this| è un puntatore implicito, disponibile in ogni metodo non statico, che
+contiene l'indirizzo dell'oggetto su cui il metodo è stato invocato; è il modo in
+cui un unico codice dei metodi lavora sui dati dell'oggetto giusto. Si usa per
+distinguere gli attributi dai parametri con lo stesso nome (\cc|this->x = x|), per
+restituire l'oggetto stesso (\cc|return *this|, come in \cc|operator=|) e per
+verificare l'autoassegnamento (\cc|this == &altro|). I metodi statici non hanno
+\cc|this|.
+\end{orale}
+
+\begin{orale}[D6. Come funzionano le eccezioni in C++?]
+Quando una funzione incontra una situazione che non può gestire, la segnala con
+\cc|throw|, lanciando un oggetto che descrive l'errore. L'esecuzione si interrompe
+e risale le chiamate finché non trova un blocco \cc|try| con un \cc|catch| adatto
+al tipo lanciato, che gestisce l'errore. La libreria \cc|<stdexcept>| offre classi
+pronte come \cc|invalid_argument| e \cc|out_of_range|, tutte derivate da
+\cc|exception|, il cui metodo \cc|what()| restituisce il messaggio. Si catturano
+per reference costante. Un costruttore che lancia un'eccezione impedisce la
+creazione dell'oggetto.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Rettangolo flessibile}{facile}
+Classe \cc|Rettangolo| con un \textbf{unico} costruttore a parametri di default
+(\cc|Rettangolo(double b = 1, double h = 1)|) che usa la lista di inizializzazione e
+corregge i valori non positivi. Metodi \cc|const|: \cc|area|, \cc|perimetro|,
+\cc|diagonale|, \cc|isQuadrato|. Crea un \cc|const Rettangolo| e verifica quali
+metodi puoi chiamare. (È l'esercizio delle slide del corso.)
+\end{esercizio}
+
+\begin{esercizio}{Chi nasce e chi muore}{facile}
+Scrivi una classe \cc|Traccia| il cui costruttore stampa \texttt{nasce <nome>} e il
+cui distruttore stampa \texttt{muore <nome>}. Creane una globale, alcune locali nel
+\cc|main| e in un blocco, una in una funzione e una con \cc|new|. \textbf{Prima} di
+eseguire, scrivi su un foglio l'ordine che ti aspetti.
+\end{esercizio}
+
+\begin{esercizio}{Contatore di istanze}{facile}
+Classe \cc|Punto| con due attributi \cc|static|: \cc|vivi| (oggetti esistenti) e
+\cc|creati| (oggetti mai creati). Aggiornali in costruttore, costruttore di copia e
+distruttore. Verifica cosa succede passando un \cc|Punto| per valore a una funzione.
+\end{esercizio}
+
+\begin{esercizio}{Concatenare con this}{facile}
+Classe \cc|Punto| il cui costruttore ha parametri con lo stesso nome degli attributi
+(usa \cc|this->|). Aggiungi \cc|setX|, \cc|setY| e \cc|sposta| che restituiscono
+\cc|Punto&| per scrivere \cc|p.setX(3).setY(4).sposta(1, 1);|, e un metodo
+\cc|stessoOggetto(const Punto&)| che confronta gli indirizzi.
+\end{esercizio}
+
+\begin{esercizio}{Punti e rettangoli}{medio}
+Classe \cc|Punto2D| e classe \cc|Rettangolo| con due attributi \cc|Punto2D|
+(\cc|topLeft| e \cc|bottomRight|) inizializzati nella lista. Metodi
+\cc|contiene(Punto2D)| e \cc|contiene(const Rettangolo&)| (overloading). Deve
+compilare \cc|Rettangolo B({10, 20}, {50, 10});|. (Esercizio delle slide.)
+\end{esercizio}
+
+\begin{esercizio}{Orario con eccezioni}{medio}
+Classe \cc|Tempo| con ore, minuti e secondi i cui setter lanciano
+\cc|invalid_argument| per valori fuori intervallo, e un costruttore che usa i setter.
+Nel \cc|main| cattura un errore di un setter, un errore del costruttore (con
+\cc|catch (const exception&)|) e un \cc|throw 42;| con \cc|catch (...)|.
+\end{esercizio}
+
+\begin{esercizio}{Vedere la copia superficiale}{medio}
+Scrivi una classe con un attributo \cc|int*| allocato nel costruttore e
+\textbf{nessun} costruttore di copia: copia un oggetto, modifica la copia e stampa
+l'originale. Poi scrivi una seconda classe con la Regola dei Tre e ripeti la prova.
+(Non dare un distruttore alla prima classe, altrimenti il programma farebbe un
+doppio \cc|delete|: libera la memoria a mano, una volta sola.)
+\end{esercizio}
+
+\begin{esercizio}{Stringa fatta in casa}{medio}
+Classe \cc|MiaStringa| che memorizza il testo in un \cc|char*| dinamico terminato da
+\cc|'\0'|. Costruttore da \cc|const char*|, Regola dei Tre, \cc|size()|,
+\cc|concatena(const MiaStringa&)| che restituisce una nuova stringa,
+\cc|maiuscolo()| e \cc|stampa()|. Non usare \cc|string| né \cc|<cstring>|.
+\end{esercizio}
+
+\begin{esercizio}{Classe Matrice}{difficile}
+Classe \cc|Matrice| con \cc|int** m|: costruttore (lancia \cc|invalid_argument| per
+dimensioni non positive), distruttore, costruttore di copia, \cc|operator=| che
+funziona anche tra matrici di dimensioni diverse, \cc|get|/\cc|set| che lanciano
+\cc|out_of_range| e \cc|somma(const Matrice&)| che restituisce una nuova matrice
+(o lancia se le dimensioni sono diverse).
+\end{esercizio}
+
+\begin{esercizio}{Pila di interi}{difficile}
+Classe \cc|Pila| su array dinamico con \cc|push| (raddoppia se piena), \cc|pop| e
+\cc|top| (lanciano \cc|underflow_error| se vuota), \cc|vuota|, \cc|size| e Regola
+dei Tre. Verifica che svuotare una pila non svuoti la sua copia. È un'anteprima del
+Modulo 12.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m04/}.

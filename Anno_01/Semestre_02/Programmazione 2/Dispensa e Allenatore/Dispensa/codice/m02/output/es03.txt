@@ -1,0 +1,4 @@
+italiano: Ciao, Mario!
+inglese: Hello, Mario!
+Nel blocco: Hello, Anna!
+Fuori: Ciao, Anna!

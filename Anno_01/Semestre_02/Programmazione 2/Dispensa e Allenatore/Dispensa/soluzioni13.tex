@@ -1,0 +1,48 @@
+% Soluzioni degli esercizi del Modulo 13
+\chapter{Soluzioni -- Modulo 13 -- Alberi Binari e Alberi Binari di Ricerca (BST)}
+
+\textbf{Esercizio 13.1}
+\codice{codice/m13/es01.cpp}
+\uscita{codice/m13/output/es01.txt}
+
+\textbf{Esercizio 13.2} --- Lo schema ``caso base sull'albero vuoto, poi io + sinistra +
+destra'' risolve quasi tutti i problemi di conteggio.
+\codice{codice/m13/es02.cpp}
+\uscita{codice/m13/output/es02.txt}
+
+\textbf{Esercizio 13.3}
+\codice{codice/m13/es03.cpp}
+\uscita{codice/m13/output/es03.txt}
+
+\textbf{Esercizio 13.4}
+\codice{codice/m13/es04.cpp}
+\uscita{codice/m13/output/es04.txt}
+
+\textbf{Esercizio 13.5} --- \cc|Nodo** p| è un puntatore al \emph{posto} in cui andrà
+il nuovo nodo (la radice o un campo \cc|sx|/\cc|dx|): così l'inserimento iterativo non ha
+bisogno di casi speciali. Il \cc|distruggi| usa un ciclo sul ramo destro per non
+annidare 1000 chiamate.
+\codice{codice/m13/es05.cpp}
+\uscita{codice/m13/output/es05.txt}
+
+\textbf{Esercizio 13.6}
+\codice{codice/m13/es06.cpp}
+\uscita{codice/m13/output/es06.txt}
+
+\textbf{Esercizio 13.7}
+\codice{codice/m13/es07.cpp}
+\uscita{codice/m13/output/es07.txt}
+
+\textbf{Esercizio 13.8} --- \cc|LONG_MIN| e \cc|LONG_MAX| (da \cc|<climits>|) fanno da
+``nessun limite'' iniziale.
+\codice{codice/m13/es08.cpp}
+\uscita{codice/m13/output/es08.txt}
+
+\textbf{Esercizio 13.9}
+\codice{codice/m13/es09.cpp}
+\uscita{codice/m13/output/es09.txt}
+
+\textbf{Esercizio 13.10} --- \cc|to_string| converte il valore in testo, così si può usare
+\q{-} quando il successore o il predecessore non esistono.
+\codice{codice/m13/es10.cpp}
+\uscita{codice/m13/output/es10.txt}

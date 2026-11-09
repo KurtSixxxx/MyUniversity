@@ -1,0 +1,3 @@
+controllo ingenuo: BST
+controllo giusto:  non BST
+con 7 al posto di 12: BST

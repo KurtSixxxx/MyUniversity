@@ -1,0 +1,5 @@
+Numero tra 1 e 10: non e' un numero
+Numero tra 1 e 10: fuori intervallo
+Numero tra 1 e 10: fuori intervallo
+Numero tra 1 e 10: (valido dopo 4 tentativi)
+Hai scelto 7

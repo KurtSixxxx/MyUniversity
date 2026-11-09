@@ -1,0 +1,5 @@
+Arrivano: Anna, Bruno, Carla, Dario
+In cima alla pila: Dario, in testa alla coda: Anna
+Escono dalla PILA (LIFO): Dario Carla Bruno Anna 
+Escono dalla CODA (FIFO): Anna Bruno Carla Dario 
+Errore: pop su pila vuota

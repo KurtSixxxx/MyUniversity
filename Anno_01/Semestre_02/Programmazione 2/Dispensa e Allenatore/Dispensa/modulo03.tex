@@ -1,0 +1,836 @@
+% =====================================================================
+\chapter{Modulo 3 -- Array, Puntatori, Reference, Stack e Heap}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Questo è il modulo più importante di tutto il corso. Liste, pile, code, alberi,
+costruttori di copia, distruttori: tutto quello che verrà dopo si basa su
+puntatori e memoria dinamica. Se qui qualcosa non ti è chiaro, i moduli
+successivi sembreranno magia nera. Prenditi il tempo che serve, rileggi, e
+soprattutto \textbf{disegna} la memoria su un foglio ogni volta che leggi del codice.
+
+\subsection*{La memoria è una via piena di case}
+
+\begin{analogia}[: indirizzi civici]
+Immagina la RAM come una via lunghissima di case tutte uguali, una per ogni
+\textbf{byte}. Ogni casa ha un \textbf{numero civico}: è il suo
+\textbf{indirizzo}. Una variabile è una casa (o un gruppo di case adiacenti:
+un \cc|int| ne occupa 4, un \cc|double| 8) con un \textbf{nome} sul
+campanello e un \textbf{valore} dentro.
+
+Un \textbf{puntatore} è un foglietto con scritto sopra un numero civico. Non
+contiene il valore: ti dice \emph{dove andare} a prenderlo. E anche il
+foglietto, che è a sua volta una variabile, sta in una casa con il suo numero civico.
+\end{analogia}
+
+Ogni variabile ha quindi tre caratteristiche: il \textbf{nome} (che usi nel
+codice), il \textbf{tipo} (che dice quanto spazio occupa e come interpretare i
+bit) e l'\textbf{indirizzo} (dove si trova in memoria). Finora hai usato solo
+le prime due; da adesso userai anche la terza.
+
+\subsection*{Puntatori}
+
+\begin{definizione}[: puntatore]
+Un \textbf{puntatore} è una variabile che contiene l'\textbf{indirizzo di
+memoria} di un'altra variabile. Il tipo del puntatore dice che tipo di
+variabile si trova a quell'indirizzo. \cc|int* p;| si legge ``\cc|p| è un
+puntatore a \cc|int|''.
+\end{definizione}
+
+I due operatori fondamentali sono uno l'inverso dell'altro:
+\begin{itemize}
+  \item \cc|&n| (operatore \textbf{indirizzo}): ``dammi il numero civico di \cc|n|'';
+  \item \cc|*p| (operatore di \textbf{dereferenziazione} o \emph{indirezione}):
+        ``vai al numero civico scritto in \cc|p| e apri la porta''. \cc|*p| non è
+        una copia: è \emph{proprio} la variabile che sta lì, e puoi sia leggerla
+        sia modificarla.
+\end{itemize}
+
+Seguiamo un esempio riga per riga:
+\begin{lstlisting}
+int n = 75;      // una casa chiamata n, con dentro 75
+int* p = &n;     // un foglietto p, con scritto il civico di n
+*p = 100;        // vai al civico scritto in p e metti 100: ora n vale 100
+cout << p;       // stampa il civico (in esadecimale), es. 0x61fe14
+cout << *p;      // stampa 100
+cout << &p;      // stampa il civico del FOGLIETTO stesso: un altro numero
+\end{lstlisting}
+
+Altre cose da sapere:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Scrittura} & \textbf{Nome} & \textbf{Significato} \\
+\midrule
+\cc|p->campo|  & freccia               & abbreviazione di \cc|(*p).campo| (struct e oggetti) \\
+\cc|nullptr|   & puntatore nullo       & ``foglietto bianco'': non punta a niente (in C: \cc|NULL|) \\
+\cc|int** pp|  & puntatore a puntatore & foglietto con scritto dov'è un altro foglietto \\
+\cc|p == q|    & confronto             & vero se puntano allo stesso indirizzo \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Un puntatore appena dichiarato e non inizializzato contiene un indirizzo
+\textbf{a caso}: usarlo significa scrivere in una casa a caso della via. Per
+questo si inizializza sempre, al limite con \cc|nullptr|.
+
+\subsection*{Reference (riferimenti)}
+
+\begin{definizione}[: reference]
+Una \textbf{reference} è un \textbf{alias}, cioè un secondo nome, per una
+variabile che esiste già. Dopo \cc|int& r = n;|, \cc|r| e \cc|n| sono
+\textbf{la stessa variabile}: stessa casa, stesso indirizzo, due nomi sul
+campanello. Tutto ciò che fai su \cc|r| lo fai su \cc|n|.
+\end{definizione}
+
+\begin{analogia}[: il soprannome]
+A casa Francesco lo chiamano ``Franci''. Se Franci si taglia i capelli, anche Francesco
+ha i capelli corti: non sono due persone, è la stessa persona con due nomi.
+Il soprannome si dà \textbf{alla nascita} (una reference va inizializzata
+subito) e resta attaccato a quella persona per sempre: non puoi decidere che da
+domani ``Franci'' indica tuo cugino.
+\end{analogia}
+
+Attenzione a un punto che confonde molti: se scrivi \cc|r = y;| dopo
+\cc|int& r = n;|, \textbf{non} stai spostando \cc|r| su \cc|y|. Stai copiando
+il valore di \cc|y| dentro \cc|n|, perché \cc|r| \emph{è} \cc|n|.
+
+\begin{center}\small
+\begin{tabular}{lll}
+\toprule
+ & \textbf{Puntatore} \cc|int* p| & \textbf{Reference} \cc|int& r| \\
+\midrule
+Inizializzazione & facoltativa, può essere \cc|nullptr| & \textbf{obbligatoria} \\
+Può cambiare bersaglio? & sì, \cc|p = &altra;| & \textbf{no}, è legata per sempre \\
+Come si usa & serve \cc|*p| per il valore & come una variabile normale \\
+Può essere nullo? & sì & no \\
+Ha un indirizzo proprio? & sì (è una variabile) & no (ha quello della variabile originale) \\
+\bottomrule
+\end{tabular}
+\end{center}
+Dietro le quinte il compilatore realizza una reference come un puntatore
+costante (\cc|int* const|) che dereferenzia automaticamente ogni volta che la
+usi. È per questo che si dice che le reference sono ``puntatori con la maschera''.
+
+\textbf{I tre significati di \texttt{\&}} (e i due di \texttt{*}).
+Lo stesso simbolo cambia significato a seconda di dove si trova:
+\begin{enumerate}
+  \item davanti a una variabile in un'espressione, \cc|&n|: ``indirizzo di'';
+  \item dopo un tipo in una dichiarazione, \cc|int& r = n;|: ``reference'';
+  \item dopo un tipo nei parametri di una funzione, \cc|void f(int& a)|:
+        ``passaggio per riferimento''.
+\end{enumerate}
+L'asterisco: in una dichiarazione (\cc|int* p|) crea un puntatore, in
+un'espressione (\cc|*p = 5|) lo dereferenzia.
+
+\subsection*{Passaggio dei parametri: valore, puntatore, reference}
+
+Quando chiami una funzione, cosa riceve esattamente?
+\begin{itemize}
+  \item \textbf{Per valore}, \cc|void f(int a)|: la funzione riceve una
+        \textbf{fotocopia} del valore. Può scarabocchiarla quanto vuole:
+        l'originale del chiamante resta intatto. È il comportamento di default.
+  \item \textbf{Per puntatore}, \cc|void f(int* a)|, chiamata con \cc|f(&x)|:
+        la funzione riceve il \emph{numero civico} di \cc|x| e, con \cc|*a|,
+        modifica l'originale. È lo stile del C.
+  \item \textbf{Per reference}, \cc|void f(int& a)|, chiamata con \cc|f(x)|:
+        la funzione riceve l'originale con un altro nome. Modifica \cc|x| senza
+        asterischi e senza \cc|&| nella chiamata. È lo stile del C++.
+  \item \textbf{Per reference costante}, \cc|void f(const string& s)|: niente
+        fotocopia (veloce, importante per oggetti grandi) e nessuna modifica
+        possibile. \textbf{È il modo standard di passare oggetti in sola lettura.}
+\end{itemize}
+
+Le reference sono anche il modo più comodo per far ``restituire'' a una
+funzione \textbf{più di un valore}: \cc|void minMax(const double* v, int n, double& mn, double& mx)|
+scrive i risultati direttamente nelle variabili del chiamante (è lo Step 1 del laboratorio).
+
+\subsection*{Puntatori e const}
+
+Con i puntatori, \cc|const| può bloccare due cose diverse: il valore puntato o
+l'indirizzo contenuto nel puntatore. Il trucco è leggere la dichiarazione
+\textbf{da destra a sinistra}:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Dichiarazione} & \textbf{Si legge} & \textbf{Cosa è bloccato} \\
+\midrule
+\cc|const int* p| & p è un puntatore a int costante & il \textbf{valore} (\cc|*p = 5| vietato) \\
+\cc|int* const p| & p è un puntatore costante a int & l'\textbf{indirizzo} (\cc|p = &y| vietato) \\
+\cc|const int* const p| & p è costante e punta a int costante & entrambi \\
+\bottomrule
+\end{tabular}
+\end{center}
+Nei parametri si usa quasi sempre la prima forma: \cc|const int* v| significa
+``la funzione legge l'array ma promette di non modificarlo''.
+
+\subsection*{Array statici}
+
+Un array è una fila di variabili dello stesso tipo, \textbf{una attaccata
+all'altra} in memoria (contigue). È proprio questa contiguità a rendere
+possibile tutto il resto.
+\begin{itemize}
+  \item \cc|int eta[5];| riserva 5 \cc|int| contigui, con indici da \cc|0| a
+        \cc|4|. La dimensione deve essere una costante nota \textbf{al momento
+        della compilazione}.
+  \item Inizializzazione: \cc|int v[5] = {1, 2};| (gli altri valgono 0);
+        \cc|int v[100] = {0};| azzera tutto; con \cc|int v[] = {1, 2, 3};| la
+        dimensione la calcola il compilatore.
+  \item Il C++ \textbf{non controlla gli indici}: \cc|eta[12]| compila, ma va a
+        leggere o scrivere nella casa di qualcun altro (\emph{buffer overflow}).
+        Il programma può funzionare, dare risultati sbagliati o andare in crash:
+        è \textbf{comportamento indefinito}.
+  \item \cc|sizeof(v)| dà i byte dell'intero array (\cc|5 * 4 = 20|), e
+        \cc|sizeof(v) / sizeof(v[0])| il numero di elementi. Funziona
+        \textbf{solo} nel punto in cui l'array è dichiarato (vedi sotto).
+\end{itemize}
+
+\textbf{Array e puntatori sono parenti stretti.} Il nome di un array, usato in
+un'espressione, si trasforma (\emph{decade}) nell'indirizzo del suo primo
+elemento: \cc|v| è uguale a \cc|&v[0]|. Da qui discende
+l'\textbf{aritmetica dei puntatori}: se \cc|p| punta a un elemento, \cc|p + 1|
+punta all'elemento \emph{successivo}. Non al byte successivo: il compilatore
+conosce il tipo e salta della dimensione giusta (4 byte per un \cc|int|). Perciò
+\cc|v[i]| e \cc|*(v + i)| sono \textbf{esattamente la stessa cosa}, e la
+differenza tra due puntatori nello stesso array è la distanza in elementi.
+
+Quando passi un array a una funzione, \cc|void f(int v[])| e
+\cc|void f(int* v)| sono \textbf{identiche}: arriva solo l'indirizzo del primo
+elemento, e l'informazione sulla dimensione si perde. Dentro \cc|f|,
+\cc|sizeof(v)| restituisce la dimensione di un puntatore. Per questo si passa
+\textbf{sempre} anche \cc|n|. E per lo stesso motivo una funzione può modificare
+gli elementi dell'array del chiamante, a meno che il parametro non sia \cc|const|.
+
+\subsection*{Stack, heap e i tre tipi di memoria}
+
+Un programma in esecuzione divide la memoria in zone diverse, ognuna con regole
+diverse (il disegno nella prossima sezione mostra come sono disposte):
+
+\begin{center}
+\begin{tabular}{p{2.5cm}p{3.6cm}p{4.2cm}p{3.6cm}}
+\toprule
+\textbf{Memoria} & \textbf{Dove} & \textbf{Cosa ci va} & \textbf{Quanto vive} \\
+\midrule
+Statica & segmento dati & globali e \cc|static| & tutto il programma \\
+Automatica & \textbf{stack} & variabili locali e parametri & fino alla fine del blocco/funzione \\
+Dinamica & \textbf{heap} & ciò che crei con \cc|new| & finché non fai \cc|delete| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Lo \textbf{stack} (``pila'') funziona come una pila di piatti. Ogni volta che
+chiami una funzione, sopra la pila si aggiunge un piatto, il \textbf{record di
+attivazione}, con i suoi parametri e le sue variabili locali. Quando la
+funzione termina, il piatto viene tolto \emph{con tutto quello che c'era
+sopra}. È velocissimo e automatico, ma ha due limiti: le dimensioni devono essere
+note al momento della compilazione, e le variabili muoiono quando la funzione finisce.
+
+Lo \textbf{heap} (``mucchio'') è una zona grande dove puoi chiedere memoria
+\textbf{mentre il programma gira}, della dimensione che vuoi, e tenerla
+\textbf{finché vuoi}, anche dopo che la funzione che l'ha chiesta è terminata.
+In cambio, la responsabilità di restituirla è tua.
+
+\begin{analogia}[: la scrivania e il magazzino]
+Lo \textbf{stack} è la tua scrivania: piccola, velocissima, si pulisce da sola.
+Quando finisci un lavoro (una funzione termina), tutti i fogli di quel lavoro
+finiscono nel cestino.
+
+Lo \textbf{heap} è un magazzino enorme. Chiedi uno scaffale al magazziniere con
+\cc|new|, e lui ti dà un foglietto con il numero dello scaffale (un
+puntatore). Lo scaffale resta tuo finché \textbf{non lo restituisci} con
+\cc|delete|. Se perdi il foglietto senza averlo restituito, lo scaffale resta
+occupato per sempre e nessuno può più usarlo: è un \textbf{memory leak}
+(``perdita di memoria''). Se invece restituisci lo scaffale ma tieni il
+foglietto e ci torni, troverai roba di qualcun altro: è un \textbf{dangling
+pointer} (``puntatore penzolante'').
+\end{analogia}
+
+\subsection*{new e delete}
+
+\begin{lstlisting}
+int* pi = new int;          // un int nello heap (valore indefinito)
+int* pj = new int(7);       // un int nello heap che vale 7
+int* v  = new int[n];       // array di n int: n può essere deciso a run-time!
+delete pi;  delete pj;      // creati con new    -> delete
+delete[] v;                 // creato con new[]  -> delete[]
+\end{lstlisting}
+\begin{itemize}
+  \item \cc|new| alloca il blocco nello heap e restituisce il suo indirizzo, che
+        salvi in un puntatore. Il tipo lo controlla il compilatore: non serve il
+        cast come con \cc|malloc|.
+  \item \cc|delete| libera il blocco ma \textbf{non} cancella né azzera il
+        puntatore, che continua a contenere il vecchio indirizzo (ora non più
+        valido). Buona abitudine: \cc|p = nullptr;| subito dopo il \cc|delete|.
+  \item La regola da non sbagliare mai: \textbf{ogni} \cc|new| ha il suo
+        \cc|delete|, \textbf{ogni} \cc|new[]| ha il suo \cc|delete[]|.
+  \item \cc|delete| su \cc|nullptr| non fa nulla: è sempre sicuro.
+  \item Differenze con \cc|malloc|/\cc|free|: \cc|new| e \cc|delete| sono
+        \textbf{operatori}, non funzioni; non richiedono header né cast; e
+        soprattutto \cc|new| \textbf{chiama il costruttore} e \cc|delete|
+        \textbf{chiama il distruttore}, cosa fondamentale nel Modulo 4.
+\end{itemize}
+
+\begin{passopasso}[: far crescere un array dinamico]
+Un blocco di heap \textbf{non si può allungare}. Quando un array dinamico è
+pieno e serve spazio per un elemento in più:
+\begin{enumerate}
+  \item alloca un blocco nuovo e più grande (di solito il \textbf{doppio}):
+        \cc|double* nuovo = new double[2 * cap];|
+  \item copia i vecchi elementi uno per uno: \cc|nuovo[i] = v[i];|
+  \item libera il vecchio blocco: \cc|delete[] v;|
+  \item fai puntare \cc|v| al nuovo blocco: \cc|v = nuovo;| e aggiorna \cc|cap|;
+  \item ora c'è posto: inserisci il nuovo elemento.
+\end{enumerate}
+Se questo avviene dentro una funzione, il puntatore va passato \textbf{per
+reference} (\cc|double*& v|): la funzione deve cambiare \emph{il puntatore del
+chiamante}, non una sua copia.
+\end{passopasso}
+
+\textbf{Matrice dinamica} $r \times c$. Non esiste \cc|new int[r][c]| con
+entrambe le dimensioni variabili. Si costruisce in due livelli: un array di
+$r$ puntatori (\cc|int** m = new int*[r];|), poi per ogni riga un array di $c$
+interi (\cc|m[i] = new int[c];|). Si usa normalmente con \cc|m[i][j]|.
+Si dealloca \textbf{in ordine inverso}: prima ogni riga (\cc|delete[] m[i]|),
+poi l'array dei puntatori (\cc|delete[] m|). Al contrario, perderesti gli
+indirizzi delle righe prima di averle liberate.
+
+\textbf{Puntatori a funzione} (da riconoscere nei quiz). Anche una funzione sta
+in memoria e ha un indirizzo. \cc|int (*pf)(int);| dichiara un puntatore a una
+funzione che prende un \cc|int| e restituisce un \cc|int|. Si assegna con
+\cc|pf = f;| e si usa con \cc|pf(5)|. Le parentesi attorno a \cc|*pf| sono
+essenziali: senza, \cc|int *pf(int);| dichiara una \emph{funzione} che
+restituisce un \cc|int*|.
+
+\begin{inparole}
+\begin{itemize}
+  \item \cc|&x| = indirizzo di \cc|x|; \cc|*p| = la variabile all'indirizzo \cc|p|.
+  \item Un puntatore è un foglietto con un indirizzo; una reference è un
+        soprannome, attaccato per sempre alla stessa variabile.
+  \item Per valore = fotocopia; per reference = l'originale; per \cc|const&| =
+        l'originale in sola lettura.
+  \item \cc|v[i]| è \cc|*(v + i)|; un array passato a funzione perde la dimensione.
+  \item Stack: automatico, muore a fine funzione. Heap: \cc|new| / \cc|delete|,
+        vive finché non lo liberi.
+  \item \cc|new| $\leftrightarrow$ \cc|delete|, \cc|new[]| $\leftrightarrow$
+        \cc|delete[]|, poi \cc|= nullptr|.
+  \item Per modificare un puntatore dentro una funzione: \cc|tipo*&|.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Mappa della memoria di un processo.} Stack e heap crescono uno verso
+l'altro nello spazio libero.
+\begin{center}
+\begin{tikzpicture}
+  \def\w{5.8}
+  \draw[fill=black!8!sfondo]   (0,0) rectangle (\w,1)   node[midway] {\textbf{Codice} (istruzioni)};
+  \draw[fill=green!12!sfondo]  (0,1) rectangle (\w,2)   node[midway] {\textbf{Dati statici} (globali, \texttt{static})};
+  \draw[fill=heapcol]   (0,2) rectangle (\w,3.4) node[midway] {\textbf{Heap} (\texttt{new})};
+  \draw[fill=sfondo,dashed] (0,3.4) rectangle (\w,4.6) node[midway,etichetta] {spazio libero};
+  \draw[fill=stackcol]  (0,4.6) rectangle (\w,6) node[midway] {\textbf{Stack} (locali)};
+  \draw[freccia] (\w+0.3,3.0) -- node[right,etichetta]{cresce verso l'alto} (\w+0.3,3.9);
+  \draw[freccia] (\w+0.3,5.0) -- node[right,etichetta]{cresce verso il basso} (\w+0.3,4.1);
+  \node[etichetta,anchor=east] at (-0.2,0.1) {indirizzi bassi};
+  \node[etichetta,anchor=east] at (-0.2,5.9) {indirizzi alti};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Puntatore e reference.} Dopo \cc|int n = 100; int* p = &n; int& r = n;|
+(indirizzi inventati per l'esempio):
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (n) at (0,0) {100};
+  \node[etichetta,below=0.05cm of n] {indirizzo 0x1000};
+  \node[font=\small\bfseries,above=0.05cm of n] (nl) {n \quad r};
+  \node[cella,fill=stackcol] (p) at (5,0) {0x1000};
+  \node[etichetta,below=0.05cm of p] {indirizzo 0x2000};
+  \node[font=\small\bfseries,above=0.05cm of p] {p};
+  \draw[freccia] (p.west) -- node[above,etichetta]{*p arriva qui} (n.east);
+  \node[text width=6cm,font=\small,anchor=west] at (7,0) {%
+    \texttt{r} non ha una casella sua: è un \textbf{secondo nome} sulla stessa
+    casella di \texttt{n}. \texttt{p} invece è una variabile vera, con il proprio
+    indirizzo, che \emph{contiene} un indirizzo.};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Valore, puntatore, reference: cosa riceve la funzione.} Chiamata con
+\cc|x = 1| nel \cc|main|.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol] (x) at (0,0) {1};
+  \node[font=\small\bfseries,above=0.05cm of x] {x};
+  \node[etichetta,left=0.2cm of x] {\texttt{main}};
+  % valore
+  \node[cella,fill=heapcol] (a1) at (4.2,1.4) {1};
+  \node[font=\small\bfseries,above=0.05cm of a1] {a};
+  \node[etichetta,right=0.2cm of a1,text width=4.6cm] {\texttt{f(int a)}: una \textbf{copia}; cambiarla non tocca \texttt{x}};
+  \draw[freccia,dashed] (x.north east) -- node[above,etichetta,sloped]{copia} (a1.west);
+  % puntatore
+  \node[cella,fill=heapcol] (a2) at (4.2,0) {\&x};
+  \node[font=\small\bfseries,above=0.05cm of a2] {a};
+  \node[etichetta,right=0.2cm of a2,text width=4.6cm] {\texttt{f(int* a)}: l'\textbf{indirizzo}; \texttt{*a} è \texttt{x}};
+  \draw[freccia] (a2.west) -- (x.east);
+  % reference
+  \node[etichetta,text width=4.6cm] (a3) at (6.75,-1.4) {\texttt{f(int\& a)}: nessuna casella nuova, \texttt{a} è un \textbf{altro nome} di \texttt{x}};
+  \draw[freccia,dotted] (a3.west) -- node[below,etichetta,sloped]{alias} (x.south east);
+\end{tikzpicture}
+\end{center}
+
+\needspace{8cm}
+\textbf{Stack e heap: chi punta a cosa.} Situazione durante il \cc|main| del
+pattern, dopo \texttt{int* quad = creaQuadrati(6);} e
+\texttt{int** m = creaMatrice(2, 3);}.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol,minimum width=2cm] (quad) at (0,1.2) {quad};
+  \node[cella,fill=stackcol,minimum width=2cm] (m) at (0,-1.4) {m};
+  \begin{scope}[on background layer]
+    \node[zona,fill=stackcol!50!sfondo,fit=(quad)(m),inner sep=12pt,label={[etichetta]above:STACK (\texttt{main})}] {};
+  \end{scope}
+  \foreach \v [count=\i] in {0,1,4,9,16,25}
+    \node[cellina,fill=heapcol] (q\i) at (3.5+\i*0.75,1.2) {\v};
+  \draw[freccia] (quad.east) -- (q1.west);
+  \node[cellina,fill=heapcol] (r0) at (4.25,-0.9) {};
+  \node[cellina,fill=heapcol,below=0cm of r0] (r1) {};
+  \foreach \v [count=\i] in {0,1,2}
+    \node[cellina,fill=heapcol] (a\i) at (6.5+\i*0.75,-0.3) {\v};
+  \foreach \v [count=\i] in {10,11,12}
+    \node[cellina,fill=heapcol] (b\i) at (6.5+\i*0.75,-2.1) {\v};
+  \draw[freccia] (m.east) -- (r0.west);
+  \draw[freccia] (r0.center) -- (a1.west);
+  \draw[freccia] (r1.center) -- (b1.west);
+  \node[etichetta,below=0.05cm of r1] {\texttt{m[0]}, \texttt{m[1]}};
+  \node[etichetta,right=0.1cm of a3] {\texttt{m[0][j]}};
+  \node[etichetta,right=0.1cm of b3] {\texttt{m[1][j]}};
+  \begin{scope}[on background layer]
+    \node[zona,fill=heapcol!40!sfondo,fit=(q1)(q6)(r0)(r1)(a3)(b3),inner sep=12pt,label={[etichetta]above:HEAP}] {};
+  \end{scope}
+\end{tikzpicture}
+\end{center}
+Quando il \cc|main| termina, lo stack si svuota da solo; lo heap \textbf{no}.
+Ogni blocco arancione richiede un \cc|delete[]|: uno per \cc|quad| e tre per la
+matrice (due righe più l'array dei puntatori). Se il \cc|main| dimentica di
+liberarli, il sistema operativo recupera tutto alla fine del programma; ma in una
+funzione chiamata mille volte, un leak riempie la memoria.
+
+\textbf{Far crescere un array dinamico.} Un blocco di heap non si allunga: se ne
+crea uno più grande e ci si trasloca.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol,minimum width=1.3cm] (v) at (0,0) {v};
+  \foreach \x [count=\i] in {4,8}
+    \node[cellina,fill=heapcol] (o\i) at (2.4+\i*0.75,0.9) {\x};
+  \foreach \x [count=\i] in {4,8,15,{}}
+    \node[cellina,fill=heapcol] (n\i) at (2.4+\i*0.75,-0.9) {\x};
+  \draw[freccia,dashed,black!50] (v.east) -- (o1.west);
+  \draw[freccia] (v.east) -- (n1.west);
+  \draw[red!75!black,thick] ($(o1.south west)+(-0.05,-0.05)$) -- ($(o2.north east)+(0.05,0.05)$);
+  \draw[red!75!black,thick] ($(o1.north west)+(-0.05,0.05)$) -- ($(o2.south east)+(0.05,-0.05)$);
+  \node[text width=7.5cm,font=\small,anchor=west] at (6.4,0) {%
+    \textbf{1.} \texttt{nuovo = new double[2*cap]}\\
+    \textbf{2.} copia \texttt{v[i]} in \texttt{nuovo[i]}\\
+    \textbf{3.} \texttt{delete[] v} \quad (vecchio blocco, barrato)\\
+    \textbf{4.} \texttt{v = nuovo} \quad (la freccia piena)\\
+    \textbf{5.} inserisci il nuovo valore (15)};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Un unico file con tutti gli strumenti del modulo: i tre passaggi di parametro,
+gli array statici e l'aritmetica dei puntatori, una funzione che crea un array
+dinamico, una variabile dinamica singola e una matrice dinamica.
+
+\codice{codice/m03/pattern.cpp}
+\uscita{codice/m03/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item \cc|scambiaValore| non scambia nulla. \cc|scambiaPuntatore| scambia;
+        poi \cc|scambiaReference| scambia \emph{di nuovo}, per questo i valori
+        tornano a \cc|x=1 y=2|.
+  \item \cc|creaQuadrati| può restituire il suo array perché sta nello
+        \textbf{heap}. Restituire l'indirizzo di un array \textbf{locale} sarebbe
+        un errore grave (vedi Trappole).
+  \item Ogni \cc|new| ha il suo \cc|delete| e ogni \cc|new[]| il suo
+        \cc|delete[]|, seguito da \cc|= nullptr|.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: delete contro delete{[]}]
+Ciò che è creato con \cc|new[]| si libera con \cc|delete[]|, ciò che è creato
+con \cc|new| con \cc|delete|. Scambiarli è \textbf{comportamento indefinito}:
+può sembrare funzionare e poi far crashare il programma in un punto lontano.
+\end{trappola}
+
+\begin{trappola}[: restituire l'indirizzo di una variabile locale]
+\begin{lstlisting}
+int* sbagliata() { int v[10]; return v; }   // v muore al return!
+\end{lstlisting}
+L'array sta nello stack della funzione e viene distrutto quando la funzione
+termina: il chiamante riceve un indirizzo che punta a memoria non più valida
+(dangling). Il compilatore di solito avvisa (\emph{address of local variable
+returned}). Soluzione: \cc|new int[10]|.
+\end{trappola}
+
+\begin{trappola}[: memory leak]
+\cc|p = new int[100]; p = new int[100];|: il primo blocco non ha più nessun
+puntatore che lo raggiunga e non potrà mai essere liberato. Prima di riassegnare
+un puntatore che ``possiede'' memoria, fai \cc|delete[]|.
+\end{trappola}
+
+\begin{trappola}[: la dichiarazione multipla]
+\cc|int* a, b;| dichiara \cc|a| puntatore e \cc|b| \textbf{intero}: l'asterisco
+si lega alla variabile, non al tipo. Per due puntatori: \cc|int *a, *b;|.
+\end{trappola}
+
+\begin{trappola}[: sizeof su un parametro array]
+Dentro \cc|void f(int v[])|, \cc|sizeof(v)| restituisce la dimensione di un
+\textbf{puntatore} (8 byte su 64 bit), non dell'array. Passa sempre \cc|n|.
+\end{trappola}
+
+\begin{trappola}[: puntatore non inizializzato]
+\cc|int* p; *p = 5;| scrive a un indirizzo casuale: crash o corruzione
+silenziosa. Inizializza sempre: \cc|int* p = nullptr;|.
+\end{trappola}
+
+\begin{trappola}[: matrice deallocata nell'ordine sbagliato]
+\cc|delete[] m;| \emph{prima} di \cc|delete[] m[i]| distrugge l'array che
+conteneva gli indirizzi delle righe: le righe restano nello heap e non sono più
+raggiungibili (leak), e leggere \cc|m[i]| a quel punto è già un errore.
+\end{trappola}
+
+\begin{consiglio}[: modificare un puntatore dentro una funzione]
+Se una funzione deve \textbf{cambiare dove punta} un puntatore del chiamante
+(riallocare, azzerare dopo il \cc|delete|), il parametro va passato
+\textbf{per reference}: \cc|void aggiungi(double*& v, ...)|. Con \cc|double* v|
+la funzione cambierebbe solo la sua copia, e il chiamante resterebbe con il vecchio
+indirizzo, già liberato. Questo schema tornerà identico con liste e alberi.
+\end{consiglio}
+
+\begin{consiglio}[: precedenza degli operatori]
+\cc|*p++| incrementa il \textbf{puntatore} e dereferenzia il vecchio indirizzo.
+Per incrementare il valore puntato serve \cc|(*p)++|. Nel dubbio, parentesi.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Dopo \texttt{int a = 5; int* p = \&a; *p = *p * 2;} quanto vale \texttt{a}?}
+  \item 5
+  \item 10
+  \item l'indirizzo di \texttt{a} moltiplicato per 2
+  \item errore di compilazione
+\end{quiz}
+
+\begin{quiz}{Quale affermazione sulle reference è \textbf{falsa}?}
+  \item una reference deve essere inizializzata nella dichiarazione
+  \item una reference può essere spostata su un'altra variabile dopo la dichiarazione
+  \item una reference ha lo stesso indirizzo della variabile a cui si riferisce
+  \item una reference non può essere nulla
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{const int* p = \&x;} quale istruzione \textbf{non} compila?}
+  \item \texttt{p = \&y;}
+  \item \texttt{cout << *p;}
+  \item \texttt{*p = 10;}
+  \item \texttt{int z = *p;}
+\end{quiz}
+
+\begin{quiz}{Come si libera correttamente \texttt{double* v = new double[n];}?}
+  \item \texttt{delete v;}
+  \item \texttt{delete[] v;}
+  \item \texttt{free(v);}
+  \item non serve: viene liberato alla fine della funzione
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{int v[4] = \{10, 20, 30, 40\}; int* p = v;} quanto vale \texttt{*(p + 2)}?}
+  \item 12
+  \item 20
+  \item 30
+  \item l'indirizzo di \texttt{v} più 2 byte
+\end{quiz}
+
+\begin{quiz}{In quale area di memoria si trova una variabile locale di una funzione?}
+  \item heap
+  \item stack
+  \item segmento dati statico
+  \item nei registri della CPU, sempre
+\end{quiz}
+
+\begin{quiz}{Cosa dichiara \texttt{int (*f)(double);}?}
+  \item una funzione che restituisce un puntatore a \texttt{int}
+  \item un puntatore a una funzione che riceve un \texttt{double} e restituisce un \texttt{int}
+  \item un array di puntatori a \texttt{int}
+  \item un puntatore a \texttt{double}
+\end{quiz}
+
+\begin{quiz}{Dopo \texttt{int x = 1, y = 2; int\& r = x; r = y; y = 5;} quanto valgono \texttt{x} e \texttt{y}?}
+  \item \texttt{x = 1}, \texttt{y = 5}
+  \item \texttt{x = 2}, \texttt{y = 5}
+  \item \texttt{x = 5}, \texttt{y = 5}
+  \item errore: una reference non si può riassegnare
+\end{quiz}
+
+\begin{quiz}{Una funzione deve riallocare un array dinamico ricevuto come parametro, in modo che il chiamante veda il nuovo blocco. Come va dichiarato il parametro?}
+  \item \texttt{int v[]}
+  \item \texttt{int* v}
+  \item \texttt{int*\& v}
+  \item \texttt{const int* v}
+\end{quiz}
+
+\begin{quiz}{Cosa succede al puntatore \texttt{p} dopo \texttt{delete p;}?}
+  \item viene automaticamente impostato a \texttt{nullptr}
+  \item contiene ancora il vecchio indirizzo, ora non più valido
+  \item viene distrutto anche lui
+  \item punta al blocco di heap successivo
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{int* a, b;} quale affermazione è vera?}
+  \item \texttt{a} e \texttt{b} sono entrambi puntatori a \texttt{int}
+  \item \texttt{a} è un puntatore, \texttt{b} è un \texttt{int}
+  \item \texttt{a} è un \texttt{int}, \texttt{b} è un puntatore
+  \item è un errore di sintassi
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. \cc|*p| è \cc|a|: l'istruzione equivale ad \cc|a = a * 2|.
+  \item \textbf{B}. Una reference resta legata per sempre. \cc|r = y;| non
+        sposta \cc|r|: \textbf{copia il valore} di \cc|y| dentro la variabile originale.
+  \item \textbf{C}. \cc|const int*| blocca il \textbf{valore puntato}; spostare il
+        puntatore (A) è permesso.
+  \item \textbf{B}. \cc|new[]| richiede \cc|delete[]|. \cc|free| (C) va solo con
+        \cc|malloc|; D è falsa: lo heap non si libera da solo.
+  \item \textbf{C}. \cc|*(p + 2)| è \cc|v[2]|. L'aritmetica avanza di
+        \textbf{elementi}, non di byte.
+  \item \textbf{B}. Le variabili automatiche (locali) stanno nello stack.
+  \item \textbf{B}. Le parentesi attorno a \cc|*f| la rendono un puntatore. Senza,
+        sarebbe la A.
+  \item \textbf{B}. \cc|r = y| copia 2 dentro \cc|x| (perché \cc|r| \emph{è}
+        \cc|x|); poi \cc|y = 5| cambia solo \cc|y|. La D è il distrattore: compila
+        benissimo, solo non fa quello che sembra.
+  \item \textbf{C}. Serve un riferimento al puntatore: la funzione deve modificare
+        il puntatore del chiamante, non solo gli elementi.
+  \item \textbf{B}. \cc|delete| libera il blocco ma non tocca il puntatore: è il
+        dangling pointer. Per questo si scrive \cc|p = nullptr;|.
+  \item \textbf{B}. L'asterisco si lega al nome della variabile.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+Costruisci il programma un passo alla volta. Dopo ogni step compila, esegui e
+\textbf{disegna su un foglio} la memoria (stack e heap) nel momento più
+complicato dello step: è l'esercizio che ti farà capire davvero i puntatori.
+
+\begin{traccia}[: stazione meteo]
+Una stazione meteo registra temperature. Si vuole analizzarle senza usare la STL,
+gestendo la memoria a mano con \cc|new| e \cc|delete|.
+\end{traccia}
+
+\begin{step}{più risultati da una funzione}
+Scrivi \cc|void minMax(const double* v, int n, double& mn, double& mx)| che
+calcola minimo e massimo di un array. Provala nel \cc|main| su un array statico
+di 5 temperature.\\[0.3em]
+\textbf{Concetto nuovo:} parametri \cc|const T*| in sola lettura, reference per
+restituire più valori.
+\end{step}
+
+\begin{step}{un array che cresce}
+Scrivi \cc|void aggiungi(double*& v, int& n, int& cap, double x)|, che inserisce
+\cc|x| in coda e, se l'array è pieno, \textbf{raddoppia} la capacità (partendo da
+2). Poi \cc|double* leggiMisure(int& n)|, che legge temperature da tastiera fino
+allo 0 e restituisce l'array.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|new[]|/\cc|delete[]|, riallocazione, \cc|double*&|.
+\end{step}
+
+\begin{step}{un nuovo array di dimensione esatta}
+Scrivi \cc|double* sopraSoglia(const double* v, int n, double soglia, int& m)|,
+che restituisce un \textbf{nuovo} array dinamico, di dimensione esattamente
+\cc|m|, con le sole misure maggiori della soglia (o \cc|nullptr| se non ce ne sono).
+Usa come soglia la media tra minimo e massimo.\\[0.3em]
+\textbf{Concetto nuovo:} funzione che restituisce memoria dello heap; schema
+``prima conto, poi alloco, poi copio''.
+\end{step}
+
+\begin{step}{matrice dinamica}
+Con \cc|srand(111222333)| riempi una matrice dinamica di 3 giorni $\times$ 4
+rilevazioni con interi casuali tra 10 e 30 (\cc|int** creaMatrice(int r, int c)|).
+Stampala e calcola in un nuovo array dinamico la media di ogni giorno
+(\cc|double* medieRighe(int** m, int r, int c)|).\\[0.3em]
+\textbf{Concetto nuovo:} \cc|int**|, array di puntatori, matrice a due livelli.
+\end{step}
+
+\begin{step}{fare pulizia}
+Libera \textbf{tutta} la memoria allocata. Scrivi
+\cc|void distruggiMatrice(int**& m, int r)|, che libera nell'ordine corretto e
+imposta \cc|m = nullptr|; verifica nel \cc|main| che il puntatore sia davvero nullo.\\[0.3em]
+\textbf{Concetto nuovo:} ordine di deallocazione, dangling pointer, puntatore
+passato per reference per poterlo azzerare.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m03/lab.cpp}
+\ingresso{codice/m03/input/lab.txt}
+\uscita{codice/m03/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|v[n++] = x;| scrive in posizione \cc|n| e \emph{poi} incrementa
+        \cc|n|: è il modo compatto di ``aggiungere in coda''.
+  \item Con 7 misure la capacità finale è 8: le riallocazioni sono state solo 3
+        (2 $\to$ 4 $\to$ 8, partendo dal primo blocco da 2). Con una crescita di
+        $+1$ alla volta sarebbero state 7, con tutte le copie del caso.
+  \item \cc|medieRighe| usa \cc|(double)somma / c|: senza cast la media di
+        \texttt{25 18 20 18} verrebbe 20 invece di 20.25.
+  \item In fondo al \cc|main| ci sono 4 operazioni di pulizia per 4 ``famiglie''
+        di \cc|new|: contarle è un buon controllo finale all'esame.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Differenza tra puntatore e reference?]
+Un puntatore è una variabile che contiene l'indirizzo di un'altra variabile: ha
+un proprio indirizzo, può essere nullo, può essere spostato su un'altra variabile
+e per accedere al valore va dereferenziato con \cc|*|. Una reference è un alias
+di una variabile esistente: va inizializzata nella dichiarazione, non può essere
+nulla, non può essere spostata e si usa con la sintassi di una variabile normale.
+Internamente il compilatore la realizza come un puntatore costante dereferenziato
+automaticamente.
+\end{orale}
+
+\begin{orale}[D2. Che differenza c'è tra stack e heap?]
+Lo stack contiene le variabili automatiche, cioè locali e parametri: vengono
+allocate quando si entra nella funzione, nel suo record di attivazione, e
+distrutte automaticamente quando la funzione termina; la loro dimensione deve
+essere nota a compile-time. Lo heap contiene la memoria dinamica, allocata a
+run-time con \cc|new|, di dimensione decisa anche durante l'esecuzione: resta
+allocata finché il programmatore non la libera con \cc|delete|, perché in C++
+non c'è un garbage collector.
+\end{orale}
+
+\begin{orale}[D3. Cosa sono memory leak e dangling pointer?]
+Un \textbf{memory leak} si verifica quando un blocco di heap non è più
+raggiungibile da nessun puntatore e quindi non può più essere liberato: ad
+esempio quando si riassegna un puntatore senza aver fatto \cc|delete|. Un
+\textbf{dangling pointer} è un puntatore che contiene l'indirizzo di memoria non
+più valida: dopo un \cc|delete|, o quando punta a una variabile locale di una
+funzione già terminata. Dereferenziarlo è comportamento indefinito. Si previene
+assegnando \cc|nullptr| dopo il \cc|delete|.
+\end{orale}
+
+\begin{orale}[D4. Perché un array passato a una funzione ``perde'' la dimensione?]
+Perché nel passaggio il nome dell'array decade nel puntatore al primo elemento:
+\cc|int v[]| come parametro equivale a \cc|int* v|. Alla funzione arriva solo un
+indirizzo, e \cc|sizeof(v)| restituisce la dimensione del puntatore. Per questo
+la dimensione si passa come parametro separato. Gli array sono di fatto sempre
+passati per indirizzo: la funzione può modificarne gli elementi, a meno che il
+parametro non sia dichiarato \cc|const|.
+\end{orale}
+
+\begin{orale}[D5. Quali differenze ci sono tra new/delete e malloc/free?]
+\cc|new| e \cc|delete| sono operatori del linguaggio, non funzioni di libreria:
+non richiedono header né cast, perché il tipo restituito è già quello giusto, e
+calcolano da soli la dimensione da allocare in base al tipo. Soprattutto,
+\cc|new| chiama il \textbf{costruttore} dell'oggetto creato e \cc|delete| ne chiama
+il \textbf{distruttore}, mentre \cc|malloc| e \cc|free| si limitano a riservare e
+liberare byte. Per gli array si usano le forme \cc|new[]| e \cc|delete[]|.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+Per ogni esercizio, prima di scrivere il codice, disegna su un foglio stack e
+heap con le frecce dei puntatori. Alla fine controlla di avere un \cc|delete|
+per ogni \cc|new|.
+
+\begin{esercizio}{Primi passi con i puntatori}{facile}
+Dichiara \cc|int a = 10; int* p = &a;| e stampa \cc|a|, \cc|&a|, \cc|p|, \cc|*p|,
+\cc|&p|. Modifica \cc|a| passando da \cc|p|; poi fai puntare \cc|p| a un'altra
+variabile \cc|b| e verifica che modificare \cc|*p| non tocchi più \cc|a|. Infine
+usa un \cc|int** pp = &p| per modificare \cc|b|.
+\end{esercizio}
+
+\begin{esercizio}{Ordinare tre numeri}{facile}
+Scrivi \cc|void scambia(int& x, int& y)| e, usandola, \cc|void ordinaTre(int& a, int& b, int& c)|
+che riordina le tre variabili del chiamante in ordine crescente con al più tre scambi.
+\end{esercizio}
+
+\begin{esercizio}{Aritmetica dei puntatori}{facile}
+Senza usare le parentesi quadre, scrivi \cc|int somma(const int* inizio, const int* fine)|
+(\cc|fine| punta \emph{uno dopo} l'ultimo elemento) e
+\cc|const int* posizioneMassimo(const int* v, int n)|. Nel \cc|main| ricava
+l'indice del massimo come differenza tra puntatori.
+\end{esercizio}
+
+\begin{esercizio}{Tre risultati}{facile}
+Scrivi \cc|bool statistiche(const int v[], int n, int& minimo, int& massimo, double& media)|,
+che restituisce \cc|false| se l'array è vuoto. Provala con un array di voti e con \cc|n = 0|.
+\end{esercizio}
+
+\begin{esercizio}{Invertire sul posto}{medio}
+Scrivi \cc|void inverti(int* v, int n)| che inverte l'array senza usarne un altro,
+con due puntatori che partono dalle due estremità e si incontrano a metà. Provala
+con un numero pari e uno dispari di elementi.
+\end{esercizio}
+
+\begin{esercizio}{Dimensione scelta dall'utente}{medio}
+Chiedi all'utente quanti numeri vuole inserire, alloca un array dinamico della
+dimensione giusta, leggi i numeri e stampali al contrario. Gestisci una dimensione
+non valida e libera la memoria.
+\end{esercizio}
+
+\begin{esercizio}{Senza duplicati}{medio}
+Scrivi \cc|int* senzaDuplicati(const int* v, int n, int& m)|, che restituisce un
+nuovo array dinamico di dimensione esatta con i valori di \cc|v| presi una sola volta,
+nell'ordine della loro prima comparsa. Con \texttt{3 1 3 2 1 1 5 2} il risultato
+è \texttt{3 1 2 5}.
+\end{esercizio}
+
+\begin{esercizio}{Fusione di due array ordinati}{medio}
+Scrivi \cc|int* fondi(const int* a, int na, const int* b, int nb)|, che riceve due
+array già ordinati e restituisce un nuovo array dinamico, ordinato, con tutti gli
+elementi di entrambi, in un solo passaggio. (È il cuore del MergeSort, Modulo 7.)
+\end{esercizio}
+
+\begin{esercizio}{Trasposta}{difficile}
+Scrivi \cc|int** crea(int r, int c)|, \cc|void distruggi(int**& m, int r)| e
+\cc|int** trasposta(int** m, int r, int c)|, che restituisce una \textbf{nuova}
+matrice $c \times r$ con \cc|t[j][i] = m[i][j]|. Attenzione a passare a
+\cc|distruggi| il numero giusto di righe per ciascuna matrice.
+\end{esercizio}
+
+\begin{esercizio}{Inserire e rimuovere in mezzo}{difficile}
+Su un array dinamico con \cc|n| elementi e capacità \cc|cap|, scrivi
+\cc|bool inserisci(int*& v, int& n, int& cap, int pos, int x)| (sposta a destra
+gli elementi da \cc|pos| in poi e raddoppia se pieno) e
+\cc|bool rimuovi(int*& v, int& n, int& cap, int pos)| (sposta a sinistra e
+dimezza la capacità quando \cc|n| scende a un quarto di \cc|cap|). Entrambe
+rifiutano posizioni non valide.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m03/}.

@@ -1,0 +1,2 @@
+ordinato, pivot primo:   1999000 confronti (circa n^2/2 = 2000000)
+ordinato, pivot centrale: 20010 confronti

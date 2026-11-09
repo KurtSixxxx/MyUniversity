@@ -1,0 +1,56 @@
+% Soluzioni degli esercizi del Modulo 2 (generato da separa_soluzioni.py)
+\chapter{Soluzioni -- Modulo 2 -- Introduzione al C++ ed Elementi Base}
+\textbf{Esercizio 2.1}
+\codice{codice/m02/es01.cpp}
+\ingresso{codice/m02/input/es01.txt}
+\uscita{codice/m02/output/es01.txt}
+
+\textbf{Esercizio 2.2} --- \cc|while (cin >> a >> op >> b)| si ferma da solo a
+fine input o al primo dato illeggibile.
+\codice{codice/m02/es02.cpp}
+\ingresso{codice/m02/input/es02.txt}
+\uscita{codice/m02/output/es02.txt}
+
+\textbf{Esercizio 2.3}
+\codice{codice/m02/es03.cpp}
+\uscita{codice/m02/output/es03.txt}
+
+\textbf{Esercizio 2.4} --- La riga A stampa 1 perché, nel momento in cui viene
+eseguita, la \cc|x| locale non è ancora stata dichiarata: lo scope di una
+variabile inizia dal punto della sua dichiarazione.
+\codice{codice/m02/es04.cpp}
+\uscita{codice/m02/output/es04.txt}
+
+\textbf{Esercizio 2.5}
+\codice{codice/m02/es05.cpp}
+\ingresso{codice/m02/input/es05.txt}
+\uscita{codice/m02/output/es05.txt}
+
+\textbf{Esercizio 2.6}
+\codice{codice/m02/es06.cpp}
+\ingresso{codice/m02/input/es06.txt}
+\uscita{codice/m02/output/es06.txt}
+
+\textbf{Esercizio 2.7} --- Se leggessi direttamente \cc|double| dalla riga, al
+primo \texttt{abc} lo stream andrebbe in errore e si fermerebbe tutto. Leggendo
+\cc|string| la lettura non fallisce mai: la conversione avviene a parte, su uno
+stream usa e getta.
+\codice{codice/m02/es07.cpp}
+\ingresso{codice/m02/input/es07.txt}
+\uscita{codice/m02/output/es07.txt}
+
+\textbf{Esercizio 2.8}
+\codice{codice/m02/es08.cpp}
+\uscita{codice/m02/output/es08.txt}
+
+\textbf{Esercizio 2.9} --- tre file nella cartella \texttt{codice/m02/es09/}.
+\codice{codice/m02/es09/geometria.h}
+\codice{codice/m02/es09/geometria.cpp}
+\codice{codice/m02/es09/main.cpp}
+\uscita{codice/m02/output/es09.txt}
+
+\textbf{Esercizio 2.10} --- La riga \texttt{questa non viene letta} si trova dopo
+la riga vuota, che chiude lo scontrino.
+\codice{codice/m02/es10.cpp}
+\ingresso{codice/m02/input/es10.txt}
+\uscita{codice/m02/output/es10.txt}

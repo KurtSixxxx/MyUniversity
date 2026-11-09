@@ -1,0 +1,6 @@
+1 2 3 4 
+somma: 10
+0.5 0.25 0.125 
+somma: 0.875
+tem pla te 
+somma: template

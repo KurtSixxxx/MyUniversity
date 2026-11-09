@@ -1,0 +1,877 @@
+% =====================================================================
+\chapter{Modulo 1 -- Introduzione alla OOP \& Information Hiding}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Il problema: perché la programmazione ``alla C'' non basta}
+
+In Programmazione 1 hai scritto programmi in C. Ripensa a come erano fatti:
+una serie di \textbf{funzioni} e, separati da esse, i \textbf{dati}
+(variabili, array, \cc|struct|). Il programma era una \textbf{ricetta}:
+``prima fai questo, poi questo, poi quest'altro''. Questo stile si chiama
+\textbf{programmazione procedurale}.
+
+Finché il programma è lungo cento righe funziona benissimo. Ora immagina di
+scrivere in C il gestionale di una biblioteca: centinaia di libri, migliaia di
+utenti, prestiti, restituzioni, multe. Avrai un array globale di libri, e ogni
+funzione (\cc|presta|, \cc|restituisci|, \cc|stampaCatalogo|, \cc|calcolaMulta|,
+\ldots) può leggerlo e \textbf{modificarlo} come vuole. Un giorno scopri che un
+libro risulta ``in prestito'' a un utente che non esiste. Chi è stato? Una
+qualunque delle cinquanta funzioni che toccano quell'array. Devi leggerle
+tutte.
+
+Il difetto di fondo è che \textbf{i dati non sono protetti da nessuno}:
+chiunque può metterci le mani e nessuno controlla che restino sensati.
+
+La \textbf{Programmazione Orientata agli Oggetti} (OOP, \emph{Object Oriented
+Programming}) nasce per risolvere proprio questo. L'idea è semplice:
+\begin{itemize}
+  \item i dati e le funzioni che li usano si mettono \textbf{nella stessa scatola};
+  \item la scatola si \textbf{chiude}: da fuori non si toccano i dati, si può solo
+        chiedere alla scatola di fare qualcosa;
+  \item la scatola \textbf{controlla} ogni richiesta e rifiuta quelle che
+        rovinerebbero i dati.
+\end{itemize}
+Quella scatola è un \textbf{oggetto}. Il programma non è più una ricetta, ma
+un \textbf{sistema di oggetti che collaborano}, come i mattoncini Lego: ognuno
+sa fare il suo lavoro e li incastri per costruire qualcosa di grande.
+
+\subsection*{Astrazione: tenere solo ciò che serve}
+
+\begin{analogia}[: la mappa della città]
+Una mappa della metropolitana non disegna ogni tombino, ogni albero, ogni
+negozio. Disegna solo le linee e le fermate, perché a chi la usa serve
+\emph{solo} quello. Se ci fosse tutto sarebbe inutilizzabile.
+Questo filtro si chiama \textbf{astrazione}: guardare la realtà e tenere solo
+gli aspetti che servono al problema da risolvere.
+\end{analogia}
+
+Quando progetti un programma fai la stessa cosa. Di un'automobile, a un
+programma di autonoleggio interessano targa, modello, chilometri e se è
+disponibile. A un videogioco di corse interessano velocità, accelerazione e
+posizione. Stessa auto reale, due astrazioni diverse: dipende dal problema.
+L'oggetto software è la ``mappa'' di un oggetto reale.
+
+\subsection*{Oggetti: stato e comportamento}
+
+\begin{definizione}[: oggetto]
+Un \textbf{oggetto} è un'entità software che unisce:
+\begin{itemize}
+  \item degli \textbf{attributi}: i dati, cioè \emph{cosa l'oggetto è} o \emph{cosa
+        sa di sé} (per un'auto: velocità, colore, carburante);
+  \item dei \textbf{metodi}: le funzioni, cioè \emph{cosa l'oggetto sa fare}
+        (accelerare, frenare, fare rifornimento).
+\end{itemize}
+I valori che hanno gli attributi in un certo momento formano lo \textbf{stato}
+dell'oggetto.
+\end{definizione}
+
+Facciamo un esempio. Un'auto ferma con il serbatoio pieno ha lo stato
+``velocità 0, carburante 40 litri''. Le chiedo di accelerare (chiamo il metodo
+\cc|accelera()|): ora il suo stato è ``velocità 50, carburante 35 litri''.
+I metodi sono l'unico modo per far cambiare lo stato di un oggetto. Ricordati
+questa frase, perché è il cuore di tutto il modulo.
+
+\subsection*{Classi: il progetto degli oggetti}
+
+Se nel programma servono 100 automobili, non descrivi 100 volte cosa è
+un'automobile. La descrivi \textbf{una volta}, in una \textbf{classe}, e poi
+crei 100 oggetti a partire da quella descrizione.
+
+\begin{definizione}[: classe]
+Una \textbf{classe} è la \textbf{descrizione} di un tipo di oggetto: dice quali
+attributi avrà ogni oggetto di quel tipo e quali metodi potrà eseguire.
+Un oggetto creato a partire da una classe si chiama \textbf{istanza} di quella classe.
+\end{definizione}
+
+\begin{analogia}[: lo stampo per biscotti]
+La \textbf{classe} è lo stampo: esiste una volta sola e non si mangia.
+Gli \textbf{oggetti} sono i biscotti: ne fai quanti vuoi con lo stesso stampo.
+Hanno tutti la stessa forma (gli stessi attributi e metodi), ma ognuno ha la sua
+glassa (i propri valori). Se mangi un biscotto, gli altri restano interi:
+ogni oggetto ha il \emph{suo} stato, indipendente da quello degli altri.
+\end{analogia}
+
+Una differenza importante: la classe esiste \textbf{solo nel codice} che
+scrivi; gli oggetti esistono \textbf{in memoria} mentre il programma gira.
+Quando il programma termina, gli oggetti spariscono; la classe resta nel file
+\texttt{.cpp}.
+
+\subsection*{Come si scrive una classe in C++, pezzo per pezzo}
+
+Vediamo la classe più piccola che abbia senso: un contatore.
+
+\begin{lstlisting}
+class Contatore {          // 1. parola chiave class + nome (con la maiuscola)
+private:                   // 2. da qui in poi: roba INTERNA, invisibile da fuori
+    int valore;            //    attributo
+
+public:                    // 3. da qui in poi: l'INTERFACCIA, usabile da fuori
+    Contatore() {          // 4. costruttore: stesso nome della classe, nessun tipo
+        valore = 0;        //    prepara l'oggetto appena nasce
+    }
+    void incrementa() {    // 5. metodo che cambia lo stato
+        valore++;
+    }
+    int getValore() const {  // 6. metodo che legge lo stato (const = non lo cambia)
+        return valore;
+    }
+};                         // 7. ATTENZIONE al punto e virgola finale!
+\end{lstlisting}
+
+E così si usa nel \cc|main|:
+\begin{lstlisting}
+Contatore a;               // creo un oggetto: parte il costruttore, valore = 0
+Contatore b;               // un secondo oggetto, completamente indipendente
+a.incrementa();            // "a, incrementati!"  -> a.valore = 1
+a.incrementa();            //                     -> a.valore = 2
+b.incrementa();            //                     -> b.valore = 1
+cout << a.getValore();     // stampa 2
+// a.valore = 100;         // ERRORE DI COMPILAZIONE: valore e' private
+\end{lstlisting}
+
+Rileggi con calma i sette punti nei commenti. Tre cose da notare:
+\begin{itemize}
+  \item Il \textbf{punto} (\cc|a.incrementa()|) significa ``chiedi all'oggetto
+        \cc|a| di eseguire il metodo \cc|incrementa|''. Lo stesso metodo chiamato
+        su \cc|b| lavora sui dati di \cc|b|.
+  \item Il \textbf{costruttore} è un metodo speciale che parte \emph{da solo}
+        quando l'oggetto viene creato. Serve a dare un valore iniziale sensato
+        agli attributi. Lo studieremo a fondo nel Modulo 4.
+  \item L'ultima riga non compila: è proprio quello che vogliamo. Da fuori
+        nessuno può cambiare \cc|valore| a piacere.
+\end{itemize}
+
+\subsection*{Scambio di messaggi}
+
+Nel linguaggio della OOP non si dice ``chiamo una funzione'' ma
+``\textbf{mando un messaggio} a un oggetto''. Sembra solo un modo di dire, ma
+cambia la prospettiva: non sei tu a modificare i dati, sei tu a
+\emph{chiedere} all'oggetto di farlo, e l'oggetto può anche rifiutare.
+
+Un messaggio ha tre parti:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Parte} & \textbf{Significato} & \textbf{In} \cc|c1.deposita(50)| \\
+\midrule
+Destinatario & l'oggetto che riceve il messaggio & \cc|c1| \\
+Selettore    & quale metodo attivare & \cc|deposita| \\
+Argomenti    & i dati passati al metodo & \cc|50| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Gli oggetti si mandano messaggi anche tra loro. Una biblioteca, per prestare un
+libro, manda il messaggio \cc|presta()| all'oggetto libro giusto; un conto
+corrente, per fare un bonifico, manda \cc|deposita()| al conto di destinazione.
+È così che gli oggetti ``collaborano''.
+
+\subsection*{Information hiding: il cuore del modulo}
+
+\begin{definizione}[: Information Hiding]
+L'\textbf{information hiding} (``occultamento dell'informazione'') consiste nel
+nascondere i \textbf{dettagli interni} di un oggetto (i suoi dati e il modo in
+cui funziona) e nel mostrare all'esterno solo un'\textbf{interfaccia pubblica}:
+l'elenco dei metodi che si possono chiamare. Chi usa l'oggetto sa \emph{cosa}
+fa, non \emph{come} lo fa.
+\end{definizione}
+
+\begin{analogia}[: il telecomando e la TV]
+Usi la TV solo con i tasti del telecomando: è l'\textbf{interfaccia pubblica}.
+I circuiti dentro sono l'\textbf{implementazione privata}, chiusa in una scatola
+che non puoi aprire. Questo ha due vantaggi enormi:
+\begin{enumerate}
+  \item \textbf{non puoi rompere la TV}: se potessi saldare i fili a mano
+        potresti bruciarla; con i tasti puoi fare solo cose previste e sicure;
+  \item \textbf{il produttore può cambiare i circuiti} (un modello nuovo, più
+        efficiente) e tu continui a usare gli stessi tasti senza accorgertene.
+\end{enumerate}
+\end{analogia}
+
+In C++ l'information hiding si realizza con gli \textbf{specificatori di accesso}:
+
+\begin{center}
+\begin{tabular}{>{\ttfamily}l l l}
+\toprule
+\textrm{\textbf{Specificatore}} & \textbf{Chi può accedere} & \textbf{Uso tipico} \\
+\midrule
+public    & tutti                                   & metodi dell'interfaccia \\
+private   & solo i metodi della classe stessa       & attributi (dati) \\
+protected & la classe e le sue classi derivate      & ereditarietà (Modulo 9) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\textbf{Perché è così importante? L'esempio del conto corrente.}
+Supponi che \cc|saldo| sia \cc|public|. Allora qualunque punto del programma
+può scrivere \cc|conto.saldo = -5000;|, e il conto si ritrova in uno stato
+\textbf{assurdo}. Se invece \cc|saldo| è \cc|private|, l'unico modo per
+cambiarlo è passare dai metodi \cc|deposita()| e \cc|preleva()|, e dentro quei
+metodi metti i controlli: ``non si deposita un importo negativo'', ``non si
+preleva più di quanto c'è''. Così il saldo \textbf{non può mai} diventare
+negativo, qualunque cosa faccia il resto del programma.
+
+Una condizione che deve essere \emph{sempre} vera per ogni oggetto di una
+classe (``il saldo non è mai negativo'') si chiama \textbf{invariante di classe}.
+L'information hiding è ciò che permette di garantirla: se tutti i dati sono
+privati e tutti i metodi rispettano l'invariante, l'invariante non può essere
+violata.
+
+\subsection*{Getter, setter e metodi const}
+
+Se gli attributi sono privati, come si leggono e si modificano? Con dei metodi
+appositi:
+\begin{itemize}
+  \item un \textbf{getter} (dall'inglese \emph{get}, ``prendere'') restituisce
+        il valore di un attributo: \cc|double getSaldo() const { return saldo; }|;
+  \item un \textbf{setter} (da \emph{set}, ``impostare'') o un metodo di
+        modifica cambia un attributo, \textbf{ma solo dopo averlo controllato}.
+        Nei nostri esercizi restituisce \cc|bool|: \cc|true| se l'operazione è
+        riuscita, \cc|false| se è stata rifiutata.
+\end{itemize}
+
+\textbf{Cosa significa quel \texttt{const} dopo le parentesi?} È una promessa
+scritta nel codice: ``questo metodo \textbf{non modifica} l'oggetto''. Se per
+errore dentro un metodo \cc|const| provi a cambiare un attributo, il
+compilatore ti blocca. Tutti i metodi che si limitano a leggere (getter,
+\cc|stampa|, \cc|media|, \ldots) vanno dichiarati \cc|const|. Il motivo pratico
+si vedrà nei moduli successivi: su un oggetto costante, o passato come
+\cc|const Classe&|, si possono chiamare \emph{solo} i metodi \cc|const|.
+
+\begin{passopasso}[: come progettare una classe all'esame]
+\begin{enumerate}
+  \item \textbf{Trova i dati}: cosa deve ricordare ogni oggetto? Diventano gli
+        attributi, tutti \cc|private|.
+  \item \textbf{Trova le regole}: quali valori sono vietati? (Saldo negativo,
+        voto sopra 30, anno nel futuro.) Sono le invarianti.
+  \item \textbf{Scrivi il costruttore}: deve creare un oggetto che rispetta già
+        le regole. Se riceve dati sbagliati, li corregge.
+  \item \textbf{Scrivi i metodi di modifica}: controllano, poi modificano.
+        Restituiscono \cc|bool|.
+  \item \textbf{Scrivi i getter}: \cc|const|, uno per ogni dato che serve leggere da fuori.
+  \item \textbf{Scrivi \texttt{stampa() const}}: ti servirà per controllare il programma.
+  \item \textbf{Prova tutto nel} \cc|main|, compresi i casi sbagliati, per
+        vedere che vengono rifiutati.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Incapsulamento e information hiding non sono sinonimi}
+
+Sono due idee legate ma distinte, e all'orale distinguerle fa un'ottima
+impressione:
+\begin{itemize}
+  \item \textbf{Incapsulamento} = \emph{mettere insieme} in un'unica unità (la
+        classe) i dati e le funzioni che li usano. È ``fare la scatola''.
+  \item \textbf{Information hiding} = \emph{nascondere} all'esterno l'interno
+        della scatola. È ``chiudere la scatola a chiave''.
+\end{itemize}
+Una classe con tutti gli attributi \cc|public| è incapsulata (dati e metodi
+stanno insieme) ma \textbf{non} nasconde nulla.
+
+\subsection*{\texttt{class} e \texttt{struct}}
+
+Il C++ conserva la \cc|struct| del C, ma la potenzia: anche una \cc|struct| può
+avere metodi, costruttori, \cc|private| e \cc|public|. In C++ \cc|class| e
+\cc|struct| sono quasi identiche: l'\textbf{unica} differenza è l'accesso
+\emph{di default}, cioè quello che vale se non scrivi nessuno specificatore.
+\begin{itemize}
+  \item in una \cc|class| tutto è \cc|private| finché non scrivi \cc|public:|;
+  \item in una \cc|struct| tutto è \cc|public| finché non scrivi \cc|private:|.
+\end{itemize}
+Per convenzione si usa \cc|struct| per semplici ``pacchetti di dati'' senza
+regole (un punto con \cc|x| e \cc|y|) e \cc|class| per oggetti con regole e
+comportamento.
+
+\subsection*{Gli altri pilastri: ereditarietà e polimorfismo (anteprima)}
+
+La OOP si regge su quattro pilastri. Due li hai appena visti, cioè
+l'\textbf{astrazione} e l'\textbf{incapsulamento} (con l'information hiding).
+Gli altri due li studieremo nel Modulo 9, ma bisogna conoscerne già la
+definizione, perché nei quiz compaiono subito.
+
+\textbf{Ereditarietà.} Permette di creare una nuova classe partendo da una che
+esiste già, senza riscrivere tutto. Da \cc|MezzoDiTrasporto| si possono derivare
+\cc|Automobile|, \cc|Moto|, \cc|Autobus|. La classe di partenza si chiama
+\textbf{sopraclasse} (o classe base), la nuova \textbf{sottoclasse} (o classe
+derivata). La sottoclasse eredita tutto e si può differenziare in due modi:
+\begin{itemize}
+  \item per \textbf{estensione}: aggiunge nuovi attributi e metodi (l'autobus ha
+        il numero di posti in piedi);
+  \item per \textbf{ridefinizione}: riscrive a modo suo un metodo ereditato
+        (\cc|accelera()| della moto è diverso da quello dell'auto).
+\end{itemize}
+
+\textbf{Polimorfismo} (dal greco: ``molte forme''). Lo stesso messaggio produce
+comportamenti diversi a seconda dell'oggetto che lo riceve. Il messaggio
+\cc|accelera()| a un'auto fa premere il pedale, a una moto fa girare la
+manopola. Se ho una variabile di tipo ``mezzo di trasporto'' che durante
+l'esecuzione può contenere ora un'auto ora una moto, il metodo giusto da
+eseguire si può scegliere solo \textbf{mentre il programma gira}. Questo
+meccanismo si chiama \textbf{collegamento dinamico} (\emph{dynamic binding}):
+``dinamico'' vuol dire ``a run-time'', cioè durante l'esecuzione e non durante la
+compilazione.
+
+\subsection*{Relazioni tra classi}
+
+Le classi di un programma non vivono isolate. Le relazioni principali si
+disegnano nel \textbf{diagramma delle classi} (UML) e sono, dalla più debole
+alla più forte:
+\begin{itemize}
+  \item \textbf{Associazione} (relazione d'\emph{uso}): la classe A usa la classe
+        B se un oggetto A manda messaggi a un oggetto B, o lo crea, lo riceve come
+        parametro o lo restituisce. Come due passanti che si chiedono l'ora:
+        comunicano ma restano indipendenti.
+  \item \textbf{Aggregazione} (relazione ``intero--parte''): un oggetto B è un
+        \emph{attributo} dell'oggetto A. La parte però può esistere anche da sola
+        o appartenere a più interi. Esempio: Azienda--Persona, perché una persona
+        può lavorare per più aziende.
+  \item \textbf{Composizione}: un'aggregazione più forte, in cui la parte
+        appartiene a \textbf{un solo} intero alla volta. Esempi:
+        Automobile--Pneumatico, Corpo--Cuore.
+\end{itemize}
+
+\subsection*{La OOP come modo di pensare: leggere una traccia d'esame}
+
+Davanti a un problema, la OOP ti chiede tre passi:
+\begin{enumerate}
+  \item individuare gli \textbf{oggetti} (i protagonisti);
+  \item definire le loro \textbf{classi} (attributi e metodi);
+  \item progettare come \textbf{interagiscono} (chi manda messaggi a chi).
+\end{enumerate}
+Un trucco pratico: nella traccia, i \textbf{nomi} importanti diventano classi o
+attributi, i \textbf{verbi} diventano metodi. ``La \underline{biblioteca}
+\emph{presta} i \underline{libri}; ogni libro ha un \underline{titolo} e un
+\underline{autore}'' $\Rightarrow$ classi \cc|Biblioteca| e \cc|Libro|, attributi
+\cc|titolo| e \cc|autore|, metodo \cc|presta()|.
+
+\begin{inparole}
+\begin{itemize}
+  \item Un \textbf{oggetto} è una scatola con dei dati (attributi) e delle
+        azioni (metodi). Lo \textbf{stato} sono i valori dei dati in un certo momento.
+  \item La \textbf{classe} è lo stampo; gli \textbf{oggetti} sono i biscotti.
+  \item I dati si mettono \cc|private|, così nessuno li rovina da fuori. Si
+        leggono con i \textbf{getter} (\cc|const|) e si cambiano con metodi che
+        \textbf{prima controllano}.
+  \item \textbf{Incapsulamento} = mettere insieme; \textbf{information hiding} =
+        nascondere.
+  \item In una \cc|class| il default è \cc|private|, in una \cc|struct| è \cc|public|.
+  \item \textbf{Polimorfismo} = stesso messaggio, comportamenti diversi; si
+        realizza con il \textbf{collegamento dinamico} (a run-time).
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Classe e oggetti.} A sinistra la classe disegnata come nel diagramma UML
+(\texttt{-} = private, \texttt{+} = public). A destra i due oggetti creati nel
+\cc|main| del pattern: ognuno ha la \textbf{sua copia} degli attributi.
+I metodi invece \textbf{non} vengono copiati: il codice di \cc|deposita| esiste
+una volta sola ed è condiviso da tutti gli oggetti. Quando scrivi
+\cc|c1.deposita(50)|, il metodo sa che deve lavorare sui dati di \cc|c1|
+perché riceve di nascosto l'indirizzo di \cc|c1| (è il puntatore \cc|this|,
+Modulo 4).
+
+\begin{center}
+\begin{tikzpicture}
+  \node[classe] (cls) at (0,0) {%
+    \textbf{ContoBancario}
+    \nodepart{second}- intestatario : string\\- saldo : double
+    \nodepart{third}+ deposita(importo) : bool\\+ preleva(importo) : bool\\+ getSaldo() : double\\+ stampa() : void};
+  \node[etichetta,above=0.1cm of cls] {CLASSE (esiste nel codice)};
+
+  \node[cella,minimum width=4.1cm,fill=privcol] (c1a) at (8.2,1.3) {intestatario = \q{Mario}};
+  \node[cella,minimum width=4.1cm,fill=privcol,below=0cm of c1a] (c1b) {saldo = 150};
+  \node[font=\small\bfseries,above=0cm of c1a] (l1) {oggetto c1};
+
+  \node[cella,minimum width=4.1cm,fill=privcol] (c2a) at (8.2,-1.2) {intestatario = \q{Lucia}};
+  \node[cella,minimum width=4.1cm,fill=privcol,below=0cm of c2a] (c2b) {saldo = 0};
+  \node[font=\small\bfseries,above=0cm of c2a] (l2) {oggetto c2};
+
+  \begin{scope}[on background layer]
+    \node[zona,fill=stackcol,fit=(l1)(c1a)(c1b)(l2)(c2a)(c2b),inner sep=10pt,
+          label={[etichetta]above:STACK -- record di attivazione di \texttt{main()}}] (st) {};
+  \end{scope}
+
+  \draw[freccia,dashed] (cls.east) -- node[above,etichetta,sloped]{istanza di} (c1a.west);
+  \draw[freccia,dashed] (cls.east) -- node[below,etichetta,sloped]{istanza di} (c2a.west);
+\end{tikzpicture}
+\end{center}
+
+\textbf{Il muro dell'information hiding.} Il codice esterno (\cc|main|) può
+parlare solo con i metodi pubblici; sono loro a toccare i dati privati, dopo
+averli controllati. L'accesso diretto viene bloccato \textbf{dal compilatore}:
+il programma non viene nemmeno creato.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[processo] (main) at (0,0) {\texttt{main()}\\ \footnotesize codice esterno};
+
+  \node[cella,fill=pubcol,minimum width=2.7cm] (dep) at (5,1)  {deposita()};
+  \node[cella,fill=pubcol,minimum width=2.7cm] (get) at (5,0)  {getSaldo()};
+  \node[cella,fill=pubcol,minimum width=2.7cm] (pre) at (5,-1) {preleva()};
+  \node[cella,fill=privcol,minimum width=2.4cm,minimum height=2.5cm] (saldo) at (9.3,0) {saldo};
+
+  \node[zona,dashed,draw=black!60,fit=(dep)(pre)(saldo),inner sep=10pt,
+        label={[etichetta]above:oggetto \texttt{c1}}] {};
+  \node[etichetta,above=0.05cm of dep] {public};
+  \node[etichetta,above=0.05cm of saldo] {private};
+
+  \draw[freccia] (main.east) -- (dep.west);
+  \draw[freccia] (main.east) -- (get.west);
+  \draw[freccia] (main.east) -- (pre.west);
+  \draw[freccia] (dep.east) -- (saldo.west |- dep.east);
+  \draw[freccia] (get.east) -- (saldo.west);
+  \draw[freccia] (pre.east) -- (saldo.west |- pre.east);
+
+  \draw[frecciarossa,dashed] (main.south) to[out=-60,in=-110]
+     node[pos=0.5,below=2pt,font=\small,text=red!75!black]
+       {$\boldsymbol{\times}$ \texttt{c1.saldo = 1000000;} \quad errore di compilazione}
+     (saldo.south);
+\end{tikzpicture}
+\end{center}
+
+\textbf{Un oggetto che contiene altri oggetti.} Nel laboratorio di questo modulo
+la \cc|Biblioteca| ha come attributo un array di \cc|Libro|: dentro l'oggetto
+biblioteca ci sono, fisicamente, gli oggetti libro (aggregazione). Il \cc|main|
+parla solo con la biblioteca; è la biblioteca a mandare messaggi ai libri.
+
+\begin{center}
+\begin{tikzpicture}
+  \node[processo] (main) at (0,0) {\texttt{main()}};
+  \foreach \t [count=\i] in {Odissea,Promessi sposi,Gattopardo,{\ldots}}
+    \node[cella,fill=privcol,minimum width=2.3cm,font=\footnotesize] (lib\i) at (3.2+\i*2.35,0) {\t};
+  \node[cella,fill=privcol,minimum width=1.2cm,below=0.35cm of lib1.south west,anchor=north west] (nn) {n = 6};
+  \node[etichetta,above=0.05cm of lib1] (s0) {scaffale[0]};
+  \node[etichetta,above=0.05cm of lib2] {scaffale[1]};
+  \node[zona,dashed,draw=black!60,fit=(s0)(lib1)(lib4)(nn),inner sep=7pt,
+        label={[etichetta]above:oggetto \texttt{b} (classe \texttt{Biblioteca}): tutto private}] (bib) {};
+  \draw[freccia] (main.east) -- (bib.west);
+  \node[etichetta,below=0.15cm of main,text width=3.6cm,align=center] {\texttt{b.prestaTitolo(...)}};
+  \node[etichetta,below=0.1cm of bib,text width=9cm,align=center]
+       {e la biblioteca manda \texttt{scaffale[i].presta()} al libro giusto};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Questo è lo schema da memorizzare per \textbf{ogni} classe d'esame:
+attributi \cc|private|, costruttore che rende lo stato valido, metodi di
+modifica con controllo che restituiscono \cc|bool|, getter \cc|const| e un
+metodo di stampa. Leggilo riga per riga insieme ai commenti.
+
+\codice{codice/m01/pattern.cpp}
+\uscita{codice/m01/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item Il controllo \cc|saldoIniziale >= 0| sta \textbf{dentro} la classe.
+        Chi usa il conto non deve ricordarsi di farlo e non può dimenticarlo:
+        Lucia ha chiesto $-50$ e si ritrova con 0.
+  \item \cc|preleva| \textbf{restituisce} \cc|false| invece di stampare un
+        messaggio d'errore. È il \cc|main| (chi chiama) a decidere cosa fare
+        del rifiuto: stampare, riprovare, ignorare. È lo stile più pulito e
+        quello che si aspetta il docente.
+  \item La riga commentata \cc|c1.saldo = 1000000;| non compila: provala
+        togliendo il commento, leggi l'errore (\emph{'double ContoBancario::saldo'
+        is private within this context}) e rimettila a posto.
+  \item Dopo la graffa di chiusura della classe c'è il \textbf{punto e virgola}.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: il punto e virgola dopo la classe]
+\cc|class A { ... }| senza \cc|;| finale produce errori di compilazione
+strani, spesso segnalati nella riga \emph{dopo} la classe (ad esempio
+``\emph{expected ';' after class definition}'' oppure errori su \cc|int main|).
+Controlla sempre \cc|};|.
+\end{trappola}
+
+\begin{trappola}[: accesso di default]
+In una \cc|class| senza specificatori \textbf{tutto è private}. Se dimentichi
+\cc|public:| nemmeno il costruttore è accessibile e il \cc|main| non compila.
+Nelle \cc|struct| invece il default è \cc|public|.
+\end{trappola}
+
+\begin{trappola}[: attributi public]
+In laboratorio, attributi \cc|public| ``per fare prima'' violano l'information
+hiding e \textbf{costano punti}. Sempre \cc|private| + getter.
+\end{trappola}
+
+\begin{trappola}[: getter senza const]
+Un metodo che non modifica nulla va dichiarato \cc|const|:
+\cc|double getSaldo() const|. Senza \cc|const| non potrai chiamarlo su un
+oggetto costante o passato come \cc|const Conto& c|, cosa frequentissima negli
+esercizi dei moduli successivi.
+\end{trappola}
+
+\begin{trappola}[: array di oggetti senza costruttore vuoto]
+\cc|Libro scaffale[10];| crea 10 oggetti \emph{subito}, e per farlo serve un
+costruttore senza parametri, \cc|Libro()|. Se la classe ha solo
+\cc|Libro(string, string, int)| il compilatore protesta (\emph{no matching
+function for call to 'Libro::Libro()'}). Soluzione: aggiungi \cc|Libro()| con
+valori di default, oppure inizializza l'array elemento per elemento con le graffe.
+\end{trappola}
+
+\begin{trappola}[: classe e oggetto all'orale]
+Non dire ``la classe contiene i valori''. La classe è il \textbf{tipo} (il
+progetto); i valori stanno negli \textbf{oggetti}. ``Classe'' e ``istanza'' non
+sono sinonimi.
+\end{trappola}
+
+\begin{consiglio}[: dimenticare le parentesi]
+\cc|c1.getSaldo| senza \cc|()| non chiama il metodo. Se vedi
+``\emph{invalid use of non-static member function}'', mancano le parentesi.
+\end{consiglio}
+
+\begin{consiglio}[: i setter riusati dal costruttore]
+Se hai già scritto un setter con il controllo, nel costruttore puoi chiamarlo
+invece di ripetere il controllo (vedi l'Esercizio~1.1): così la regola sta
+\textbf{in un solo punto} e, se cambia, la modifichi una volta sola.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+Rispondi a tutte le domande su un foglio, \emph{poi} controlla le soluzioni.
+
+\begin{quiz}{In una \texttt{class} C++, se non si scrive alcuno specificatore di accesso, i membri sono:}
+  \item \texttt{public}
+  \item \texttt{private}
+  \item \texttt{protected}
+  \item dipende dal compilatore
+\end{quiz}
+
+\begin{quiz}{Il principio di \emph{information hiding} consiste nel:}
+  \item raggruppare dati e metodi nella stessa classe
+  \item nascondere i dettagli implementativi, esponendo solo un'interfaccia pubblica
+  \item derivare una classe da un'altra
+  \item usare variabili globali per condividere i dati tra oggetti
+\end{quiz}
+
+\begin{quiz}{L'attributo \texttt{saldo} è \texttt{private}. Cosa succede scrivendo \texttt{c1.saldo = 10;} nel \texttt{main}?}
+  \item l'istruzione viene eseguita normalmente
+  \item errore a tempo di esecuzione (run-time)
+  \item errore di compilazione
+  \item solo un warning, poi viene eseguita
+\end{quiz}
+
+\begin{quiz}{Il collegamento dinamico (dynamic binding):}
+  \item sceglie il metodo da eseguire durante la compilazione
+  \item sceglie il metodo da eseguire durante l'esecuzione ed è alla base del polimorfismo
+  \item è un altro nome del linker
+  \item riguarda esclusivamente le librerie dinamiche (.dll)
+\end{quiz}
+
+\begin{quiz}{Una persona può lavorare contemporaneamente per più aziende. La relazione tra \texttt{Azienda} e \texttt{Persona} è:}
+  \item associazione semplice
+  \item aggregazione
+  \item composizione
+  \item ereditarietà
+\end{quiz}
+
+\begin{quiz}{Chi può accedere a un attributo \texttt{private} di una classe?}
+  \item qualunque funzione scritta nello stesso file
+  \item solo i metodi della stessa classe
+  \item solo il \texttt{main}
+  \item le classi derivate, ma non i metodi della classe stessa
+\end{quiz}
+
+\begin{quiz}{Un metodo dichiarato \texttt{int getX() const} :}
+  \item restituisce un valore che non si può modificare
+  \item promette di non modificare lo stato dell'oggetto
+  \item può essere chiamato solo su oggetti costanti
+  \item è condiviso da tutti gli oggetti e non ha accesso agli attributi
+\end{quiz}
+
+\begin{quiz}{Si creano 100 oggetti della classe \texttt{Auto}, che ha 3 attributi e 5 metodi. In memoria esistono:}
+  \item 100 copie degli attributi e 100 copie del codice dei metodi
+  \item 100 copie degli attributi e una sola copia del codice dei metodi
+  \item una sola copia degli attributi e 100 copie dei metodi
+  \item una sola copia di tutto, condivisa
+\end{quiz}
+
+\begin{quiz}{Nell'istruzione \texttt{auto1.accelera(20);} il \emph{selettore} del messaggio è:}
+  \item \texttt{auto1}
+  \item \texttt{accelera}
+  \item \texttt{20}
+  \item il punto
+\end{quiz}
+
+\begin{quiz}{Una sottoclasse si può differenziare dalla sua sopraclasse:}
+  \item solo aggiungendo attributi e metodi (estensione)
+  \item solo riscrivendo metodi ereditati (ridefinizione)
+  \item sia per estensione sia per ridefinizione
+  \item in nessun modo: è una copia identica
+\end{quiz}
+
+\begin{quiz}{Qual è l'unica differenza tra \texttt{struct} e \texttt{class} in C++?}
+  \item le \texttt{struct} non possono avere metodi
+  \item le \texttt{struct} non possono avere membri privati
+  \item l'accesso di default: \texttt{public} nelle \texttt{struct}, \texttt{private} nelle \texttt{class}
+  \item le \texttt{class} si allocano nello heap, le \texttt{struct} nello stack
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. In una \cc|class| il default è \cc|private|. La A sarebbe
+        giusta per una \cc|struct|. La D è falsa: lo stabilisce lo standard.
+  \item \textbf{B}. La A è la definizione di \emph{incapsulamento}: è il
+        distrattore classico.
+  \item \textbf{C}. Il controllo d'accesso lo fa \textbf{il compilatore}: il
+        programma non viene nemmeno prodotto.
+  \item \textbf{B}. ``Dinamico'' significa a run-time. Il linker (C) è un'altra
+        cosa: collega i file oggetto (Modulo 2).
+  \item \textbf{B}. È una relazione ``intero--parte'', ma la parte non appartiene
+        in modo esclusivo a un solo intero: aggregazione. Se fosse esclusiva
+        (pneumatico--auto) sarebbe composizione.
+  \item \textbf{B}. Solo i metodi della classe (e le funzioni dichiarate
+        \cc|friend|, che vedrai con gli operatori). Le classi derivate (D)
+        accedono ai membri \cc|protected|, non ai \cc|private|.
+  \item \textbf{B}. \cc|const| dopo le parentesi riguarda l'oggetto su cui si
+        chiama il metodo, non il valore restituito. Un metodo \cc|const| si può
+        chiamare su qualunque oggetto, costante o no (C è falsa).
+  \item \textbf{B}. Ogni oggetto ha i \emph{suoi} attributi (il suo stato), ma il
+        codice dei metodi è uno solo.
+  \item \textbf{B}. Destinatario \cc|auto1|, selettore \cc|accelera|, argomento \cc|20|.
+  \item \textbf{C}. Estensione (aggiungo) e ridefinizione (modifico) si possono
+        usare insieme.
+  \item \textbf{C}. Anche le \cc|struct| C++ hanno metodi e membri privati; dove
+        vengono allocate dipende da come le crei, non dal fatto che siano
+        \cc|struct| o \cc|class|.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+Questo esercizio è costruito come una prova d'esame, ma si sviluppa \textbf{a
+passi}: ogni step aggiunge un concetto nuovo a quello che hai già scritto.
+Fai uno step alla volta, compila e prova \textbf{prima} di passare al
+successivo. È esattamente il modo giusto di lavorare anche all'esame: un
+programma che compila e fa metà delle cose vale molto più di uno completo che
+non compila.
+
+\begin{traccia}[: gestione di una biblioteca]
+Si vuole gestire il catalogo di una piccola biblioteca. Ogni libro ha un titolo,
+un autore, un anno di pubblicazione e può essere disponibile o in prestito.
+\end{traccia}
+
+\begin{step}{la classe Libro}
+Scrivi la classe \cc|Libro| con attributi privati \cc|titolo|, \cc|autore|
+(\cc|string|), \cc|anno| (\cc|int|) e \cc|disponibile| (\cc|bool|). Aggiungi un
+costruttore \cc|Libro(string t, string a, int y)| che crea un libro disponibile,
+i getter \cc|const| e un metodo \cc|stampa() const|.\\[0.3em]
+\textbf{Concetto nuovo:} classe, attributi privati, costruttore, getter \cc|const|.
+\end{step}
+
+\begin{step}{proteggere lo stato}
+Il costruttore deve correggere i dati non validi: titolo vuoto $\to$
+\q{Senza titolo}; anno prima del 1450 o dopo il 2026 $\to$ 0.
+Aggiungi \cc|bool presta()| e \cc|bool restituisci()|: prestare un libro già in
+prestito, o restituirne uno disponibile, deve essere \textbf{rifiutato}
+(\cc|false|) senza cambiare nulla.\\[0.3em]
+\textbf{Concetto nuovo:} invariante di classe, metodi che controllano prima di modificare.
+\end{step}
+
+\begin{step}{array di oggetti e numeri casuali}
+Nel \cc|main|, con \cc|srand(111222333)|, crea un array di 4 libri inizializzato
+con le graffe ed esegui 5 tentativi di prestito su libri scelti a caso
+(\cc|rand() % N|), stampando per ognuno se è riuscito o è stato rifiutato.\\[0.3em]
+\textbf{Concetto nuovo:} array di oggetti, messaggi inviati a elementi diversi.
+\end{step}
+
+\begin{step}{la classe Biblioteca}
+Scrivi la classe \cc|Biblioteca|, che contiene un array privato di (al massimo)
+10 \cc|Libro| e il numero \cc|n| di libri presenti. Metodi:
+\cc|bool aggiungi(Libro l)| (rifiuta se piena), \cc|bool prestaTitolo(string t)|
+(cerca il libro e gli manda il messaggio \cc|presta()|), \cc|int contaDisponibili() const|
+e \cc|stampa() const|. \emph{Attenzione}: per dichiarare l'array serve un
+costruttore \cc|Libro()| senza parametri.\\[0.3em]
+\textbf{Concetto nuovo:} aggregazione, oggetti che mandano messaggi ad altri oggetti.
+\end{step}
+
+\begin{step}{ricerche}
+Aggiungi a \cc|Biblioteca| i metodi \cc|void stampaAutore(string a) const|,
+\cc|int indicePiuVecchio() const| (restituisce $-1$ se la biblioteca è vuota) e
+\cc|Libro getLibro(int i) const|, che restituisce una \emph{copia} del libro
+$i$-esimo. Nel \cc|main| stampa i libri di Eco e il libro più vecchio.\\[0.3em]
+\textbf{Concetto nuovo:} ricerca del minimo su un array di oggetti, restituire oggetti.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m01/lab.cpp}
+\uscita{codice/m01/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|cout << l1.presta()| stampa \texttt{1} o \texttt{0}: \cc|cout|
+        stampa i \cc|bool| come numeri. Per avere \texttt{true}/\texttt{false}
+        si scrive \cc|cout << boolalpha;| una volta.
+  \item Nello step 4 \cc|b.aggiungi(v[i])| mette nella biblioteca una
+        \textbf{copia} del libro, con il suo stato di quel momento. I libri già
+        prestati nello step 3 risultano in prestito anche nella biblioteca,
+        ma se poi presti \cc|v[3]| la copia nella biblioteca non cambia.
+        Le copie sono oggetti indipendenti.
+  \item \cc|indicePiuVecchio| restituisce un \textbf{indice} e non stampa nulla:
+        così il metodo si può riusare per altri scopi. Il valore $-1$ è il modo
+        classico di dire ``non trovato''.
+  \item \cc|static const int MAX = 10;| è una costante unica per tutta la classe,
+        non una per ogni oggetto.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Che differenza c'è tra classe e oggetto?]
+La classe è la \textbf{descrizione} di un tipo di oggetti: stabilisce quali
+attributi e quali metodi avranno, ed esiste solo nel codice. L'oggetto è
+un'\textbf{istanza} concreta della classe, creata in memoria durante
+l'esecuzione, con i propri valori degli attributi, cioè il suo stato. Da una
+classe si possono creare molti oggetti con la stessa struttura e stato diverso.
+I metodi invece non vengono duplicati: il codice è uno solo, condiviso da tutti
+gli oggetti.
+\end{orale}
+
+\begin{orale}[D2. Incapsulamento e information hiding sono la stessa cosa?]
+No. L'\textbf{incapsulamento} è raccogliere in un'unica unità, la classe, i dati
+e i metodi che li manipolano. L'\textbf{information hiding} è nascondere
+all'esterno i dettagli interni, lasciando visibile solo l'interfaccia pubblica;
+in C++ si ottiene con \cc|private| e \cc|public|. I vantaggi sono tre: i dati non
+possono finire in stati non validi, perché si modificano solo tramite metodi
+che li controllano; l'implementazione si può cambiare senza toccare il codice
+che usa la classe; gli errori sono più facili da trovare, perché i dati si
+modificano in pochi punti.
+\end{orale}
+
+\begin{orale}[D3. Cos'è il polimorfismo e come si realizza?]
+È la capacità di uno stesso messaggio di produrre comportamenti diversi a
+seconda dell'oggetto che lo riceve. Ad esempio \cc|accelera()| ha
+un'implementazione diversa in \cc|Automobile| e in \cc|Moto|. Se una variabile di
+tipo ``veicolo'' può riferirsi a entrambe, il metodo giusto deve essere scelto
+\textbf{durante l'esecuzione}: è il \textbf{collegamento dinamico}. In C++ si
+ottiene con i metodi \cc|virtual| (Modulo 9).
+\end{orale}
+
+\begin{orale}[D4. Differenza tra associazione, aggregazione e composizione?]
+Sono relazioni via via più forti. L'\textbf{associazione} è una relazione d'uso:
+una classe usa l'altra, ad esempio inviandole messaggi o ricevendone un oggetto
+come parametro. L'\textbf{aggregazione} è una relazione intero--parte in cui la
+parte è un attributo dell'intero ma può esistere indipendentemente o appartenere
+a più interi (Azienda--Persona). La \textbf{composizione} è un'aggregazione con
+appartenenza esclusiva: la parte appartiene a un solo intero alla volta
+(Automobile--Pneumatico).
+\end{orale}
+
+\begin{orale}[D5. Cos'è un messaggio e quali parti ha?]
+Nella OOP gli oggetti interagiscono scambiandosi messaggi, cioè richieste di
+attivare un metodo. Un messaggio ha tre parti: il \textbf{destinatario}
+(l'oggetto che lo riceve), il \textbf{selettore} (il metodo da attivare) e gli
+\textbf{argomenti} (i parametri passati). In C++ un messaggio si scrive
+\cc|destinatario.selettore(argomenti)|. L'effetto è un'azione o un cambiamento
+dello stato del destinatario.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+Scrivi ogni esercizio in un file \texttt{.cpp} nuovo, compilalo e provalo
+\textbf{anche con dati sbagliati}. Solo quando funziona, confrontalo con la
+soluzione a fine sezione: non c'è un'unica soluzione giusta, ma controlla di
+aver rispettato le regole (attributi \cc|private|, getter \cc|const|, controlli
+nei metodi di modifica).
+
+\begin{esercizio}{Rettangolo}{facile}
+Classe \cc|Rettangolo| con \cc|base| e \cc|altezza| private. Costruttore con due
+parametri; setter \cc|bool setBase(double)| e \cc|bool setAltezza(double)| che
+rifiutano valori $\le 0$; metodi \cc|area()|, \cc|perimetro()| e \cc|stampa()|.
+Se il costruttore riceve un valore non valido, usa 1.
+\emph{Suggerimento:} fai chiamare i setter al costruttore.
+\end{esercizio}
+
+\begin{esercizio}{Contatore di persone}{facile}
+Classe \cc|Contatore| con un intero privato che parte da 0: \cc|incrementa()|,
+\cc|bool decrementa()| (non può scendere sotto 0), \cc|reset()| e
+\cc|getValore() const|. Usalo per contare le persone che entrano ed escono da una stanza.
+\end{esercizio}
+
+\begin{esercizio}{struct contro class}{facile}
+Scrivi \cc|struct PuntoS { double x, y; };| e una \cc|class PuntoC| con \cc|x| e
+\cc|y| \textbf{senza} specificatori, più un costruttore pubblico e un metodo
+\cc|distanzaOrigine()|. Nel \cc|main| prova ad assegnare \cc|x| direttamente in
+entrambi i casi e leggi l'errore del compilatore. (Serve \cc|#include <cmath>|
+per \cc|sqrt|.)
+\end{esercizio}
+
+\begin{esercizio}{Termometro}{facile}
+Classe \cc|Termometro| che memorizza \textbf{solo} la temperatura in gradi
+Celsius e offre \cc|getFahrenheit()| ($C \cdot 9/5 + 32$) e \cc|getKelvin()|
+($C + 273.15$). Il setter rifiuta temperature sotto lo zero assoluto ($-273.15$).
+Perché è meglio non memorizzare anche Fahrenheit e Kelvin come attributi?
+\end{esercizio}
+
+\begin{esercizio}{Lampadina}{medio}
+Classe \cc|Lampadina| con stato acceso/spento, numero di accensioni e durata
+massima (passata al costruttore). \cc|bool accendi()| fallisce se è già accesa o
+bruciata; se le accensioni superano la durata, la lampadina si brucia e non si
+accende più. Prova con durata 2 e tre accensioni.
+\end{esercizio}
+
+\begin{esercizio}{Orologio}{medio}
+Classe \cc|Orologio| con ore, minuti e secondi. Il costruttore porta a
+\texttt{00:00:00} un orario non valido. \cc|avanza()| aggiunge un secondo
+gestendo i riporti (\texttt{23:59:59} $\to$ \texttt{00:00:00}). \cc|stampa()|
+scrive sempre due cifre (\texttt{09:05:03}): usa un metodo \textbf{privato} di supporto.
+\end{esercizio}
+
+\begin{esercizio}{Libretto universitario}{medio}
+Classe \cc|Studente| con nome e un array privato di al massimo 30 voti.
+\cc|bool aggiungiVoto(int)| accetta solo voti tra 18 e 30; poi \cc|media()|,
+\cc|votoMassimo()| e \cc|stampa()|. Nel \cc|main| prova i voti 28, 15, 30, 24, 33, 27.
+\end{esercizio}
+
+\begin{esercizio}{Flotta di automobili}{medio}
+Classe \cc|Automobile| con modello, velocità (massimo 180 km/h) e carburante
+(serbatoio da 40 litri). \cc|bool accelera(int delta)| consuma 1 litro ogni
+10 km/h e rifiuta se non c'è abbastanza benzina; \cc|frena|, \cc|fermati|,
+\cc|double rifornisci(double)| (restituisce i litri effettivamente messi).
+Nel \cc|main|, con \cc|srand(111222333)|, crea 3 auto, applica 5 accelerazioni
+casuali tra 10 e 90 a ciascuna e stampa la più veloce.
+\end{esercizio}
+
+\begin{esercizio}{Bonifico tra conti}{difficile}
+Riprendi \cc|ContoBancario| del pattern e aggiungi
+\cc|bool bonifico(ContoBancario& dest, double x)|: preleva da questo conto e
+deposita su \cc|dest|. Va rifiutato se manca il saldo o se \cc|dest| è lo stesso
+conto (confronta gli indirizzi: \cc|&dest == this|). La \cc|&| nel parametro
+serve a modificare il conto originale e non una copia (Modulo 3).
+\end{esercizio}
+
+\begin{esercizio}{Frazione sempre semplificata}{difficile}
+Classe \cc|Frazione| con numeratore e denominatore. \textbf{Invariante}: il
+denominatore è sempre positivo e la frazione è sempre ridotta ai minimi termini
+(usa l'MCD con l'algoritmo di Euclide, in un metodo privato). Denominatore 0
+$\to$ la frazione diventa $0/1$. Metodi \cc|somma(Frazione)| e
+\cc|prodotto(Frazione)| che restituiscono una \textbf{nuova} frazione, più
+\cc|valore()| e \cc|stampa()|.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m01/}.

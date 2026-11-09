@@ -1,0 +1,7 @@
+costruttore Persona(Mario)
+costruttore Studente(1000123)
+Ciao, sono Mario
+Mario ha matricola 1000123
+--- fine blocco ---
+distruttore Studente(1000123)
+distruttore Persona(Mario)

@@ -1,0 +1,7 @@
+Componente 0 (3 vertici): 0 1 2
+Componente 1 (2 vertici): 3 4
+Componente 2 (4 vertici): 5 6 7 8
+Componente 3 (1 vertici): 9
+Componenti: 4 -> il grafo NON e' connesso
+4 e 3 nella stessa componente? si
+4 e 8 nella stessa componente? no

@@ -1,0 +1,587 @@
+% =====================================================================
+\chapter{Verso l'esame}
+% =====================================================================
+
+Hai finito i 14 moduli. Questa appendice serve a trasformare quello che hai studiato in
+un esame superato: un \textbf{piano di studio} giorno per giorno, una \textbf{simulazione
+d'esame} completa (quiz, laboratorio, orale), un \textbf{formulario} da rileggere negli
+ultimi giorni e un \textbf{glossario} dei termini con il rimando al modulo in cui sono
+spiegati.
+
+% ---------------------------------------------------------------------
+\section{Piano di studio intensivo: 20 giorni}
+% ---------------------------------------------------------------------
+
+\begin{consiglio}[: adatta il piano al tuo tempo]
+Il piano è scritto per chi ha 20 giorni pieni, circa 8 ore al giorno. Se studi mentre
+lavori o frequenti altri corsi, tieni lo stesso \emph{ordine} e la stessa
+\emph{giornata tipo}, ma dai a ogni riga del calendario due o tre giorni (con 3--4 ore
+al giorno diventa un piano di 40--60 giorni). L'Allenatore conta i giorni a partire
+dalla data dell'appello che imposti: se mancano più di 20 giorni ti dice tra quanto
+comincia il piano intensivo, se ne mancano meno ti porta direttamente al giorno
+corrispondente.
+\end{consiglio}
+
+L'esame ha tre prove: \textbf{quiz a crocette}, \textbf{prova di laboratorio} (scrivere al
+PC un programma completo da una traccia) e \textbf{orale}. Il laboratorio è la prova
+più selettiva e quella che richiede più allenamento: per questo metà del piano è fatto di
+codice scritto da te, a mano, senza copiare.
+
+\subsection*{La giornata tipo}
+
+Ogni giornata di studio ``su un modulo'' ha la stessa forma. Non saltare le ultime due
+voci: sono quelle che fissano la memoria.
+\begin{center}
+\begin{tabular}{lp{10.5cm}}
+\toprule
+\textbf{Tempo} & \textbf{Attività} \\
+\midrule
+1h 30 & \textbf{Teoria attiva}: leggi la sezione 1 del modulo con carta e penna. Dopo ogni
+        paragrafo chiudi la dispensa e riscrivi l'idea con parole tue. Ridisegna a mano le
+        figure della sezione 2. \\
+2h 00 & \textbf{Codice}: leggi il pattern, poi \textbf{chiudilo} e riscrivilo da zero.
+        Compila, confronta, correggi. Ripeti finché esce senza guardare. \\
+2h 00 & \textbf{Esercizi al PC}: almeno 6 dei 10, in ordine. Guarda la soluzione solo
+        dopo aver ottenuto un programma che compila e gira (anche se sbagliato). \\
+1h 00 & \textbf{Laboratorio a step}: uno step alla volta, con il programma che compila
+        alla fine di ogni step. \\
+0h 45 & \textbf{Quiz} del modulo, cronometrati (1 minuto a domanda), poi correzione. \\
+0h 30 & \textbf{Orale}: rispondi \emph{ad alta voce} alle domande del modulo, poi leggi
+        la risposta modello. \\
+0h 15 & \textbf{Ripasso a distanza}: rifai 3 quiz a caso di moduli già fatti. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Il calendario}
+
+\begin{center}\small
+\begin{tabular}{lp{4.4cm}p{7.6cm}}
+\toprule
+\textbf{Giorno} & \textbf{Argomento} & \textbf{Obiettivo della giornata} \\
+\midrule
+1  & M1 OOP + M2 C++ base       & scrivere una classe con getter/setter e un \cc|main| che legge da tastiera \\
+2  & M3 puntatori e memoria      & disegnare stack e heap di qualunque programma; array dinamici \\
+3  & M4 classi (parte 1)         & costruttori, lista di inizializzazione, distruttore, \cc|this| \\
+4  & M4 (parte 2) + M5 template  & Regola dei Tre scritta a memoria; eccezioni; una classe template \\
+5  & M9 ereditarietà             & gerarchia con base astratta, \cc|virtual|, array di \cc|Base*| \\
+6  & M10 operatori + 1 traccia   & \cc|put|/\cc|operator<<|, \cc|operator==|; prima traccia d'esame di gerarchia \\
+7  & M6 complessità + M7 ordinamenti & riconoscere la complessità a colpo d'occhio; quick e merge a memoria \\
+8  & M8 ricorsione               & le tre domande; tracciare a mano le chiamate \\
+9  & M11 liste                   & lista template: inserimento, cancellazione, inversione, distruttore \\
+10 & M12 pile e code             & pila e coda template da zero in 20 minuti \\
+11 & M13 alberi e BST            & BST template: inserimento, visite, altezza, cancellazione \\
+12 & M14 grafi                   & BFS e DFS a mano e in codice \\
+13 & Tracce d'esame (1)          & una traccia passata in 3 ore di orologio, poi correzione \\
+14 & Tracce d'esame (2)          & due tracce; rifai da zero quella andata peggio \\
+15 & Tracce d'esame (3)          & due tracce; annota in un quaderno ogni errore ricorrente \\
+16 & Debolezze                   & rifai gli esercizi \q{difficili} dei moduli dove hai sbagliato di più \\
+17 & Quiz di tutti i moduli      & tutti i quiz senza guardare; ripassa solo le risposte sbagliate \\
+18 & \textbf{Simulazione d'esame} & la Sezione A.2 in condizioni reali, poi correzione con il volume Soluzioni \\
+19 & Orale                       & rispondi ad alta voce a tutte le 71 domande dei moduli \\
+20 & Ripasso leggero             & formulario (A.3), glossario (A.4), riposo e sonno \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{consiglio}[: dove trovare le tracce passate]
+In \texttt{Fonti/GitCatalogue/} ci sono prove vere: \texttt{Esami Passati/} (Biblioteca,
+Animale, Frutto, Studente\_Borsista), \texttt{Esercitazioni Laboratorio/} (esami del 2022 e
+il \texttt{template esami di laboratorio.txt} con lo schema \cc|put| + \cc|operator<<|) e
+\texttt{Esami Prog2/} (es.\ \q{Distanza successore} sul BST). Scegli la traccia, metti un
+timer e \textbf{non aprire la soluzione} finché il timer non suona.
+\end{consiglio}
+
+\begin{trappola}[: il piano non è un dogma]
+Se un giorno resti indietro non saltare in avanti per ``rispettare il calendario'':
+recupera usando il giorno 16 (debolezze). Se invece un modulo ti è già chiaro, usa il
+tempo risparmiato per una traccia d'esame in più. Il laboratorio è dove si guadagnano
+(o si perdono) più punti.
+\end{trappola}
+
+% ---------------------------------------------------------------------
+\section{Simulazione d'esame}
+% ---------------------------------------------------------------------
+
+Fai questa simulazione il giorno 18, \textbf{tutta di seguito}, con il cronometro,
+senza dispensa, senza Internet e senza AI. Le soluzioni sono nel volume
+\textbf{Soluzioni}, nell'appendice \q{Soluzioni -- Simulazione d'esame}.
+
+\subsection*{Prova 1 -- Quiz a crocette (30 minuti)}
+
+Una sola risposta corretta per domanda. Segna le risposte su un foglio e correggi alla fine.
+
+\setcounter{domanda}{0}
+\begin{quiz}{Cosa si intende per \emph{information hiding}?}
+  \item rendere tutti gli attributi \texttt{static}
+  \item nascondere i dettagli dell'implementazione, rendendo accessibile solo l'interfaccia pubblica
+  \item cifrare i dati di un oggetto
+  \item impedire l'ereditarietà
+\end{quiz}
+
+\begin{quiz}{Cosa stampa il codice \texttt{int x = 5; \{ int x = 7; x++; \} cout << x;}?}
+  \item 5
+  \item 7
+  \item 8
+  \item errore di compilazione: \texttt{x} è già definita
+\end{quiz}
+
+\begin{quiz}{Dati \texttt{int a[5]} e \texttt{int* p = a;}, a cosa equivale \texttt{*(p + 2)}?}
+  \item all'indirizzo di \texttt{a[2]}
+  \item ad \texttt{a[0] + 2}
+  \item ad \texttt{a[2]}
+  \item a un errore, perché \texttt{p} non è un array
+\end{quiz}
+
+\begin{quiz}{Cos'è un \emph{memory leak}?}
+  \item un puntatore che punta a memoria già liberata
+  \item memoria allocata con \texttt{new} che non viene più liberata e non è più raggiungibile
+  \item l'uso di una variabile non inizializzata
+  \item un accesso fuori dai limiti di un array
+\end{quiz}
+
+\begin{quiz}{Quando è necessario scrivere costruttore di copia, \texttt{operator=} e distruttore?}
+  \item sempre, in ogni classe
+  \item quando la classe ha attributi \texttt{private}
+  \item quando la classe gestisce risorse dinamiche (ad esempio memoria allocata con \texttt{new})
+  \item solo nelle classi template
+\end{quiz}
+
+\begin{quiz}{In che ordine vengono distrutti due oggetti locali \texttt{a} e \texttt{b}, dichiarati in quest'ordine?}
+  \item prima \texttt{a}, poi \texttt{b}
+  \item prima \texttt{b}, poi \texttt{a}
+  \item in ordine casuale
+  \item non vengono distrutti: serve \texttt{delete}
+\end{quiz}
+
+\begin{quiz}{Perché il codice di una classe template si scrive tutto nel file header?}
+  \item perché i template non possono avere metodi
+  \item perché il compilatore deve vedere il codice completo per generare la versione per ogni tipo usato
+  \item per renderlo più veloce in esecuzione
+  \item è solo una convenzione di stile
+\end{quiz}
+
+\begin{quiz}{$T(n) = 3n^2 + 5n\log n + 100$. Qual è la complessità?}
+  \item $O(n \log n)$
+  \item $O(100)$
+  \item $O(n^3)$
+  \item $O(n^2)$
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità di \texttt{for (i = 0; i < n; i++) for (j = 0; j < i; j++) c++;}?}
+  \item $O(n)$
+  \item $O(n^2)$
+  \item $O(n \log n)$
+  \item $O(2^n)$
+\end{quiz}
+
+\begin{quiz}{Quale condizione è necessaria per la ricerca binaria?}
+  \item l'array deve essere ordinato
+  \item l'array deve avere lunghezza pari
+  \item gli elementi devono essere distinti
+  \item l'array deve essere allocato dinamicamente
+\end{quiz}
+
+\begin{quiz}{Quale algoritmo ha costo $O(n \log n)$ anche nel caso peggiore?}
+  \item quick sort
+  \item insertion sort
+  \item merge sort
+  \item bubble sort
+\end{quiz}
+
+\begin{quiz}{Cosa succede eseguendo una funzione ricorsiva senza caso base?}
+  \item restituisce 0
+  \item il compilatore la trasforma in un ciclo
+  \item le chiamate si accumulano finché lo stack si esaurisce (stack overflow)
+  \item viene eseguita una sola volta
+\end{quiz}
+
+\begin{quiz}{\texttt{Base* p = new Derivata; delete p;} -- perché il distruttore di \texttt{Base} dovrebbe essere \texttt{virtual}?}
+  \item perché altrimenti \texttt{delete} non compila
+  \item perché altrimenti viene eseguito solo il distruttore di \texttt{Base} e le risorse di \texttt{Derivata} non vengono liberate
+  \item perché i distruttori sono sempre virtuali
+  \item per poter chiamare il distruttore esplicitamente
+\end{quiz}
+
+\begin{quiz}{Una classe con almeno un metodo virtuale puro:}
+  \item non può essere istanziata
+  \item non può avere costruttori
+  \item non può avere attributi
+  \item non può essere usata come tipo di un puntatore
+\end{quiz}
+
+\begin{quiz}{Perché \texttt{operator<<} per stampare un oggetto si definisce come funzione esterna (non metodo)?}
+  \item perché gli operatori non possono essere metodi
+  \item perché l'operando sinistro è un \texttt{ostream}, non un oggetto della nostra classe
+  \item perché deve essere \texttt{static}
+  \item per renderlo virtuale
+\end{quiz}
+
+\begin{quiz}{Qual è il costo dell'inserimento in testa in una lista semplicemente concatenata con $n$ elementi?}
+  \item $O(1)$
+  \item $O(\log n)$
+  \item $O(n)$
+  \item $O(n^2)$
+\end{quiz}
+
+\begin{quiz}{Su una pila vuota si eseguono: push(1), push(2), push(3), pop, pop, push(4), pop. Quali valori restituiscono i tre pop, in ordine?}
+  \item 1 2 4
+  \item 3 2 4
+  \item 3 2 1
+  \item 1 2 3
+\end{quiz}
+
+\begin{quiz}{In un BST si cancella un nodo con due figli. Chi ne prende il posto?}
+  \item il figlio sinistro
+  \item la radice
+  \item una foglia qualsiasi
+  \item il successore (minimo del sottoalbero destro)
+\end{quiz}
+
+\begin{quiz}{Quale visita di un grafo calcola le distanze minime (in numero di archi) da una sorgente?}
+  \item la DFS
+  \item la BFS
+  \item la visita in-order
+  \item l'ordinamento topologico
+\end{quiz}
+
+\begin{quiz}{Cosa dovrebbe restituire \texttt{operator=} di una classe \texttt{T}?}
+  \item \texttt{void}
+  \item una copia di \texttt{*this} (tipo \texttt{T})
+  \item un riferimento a \texttt{*this} (tipo \texttt{T\&})
+  \item \texttt{bool}
+\end{quiz}
+
+\subsection*{Prova 2 -- Laboratorio (2 ore e 30 minuti)}
+
+\begin{traccia}[: L'officina]
+Un'officina ripara automobili e moto.
+\begin{enumerate}[label=\textbf{\Alph*.}]
+  \item Si implementi la classe astratta \cc|Veicolo| con gli attributi \cc|targa|
+        (stringa) e \cc|km| (intero), il metodo virtuale puro \cc|costoTagliando()| e un
+        metodo virtuale \cc|put(ostream&)| che stampa il nome della classe (con
+        \cc|typeid|), la targa e i km. Si sovraccarichi \cc|operator<<| in modo che chiami
+        \cc|put|.
+  \item Si implementino le sottoclassi \cc|Auto| (con l'attributo \cc|posti|; tagliando:
+        100 euro + 0{,}002 euro per km, + 30 euro se i posti sono più di 5) e \cc|Moto|
+        (con l'attributo \cc|cilindrata|; tagliando: 60 euro + cilindrata/10). Ciascuna
+        ridefinisce \cc|put| aggiungendo il proprio attributo.
+  \item Nel \cc|main|, con \cc|srand(424242)|, si crei un array di 10 puntatori a
+        \cc|Veicolo| scegliendo a caso il tipo, targhe casuali di 7 caratteri (2 lettere, 3
+        cifre, 2 lettere), km tra 0 e 149\,999 (la metà per le moto), posti tra 2 e 7 e
+        cilindrata multipla di 125 tra 125 e 1000. Stamparli.
+  \item Si implementi una classe template \cc|Coda<T>| su nodi allocati dinamicamente,
+        \textbf{senza STL}, che lanci un'eccezione personalizzata \cc|CodaVuota| (derivata
+        da \cc|std::exception|) quando si estrae da una coda vuota. Inserire i veicoli in
+        coda nell'ordine di arrivo, servirli tutti calcolando l'incasso totale, e
+        dimostrare la cattura dell'eccezione con un'estrazione di troppo.
+  \item Si implementi una classe template \cc|BST<K, V>| con inserimento, stampa in ordine
+        di chiave e un metodo che restituisce il valore associato alla chiave massima.
+        Inserire i veicoli con chiave il costo del tagliando, stamparli e stampare il
+        veicolo con il tagliando più caro.
+  \item Usando \cc|typeid| e \cc|dynamic_cast|, stampare il numero di auto con la media dei
+        loro km e il numero di moto con cilindrata di almeno 500 cc.
+  \item Liberare correttamente tutta la memoria.
+\end{enumerate}
+\end{traccia}
+
+\begin{consiglio}[: come affrontare la prova]
+\begin{enumerate}
+  \item Primi 10 minuti: leggi tutta la traccia e disegna su carta la gerarchia e le
+        strutture dati. Non scrivere codice.
+  \item Scrivi subito un \cc|main| vuoto che compila. Poi aggiungi \textbf{un punto alla
+        volta} (A, poi B\ldots) e compila e prova dopo ognuno: un programma incompleto che
+        funziona vale più di un programma completo che non compila.
+  \item Tieni l'ultimo quarto d'ora per rileggere: \cc|virtual| dove serve, distruttore
+        virtuale, \cc|delete| di ogni \cc|new|, output leggibile.
+\end{enumerate}
+\end{consiglio}
+
+\begin{trappola}[: \texttt{rand()} su Windows]
+Con MinGW \cc|RAND_MAX| vale 32767: \cc|rand() % 150000| non supera mai 32767, e i numeri
+\q{grandi} escono tutti piccoli. Per un intervallo ampio componi due estrazioni
+(\cc|casuale(0, 149) * 1000 + casuale(0, 999)|). È un dettaglio che si nota solo se si
+guarda davvero l'output.
+\end{trappola}
+
+\subsection*{Prova 3 -- Orale (simulazione)}
+
+Chiedi a qualcuno di farti queste domande in ordine casuale (o estraile a sorte) e
+rispondi \textbf{ad alta voce}, in piedi, per 2--3 minuti ciascuna. Poi confronta con la
+risposta modello del modulo indicato.
+\begin{center}\small
+\begin{tabular}{rp{10.4cm}l}
+\toprule
+ & \textbf{Domanda} & \textbf{Risposta} \\
+\midrule
+1  & Che differenza c'è tra stack e heap? Cosa sono memory leak e dangling pointer? & M3, D2--D3 \\
+2  & Cos'è la Regola dei Tre? Differenza tra copia superficiale e profonda?       & M4, D2 e D4 \\
+3  & Cos'è un template? Perché si scrive tutto nell'header?                       & M5, D1 e D3 \\
+4  & Cosa significa O-grande? Differenza tra $O$, $\Omega$, $\Theta$?             & M6, D2--D3 \\
+5  & Come funziona il quick sort? Qual è il suo caso peggiore?                    & M7, D2 \\
+6  & Cosa succede in memoria durante una chiamata ricorsiva?                      & M8, D2 \\
+7  & Differenza tra binding statico e dinamico? Cos'è una classe astratta?        & M9, D2--D3 \\
+8  & Perché il distruttore della base deve essere virtuale?                       & M9, D4 \\
+9  & Quando un operatore va definito come metodo e quando come funzione esterna?  & M10, D2 \\
+10 & Differenze tra array e lista concatenata?                                    & M11, D1 \\
+11 & Come si cancella un nodo da un BST?                                           & M13, D3 \\
+12 & Descriva la visita in ampiezza di un grafo.                                   & M14, D3 \\
+\bottomrule
+\end{tabular}
+\end{center}
+All'orale spesso si parte \textbf{dal tuo codice di laboratorio}: preparati a spiegare ogni
+riga della tua soluzione (perché \cc|virtual|? chi libera questa memoria? che complessità
+ha questo metodo?).
+
+% ---------------------------------------------------------------------
+\section{Formulario di ripasso}
+% ---------------------------------------------------------------------
+
+Una scheda per modulo: le cose che \emph{devi} ricordare il giorno dell'esame. Se una riga
+non ti dice niente, torna al modulo indicato.
+
+\subsection*{M1 -- OOP e information hiding}
+\begin{itemize}
+  \item Classe = progetto; oggetto = istanza con il suo stato. Stato (attributi) +
+        comportamento (metodi).
+  \item Information hiding: attributi \cc|private|, interfaccia \cc|public|; si accede solo
+        tramite metodi. Getter \cc|const|, setter con controlli.
+  \item \cc|struct| = \cc|class| con accesso \cc|public| di default.
+  \item Pilastri: astrazione, incapsulamento, ereditarietà, polimorfismo.
+\end{itemize}
+
+\subsection*{M2 -- C++ di base}
+\begin{itemize}
+  \item Preprocessore $\to$ compilatore $\to$ linker. \cc|.h| dichiarazioni, \cc|.cpp|
+        definizioni, \cc|#ifndef| contro le inclusioni doppie.
+  \item Niente \cc|using namespace std;| negli header. \cc|::| = operatore di scope.
+  \item Input sbagliato: \cc|cin.fail()|, \cc|cin.clear()|, \cc|cin.ignore(...)|.
+        \cc|getline| dopo \cc|cin >>|: prima un \cc|ignore|.
+  \item \cc|srand(seme)| una volta sola; \cc|a + rand() % (b - a + 1)| in $[a,b]$.
+\end{itemize}
+
+\subsection*{M3 -- Puntatori e memoria}
+\begin{itemize}
+  \item \cc|&x| indirizzo, \cc|*p| contenuto, \cc|p->m| = \cc|(*p).m|. Reference = alias,
+        non riassegnabile, mai nullo.
+  \item Stack: variabili locali, automatiche. Heap: \cc|new|/\cc|delete|, a mano.
+  \item \cc|new T[n]| $\leftrightarrow$ \cc|delete[] p|. Dopo \cc|delete|: \cc|p = nullptr|.
+  \item \cc|a[i]| = \cc|*(a + i)|. Un array passato a funzione diventa un puntatore: passa
+        anche la dimensione.
+\end{itemize}
+
+\subsection*{M4 -- Classi e oggetti}
+\begin{lstlisting}
+class Vettore {
+    int* v; int n;
+public:
+    Vettore(int n) : v(new int[n]{}), n(n) {}               // lista di inizializzazione
+    ~Vettore() { delete[] v; }                                // distruttore
+    Vettore(const Vettore& o) : v(new int[o.n]), n(o.n) {     // copia PROFONDA
+        for (int i = 0; i < n; i++) v[i] = o.v[i];
+    }
+    Vettore& operator=(const Vettore& o) {
+        if (this != &o) {                                     // auto-assegnamento
+            delete[] v; n = o.n; v = new int[n];
+            for (int i = 0; i < n; i++) v[i] = o.v[i];
+        }
+        return *this;
+    }
+};
+\end{lstlisting}
+\begin{itemize}
+  \item Costruzione: base, poi attributi, poi corpo. Distruzione: ordine inverso.
+  \item Costruttore di copia: oggetto nuovo (\cc|T b = a;|, passaggio per valore).
+        \cc|operator=|: oggetto già esistente (\cc|b = a;|).
+  \item \cc|static|: uno per classe. \cc|throw|/\cc|try|/\cc|catch| per riferimento.
+\end{itemize}
+
+\subsection*{M5 -- Template}
+\begin{itemize}
+  \item \cc|template <typename T>| prima di funzione o classe; il compilatore genera una
+        versione per tipo (istanziazione). Tutto nell'header.
+  \item Fuori dalla classe: \cc|template <typename T> void Lista<T>::metodo() { ... }|.
+  \item Il tipo deve avere gli operatori usati (\cc|<|, \cc|==|, \cc|<<|).
+\end{itemize}
+
+\subsection*{M6 -- Complessità}
+\begin{itemize}
+  \item Si contano i passi nel caso peggiore; si tiene il termine che cresce di più e si
+        tolgono le costanti.
+  \item Sequenza: somma. If: ramo peggiore. Ciclo: giri $\times$ costo del giro. Cicli
+        annidati su $n$: $n^2$. Variabile che si dimezza: $\log n$.
+  \item $O$ = al massimo, $\Omega$ = almeno, $\Theta$ = esattamente (entrambe).
+  \item $O(1) < O(\log n) < O(n) < O(n \log n) < O(n^2) < O(2^n)$.
+  \item Ricorrenze: $C_{N-1}+N \to N^2$; $C_{N/2}+1 \to \log N$; $C_{N/2}+N \to N$;
+        $2C_{N/2}+N \to N\log N$; $2C_{N/2}+1 \to N$.
+\end{itemize}
+
+\subsection*{M7 -- Ordinamento e ricerca}
+\begin{center}\small
+\begin{tabular}{lccccc}
+\toprule
+ & \textbf{Migliore} & \textbf{Peggiore} & \textbf{Stabile} & \textbf{In loco} \\
+\midrule
+Bubble    & $n$        & $n^2$        & sì & sì \\
+Selection & $n^2$      & $n^2$        & no & sì \\
+Insertion & $n$        & $n^2$        & sì & sì \\
+Merge     & $n\log n$  & $n\log n$    & sì & no \\
+Quick     & $n\log n$  & $n^2$        & no & sì \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ricerca lineare $O(n)$; binaria $O(\log n)$, solo su array \textbf{ordinato}.
+
+\subsection*{M8 -- Ricorsione}
+\begin{itemize}
+  \item Le tre domande: qual è il caso base? come rendo il problema più piccolo? come uso
+        il risultato della chiamata?
+  \item Ogni chiamata ha il suo stack frame; senza caso base: stack overflow.
+  \item Codice \textbf{prima} della chiamata: eseguito all'andata. \textbf{Dopo}: al
+        ritorno, in ordine inverso.
+  \item Ricorsione di coda: la chiamata è l'ultima istruzione; si trasforma in un ciclo.
+\end{itemize}
+
+\subsection*{M9 -- Ereditarietà e polimorfismo}
+\begin{lstlisting}
+class Base {
+public:
+    virtual ~Base() {}                          // SEMPRE virtuale
+    virtual double area() const = 0;            // virtuale pura: Base è astratta
+    virtual ostream& put(ostream& os) const { return os << typeid(*this).name(); }
+};
+ostream& operator<<(ostream& os, const Base& b) { return b.put(os); }
+class Derivata : public Base {
+public:
+    double area() const { return 1.0; }
+    ostream& put(ostream& os) const { Base::put(os); return os << " ..."; }
+};
+// Base* v[10]; ... if (Derivata* d = dynamic_cast<Derivata*>(v[i])) ...
+\end{lstlisting}
+\begin{itemize}
+  \item \cc|virtual| = binding dinamico: decide il tipo dell'\emph{oggetto}, non del
+        puntatore. Solo tramite puntatore o reference.
+  \item \cc|protected|: visibile alle derivate. Il costruttore della derivata chiama
+        quello della base nella lista di inizializzazione.
+  \item \cc|typeid(*p) == typeid(X)| tipo esatto; \cc|dynamic_cast<X*>(p)| restituisce
+        \cc|nullptr| se non è un \cc|X|.
+\end{itemize}
+
+\subsection*{M10 -- Operatori}
+\begin{itemize}
+  \item Come metodo: \cc|=|, \cc|[]|, \cc|()|, \cc|->| (obbligatorio), e quelli che
+        modificano l'oggetto (\cc|+=|). Come funzione esterna: \cc|<<|, \cc|>>|, e i
+        simmetrici (\cc|+|, \cc|==|) se serve la conversione a sinistra.
+  \item \cc|ostream& operator<<(ostream& os, const T& x)|: restituisce \cc|os|, così si
+        possono concatenare le stampe. \cc|operator[]| in due versioni (\cc|const| e non).
+  \item \cc|++x|: \cc|T& operator++()|. \cc|x++|: \cc|T operator++(int)|.
+\end{itemize}
+
+\subsection*{M11 -- Liste}
+\begin{itemize}
+  \item Testa: inserimento e cancellazione $O(1)$. In fondo: $O(n)$ (o $O(1)$ con un
+        puntatore alla coda). Accesso all'$i$-esimo: $O(n)$.
+  \item Cancellazione: serve il nodo \emph{precedente}; caso speciale se è la testa.
+  \item Inversione in loco: tre puntatori \cc|prec|, \cc|cur|, \cc|succ|.
+  \item Lista doppia: \cc|prec| e \cc|succ|, si aggiornano 4 puntatori.
+\end{itemize}
+
+\subsection*{M12 -- Pile e code}
+\begin{itemize}
+  \item Pila LIFO: \cc|push|/\cc|pop|/\cc|top| in testa alla lista, tutto $O(1)$.
+  \item Coda FIFO: \cc|enqueue| in fondo, \cc|dequeue| in testa; puntatori \cc|testa| e
+        \cc|fondo|; quando si svuota anche \cc|fondo = nullptr|.
+  \item Pop/dequeue su struttura vuota: eccezione.
+\end{itemize}
+
+\subsection*{M13 -- Alberi e BST}
+\begin{itemize}
+  \item Sinistra $<$ nodo $\le$ destra, in tutto il sottoalbero. In-order = ordinato.
+  \item Pre (radice prima), in (in mezzo), post (dopo: per distruggere).
+  \item Ricerca/inserimento/cancellazione $O(h)$: $\log n$ bilanciato, $n$ degenere.
+  \item Cancellazione: foglia; un figlio (sale il figlio); due figli (sale il successore).
+  \item Altezza: vuoto $-1$, poi $1 + \max(h_{sx}, h_{dx})$.
+\end{itemize}
+
+\subsection*{M14 -- Grafi}
+\begin{itemize}
+  \item Matrice: $V^2$ spazio, arco in $O(1)$. Liste: $V + E$ spazio, somma lunghezze $2E$
+        (non orientato) o $E$.
+  \item BFS: coda, bianco/grigio/nero, \cc|d[v] = d[u] + 1|, \cc|pred|; distanze minime.
+  \item DFS: ricorsione, tempi $d$/$f$, ripartenza da ogni vertice bianco.
+        Topologico = in testa a una lista quando un vertice finisce.
+  \item Entrambe $O(V + E)$ con le liste.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Glossario}
+% ---------------------------------------------------------------------
+
+Tra parentesi il modulo in cui il termine è spiegato.
+
+\begin{description}[itemsep=0.15em,font=\normalfont\bfseries]
+  \item[Adiacente] (M14) $v$ è adiacente a $u$ se esiste l'arco $(u, v)$.
+  \item[Albero binario] (M13) albero in cui ogni nodo ha al più due figli, sinistro e destro.
+  \item[Allocazione dinamica] (M3) memoria chiesta durante l'esecuzione con \cc|new|, nello heap.
+  \item[Altezza] (M13) lunghezza del cammino più lungo dalla radice a una foglia.
+  \item[Arco] (M14) collegamento tra due vertici di un grafo.
+  \item[Attributo] (M1) variabile che fa parte di un oggetto: ne descrive lo stato.
+  \item[BFS] (M14) visita in ampiezza di un grafo, con una coda; calcola le distanze minime.
+  \item[Binding dinamico] (M9) scelta del metodo da eseguire in base al tipo reale dell'oggetto, a tempo di esecuzione (\cc|virtual|).
+  \item[BST] (M13) albero binario di ricerca: a sinistra i minori, a destra i maggiori o uguali.
+  \item[Caso base] (M8) il caso che una funzione ricorsiva risolve senza richiamarsi.
+  \item[Classe astratta] (M9) classe con almeno un metodo virtuale puro; non si può istanziare.
+  \item[Coda] (M12) struttura FIFO: il primo entrato è il primo a uscire.
+  \item[Complessità] (M6) numero di passi di un algoritmo al crescere dei dati.
+  \item[Componente connessa] (M14) gruppo massimale di vertici raggiungibili tra loro.
+  \item[Copia profonda] (M4) copia che duplica anche la memoria dinamica puntata, non solo i puntatori.
+  \item[Costruttore] (M4) metodo chiamato automaticamente alla creazione dell'oggetto.
+  \item[Costruttore di copia] (M4) costruttore che crea un oggetto come copia di un altro: \cc|T(const T&)|.
+  \item[Dangling pointer] (M3) puntatore che punta a memoria già liberata.
+  \item[DFS] (M14) visita in profondità di un grafo, ricorsiva, con backtracking.
+  \item[Distruttore] (M4) metodo chiamato automaticamente quando l'oggetto muore: \cc|~T()|.
+  \item[Divide et impera] (M6, M7) dividere il problema, risolvere le parti, combinare.
+  \item[\texttt{dynamic\_cast}] (M9) conversione sicura verso una derivata; \cc|nullptr| se il tipo non è quello.
+  \item[Eccezione] (M4) oggetto lanciato con \cc|throw| per segnalare un errore, catturato con \cc|catch|.
+  \item[Ereditarietà] (M9) definire una classe a partire da un'altra, ereditandone membri.
+  \item[Foglia] (M13) nodo senza figli.
+  \item[\texttt{friend}] (M4, M10) funzione o classe esterna che può accedere ai membri privati.
+  \item[Grado] (M14) numero di archi che toccano un vertice.
+  \item[Grafo] (M14) insieme di vertici e di archi tra coppie di vertici.
+  \item[Header] (M2) file \texttt{.h} con le dichiarazioni, incluso con \cc|#include|.
+  \item[Heap] (M3) zona della memoria per l'allocazione dinamica, gestita a mano.
+  \item[In loco] (M7) ordinamento che usa solo memoria aggiuntiva costante.
+  \item[Information hiding] (M1) nascondere l'implementazione, esporre solo l'interfaccia.
+  \item[Istanziazione] (M5) generazione del codice di un template per un tipo specifico; anche: creazione di un oggetto.
+  \item[Lista concatenata] (M11) sequenza di nodi dinamici collegati da puntatori.
+  \item[Lista di inizializzazione] (M4) inizializzazione degli attributi dopo i \q{:} del costruttore.
+  \item[Matrice di adiacenza] (M14) tabella $V \times V$: 1 se c'è l'arco, 0 altrimenti.
+  \item[Memory leak] (M3) memoria allocata e mai liberata, non più raggiungibile.
+  \item[Metodo] (M1) funzione che fa parte di una classe.
+  \item[Metodo virtuale puro] (M9) metodo dichiarato \cc|= 0|, senza implementazione nella base.
+  \item[Namespace] (M2) spazio di nomi che evita conflitti (\cc|std::|).
+  \item[\texttt{nullptr}] (M3) valore di un puntatore che non punta a niente.
+  \item[O-grande] (M6) limite superiore alla crescita del numero di passi.
+  \item[Ordinamento topologico] (M14) ordine dei vertici di un DAG in cui ogni arco va avanti.
+  \item[Overloading] (M2, M10) più funzioni o operatori con lo stesso nome e parametri diversi.
+  \item[Override] (M9) ridefinizione in una derivata di un metodo virtuale della base.
+  \item[Pila] (M12) struttura LIFO: l'ultimo entrato è il primo a uscire.
+  \item[Polimorfismo] (M1, M9) lo stesso messaggio produce comportamenti diversi secondo il tipo dell'oggetto.
+  \item[Puntatore] (M3) variabile che contiene un indirizzo di memoria.
+  \item[Reference] (M3) alias di una variabile esistente.
+  \item[Regola dei Tre] (M4) se serve uno tra distruttore, costruttore di copia e \cc|operator=|, servono tutti e tre.
+  \item[Ricorsione] (M8) funzione che chiama sé stessa su un problema più piccolo.
+  \item[Ricorsione di coda] (M8) la chiamata ricorsiva è l'ultima operazione eseguita.
+  \item[RTTI] (M9) informazioni sul tipo a tempo di esecuzione: \cc|typeid|, \cc|dynamic_cast|.
+  \item[Scope] (M2) parte del codice in cui un nome è visibile.
+  \item[Stabile] (M7) ordinamento che mantiene l'ordine relativo degli elementi uguali.
+  \item[Stack] (M3, M8) zona di memoria delle variabili locali e delle chiamate di funzione.
+  \item[Stack frame] (M8) spazio sullo stack di una singola chiamata: parametri, variabili locali, ritorno.
+  \item[\texttt{static}] (M4) membro condiviso da tutti gli oggetti della classe.
+  \item[Successore] (M13) in un BST, il nodo con il valore immediatamente più grande.
+  \item[Template] (M5) funzione o classe parametrizzata su un tipo.
+  \item[\texttt{this}] (M4) puntatore all'oggetto su cui è chiamato il metodo.
+  \item[\texttt{typeid}] (M9) operatore che restituisce il tipo reale di un'espressione.
+  \item[Vertice] (M14) nodo di un grafo.
+  \item[Visita] (M13, M14) percorso che tocca tutti i nodi di una struttura una volta.
+\end{description}

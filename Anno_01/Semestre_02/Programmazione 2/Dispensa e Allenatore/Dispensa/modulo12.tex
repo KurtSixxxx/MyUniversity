@@ -1,0 +1,548 @@
+% =====================================================================
+\chapter{Modulo 12 -- Pile e Code}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Pile e code non sono strutture ``nuove'': sono \textbf{liste (o array) a cui si
+vietano quasi tutte le operazioni}. Si può entrare e uscire solo da punti precisi.
+Proprio questa limitazione le rende utilissime: garantisce un ordine di uscita, e
+rende ogni operazione $O(1)$.
+
+\subsection*{La pila (stack): LIFO}
+
+\begin{analogia}[: la pila di piatti]
+In una pila di piatti appoggi un piatto \textbf{sopra} agli altri e, quando ne prendi
+uno, prendi quello \textbf{in cima}: l'ultimo appoggiato. Per prendere quello in fondo
+devi prima togliere tutti gli altri. Questa regola si chiama \textbf{LIFO}: \emph{Last
+In, First Out}, l'ultimo entrato è il primo a uscire.
+\end{analogia}
+
+\begin{definizione}[: pila]
+Una \textbf{pila} è una sequenza a cui si accede da \textbf{un solo estremo}, la
+\textbf{cima}. Operazioni:
+\begin{itemize}
+  \item \cc|push(x)|: inserisce \cc|x| in cima;
+  \item \cc|pop()|: rimuove (e di solito restituisce) l'elemento in cima;
+  \item \cc|top()|: legge l'elemento in cima senza toglierlo;
+  \item \cc|vuota()|, e \cc|piena()| se la capacità è limitata.
+\end{itemize}
+Fare \cc|pop| o \cc|top| su una pila vuota è un errore chiamato \textbf{underflow};
+fare \cc|push| su una pila piena è un \textbf{overflow}.
+\end{definizione}
+
+La pila la conosci già: lo \textbf{stack} delle chiamate di funzione (Moduli 3 e 8) è
+proprio una pila di record di attivazione. Altri usi tipici: annulla/ripeti negli
+editor, il pulsante ``indietro'' del browser, il controllo delle parentesi, la
+valutazione delle espressioni, invertire qualcosa.
+
+\textbf{Pila su array} (come nelle slide). Un array \cc|dati| e un indice \cc|cima| che
+parte da $-1$ (pila vuota):
+\begin{itemize}
+  \item \cc|push|: verifica che non sia piena, incrementa \cc|cima|, scrivi
+        \cc|dati[cima]|;
+  \item \cc|pop|: verifica che non sia vuota, leggi \cc|dati[cima]|, decrementa \cc|cima|.
+\end{itemize}
+Il fondo della pila è la posizione 0. La capacità è fissata (o si raddoppia come negli
+Esercizi~4.10 e 5.10).
+
+\textbf{Pila su lista concatenata.} Basta una lista semplice in cui la \textbf{cima è
+la testa}: \cc|push| è un inserimento in testa, \cc|pop| una rimozione in testa. Entrambi
+$O(1)$, nessun limite di capacità. La pila è vuota quando la testa è \cc|nullptr|.
+\begin{lstlisting}
+void push(const T& x) { cima = new Nodo<T>{x, cima}; }
+T pop() {
+    if (vuota()) throw underflow_error("pop su pila vuota");
+    Nodo<T>* vecchia = cima;
+    T x = vecchia->valore;     // salvo il valore PRIMA del delete
+    cima = cima->succ;
+    delete vecchia;
+    return x;
+}
+\end{lstlisting}
+
+\subsection*{La coda (queue): FIFO}
+
+\begin{analogia}[: la fila alla posta]
+Chi arriva si mette in \textbf{fondo} alla fila; lo sportello serve chi è in
+\textbf{testa}, cioè chi è arrivato per primo. Regola \textbf{FIFO}: \emph{First In,
+First Out}, il primo entrato è il primo a uscire.
+\end{analogia}
+
+\begin{definizione}[: coda]
+Una \textbf{coda} è una sequenza in cui si inserisce da un estremo (il fondo) e si
+rimuove dall'altro (la testa). Operazioni delle slide:
+\begin{itemize}
+  \item \cc|enqueue(x)|: aggiunge \cc|x| in fondo;
+  \item \cc|dequeue()|: rimuove l'elemento in testa;
+  \item \cc|front()|: legge l'elemento in testa senza toglierlo;
+  \item \cc|isEmpty()|, e \cc|isFull()| se la capacità è limitata.
+\end{itemize}
+\end{definizione}
+
+Usi tipici: code di stampa, gestione delle richieste a un server, simulazioni di
+sportelli, buffer tra chi produce dati e chi li consuma, visita in ampiezza di alberi e
+grafi (Modulo 14).
+
+\textbf{Coda su lista concatenata.} Servono \textbf{due} puntatori: \cc|testa| (da cui
+si esce) e \cc|fondo| (da cui si entra). Con il solo \cc|testa|, \cc|enqueue| dovrebbe
+scorrere tutta la lista: $O(n)$. Con \cc|fondo| entrambe le operazioni sono $O(1)$.
+Attenzione ai casi limite: inserendo in una coda vuota il nuovo nodo diventa sia testa
+sia fondo; togliendo l'ultimo elemento vanno azzerati entrambi.
+\begin{lstlisting}
+void enqueue(const T& x) {
+    Nodo<T>* nuovo = new Nodo<T>{x, nullptr};
+    if (vuota()) testa = nuovo;         // era vuota: è anche la testa
+    else fondo->succ = nuovo;           // altrimenti lo aggancio dopo l'ultimo
+    fondo = nuovo;
+}
+\end{lstlisting}
+
+\textbf{Coda su array circolare.} Con un array, se ogni \cc|dequeue| spostasse avanti
+tutti gli elementi costerebbe $O(n)$. Il trucco è non spostare niente: si tengono
+l'indice del primo elemento (\cc|inizio|) e il numero di elementi (\cc|n|), e si fa
+``girare'' l'array come un orologio usando il resto della divisione:
+\begin{itemize}
+  \item \cc|enqueue|: \cc|dati[(inizio + n) % N] = x; n++;|
+  \item \cc|dequeue|: \cc|x = dati[inizio]; inizio = (inizio + 1) % N; n--;|
+\end{itemize}
+Quando si arriva in fondo all'array, \cc|% N| riporta all'indice 0, nelle celle già
+liberate. Coda vuota: \cc|n == 0|; coda piena: \cc|n == N|.
+
+\begin{analogia}[: il nastro del sushi]
+L'array circolare è il nastro di un ristorante di sushi: i piatti non si spostano
+all'indietro quando qualcuno ne prende uno; semplicemente il ``punto di inizio'' avanza,
+e dopo l'ultimo posto del nastro c'è di nuovo il primo.
+\end{analogia}
+
+\subsection*{Riepilogo}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+ & \textbf{Pila} & \textbf{Coda} \\
+\midrule
+politica & LIFO & FIFO \\
+inserimento & \cc|push| (in cima) & \cc|enqueue| (in fondo) \\
+rimozione & \cc|pop| (dalla cima) & \cc|dequeue| (dalla testa) \\
+lettura & \cc|top| & \cc|front| \\
+su lista & testa = cima & puntatori a testa \emph{e} fondo \\
+su array & indice della cima & array circolare (\cc|% N|) \\
+complessità & tutto $O(1)$ & tutto $O(1)$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\subsection*{Due applicazioni classiche della pila}
+
+\textbf{Parentesi bilanciate.} Scorri il testo: ogni parentesi aperta va sulla pila;
+ogni parentesi chiusa deve corrispondere a quella in cima (che si toglie). Errore se
+trovi una chiusa con la pila vuota o del tipo sbagliato, oppure se alla fine la pila non
+è vuota. Funziona perché l'ultima parentesi aperta è la prima che va chiusa: LIFO.
+
+\textbf{Espressioni in notazione postfissa} (``polacca inversa''): l'operatore si
+scrive \emph{dopo} i suoi operandi. \texttt{(3 + 4) * 2} diventa \texttt{3 4 + 2 *}. Non
+servono parentesi né regole di precedenza. Per calcolarla: i numeri vanno sulla pila;
+quando arriva un operatore si tolgono due numeri, si calcola e si rimette il risultato.
+Attenzione: il primo numero estratto è il \emph{secondo} operando
+(\texttt{8 2 -} vale $8 - 2$, non $2 - 8$).
+
+\begin{inparole}
+\begin{itemize}
+  \item Pila = piatti: LIFO, si lavora solo in cima (\cc|push|, \cc|pop|, \cc|top|).
+  \item Coda = fila alla posta: FIFO, si entra in fondo e si esce dalla testa
+        (\cc|enqueue|, \cc|dequeue|, \cc|front|).
+  \item Su lista: pila = inserimento e rimozione in testa; coda = puntatori a testa e fondo.
+  \item Su array: pila con l'indice della cima; coda circolare con \cc|% N|.
+  \item Togliere da una struttura vuota = underflow: lancia un'eccezione.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+
+eedspace{6cm}
+\textbf{Pila e coda dopo l'arrivo di A, B, C, D} (il pattern).
+\begin{center}
+\begin{tikzpicture}
+  % pila
+  \foreach \v [count=\i] in {A,B,C,D}
+    \node[cella,fill=heapcol,minimum width=1.6cm] (p\i) at (0,\i*0.75) {\v};
+  \draw[freccia] (1.6,4.4) -- node[above,etichetta]{push} (0.9,3.4);
+  \draw[freccia] (-0.9,3.4) -- node[above,etichetta]{pop} (-1.6,4.4);
+  \node[etichetta,below=0.15cm of p1] {PILA: esce D (l'ultimo)};
+  % coda
+  \foreach \v [count=\i] in {A,B,C,D}
+    \node[cella,fill=pubcol,minimum width=1.2cm] (c\i) at (4.6+\i*1.25,2) {\v};
+  \node[etichetta,above=0.15cm of c1] {testa};
+  \node[etichetta,above=0.15cm of c4] {fondo};
+  \draw[freccia] ($(c1.west)+(0,0)$) -- node[above,etichetta]{dequeue} ++(-1.4,0);
+  \draw[freccia] ($(c4.east)+(1.4,0)$) node[above left,etichetta]{enqueue} -- (c4.east);
+  \node[etichetta,below=0.15cm of c2,xshift=0.6cm] {CODA: esce A (il primo)};
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Coda su lista: i due puntatori.} Si entra da \cc|fondo|, si esce da \cc|testa|.
+\begin{center}
+\begin{tikzpicture}[nodoC/.style={draw,rectangle split,rectangle split horizontal,rectangle split parts=2,fill=heapcol,font=\ttfamily\small,minimum height=0.6cm}]
+  \node[cella,fill=stackcol] (t) at (0,0.9) {testa};
+  \node[cella,fill=stackcol] (f) at (7.2,0.9) {fondo};
+  \node[nodoC] (a) at (1.6,-0.4) {A \nodepart{two} \phantom{x}};
+  \node[nodoC] (b) at (3.6,-0.4) {B \nodepart{two} \phantom{x}};
+  \node[nodoC] (c) at (5.6,-0.4) {C \nodepart{two} \phantom{x}};
+  \node[font=\ttfamily\footnotesize] (z) at (7.4,-0.4) {nullptr};
+  \draw[freccia] (t) -- (a.north);
+  \draw[freccia] (f) -- (c.north);
+  \draw[freccia] (a.two) -- (b.west);
+  \draw[freccia] (b.two) -- (c.west);
+  \draw[freccia] (c.two) -- (z.west);
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Coda circolare con $N = 5$.} Dopo vari inserimenti e rimozioni, gli elementi
+occupano le celle 3, 4, 0: il fondo ha ``fatto il giro''.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \v/\f [count=\i from 0] in {E/pubcol,{}/sfondo,{}/sfondo,C/pubcol,D/pubcol}
+    \node[cellina,fill=\f,minimum width=1cm] (q\i) at (\i*1,0) {\v};
+  \foreach \i in {0,...,4} \node[etichetta,below=0.05cm of q\i] {\i};
+  \node[etichetta,above=0.15cm of q3] {inizio = 3};
+  \node[etichetta,anchor=west,text width=6cm] at (5.4,0) {n = 3. Prossimo inserimento in \texttt{(3 + 3) \% 5 = 1}; prossima uscita: C.};
+  \draw[freccia,dashed] (q4.north) to[out=60,in=120] (q0.north);
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Valutare \texttt{3 4 + 2 *}}: lo stato della pila dopo ogni simbolo.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \tok/\stack [count=\i] in {3/{3},4/{3,4},+/{7},2/{7,2},*/{14}} {
+    \node[font=\ttfamily\bfseries] at (\i*2.2,-0.9) {\tok};
+    \foreach \v [count=\j] in \stack
+      \node[cellina,fill=heapcol,minimum width=0.9cm] at (\i*2.2,\j*0.6-0.6) {\v};
+  }
+  \node[etichetta,anchor=east] at (1.3,-0.9) {simbolo letto};
+  \node[etichetta,anchor=east] at (1.3,0.3) {pila (cima in alto)};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Pila e coda generiche su nodi dinamici, con eccezioni di underflow e copia vietata
+(\cc|= delete|). Lo stesso gruppo di persone entra nelle due strutture ed esce in
+ordine opposto.
+
+\codice{codice/m12/pattern.cpp}
+\uscita{codice/m12/output/pattern.txt}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: pop su struttura vuota]
+Senza il controllo, \cc|pop()| su pila vuota dereferenzia \cc|nullptr|: crash. Controlla
+sempre e lancia \cc|underflow_error| (o restituisci un \cc|bool|). Nel \cc|main|, cicla
+con \cc|while (!p.vuota())|.
+\end{trappola}
+
+\begin{trappola}[: dimenticare il fondo nella coda]
+Dopo l'ultimo \cc|dequeue|, \cc|testa| diventa \cc|nullptr| ma \cc|fondo| punta ancora
+al nodo appena cancellato. Il successivo \cc|enqueue| funziona solo se controlla
+\cc|vuota()| guardando \cc|testa|; altrimenti scrive in memoria liberata. Azzera
+\cc|fondo| quando la coda si svuota.
+\end{trappola}
+
+\begin{trappola}[: leggere il valore dopo il delete]
+In \cc|pop|/\cc|dequeue| il valore va copiato in una variabile \emph{prima} di
+\cc|delete|, poi restituito.
+\end{trappola}
+
+\begin{trappola}[: ordine degli operandi nella postfissa]
+Con \cc|b = p.pop(); a = p.pop();| il risultato di \texttt{-} e \texttt{/} è \cc|a - b|.
+Invertirli dà risultati sbagliati solo per sottrazione e divisione, quindi il bug sfugge
+facilmente ai test.
+\end{trappola}
+
+\begin{trappola}[: coda circolare piena o vuota?]
+Con solo \cc|inizio| e \cc|fine| (senza contatore) le due situazioni ``piena'' e
+``vuota'' hanno gli indici uguali. Usa un contatore \cc|n|, oppure lascia sempre una cella
+vuota.
+\end{trappola}
+
+\begin{consiglio}[: riusare la lista]
+All'esame puoi costruire pila e coda sopra la tua classe lista (pila = inserisci e togli
+in testa; coda = inserisci in coda e togli in testa). Ma scriverle da zero con i nodi
+richiede poche righe ed evita dipendenze: quasi sempre conviene.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Si eseguono \texttt{push(1); push(2); push(3); pop(); push(4);} su una pila vuota. Cosa restituisce ora \texttt{top()}?}
+  \item 1
+  \item 2
+  \item 3
+  \item 4
+\end{quiz}
+
+\begin{quiz}{Si eseguono \texttt{enqueue(1); enqueue(2); enqueue(3); dequeue(); enqueue(4);} su una coda vuota. Cosa restituisce ora \texttt{front()}?}
+  \item 1
+  \item 2
+  \item 3
+  \item 4
+\end{quiz}
+
+\begin{quiz}{Quale politica segue una coda?}
+  \item LIFO
+  \item FIFO
+  \item per priorità
+  \item casuale
+\end{quiz}
+
+\begin{quiz}{Implementando una pila con una lista concatenata, dove conviene mettere la cima?}
+  \item in testa alla lista
+  \item in coda alla lista
+  \item a metà lista
+  \item indifferente: costa sempre $O(n)$
+\end{quiz}
+
+\begin{quiz}{Perché in una coda su lista concatenata si tiene anche un puntatore al fondo?}
+  \item per poter scorrere la lista all'indietro
+  \item per rendere \texttt{enqueue} $O(1)$ invece di $O(n)$
+  \item per rendere \texttt{dequeue} $O(1)$
+  \item non serve
+\end{quiz}
+
+\begin{quiz}{Coda circolare su array di dimensione 5, con \texttt{inizio = 3} e \texttt{n = 4}. In quale indice viene scritto il prossimo elemento?}
+  \item 7
+  \item 2
+  \item 4
+  \item 0
+\end{quiz}
+
+\begin{quiz}{Cosa succede facendo \texttt{pop} su una pila vuota?}
+  \item restituisce 0
+  \item si verifica un underflow
+  \item si verifica un overflow
+  \item la pila si riempie
+\end{quiz}
+
+\begin{quiz}{Quanto vale l'espressione postfissa \texttt{6 2 / 3 *}?}
+  \item 1
+  \item 4
+  \item 9
+  \item 36
+\end{quiz}
+
+\begin{quiz}{Quale struttura dati è più adatta per controllare se le parentesi di un'espressione sono bilanciate?}
+  \item una coda
+  \item una pila
+  \item un array ordinato
+  \item una lista circolare
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità di \texttt{push}, \texttt{pop}, \texttt{enqueue} e \texttt{dequeue} nelle implementazioni viste?}
+  \item $O(1)$
+  \item $O(\log n)$
+  \item $O(n)$
+  \item $O(n)$ per la coda, $O(1)$ per la pila
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{D}. Pila: 1, 2, 3; \cc|pop| toglie 3; poi entra 4, che sta in cima.
+  \item \textbf{B}. Coda: 1, 2, 3; \cc|dequeue| toglie 1; in testa ora c'è 2.
+  \item \textbf{B}.
+  \item \textbf{A}. Inserimento e rimozione in testa costano $O(1)$; in coda la rimozione
+        costerebbe $O(n)$.
+  \item \textbf{B}.
+  \item \textbf{B}. $(3 + 4) \% 5 = 2$.
+  \item \textbf{B}.
+  \item \textbf{C}. $6 / 2 = 3$, poi $3 \cdot 3 = 9$.
+  \item \textbf{B}. L'ultima aperta deve essere la prima chiusa: LIFO.
+  \item \textbf{A}. Con il puntatore al fondo anche la coda è tutta $O(1)$.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: pile e code al lavoro]
+Implementare da zero una pila e una coda generiche su nodi dinamici e una coda su array
+circolare, e usarle per tre applicazioni: controllo delle parentesi, simulazione di uno
+sportello e calcolatrice in notazione postfissa.
+\end{traccia}
+
+\begin{step}{la pila}
+\cc|template <typename T> class Pila| su nodi, con \cc|push|, \cc|pop| (che lancia
+\cc|underflow_error| se vuota), \cc|vuota| e distruttore.\\[0.3em]
+\textbf{Concetto nuovo:} LIFO su lista.
+\end{step}
+
+\begin{step}{parentesi bilanciate}
+Scrivi \cc|bool bilanciata(const string& s)| che controlla le parentesi
+\texttt{() [] \{\}} usando una \cc|Pila<char>|. Provala su quattro espressioni, tra cui
+\texttt{([)]}.\\[0.3em]
+\textbf{Concetto nuovo:} usare la pila per ``ricordare'' in ordine inverso.
+\end{step}
+
+\begin{step}{la coda}
+\cc|template <typename T> class Coda| con \cc|testa| e \cc|fondo|, \cc|enqueue|,
+\cc|dequeue|, \cc|vuota|, \cc|size|.\\[0.3em]
+\textbf{Concetto nuovo:} FIFO su lista con due puntatori.
+\end{step}
+
+\begin{step}{lo sportello}
+Con \cc|srand(111222333)| simula 60 minuti di uno sportello: ogni minuto arriva un
+cliente con probabilità 60\% (si mette in coda il suo minuto di arrivo); se lo sportello
+è libero serve il primo della fila, con un tempo di servizio casuale tra 1 e 3 minuti.
+Stampa arrivati, serviti, rimasti in fila, fila massima e attesa media.\\[0.3em]
+\textbf{Concetto nuovo:} la coda come strumento di simulazione.
+\end{step}
+
+\begin{step}{coda circolare}
+\cc|template <typename T, int N> class CodaCircolare| su array statico, con
+\cc|isEmpty|, \cc|isFull|, \cc|enqueue| (lancia \cc|overflow_error| se piena) e
+\cc|dequeue|. Mostra che dopo una rimozione l'elemento successivo riusa la cella 0.\\[0.3em]
+\textbf{Concetto nuovo:} array circolare, operatore \cc|%|.
+\end{step}
+
+\begin{step}{calcolatrice postfissa}
+Scrivi \cc|double valutaPostfissa(const string& espr)| che legge i simboli separati da
+spazi con uno \cc|stringstream| e calcola il risultato con una \cc|Pila<double>|.
+\cc|stod| converte una \cc|string| in \cc|double|.\\[0.3em]
+\textbf{Concetto nuovo:} valutazione di espressioni con la pila.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m12/lab.cpp}
+\uscita{codice/m12/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|for (char c : s)| è il ``for per ogni elemento'': scorre tutti i caratteri
+        della stringa senza indici.
+  \item Nello sportello arrivano in media 0,6 clienti al minuto ma se ne servono circa
+        0,5 (un servizio dura in media 2 minuti): la fila tende a crescere. Prova a
+        cambiare la probabilità di arrivo e guarda come cambiano fila e attese.
+  \item In \cc|valutaPostfissa|, se alla fine la pila contiene più di un numero
+        l'espressione era malformata (mancavano operatori).
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è una pila e come si implementa?]
+Una pila è una struttura dati lineare a cui si accede da un solo estremo, la cima,
+gestita con politica LIFO: l'ultimo elemento inserito è il primo a essere estratto. Le
+operazioni sono \cc|push| (inserimento in cima), \cc|pop| (rimozione dalla cima), \cc|top|
+(lettura della cima) e il test di pila vuota. Con un array si usa un indice che segna la
+cima, incrementato a ogni \cc|push|; la capacità è fissa e la pila può essere piena. Con
+una lista concatenata la cima è la testa della lista: \cc|push| e \cc|pop| sono
+inserimento e rimozione in testa, in $O(1)$, senza limiti di capacità. Estrarre da una
+pila vuota provoca un underflow.
+\end{orale}
+
+\begin{orale}[D2. Cos'è una coda e come si implementa?]
+Una coda è una struttura lineare gestita con politica FIFO: gli elementi si inseriscono
+in fondo (\cc|enqueue|) e si rimuovono dalla testa (\cc|dequeue|), nello stesso ordine in
+cui sono entrati; \cc|front| legge l'elemento in testa. Con una lista concatenata si
+mantengono due puntatori, alla testa e al fondo, così entrambe le operazioni sono
+$O(1)$. Con un array si usa una coda circolare: un indice di inizio e il numero di
+elementi, con gli indici calcolati modulo la dimensione, per non dover spostare elementi.
+\end{orale}
+
+\begin{orale}[D3. Pila su array o su lista: vantaggi e svantaggi?]
+Su array l'accesso è molto veloce e non c'è spazio extra per i puntatori, ma la
+capacità è fissata: la pila può riempirsi, oppure va riallocata raddoppiando, con un costo
+occasionale $O(n)$. Su lista la dimensione è illimitata e ogni operazione è $O(1)$, ma
+ogni elemento occupa memoria in più per il puntatore e ogni \cc|push| richiede
+un'allocazione dinamica.
+\end{orale}
+
+\begin{orale}[D4. Fai un esempio di uso della pila.]
+Il controllo delle parentesi bilanciate: si scorre l'espressione, si fa \cc|push| di ogni
+parentesi aperta e, per ogni parentesi chiusa, si fa \cc|pop| verificando che corrisponda;
+l'espressione è bilanciata se non si incontrano errori e alla fine la pila è vuota. Altri
+esempi: la valutazione di espressioni in notazione postfissa, l'annulla/ripeti negli
+editor e soprattutto lo stack delle chiamate di funzione, che è una pila di record di
+attivazione.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Pila su array}{facile}
+Implementa \cc|template <typename T, int CAP> class PilaArray| come nelle slide: indice
+\cc|cima| che parte da $-1$, \cc|push| che verifica che la pila non sia piena,
+\cc|pop| che verifica che non sia vuota. Provala con capacità 3 e quattro \cc|push|.
+\end{esercizio}
+
+\begin{esercizio}{Invertire con la pila}{facile}
+Con una pila inverti una stringa carattere per carattere, e poi l'ordine delle parole di
+una frase (leggi le parole con uno \cc|stringstream|).
+\end{esercizio}
+
+\begin{esercizio}{Coda di stampa}{facile}
+Una coda di lavori di stampa (\cc|struct Lavoro| con nome del documento e pagine). La
+stampante fa 20 pagine al minuto: stampa a che minuto inizia ogni lavoro.
+\end{esercizio}
+
+\begin{esercizio}{Cambio di base}{facile}
+Converti un intero in base 2, 8 e 16 dividendo ripetutamente per la base e mettendo i
+resti su una pila: escono nell'ordine giusto.
+\end{esercizio}
+
+\begin{esercizio}{Palindromi con pila e coda}{medio}
+Inserisci le lettere di una frase sia in una pila sia in una coda (ignorando spazi,
+punteggiatura e maiuscole). La frase è palindroma se pila e coda restituiscono sempre la
+stessa lettera.
+\end{esercizio}
+
+\begin{esercizio}{Coda con due pile}{medio}
+Implementa una coda usando solo due pile, \cc|entrata| e \cc|uscita|: \cc|enqueue| fa
+\cc|push| su \cc|entrata|; \cc|dequeue|, se \cc|uscita| è vuota, vi travasa tutta
+\cc|entrata| e poi fa \cc|pop|.
+\end{esercizio}
+
+\begin{esercizio}{Pila con minimo}{medio}
+Una pila che, oltre a \cc|push| e \cc|pop|, restituisce in $O(1)$ il minimo degli elementi
+presenti. Idea: ogni nodo memorizza anche il minimo della pila ``da lui in giù''.
+\end{esercizio}
+
+\begin{esercizio}{Annulla e ripeti}{medio}
+Una classe \cc|Editor| con un testo e due pile di versioni precedenti: \cc|scrivi(s)|
+salva la versione attuale nella pila \cc|annulla| e svuota \cc|ripeti|; \cc|undo()| e
+\cc|redo()| spostano le versioni tra le due pile.
+\end{esercizio}
+
+\begin{esercizio}{Da infissa a postfissa}{difficile}
+Converti espressioni infisse con cifre singole, \texttt{+ - * /} e parentesi in
+postfisse: le cifre vanno subito in uscita; un operatore, prima di andare sulla pila,
+fa uscire quelli in cima con priorità maggiore o uguale; una \texttt{)} fa uscire tutto
+fino alla \texttt{(}. Poi valuta la postfissa.
+\end{esercizio}
+
+\begin{esercizio}{Pronto soccorso}{difficile}
+Una coda con priorità: i pazienti hanno un codice (1 rosso, 2 giallo, 3 verde). Escono
+prima i codici più urgenti e, a parità di codice, nell'ordine di arrivo. Realizzala con
+una lista mantenuta ordinata all'inserimento.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m12/}.

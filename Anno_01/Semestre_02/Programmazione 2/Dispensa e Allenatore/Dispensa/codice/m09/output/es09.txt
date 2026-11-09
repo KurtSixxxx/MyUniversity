@@ -1,0 +1,6 @@
+Carla (manager): 3400 euro
+Bruno (operaio): 1840 euro
+Elisa (impiegato): 1750 euro
+Anna (impiegato): 1600 euro
+Dario (operaio): 1560 euro
+Monte stipendi: 10150 euro

@@ -1,0 +1,12 @@
+push 5 -> minimo 5
+push 7 -> minimo 5
+push 3 -> minimo 3
+push 8 -> minimo 3
+push 1 -> minimo 1
+push 9 -> minimo 1
+minimo 1, pop 9
+minimo 1, pop 1
+minimo 3, pop 8
+minimo 3, pop 3
+minimo 5, pop 7
+minimo 5, pop 5

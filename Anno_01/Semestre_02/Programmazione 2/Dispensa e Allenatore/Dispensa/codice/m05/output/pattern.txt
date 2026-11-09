@@ -1,0 +1,6 @@
+7 2.5 mondo
+4.5
+2 1 due uno
+[ c i a o ]
+si: 6 elementi, l'ultimo e' 36
+ss: 2, copia: 3 (gamma)

@@ -1,0 +1,4 @@
+minuto 0: stampo tesi.pdf (120 pag., 6 min)
+minuto 6: stampo biglietto.pdf (1 pag., 1 min)
+minuto 7: stampo slide.pdf (40 pag., 2 min)
+finito al minuto 9

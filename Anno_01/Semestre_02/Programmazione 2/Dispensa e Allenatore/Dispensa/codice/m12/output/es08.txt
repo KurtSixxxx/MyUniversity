@@ -1,0 +1,7 @@
+  "Ciao mondo!"
+  "Ciao mondo"
+  "Ciao"
+  "Ciao mondo"
+  "Ciao mondo?"
+  (niente da ripetere)
+  ""

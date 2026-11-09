@@ -1,0 +1,50 @@
+% Soluzioni degli esercizi del Modulo 12
+\chapter{Soluzioni -- Modulo 12 -- Pile e Code}
+
+\textbf{Esercizio 12.1} --- La capacità è un parametro template: \cc|PilaArray<int, 3>|
+usa un array statico di 3 elementi.
+\codice{codice/m12/es01.cpp}
+\uscita{codice/m12/output/es01.txt}
+
+\textbf{Esercizio 12.2}
+\codice{codice/m12/es02.cpp}
+\uscita{codice/m12/output/es02.txt}
+
+\textbf{Esercizio 12.3} --- \cc|(pagine + 19) / 20| è la divisione intera arrotondata
+per eccesso. Il biglietto da una pagina aspetta 6 minuti: in una coda FIFO conta solo
+l'ordine di arrivo (l'Esercizio~12.10 mostra l'alternativa con priorità).
+\codice{codice/m12/es03.cpp}
+\uscita{codice/m12/output/es03.txt}
+
+\textbf{Esercizio 12.4}
+\codice{codice/m12/es04.cpp}
+\uscita{codice/m12/output/es04.txt}
+
+\textbf{Esercizio 12.5}
+\codice{codice/m12/es05.cpp}
+\uscita{codice/m12/output/es05.txt}
+
+\textbf{Esercizio 12.6} --- Ogni elemento viene spostato al più una volta da
+\cc|entrata| a \cc|uscita|: in media ogni operazione costa $O(1)$.
+\codice{codice/m12/es06.cpp}
+\uscita{codice/m12/output/es06.txt}
+
+\textbf{Esercizio 12.7}
+\codice{codice/m12/es07.cpp}
+\uscita{codice/m12/output/es07.txt}
+
+\textbf{Esercizio 12.8} --- Le pile memorizzano versioni intere del testo: semplice ma
+costoso per testi lunghi. Un editor vero memorizzerebbe le singole operazioni.
+\codice{codice/m12/es08.cpp}
+\uscita{codice/m12/output/es08.txt}
+
+\textbf{Esercizio 12.9} --- \texttt{8 - 2 - 1} diventa \texttt{8 2 - 1 -}: a parità di
+priorità esce prima l'operatore già in pila, così la sottrazione resta associativa a
+sinistra ($(8 - 2) - 1 = 5$).
+\codice{codice/m12/es09.cpp}
+\uscita{codice/m12/output/es09.txt}
+
+\textbf{Esercizio 12.10} --- L'inserimento si ferma \emph{dopo} tutti i pazienti con
+codice minore o uguale: per questo a parità di codice resta l'ordine di arrivo.
+\codice{codice/m12/es10.cpp}
+\uscita{codice/m12/output/es10.txt}

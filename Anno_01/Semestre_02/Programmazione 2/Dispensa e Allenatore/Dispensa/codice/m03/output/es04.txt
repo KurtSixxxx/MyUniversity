@@ -1,0 +1,2 @@
+min 18, max 30, media 25
+array vuoto: nessuna statistica

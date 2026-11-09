@@ -1,0 +1,716 @@
+% =====================================================================
+\chapter{Modulo 8 -- Ricorsione}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\begin{consiglio}[: prima di cominciare]
+La ricorsione è l'argomento che mette in difficoltà più studenti, quasi sempre
+per lo stesso motivo: si prova a seguire \emph{tutte} le chiamate a mente, ci si
+perde e si conclude ``non la capisco''. In questo modulo andiamo un passo alla
+volta, e ogni programma d'esempio \textbf{stampa quello che sta facendo}, con un
+rientro che cresce a ogni chiamata. Leggi le tracce stampate: valgono più di
+qualunque spiegazione. E alla fine imparerai il trucco per \emph{non} dover
+seguire tutte le chiamate.
+\end{consiglio}
+
+\subsection*{Cos'è la ricorsione}
+
+\begin{definizione}[: funzione ricorsiva]
+Una funzione è \textbf{ricorsiva} quando, per fare il suo lavoro, \textbf{chiama
+se stessa} su un problema \textbf{più piccolo}.
+\end{definizione}
+
+Sembra un controsenso: come può una funzione usare se stessa, se non è ancora
+finita? Il punto è che non chiama se stessa sullo \emph{stesso} problema (sarebbe
+un ciclo infinito), ma su una versione \emph{più piccola}. E il problema non può
+rimpicciolirsi per sempre: a un certo punto diventa così piccolo che la risposta si
+sa al volo, senza chiedere a nessuno.
+
+\subsection*{L'analogia della fila al cinema}
+
+\begin{analogia}[: in che fila sono seduto?]
+Sei al cinema, al buio, e vuoi sapere in che fila sei. Non riesci a contare le
+file. Allora chiedi alla persona davanti a te: ``Scusa, tu in che fila sei?''.
+Lei non lo sa nemmeno, quindi fa la stessa domanda a chi ha davanti, e così via.
+
+Prima o poi la domanda arriva a qualcuno seduto in \textbf{prima fila}: lui non ha
+nessuno davanti e sa la risposta senza chiedere, ``sono in fila 1''. Questo è il
+\textbf{caso base}.
+
+Ora la risposta torna indietro: chi è in seconda fila sente ``1'' e pensa ``io
+sono in fila $1 + 1 = 2$'', e lo dice a chi sta dietro. Il successivo pensa
+$2 + 1 = 3$\ldots{} finché la risposta arriva a te: ``sono in fila 7, quindi tu sei
+in fila 8''.
+\end{analogia}
+
+Questa storia contiene \emph{tutta} la ricorsione:
+\begin{itemize}
+  \item ogni persona fa la \textbf{stessa domanda} di te, ma su un problema
+        \textbf{più piccolo} (ha una fila in meno davanti);
+  \item c'è qualcuno che risponde \textbf{senza chiedere}: il caso base;
+  \item c'è un'\textbf{andata} (le domande che vanno avanti fila per fila) e un
+        \textbf{ritorno} (le risposte che tornano indietro, e ognuno ci aggiunge il suo
+        pezzo: $+1$);
+  \item nessuno deve conoscere tutta la catena: ognuno si \textbf{fida} della
+        risposta di chi gli sta davanti e fa solo il suo piccolo lavoro.
+\end{itemize}
+
+In C++:
+\begin{lstlisting}
+int fila(Persona p) {
+    if (nessunoDavanti(p)) return 1;           // caso base
+    return fila(personaDavanti(p)) + 1;        // chiedo a chi ho davanti, poi aggiungo 1
+}
+\end{lstlisting}
+
+\subsection*{Le due regole d'oro}
+
+Ogni funzione ricorsiva corretta ha \textbf{sempre} due parti. Le slide le
+chiamano i due requisiti fondamentali:
+\begin{enumerate}
+  \item \textbf{Il caso base}: uno (o più) casi così semplici da risolvere
+        \textbf{direttamente}, senza chiamate ricorsive. Si scrive per primo, con un
+        \cc|if| e un \cc|return|.
+  \item \textbf{Il passo ricorsivo}: la funzione chiama se stessa su un problema
+        \textbf{più piccolo}, cioè più vicino al caso base, e usa il risultato per
+        costruire la propria risposta.
+\end{enumerate}
+Se manca il caso base, o se le chiamate non si avvicinano mai a esso, la
+funzione si chiama all'infinito: il programma esaurisce la memoria dello stack e va
+in crash (\emph{stack overflow}).
+
+\subsection*{Il primo esempio: il fattoriale}
+
+Il fattoriale di $n$, scritto $n!$, è il prodotto dei numeri da 1 a $n$:
+$4! = 4 \cdot 3 \cdot 2 \cdot 1 = 24$. Per convenzione $0! = 1$. Osserva:
+\[
+4! = 4 \cdot \underbrace{3 \cdot 2 \cdot 1}_{3!} = 4 \cdot 3!
+\]
+Il fattoriale di 4 contiene il fattoriale di 3! In generale
+$n! = n \cdot (n-1)!$. Ecco il passo ricorsivo; il caso base è $0! = 1$.
+\begin{lstlisting}
+int fatt(int n) {
+    if (n == 0) return 1;           // caso base
+    return n * fatt(n - 1);         // passo ricorsivo: problema più piccolo (n-1)
+}
+\end{lstlisting}
+Tre righe. Ecco cosa succede chiamando \cc|fatt(4)|, stampato dal programma del
+pattern (più avanti nel modulo); il rientro indica la profondità:
+
+\begin{lstlisting}[language={},numbers=none,backgroundcolor=\color{black!6!sfondo}]
+fattoriale(4): non lo so ancora, chiedo fattoriale(3)
+    fattoriale(3): non lo so ancora, chiedo fattoriale(2)
+        fattoriale(2): non lo so ancora, chiedo fattoriale(1)
+            fattoriale(1): non lo so ancora, chiedo fattoriale(0)
+                fattoriale(0): caso base, restituisco 1
+            fattoriale(1): mi e' tornato 1, restituisco 1 * 1 = 1
+        fattoriale(2): mi e' tornato 1, restituisco 2 * 1 = 2
+    fattoriale(3): mi e' tornato 2, restituisco 3 * 2 = 6
+fattoriale(4): mi e' tornato 6, restituisco 4 * 6 = 24
+\end{lstlisting}
+Leggila due volte. La prima metà (il rientro cresce) è l'\textbf{andata}: ogni
+chiamata ``si mette in attesa'' e chiede a quella dopo. La seconda metà (il rientro
+cala) è il \textbf{ritorno}: le risposte risalgono e ognuno fa la sua
+moltiplicazione. È esattamente la fila al cinema.
+
+\subsection*{Cosa succede davvero in memoria}
+
+Ecco la cosa che sblocca quasi tutti: \textbf{ogni chiamata è una copia separata
+della funzione}, con le \emph{sue} variabili. Quando \cc|fatt(4)| chiama
+\cc|fatt(3)|, non ``riparte'' la stessa funzione cancellando \cc|n = 4|: nello
+stack (Modulo 3) viene creato un \textbf{nuovo record di attivazione}, un nuovo
+``foglio'' con dentro una nuova \cc|n| che vale 3. Il foglio di \cc|fatt(4)| resta
+lì sotto, fermo, con la sua \cc|n = 4|, in attesa della risposta.
+
+Nel momento più profondo, nello stack ci sono cinque fogli impilati, con
+\cc|n| = 4, 3, 2, 1, 0. Poi \cc|fatt(0)| restituisce 1 e il suo foglio viene
+buttato; \cc|fatt(1)| riprende \emph{esattamente dal punto in cui si era fermato}
+(la moltiplicazione), calcola $1 \cdot 1$, restituisce e sparisce; e così via. Il
+disegno nella prossima sezione mostra la pila che cresce e poi si svuota.
+
+\begin{analogia}[: la pila di post-it]
+Stai facendo un calcolo e ti accorgi che ti serve un risultato intermedio. Scrivi
+su un post-it ``ero arrivato qui, mi mancava fatt(3)'', lo attacchi sulla
+scrivania e inizi il calcolo di fatt(3). Anche lì ti serve qualcosa: nuovo post-it
+\emph{sopra} il primo. Quando finalmente arrivi a un calcolo che sai fare (il caso
+base), prendi il post-it in cima, finisci quel calcolo, lo butti, e passi a quello
+sotto. Lo stack è questa pila di post-it.
+\end{analogia}
+
+\subsection*{Il trucco per non perdersi: fidati}
+
+Per \emph{capire} come funziona la ricorsione, segui le tracce. Ma per
+\emph{scrivere} una funzione ricorsiva, \textbf{non} devi seguire tutte le
+chiamate a mente. Devi fare come le persone al cinema: \textbf{fidarti} che la
+chiamata sul problema più piccolo restituisca la risposta giusta, e pensare solo a
+come usarla. (È lo stesso ragionamento dell'induzione matematica citata nelle
+slide: se funziona il caso base, e se ``funziona per $n-1$'' implica ``funziona
+per $n$'', allora funziona sempre.)
+
+\begin{passopasso}[: scrivere una funzione ricorsiva in tre domande]
+\begin{enumerate}
+  \item \textbf{Qual è il caso più semplice possibile, che so risolvere al volo?}
+        (Un array vuoto ha somma 0; una stringa di una lettera è palindroma; $0! = 1$;
+        una lista vuota ha lunghezza 0.) Scrivilo per primo.
+  \item \textbf{Se qualcuno mi desse già la soluzione del problema un po' più
+        piccolo, come la userei per risolvere il mio?} (Se conosco la somma di tutti
+        gli elementi tranne il primo, la somma totale è il primo più quella.) Questo
+        è il passo ricorsivo: scrivilo \emph{fidandoti} che la chiamata funzioni.
+  \item \textbf{Ogni chiamata si avvicina davvero al caso base?} (\cc|n - 1| scende
+        verso 0; la lista si accorcia di un nodo.) Se la risposta è no, hai un ciclo
+        infinito.
+\end{enumerate}
+\end{passopasso}
+
+Proviamo con la somma degli elementi di un array:
+\begin{enumerate}
+  \item caso semplice: array vuoto ($n = 0$), somma 0;
+  \item se conosco la somma degli $n-1$ elementi dal secondo in poi, la somma totale
+        è \cc|v[0]| più quella;
+  \item ogni chiamata ha un elemento in meno: si arriva a 0.
+\end{enumerate}
+\begin{lstlisting}
+int somma(const int v[], int n) {
+    if (n == 0) return 0;                    // domanda 1
+    return v[0] + somma(v + 1, n - 1);       // domanda 2 (v + 1 = array dal secondo elemento)
+}
+\end{lstlisting}
+Fatto. Non abbiamo mai dovuto immaginare tutte le chiamate.
+
+\subsection*{Prima o dopo la chiamata: fa una grande differenza}
+
+Il codice che sta \textbf{prima} della chiamata ricorsiva viene eseguito
+all'\emph{andata}, quello che sta \textbf{dopo} al \emph{ritorno}, cioè in ordine
+inverso. Guarda (Step~1 del laboratorio):
+\begin{lstlisting}
+void contoAllaRovescia(int n) {     void contoInAvanti(int n) {
+    if (n == 0) return;                 if (n == 0) return;
+    cout << n << " ";                   contoInAvanti(n - 1);
+    contoAllaRovescia(n - 1);           cout << n << " ";
+}                                   }
+// stampa 5 4 3 2 1                 // stampa 1 2 3 4 5
+\end{lstlisting}
+A sinistra ognuno stampa il suo numero e \emph{poi} passa la parola: 5, 4, 3, 2, 1.
+A destra ognuno passa \emph{prima} la parola e stampa solo quando gli tornano
+indietro: il primo a stampare è l'ultimo chiamato (1), poi 2, \ldots{} Questo
+trucco serve, ad esempio, per stampare una lista al contrario senza invertirla.
+
+\subsection*{Ricorsione su array, stringhe e liste}
+
+Gli schemi più comuni sono due:
+\begin{itemize}
+  \item \textbf{``il primo + il resto''}: tratto un elemento e chiedo alla ricorsione
+        di occuparsi di tutti gli altri. Si passa \cc|v + 1, n - 1|, oppure un indice
+        che avanza (\cc|i + 1|). Esempi: somma, conteggio, ricerca, lunghezza di una lista.
+  \item \textbf{``dividi a metà''} (divide et impera): divido in due parti, chiedo
+        alla ricorsione il risultato di ciascuna, combino. Esempi: il massimo
+        dell'array delle slide, merge sort, quick sort, ricerca binaria (Modulo 7).
+\end{itemize}
+
+Per le \textbf{stringhe} si usano due indici \cc|i| e \cc|j| che si avvicinano
+dalle estremità (palindromo: \q{il primo e l'ultimo sono uguali e la parte in mezzo
+è palindroma}).
+
+Per le \textbf{liste concatenate} (Modulo 11) la ricorsione è naturale: una lista è
+\emph{un nodo seguito da una lista più corta}. La lista vuota (\cc|nullptr|) è il
+caso base:
+\begin{lstlisting}
+int lunghezza(Nodo* p) {
+    if (p == nullptr) return 0;           // lista vuota
+    return 1 + lunghezza(p->next);        // io + il resto
+}
+\end{lstlisting}
+
+\subsection*{Quando la ricorsione non termina}
+
+La funzione \q{puzzle} delle slide (congettura di Collatz):
+\begin{lstlisting}
+int puzzle(int N) {
+    if (N == 1) return 1;
+    if (N % 2 == 0) return puzzle(N / 2);
+    else return puzzle(3 * N + 1);
+}
+\end{lstlisting}
+Ha un caso base, ma quando $N$ è dispari si chiama su $3N + 1$, che è \textbf{più
+grande} di $N$. La terza regola (``mi avvicino al caso base?'') non è
+garantita, quindi non possiamo dimostrare che termini. In pratica termina per tutti
+i numeri mai provati, ma nessuno l'ha mai dimostrato: è un famoso problema aperto
+della matematica (Esercizio~8.8).
+
+\subsection*{Ricorsione di coda}
+
+Una ricorsione è \textbf{di coda} quando la chiamata ricorsiva è l'\textbf{ultima
+cosa} che la funzione fa: il suo risultato viene restituito così com'è, senza
+altre operazioni. \cc|return n * fatt(n - 1);| \textbf{non} è di coda (dopo la
+chiamata c'è ancora la moltiplicazione); \cc|return mcd(b, a % b);| sì.
+
+Una ricorsione non di coda si può spesso trasformare in una di coda aggiungendo un
+parametro \textbf{accumulatore}, che porta avanti il risultato parziale:
+\begin{lstlisting}
+int sommaCoda(const int v[], int n, int acc) {    // si chiama con acc = 0
+    if (n == 0) return acc;                       // il risultato è già pronto
+    return sommaCoda(v + 1, n - 1, acc + v[0]);   // ultima cosa: di coda
+}
+\end{lstlisting}
+Perché interessa? Una ricorsione di coda si trasforma in un ciclo
+\textbf{meccanicamente}: i parametri diventano variabili, la chiamata diventa
+``aggiorna le variabili e ricomincia''. E molti compilatori lo fanno da soli,
+eliminando il costo delle chiamate.
+
+\subsection*{Ricorsione o iterazione?}
+
+Le slide sono chiare: \textbf{ogni} funzione ricorsiva si può riscrivere con un
+ciclo, e viceversa.
+\begin{itemize}
+  \item \textbf{Svantaggi della ricorsione}: ogni chiamata costa tempo (creare il
+        record di attivazione, passare i parametri) e memoria nello stack. Il
+        fattoriale ricorsivo usa spazio $O(n)$, quello iterativo $O(1)$. Con $n$
+        troppo grande si rischia lo stack overflow.
+  \item \textbf{Vantaggi}: per molti problemi il codice è più chiaro, più corto e
+        rispecchia la strategia di soluzione. Merge sort, quick sort, visite degli
+        alberi (Modulo 13), torre di Hanoi e permutazioni sono molto più semplici in
+        forma ricorsiva.
+\end{itemize}
+Attenzione infine alle ricorsioni che si chiamano \textbf{due volte} sullo stesso
+sottoproblema, come Fibonacci ``ingenuo'' (Modulo 6): ricalcolano le stesse cose
+moltissime volte e diventano esponenziali.
+
+\textbf{Complessità di una funzione ricorsiva}, in pratica: \emph{numero totale di
+chiamate} $\times$ \emph{lavoro fatto in una chiamata} (escluse le sottochiamate).
+Il fattoriale fa $n + 1$ chiamate da $O(1)$: $O(n)$. Lo spazio è la
+\emph{profondità massima} della ricorsione (quanti fogli ci sono insieme nello
+stack): anche questo $O(n)$.
+
+\begin{inparole}
+\begin{itemize}
+  \item Ricorsione = una funzione che chiama se stessa su un problema \textbf{più piccolo}.
+  \item Sempre: \textbf{caso base} (risposta immediata) + \textbf{passo ricorsivo}
+        (problema più piccolo, poi uso la risposta).
+  \item Ogni chiamata ha \textbf{le sue} variabili, in un suo foglio sullo stack.
+        Andata: i fogli si impilano. Ritorno: si tolgono dall'alto.
+  \item Per scriverla: \textbf{fidati} che la chiamata più piccola funzioni e pensa
+        solo a come usarla.
+  \item Codice \textbf{prima} della chiamata $\to$ all'andata; \textbf{dopo} $\to$
+        al ritorno, in ordine inverso.
+  \item Senza caso base, o senza avvicinarsi a esso: stack overflow.
+  \item Di coda = la chiamata è l'ultima operazione; si trasforma facilmente in ciclo.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{La fila al cinema.} Le domande vanno avanti, le risposte tornano indietro;
+ognuno aggiunge 1.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \f/\x in {1/0,2/2.6,3/5.2,4/7.8} {
+    \node[cella,fill=stackcol,minimum width=1.6cm] (p\f) at (\x,0) {fila \f};
+  }
+  \foreach \a/\b in {4/3,3/2,2/1}
+    \draw[freccia] ($(p\a.north west)+(0,0.1)$) to[bend right=25] node[above,etichetta]{in che fila sei?} ($(p\b.north east)+(0,0.1)$);
+  \foreach \a/\b/\r in {1/2/1,2/3/2,3/4/3}
+    \draw[freccia,green!50!black] ($(p\a.south east)+(0,-0.1)$) to[bend right=25] node[below,etichetta,text=green!45!black]{``\r''} ($(p\b.south west)+(0,-0.1)$);
+  \node[etichetta,below=0.9cm of p1,text width=2.4cm,align=center] {caso base:\\ lo so da solo};
+  \node[etichetta,right=0.2cm of p4,text width=2.4cm] {io: $3 + 1 = 4$};
+\end{tikzpicture}
+\end{center}
+
+\needspace{8cm}
+\textbf{Lo stack durante \texttt{fatt(3)}.} Ogni chiamata ha il suo record di
+attivazione con la sua \cc|n|. A sinistra l'andata (i record si impilano), a destra
+il ritorno (si tolgono dall'alto, restituendo il valore a chi sta sotto).
+\begin{center}
+\begin{tikzpicture}[record/.style={draw,fill=stackcol,minimum width=3.4cm,minimum height=0.6cm,font=\ttfamily\footnotesize}]
+  % andata
+  \node[font=\small\bfseries] at (1.7,4.2) {ANDATA};
+  \node[record] at (1.7,0) {main};
+  \node[record] at (1.7,0.7) {fatt(3)\quad n=3 \quad attende};
+  \node[record] at (1.7,1.4) {fatt(2)\quad n=2 \quad attende};
+  \node[record] at (1.7,2.1) {fatt(1)\quad n=1 \quad attende};
+  \node[record,fill=green!20!sfondo] at (1.7,2.8) {fatt(0)\quad caso base};
+  \draw[freccia] (-0.6,0) -- node[left,etichetta]{la pila cresce} (-0.6,2.8);
+  % ritorno
+  \node[font=\small\bfseries] at (8.2,4.2) {RITORNO};
+  \node[record] (m) at (8.2,0) {main \quad riceve 6};
+  \node[record] (f3) at (8.2,0.7) {fatt(3)\quad 3*2 = 6};
+  \node[record] (f2) at (8.2,1.4) {fatt(2)\quad 2*1 = 2};
+  \node[record] (f1) at (8.2,2.1) {fatt(1)\quad 1*1 = 1};
+  \node[record,dashed,fill=sfondo] (f0) at (8.2,2.8) {fatt(0)\quad return 1};
+  \draw[freccia,green!50!black] (f0.east) to[bend left=50] node[right,etichetta,text=green!45!black]{1} (f1.east);
+  \draw[freccia,green!50!black] (f1.east) to[bend left=50] node[right,etichetta,text=green!45!black]{1} (f2.east);
+  \draw[freccia,green!50!black] (f2.east) to[bend left=50] node[right,etichetta,text=green!45!black]{2} (f3.east);
+  \draw[freccia,green!50!black] (f3.east) to[bend left=50] node[right,etichetta,text=green!45!black]{6} (m.east);
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Divide et impera: il massimo di \texttt{\{7, 3, 12, 5\}}} (Step~3 del
+laboratorio). Ogni riquadro è una chiamata; le frecce verdi sono i valori restituiti.
+\begin{center}
+\begin{tikzpicture}[ch/.style={draw,fill=stackcol,font=\ttfamily\footnotesize,minimum height=0.55cm,inner sep=3pt}]
+  \node[ch] (a) at (0,0) {massimo(7 3 12 5)};
+  \node[ch] (b) at (-2.6,-1.2) {massimo(7 3)};
+  \node[ch] (c) at (2.6,-1.2) {massimo(12 5)};
+  \node[ch,fill=green!20!sfondo] (d) at (-3.6,-2.4) {7};
+  \node[ch,fill=green!20!sfondo] (e) at (-1.6,-2.4) {3};
+  \node[ch,fill=green!20!sfondo] (f) at (1.6,-2.4) {12};
+  \node[ch,fill=green!20!sfondo] (g) at (3.6,-2.4) {5};
+  \draw (a) -- (b); \draw (a) -- (c); \draw (b) -- (d); \draw (b) -- (e); \draw (c) -- (f); \draw (c) -- (g);
+  \node[etichetta,text=green!45!black,left=0.1cm of b] {$\uparrow$ 7};
+  \node[etichetta,text=green!45!black,right=0.1cm of c] {$\uparrow$ 12};
+  \node[etichetta,text=green!45!black,right=0.1cm of a] {$\to$ restituisce 12};
+  \node[etichetta,below=0.4cm of d,xshift=1cm] {casi base: un solo elemento};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Il fattoriale in tre versioni: ricorsiva ``parlante'' (stampa ogni passaggio, con
+un parametro \cc|livello| usato solo per il rientro), ricorsiva ``da esame'' (tre
+righe) e iterativa. Il trucco del parametro \cc|livello| e della funzione
+\cc|rientra| si può aggiungere a \textbf{qualunque} funzione ricorsiva quando non
+capisci cosa sta succedendo.
+
+\codice{codice/m08/pattern.cpp}
+\uscita{codice/m08/output/pattern.txt}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: dimenticare il caso base]
+\cc|int fatt(int n) { return n * fatt(n - 1); }| compila, ma non si ferma mai:
+$n$ diventa negativo e scende all'infinito. Il programma termina con un crash dopo
+migliaia di chiamate. Il caso base va scritto \textbf{per primo}.
+\end{trappola}
+
+\begin{trappola}[: caso base che non viene mai raggiunto]
+\cc|prod(a, b)| delle slide ha caso base \cc|b == 1|: chiamata con \cc|b = 0| scende
+a $-1, -2, \ldots$ e non arriva mai a 1 (Esercizio~8.2). Controlla sempre il caso
+base con i valori più piccoli possibili (0, array vuoto, \cc|nullptr|).
+\end{trappola}
+
+\begin{trappola}[: chiamare la ricorsione e buttare il risultato]
+\begin{lstlisting}
+int somma(const int v[], int n) {
+    if (n == 0) return 0;
+    somma(v + 1, n - 1);        // SBAGLIATO: il risultato si perde
+    return v[0];
+}
+\end{lstlisting}
+Il valore restituito dalla chiamata ricorsiva va \textbf{usato}:
+\cc|return v[0] + somma(v + 1, n - 1);|. È l'errore più comune in assoluto.
+\end{trappola}
+
+\begin{trappola}[: modificare il parametro invece di passare il valore più piccolo]
+\cc|return n * fatt(n--);| passa a \cc|fatt| il valore \emph{vecchio} di \cc|n| (il
+post-decremento agisce dopo): ricorsione infinita. Scrivi sempre \cc|n - 1|.
+\end{trappola}
+
+\begin{consiglio}[: verifica con i casi piccoli]
+Prima di fidarti di una funzione ricorsiva, provala a mano con $n = 0$, $n = 1$,
+$n = 2$. Se funziona per questi, e il passo ricorsivo ha senso, funziona per tutti
+(è l'idea dell'induzione).
+\end{consiglio}
+
+\begin{consiglio}[: la funzione involucro]
+Spesso la versione ricorsiva ha bisogno di parametri ``tecnici'' (indici,
+accumulatore, livello). Scrivi anche una funzione semplice per chi la usa:
+\cc|bool palindromo(const string& s) { return palindromo(s, 0, s.length() - 1); }|
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Quali sono i due elementi indispensabili di una funzione ricorsiva corretta?}
+  \item un ciclo \texttt{for} e una variabile globale
+  \item un caso base e una chiamata ricorsiva su un problema più piccolo
+  \item almeno due parametri e un valore di ritorno
+  \item un puntatore e un'allocazione dinamica
+\end{quiz}
+
+\begin{quiz}{Cosa succede se una funzione ricorsiva non raggiunge mai il caso base?}
+  \item restituisce 0
+  \item il compilatore segnala un errore
+  \item le chiamate si accumulano finché lo stack si esaurisce e il programma va in crash
+  \item il programma si ferma dopo 1000 chiamate restituendo l'ultimo valore
+\end{quiz}
+
+\begin{quiz}{Cosa restituisce \texttt{f(4)}, con \texttt{int f(int n) \{ if (n == 0) return 0; return n + f(n - 1); \}}?}
+  \item 4
+  \item 10
+  \item 24
+  \item 0
+\end{quiz}
+
+\begin{quiz}{Cosa stampa \texttt{g(3)}, con \texttt{void g(int n) \{ if (n == 0) return; g(n - 1); cout << n; \}}?}
+  \item \texttt{321}
+  \item \texttt{123}
+  \item \texttt{3}
+  \item \texttt{0123}
+\end{quiz}
+
+\begin{quiz}{Durante l'esecuzione di \texttt{fatt(5)}, quanti record di attivazione di \texttt{fatt} sono presenti contemporaneamente nello stack, al massimo?}
+  \item 1
+  \item 5
+  \item 6
+  \item 120
+\end{quiz}
+
+\begin{quiz}{Quale di queste funzioni è ricorsiva \textbf{di coda}?}
+  \item \texttt{return n * fatt(n - 1);}
+  \item \texttt{return mcd(b, a \% b);}
+  \item \texttt{return 1 + lunghezza(p->next);}
+  \item \texttt{return f(n - 1) + f(n - 2);}
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità in spazio del fattoriale ricorsivo \texttt{fatt(n)}?}
+  \item $O(1)$
+  \item $O(\log n)$
+  \item $O(n)$
+  \item $O(n!)$
+\end{quiz}
+
+\begin{quiz}{Quale affermazione su ricorsione e iterazione è corretta (secondo le slide)?}
+  \item alcuni problemi si possono risolvere solo con la ricorsione
+  \item ogni funzione ricorsiva ha un'equivalente iterativa, di solito più efficiente
+  \item la ricorsione è sempre più veloce dell'iterazione
+  \item l'iterazione non può usare lo stack
+\end{quiz}
+
+\begin{quiz}{Perché non si può dimostrare per induzione che \texttt{puzzle(N)} delle slide termini?}
+  \item perché non ha un caso base
+  \item perché alcune chiamate ricorsive hanno un argomento più grande di N
+  \item perché usa l'operatore \texttt{\%}
+  \item perché restituisce sempre 1
+\end{quiz}
+
+\begin{quiz}{Nella torre di Hanoi con $n$ dischi servono $2^n - 1$ mosse. Che complessità ha l'algoritmo?}
+  \item $O(n)$
+  \item $O(n^2)$
+  \item $O(n \log n)$
+  \item $O(2^n)$
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. Le due regole d'oro.
+  \item \textbf{C}. È lo \emph{stack overflow}. Il compilatore non se ne accorge (B).
+  \item \textbf{B}. $4 + 3 + 2 + 1 + 0$.
+  \item \textbf{B}. La stampa è \emph{dopo} la chiamata: avviene al ritorno, partendo
+        dalla chiamata più profonda.
+  \item \textbf{C}. \cc|fatt(5)|, \cc|fatt(4)|, \ldots, \cc|fatt(0)|: sei record.
+  \item \textbf{B}. Nelle altre, dopo la chiamata c'è ancora un'operazione
+        (\cc|*|, \cc|+|).
+  \item \textbf{C}. La profondità massima della ricorsione è $n + 1$.
+  \item \textbf{B}. Proprio come dicono le slide.
+  \item \textbf{B}. Con $N$ dispari si passa a $3N + 1$.
+  \item \textbf{D}. Il numero di mosse raddoppia a ogni disco in più.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: una cassetta degli attrezzi ricorsivi]
+Scrivere, \textbf{senza usare cicli} (salvo dove indicato), un insieme di funzioni
+ricorsive su numeri, array, stringhe e liste, e provarle nel \cc|main|. Per ogni
+funzione, prima di scriverla, rispondi alle tre domande del ``passo per passo''.
+\end{traccia}
+
+\begin{step}{prima o dopo}
+Scrivi \cc|contoAllaRovescia(n)| (stampa $n, \ldots, 1$) e \cc|contoInAvanti(n)|
+(stampa $1, \ldots, n$). Devono differire \textbf{solo} nella posizione del \cc|cout|
+rispetto alla chiamata.\\[0.3em]
+\textbf{Concetto nuovo:} andata e ritorno.
+\end{step}
+
+\begin{step}{il primo più il resto}
+Scrivi \cc|int somma(const int v[], int n)|, che restituisce \cc|v[0]| più la somma
+del resto dell'array (\cc|v + 1|, \cc|n - 1|).\\[0.3em]
+\textbf{Concetto nuovo:} ricorsione lineare su array, uso del valore restituito.
+\end{step}
+
+\begin{step}{dividi a metà}
+Scrivi \cc|int massimo(const int v[], int sx, int dx)| come nelle slide: se c'è un
+solo elemento lo restituisci, altrimenti calcoli il massimo delle due metà e
+restituisci il maggiore.\\[0.3em]
+\textbf{Concetto nuovo:} due chiamate ricorsive, divide et impera.
+\end{step}
+
+\begin{step}{stringhe}
+Scrivi \cc|bool palindromo(const string& s, int i, int j)| e provala su
+\q{radar}, \q{osso}, \q{ciao}, \q{a}, \q{anna}.\\[0.3em]
+\textbf{Concetto nuovo:} due indici che si avvicinano, caso base doppio.
+\end{step}
+
+\begin{step}{liste}
+Definisci \cc|struct Nodo { int valore; Nodo* next; };|, costruisci la lista
+$1 \to 2 \to 3 \to 4$ con \cc|new| (un ciclo qui è permesso) e scrivi
+\cc|lunghezza(Nodo*)|, \cc|stampaAlContrario(Nodo*)| e \cc|distruggi(Nodo*)|, che
+libera tutti i nodi.\\[0.3em]
+\textbf{Concetto nuovo:} ricorsione su strutture collegate (anteprima del Modulo 11).
+\end{step}
+
+\begin{step}{di coda}
+Riscrivi la somma come ricorsione di coda con un accumulatore
+(\cc|sommaCoda(v, n, 0)|), poi trasformala in un ciclo \cc|while| seguendo la
+regola ``i parametri diventano variabili''.\\[0.3em]
+\textbf{Concetto nuovo:} ricorsione di coda, da ricorsione a iterazione.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m08/lab.cpp}
+\uscita{codice/m08/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|stampaAlContrario| e \cc|contoInAvanti| hanno la stessa struttura: chiamata
+        prima, stampa dopo. Per questo stampano ``al ritorno''.
+  \item \cc|distruggi| libera il resto della lista \emph{prima} del nodo corrente: se
+        facessi \cc|delete p| per primo, \cc|p->next| non sarebbe più leggibile.
+  \item \cc|new Nodo{x, testa}| crea un nodo con \cc|valore = x| e \cc|next = testa|:
+        inserire in testa un nodo alla volta da 4 a 1 dà la lista $1 \to 2 \to 3 \to 4$.
+  \item In \cc|sommaCiclo|, ogni ``chiamata'' di \cc|sommaCoda| è diventata un giro del
+        \cc|while|: stesso caso base (la condizione), stessi aggiornamenti dei
+        parametri.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è una funzione ricorsiva e quali requisiti deve avere?]
+Una funzione è ricorsiva quando chiama se stessa, direttamente o tramite altre
+funzioni. Per essere corretta deve soddisfare due requisiti: risolvere
+esplicitamente uno o più casi base senza chiamate ricorsive, e fare in modo che ogni
+chiamata ricorsiva riceva argomenti più piccoli, cioè più vicini al caso base. Il
+legame con l'induzione matematica permette di convincersi della correttezza: se il
+caso base è giusto e, supponendo corretta la soluzione per i casi più piccoli, la
+funzione costruisce correttamente quella per $n$, allora è corretta per ogni $n$.
+\end{orale}
+
+\begin{orale}[D2. Cosa succede in memoria durante una chiamata ricorsiva?]
+Ogni chiamata, ricorsiva o no, crea nello stack un nuovo record di attivazione con
+i propri parametri, le variabili locali e l'indirizzo di ritorno. In una ricorsione
+ogni chiamata ha quindi una propria copia delle variabili, indipendente dalle altre.
+Le chiamate in attesa restano nello stack finché quelle successive non terminano;
+quando una chiamata restituisce il suo valore, il suo record viene rimosso e la
+precedente riprende da dove si era interrotta. Lo spazio occupato è proporzionale
+alla profondità massima della ricorsione: se è troppo grande si ha uno stack overflow.
+\end{orale}
+
+\begin{orale}[D3. Ricorsione o iterazione: vantaggi e svantaggi?]
+Ogni problema risolvibile ricorsivamente si può risolvere anche iterativamente.
+La ricorsione ha costi aggiuntivi: tempo per gestire ogni chiamata e memoria nello
+stack per le chiamate in sospeso. Ad esempio la potenza ricorsiva usa spazio $O(n)$,
+quella iterativa spazio costante. In compenso, per molti problemi le soluzioni
+ricorsive sono più semplici, più brevi e rispecchiano direttamente la strategia di
+soluzione, come nel divide et impera; spesso si possono poi trasformare in versioni
+iterative più efficienti.
+\end{orale}
+
+\begin{orale}[D4. Cos'è la ricorsione di coda?]
+Una funzione è ricorsiva di coda quando la chiamata ricorsiva è l'ultima operazione
+eseguita e il suo risultato viene restituito senza ulteriori elaborazioni. Ad esempio
+l'algoritmo di Euclide \cc|return mcd(b, a % b);| è di coda, mentre
+\cc|return n * fatt(n - 1);| non lo è, perché dopo la chiamata va eseguita la
+moltiplicazione. Una ricorsione di coda si trasforma direttamente in un ciclo, e
+molti compilatori lo fanno automaticamente, eliminando il costo dello stack.
+Spesso si ottiene aggiungendo un parametro accumulatore.
+\end{orale}
+
+\begin{orale}[D5. Come si calcola la complessità di una funzione ricorsiva?]
+Si scrive una relazione di ricorrenza che esprime il costo per input di dimensione
+$n$ in funzione del costo delle chiamate su input più piccoli più il lavoro della
+singola chiamata. In modo pratico: numero totale di chiamate per il lavoro di
+ciascuna. Il fattoriale fa $n + 1$ chiamate di costo costante, quindi $O(n)$; il
+massimo con divide et impera fa circa $2n$ chiamate, $O(n)$; la torre di Hanoi
+$2^n - 1$ mosse, $O(2^n)$. Per lo spazio si considera la profondità massima della
+ricorsione.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+Per ogni esercizio: rispondi alle tre domande (caso base, come uso il risultato
+più piccolo, mi avvicino al caso base?) \textbf{prima} di scrivere codice. Se non
+funziona, aggiungi il parametro \cc|livello| e stampa le chiamate come nel pattern.
+
+\begin{esercizio}{Prima, dopo, prima e dopo}{facile}
+Scrivi tre funzioni ricorsive \cc|giu(n)|, \cc|su(n)| e \cc|suEGiu(n)| che
+differiscono solo per la posizione del \cc|cout| rispetto alla chiamata. Prevedi cosa
+stampano \cc|giu(5)|, \cc|su(5)| e \cc|suEGiu(3)|, poi verifica.
+\end{esercizio}
+
+\begin{esercizio}{Prodotto come somme}{facile}
+Scrivi \cc|prod(a, b)| delle slide (\cc|a| se \cc|b == 1|, altrimenti
+\cc|a + prod(a, b - 1)|). Cosa succede con \cc|b = 0|? Scrivi una versione con caso
+base \cc|b == 0| che funzioni anche lì.
+\end{esercizio}
+
+\begin{esercizio}{Cifre di un numero}{facile}
+Scrivi \cc|sommaCifre(n)| e \cc|numeroCifre(n)| ricorsive.
+\emph{Suggerimento}: \cc|n % 10| è l'ultima cifra, \cc|n / 10| è il numero senza
+l'ultima cifra.
+\end{esercizio}
+
+\begin{esercizio}{Potenza con traccia}{facile}
+Scrivi la potenza ricorsiva $b^n = b \cdot b^{n-1}$ con un parametro \cc|livello| che
+stampi le chiamate rientrate all'andata e i risultati al ritorno.
+\end{esercizio}
+
+\begin{esercizio}{Contare un carattere}{medio}
+Scrivi \cc|int conta(const string& s, char c, int i)|, che conta quante volte \cc|c|
+compare in \cc|s| a partire dalla posizione \cc|i|. Caso base: \cc|i| arriva alla
+fine della stringa.
+\end{esercizio}
+
+\begin{esercizio}{Invertire}{medio}
+Scrivi \cc|void inverti(int v[], int i, int j)|, che inverte l'array scambiando gli
+estremi e poi invertendo la parte interna, e \cc|string contrario(const string& s)|,
+che restituisce la stringa al contrario (\emph{suggerimento}: \cc|s.substr(1)| è la
+stringa senza il primo carattere).
+\end{esercizio}
+
+\begin{esercizio}{Euclide}{medio}
+Scrivi l'MCD con l'algoritmo di Euclide in forma ricorsiva (\cc|mcd(a, 0) = a|,
+\cc|mcd(a, b) = mcd(b, a % b)|), stampando ogni chiamata. È di coda? Trasformalo in
+un ciclo.
+\end{esercizio}
+
+\begin{esercizio}{Il puzzle di Collatz}{medio}
+Scrivi la funzione \cc|puzzle| delle slide in modo che stampi il percorso dei numeri
+fino a 1 e una funzione che conti i passi. Trova il numero fino a 30 con il percorso
+più lungo. Perché non si può garantire che termini?
+\end{esercizio}
+
+\begin{esercizio}{Torre di Hanoi}{difficile}
+Sposta $n$ dischi dal piolo A al piolo C usando B come appoggio, senza mai mettere
+un disco grande su uno piccolo. Idea ricorsiva: sposta $n-1$ dischi su B, sposta il
+disco grande su C, riporta gli $n-1$ dischi su C. Stampa le mosse per 3 dischi e
+conta le mosse fino a 20 dischi.
+\end{esercizio}
+
+\begin{esercizio}{Permutazioni}{difficile}
+Stampa tutte le permutazioni di una stringa: per ogni posizione $k$, prova a
+metterci ognuno dei caratteri rimasti (scambiandolo in posizione $k$), permuta il
+resto e poi \textbf{rimetti a posto} lo scambio (backtracking). Verifica che
+\q{1234} abbia $4! = 24$ permutazioni.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m08/}.

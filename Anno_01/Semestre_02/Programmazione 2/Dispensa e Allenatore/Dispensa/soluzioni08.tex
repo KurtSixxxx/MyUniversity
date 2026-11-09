@@ -1,0 +1,49 @@
+% Soluzioni degli esercizi del Modulo 8
+\chapter{Soluzioni -- Modulo 8 -- Ricorsione}
+
+\textbf{Esercizio 8.1} --- \cc|suEGiu(3)| stampa all'andata 3, 2, 1 e al ritorno
+1, 2, 3: ogni numero compare due volte, ``a specchio''.
+\codice{codice/m08/es01.cpp}
+\uscita{codice/m08/output/es01.txt}
+
+\textbf{Esercizio 8.2} --- Con caso base \cc|b == 1| la chiamata \cc|prod(5, 0)| non
+termina: \cc|b| scende a $-1, -2, \ldots$ senza mai valere 1.
+\codice{codice/m08/es02.cpp}
+\uscita{codice/m08/output/es02.txt}
+
+\textbf{Esercizio 8.3}
+\codice{codice/m08/es03.cpp}
+\uscita{codice/m08/output/es03.txt}
+
+\textbf{Esercizio 8.4} --- Le righe \texttt{->} compaiono in ordine inverso rispetto
+alle chiamate: è il ritorno.
+\codice{codice/m08/es04.cpp}
+\uscita{codice/m08/output/es04.txt}
+
+\textbf{Esercizio 8.5}
+\codice{codice/m08/es05.cpp}
+\uscita{codice/m08/output/es05.txt}
+
+\textbf{Esercizio 8.6} --- In \cc|contrario|, \cc|contrario(s.substr(1)) + s[0]|
+mette il primo carattere \emph{in fondo} al contrario del resto.
+\codice{codice/m08/es06.cpp}
+\uscita{codice/m08/output/es06.txt}
+
+\textbf{Esercizio 8.7} --- È di coda: la chiamata è l'ultima cosa. Nel ciclo, i
+parametri \cc|a| e \cc|b| diventano variabili aggiornate a ogni giro.
+\codice{codice/m08/es07.cpp}
+\uscita{codice/m08/output/es07.txt}
+
+\textbf{Esercizio 8.8} --- 27 fa ben 111 passi, salendo fino a 9232 prima di
+scendere. Che ogni numero arrivi a 1 non è mai stato dimostrato.
+\codice{codice/m08/es08.cpp}
+\uscita{codice/m08/output/es08.txt}
+
+\textbf{Esercizio 8.9} --- Le mosse sono $2^n - 1$: per 20 dischi più di un milione.
+\codice{codice/m08/es09.cpp}
+\uscita{codice/m08/output/es09.txt}
+
+\textbf{Esercizio 8.10} --- Il secondo \cc|swap|, dopo la chiamata, rimette la stringa
+com'era: senza, i tentativi successivi partirebbero da una stringa già modificata.
+\codice{codice/m08/es10.cpp}
+\uscita{codice/m08/output/es10.txt}

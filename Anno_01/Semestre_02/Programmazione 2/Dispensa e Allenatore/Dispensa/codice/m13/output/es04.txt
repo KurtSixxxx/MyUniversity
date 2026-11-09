@@ -1,0 +1,2 @@
+minimo: 2 / 2
+massimo: 99 / 99

@@ -1,0 +1,17 @@
+Grafo G:
+  0: 1 2
+  1: 2
+  2: 0
+  3: 2 4
+  4:
+  vertice 0: uscente 2, entrante 1, grado 3
+  vertice 1: uscente 1, entrante 1, grado 2
+  vertice 2: uscente 1, entrante 3, grado 4
+  vertice 3: uscente 2, entrante 0, grado 2
+  vertice 4: uscente 0, entrante 1, grado 1
+Grafo trasposto:
+  0: 2
+  1: 0
+  2: 0 1 3
+  3:
+  4: 3

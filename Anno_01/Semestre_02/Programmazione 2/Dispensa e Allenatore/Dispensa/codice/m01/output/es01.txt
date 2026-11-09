@@ -1,0 +1,4 @@
+Rettangolo 3 x 4 -> area 12, perimetro 14
+Base -5 rifiutata
+Rettangolo 3 x 10 -> area 30, perimetro 26
+Rettangolo 1 x 2 -> area 2, perimetro 6

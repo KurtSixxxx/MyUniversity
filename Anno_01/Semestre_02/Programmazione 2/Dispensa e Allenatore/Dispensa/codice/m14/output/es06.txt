@@ -1,0 +1,12 @@
+Da 0 a 4:
+  ordine DFS da 0: 0 2 3 4 1
+  BFS: si, DFS: si
+Da 2 a 1:
+  ordine DFS da 2: 2 3 4 1 0
+  BFS: si, DFS: si
+Da 0 a 6:
+  ordine DFS da 0: 0 2 3 4 1
+  BFS: no, DFS: no
+Da 5 a 6:
+  ordine DFS da 5: 5 6
+  BFS: si, DFS: si

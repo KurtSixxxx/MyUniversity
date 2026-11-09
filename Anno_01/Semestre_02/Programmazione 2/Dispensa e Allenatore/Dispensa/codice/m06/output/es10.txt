@@ -1,0 +1,6 @@
+fib(10) = 55    chiamate ricorsive: 177 giri del ciclo: 10
+fib(15) = 610   chiamate ricorsive: 1973        giri del ciclo: 15
+fib(20) = 6765  chiamate ricorsive: 21891       giri del ciclo: 20
+fib(25) = 75025 chiamate ricorsive: 242785      giri del ciclo: 25
+fib(30) = 832040        chiamate ricorsive: 2692537     giri del ciclo: 30
+fib(35) = 9227465       chiamate ricorsive: 29860703    giri del ciclo: 35

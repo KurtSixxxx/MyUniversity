@@ -1,0 +1,8 @@
+push 10
+push 20
+push 30
+push 40: pila piena
+pop 30
+pop 20
+pop 10
+pop: pila vuota

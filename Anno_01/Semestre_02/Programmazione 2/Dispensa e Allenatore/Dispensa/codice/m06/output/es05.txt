@@ -1,0 +1,4 @@
+caso migliore (primo elemento): 1 confronti
+caso peggiore (ultimo elemento): 1000 confronti
+caso peggiore (assente): 1000 confronti
+caso medio (elemento presente): 500.5 confronti

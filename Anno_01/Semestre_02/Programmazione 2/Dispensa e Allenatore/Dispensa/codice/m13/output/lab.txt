@@ -1,0 +1,11 @@
+Persone in ordine di eta' (visita in-order):
+  Bea Russo (7, studente)
+  Ada Rossi (9, studente)
+  Ciro Greco (21, lavoratore)
+  Dora Bruno (64, lavoratore)
+  Fede Costa (70, pensionato)
+  Ezio Gallo (76, pensionato)
+Altezza dell'albero: 4
+Eta' media studenti: 8
+Eta' media lavoratori: 42.5
+Eta' media pensionati: 73

@@ -1,0 +1,60 @@
+% Soluzioni degli esercizi del Modulo 14
+\chapter{Soluzioni -- Modulo 14 -- Grafi}
+
+\textbf{Esercizio 14.1} --- Il numero di archi è la somma dei gradi divisa per 2, perché
+ogni arco viene contato da entrambi i suoi estremi.
+\codice{codice/m14/es01.cpp}
+\uscita{codice/m14/output/es01.txt}
+
+\textbf{Esercizio 14.2} --- Con l'inserimento in testa i vicini compaiono in ordine
+inverso rispetto a quello di inserimento.
+\codice{codice/m14/es02.cpp}
+\uscita{codice/m14/output/es02.txt}
+
+\textbf{Esercizio 14.3} --- Per avere le liste in ordine crescente inserendo in testa,
+basta scorrere ogni riga della matrice da destra a sinistra: l'ultimo inserito (il più
+piccolo) finisce in testa.
+\codice{codice/m14/es03.cpp}
+\uscita{codice/m14/output/es03.txt}
+
+\textbf{Esercizio 14.4} --- Il grado uscente di $u$ è la lunghezza della sua lista; il
+grado entrante è il numero di volte in cui $u$ compare nelle liste degli \emph{altri}.
+Il trasposto si costruisce con un solo passaggio: $O(|V| + |E|)$.
+\codice{codice/m14/es04.cpp}
+\uscita{codice/m14/output/es04.txt}
+
+\textbf{Esercizio 14.5} --- Qui \cc|dist[v] == -1| fa anche da \q{bianco}: non serve un
+array di colori separato.
+\codice{codice/m14/es05.cpp}
+\uscita{codice/m14/output/es05.txt}
+
+\textbf{Esercizio 14.6} --- Nella DFS iterativa un vertice può finire in pila più volte
+(lo mettono due vicini diversi prima che venga estratto): per questo si controlla
+\cc|vis[u]| quando lo si \emph{estrae}. L'ordine di visita (0 2 3 4 1) è diverso da quello
+ricorsivo, perché la pila restituisce per ultimo il primo vicino inserito.
+\codice{codice/m14/es06.cpp}
+\uscita{codice/m14/output/es06.txt}
+
+\textbf{Esercizio 14.7}
+\codice{codice/m14/es07.cpp}
+\uscita{codice/m14/output/es07.txt}
+
+\textbf{Esercizio 14.8} --- Con due soli colori (visitato sì/no), nel rombo il vertice 3
+viene raggiunto una seconda volta da 2 dopo essere stato visitato da 1: sembrerebbe un
+ciclo, ma 3 è già \textbf{finito} (nero), non è un antenato aperto. Solo un arco verso un
+vertice grigio chiude davvero un ciclo.
+\codice{codice/m14/es08.cpp}
+\uscita{codice/m14/output/es08.txt}
+
+\textbf{Esercizio 14.9} --- Il grafo è \emph{implicito}: non c'è né matrice né lista, i
+quattro vicini di una cella si calcolano con gli spostamenti \cc|dr[]| e \cc|dc[]|. La
+BFS garantisce che il percorso trovato sia il più corto (19 passi).
+\codice{codice/m14/es09.cpp}
+\uscita{codice/m14/output/es09.txt}
+
+\textbf{Esercizio 14.10} --- Un grafo è bipartito se e solo se non contiene cicli di
+lunghezza dispari: l'esagono (ciclo di 6) lo è, il triangolo (ciclo di 3) no. La coda è
+un oggetto locale: uscendo con \cc|return false| a metà, il suo distruttore libera i nodi
+rimasti.
+\codice{codice/m14/es10.cpp}
+\uscita{codice/m14/output/es10.txt}

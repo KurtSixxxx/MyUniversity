@@ -1,0 +1,4 @@
+n = 10  passi = 5       passi/n = 0.5
+n = 100 passi = 50      passi/n = 0.5
+n = 1000        passi = 500     passi/n = 0.5
+n = 10000       passi = 5000    passi/n = 0.5

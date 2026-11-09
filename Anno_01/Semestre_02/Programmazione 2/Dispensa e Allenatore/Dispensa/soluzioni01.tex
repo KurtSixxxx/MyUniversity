@@ -1,0 +1,48 @@
+% Soluzioni degli esercizi del Modulo 1 (generato da separa_soluzioni.py)
+\chapter{Soluzioni -- Modulo 1 -- Introduzione alla OOP \& Information Hiding}
+\textbf{Esercizio 1.1}
+\codice{codice/m01/es01.cpp}
+\uscita{codice/m01/output/es01.txt}
+
+\textbf{Esercizio 1.2}
+\codice{codice/m01/es02.cpp}
+\uscita{codice/m01/output/es02.txt}
+
+\textbf{Esercizio 1.3}
+\codice{codice/m01/es03.cpp}
+\uscita{codice/m01/output/es03.txt}
+
+\textbf{Esercizio 1.4} --- Memorizzare tre temperature vorrebbe dire tenerle
+sempre allineate: basterebbe dimenticarsene una in un setter per avere un oggetto
+incoerente. Con un solo dato le altre si calcolano e non possono essere sbagliate.
+\codice{codice/m01/es04.cpp}
+\uscita{codice/m01/output/es04.txt}
+
+\textbf{Esercizio 1.5}
+\codice{codice/m01/es05.cpp}
+\uscita{codice/m01/output/es05.txt}
+
+\textbf{Esercizio 1.6}
+\codice{codice/m01/es06.cpp}
+\uscita{codice/m01/output/es06.txt}
+
+\textbf{Esercizio 1.7}
+\codice{codice/m01/es07.cpp}
+\uscita{codice/m01/output/es07.txt}
+
+\textbf{Esercizio 1.8} --- Nota \cc|delta / 10.0|: con \cc|delta / 10| avresti una
+divisione \textbf{intera} (45/10 = 4, non 4.5). L'output dipende dalla sequenza
+di \cc|rand()| di MinGW: con un altro compilatore i numeri possono cambiare.
+\codice{codice/m01/es08.cpp}
+\uscita{codice/m01/output/es08.txt}
+
+\textbf{Esercizio 1.9}
+\codice{codice/m01/es09.cpp}
+\uscita{codice/m01/output/es09.txt}
+
+\textbf{Esercizio 1.10} --- \cc|mcd| è \cc|static|: non usa gli attributi di un
+oggetto, è una funzione di servizio della classe. \cc|somma| e \cc|prodotto|
+creano la nuova frazione con il costruttore, che la semplifica da solo:
+l'invariante è garantita in un unico punto.
+\codice{codice/m01/es10.cpp}
+\uscita{codice/m01/output/es10.txt}

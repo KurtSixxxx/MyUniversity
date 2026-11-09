@@ -1,0 +1,19 @@
+  nasce GLOBALE
+inizio main
+  nasce A
+  nasce B
+  nasce C
+fine blocco
+  muore C
+  muore B
+inizio funzione
+  nasce LOCALE_F
+fine funzione
+  muore LOCALE_F
+  nasce HEAP
+  nasce D
+  muore HEAP
+fine main
+  muore D
+  muore A
+  muore GLOBALE

@@ -1,0 +1,6 @@
+distanza 0: Tu
+distanza 1: Ada Bea
+distanza 2: Ciro Dina
+distanza 3: Ezio Fede
+distanza 4: Gino
+Non raggiungibili: Lia

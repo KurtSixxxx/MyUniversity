@@ -1,0 +1,5 @@
+c = 5
+a = c++  -> a = 5, c = 6
+b = ++c  -> b = 7, c = 7
+dopo ++(++c): c = 9
+z dopo tre z--: 0

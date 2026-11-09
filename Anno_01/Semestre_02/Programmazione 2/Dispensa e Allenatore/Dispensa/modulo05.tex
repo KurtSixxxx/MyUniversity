@@ -1,0 +1,576 @@
+% =====================================================================
+\chapter{Modulo 5 -- Template di Funzione e di Classe}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Il problema: lo stesso codice per tipi diversi}
+
+Scrivi una funzione che restituisce il massimo tra due interi:
+\begin{lstlisting}
+int massimo(int a, int b) { return (a > b) ? a : b; }
+\end{lstlisting}
+Poi ti serve per i \cc|double|. Con l'overloading ne scrivi un'altra, identica
+tranne che per il tipo. Poi per le \cc|string|, poi per i \cc|char|\ldots{} Hai
+quattro copie dello stesso codice: se trovi un errore, va corretto quattro volte.
+Peggio ancora con una classe: una pila di interi, una pila di stringhe, una pila
+di rettangoli sarebbero tre classi quasi identiche.
+
+Eppure l'algoritmo è lo stesso: ``se il primo è più grande restituisci il primo,
+altrimenti il secondo''. L'unica cosa che cambia è il \textbf{tipo}. La
+\textbf{programmazione generica} consiste nello scrivere algoritmi e strutture
+dati \textbf{una volta sola}, lasciando il tipo come un parametro da specificare
+dopo, quando il codice viene usato. In C++ lo strumento per farlo è il
+\textbf{template} (``modello'', ``sagoma'').
+
+\begin{analogia}[: lo stampo con il materiale da scegliere]
+Un template è uno stampo per biscotti in cui \emph{non} hai ancora deciso
+l'impasto. Lo stampo dice la forma; quando ti serve, scegli l'impasto (frolla,
+cioccolato, pan di zenzero) e ottieni biscotti con quella forma e quel materiale.
+Il template dice la ``forma'' del codice; il tipo concreto (\cc|int|,
+\cc|string|, \cc|Rettangolo|) è l'impasto.
+\end{analogia}
+
+\subsection*{Template di funzione}
+
+\begin{lstlisting}
+template <typename T>          // "T è un tipo, che deciderò dopo"
+T massimo(T a, T b) {
+    return (a > b) ? a : b;
+}
+\end{lstlisting}
+\begin{itemize}
+  \item \cc|template <typename T>| va scritto \textbf{subito prima} della funzione.
+        \cc|T| è un nome a scelta (per convenzione \cc|T|, ``Type''); al posto di
+        \cc|typename| si può scrivere \cc|class|, con lo stesso significato.
+  \item Dentro la funzione \cc|T| si usa come un tipo qualunque: per i parametri,
+        per il valore di ritorno, per le variabili locali.
+\end{itemize}
+
+\textbf{Cosa fa il compilatore.} Un template \emph{non} è una funzione: è una
+ricetta per generare funzioni. Quando scrivi \cc|massimo(3, 7)|, il compilatore
+vede che gli argomenti sono \cc|int|, \textbf{deduce} \cc|T = int| e genera (si dice
+\textbf{istanzia}) una vera funzione \cc|massimo<int>|, sostituendo \cc|int| a
+ogni \cc|T|. Se poi scrivi \cc|massimo(2.5, 1.5)| genera anche
+\cc|massimo<double>|. Tutto questo avviene \textbf{durante la compilazione}: i tipi
+sono decisi prima che il programma giri, e i controlli sui tipi restano rigorosi.
+Il codice sorgente contiene un solo template, ma il codice compilato contiene
+\textbf{una copia per ogni tipo usato}.
+
+\textbf{Quando la deduzione non basta.} \cc|massimo(3, 4.5)| non compila: dal
+primo argomento \cc|T| sarebbe \cc|int|, dal secondo \cc|double|, e il
+compilatore non sceglie da solo. In questi casi il tipo si indica esplicitamente
+tra parentesi angolari: \cc|massimo<double>(3, 4.5)|. Il \cc|3| viene allora
+convertito in \cc|3.0|.
+
+\textbf{Il ``contratto'' implicito.} \cc|massimo| usa l'operatore \cc|>|. Quindi
+funziona con qualunque tipo che \textbf{sappia fare} \cc|>|: \cc|int|, \cc|double|,
+\cc|char|, \cc|string| (ordine alfabetico). Con una classe tua, ad esempio
+\cc|Rettangolo|, il compilatore genererebbe codice che confronta due rettangoli
+con \cc|>|: se la classe non definisce quell'operatore, ottieni un errore, spesso
+lungo e confuso, che punta \emph{dentro} il template. Per far funzionare il
+template devi ``insegnare'' alla classe l'operatore richiesto:
+\begin{lstlisting}
+class Rettangolo {
+    double b, h;
+public:
+    double area() const { return b * h; }
+    bool operator<(const Rettangolo& altro) const {   // "r1 < r2" = confronto le aree
+        return area() < altro.area();
+    }
+};
+\end{lstlisting}
+È un'anteprima del Modulo 10: per ora basta sapere che \cc|operator<| è un metodo
+che il compilatore chiama quando scrivi \cc|r1 < r2|. Allo stesso modo, per
+stampare un oggetto con \cc|cout <<| serve \cc|operator<<|; negli esempi di questo
+modulo lo trovi già scritto, come formula da copiare. Un buon consiglio: nei tuoi
+template usa il \textbf{minor numero possibile} di operatori (ad esempio solo
+\cc|<|), così i tipi dovranno soddisfare meno requisiti.
+
+\textbf{Più parametri e parametri non di tipo.} Un template può avere più tipi
+(\cc|template <typename T, typename U>|) e anche parametri che sono
+\textbf{valori} costanti, ad esempio un intero:
+\cc|template <typename T, int N>|. Si possono dare valori di default:
+\cc|template <typename T = int, int N = 5>|.
+
+\textbf{Specializzazione.} A volte la versione generale è sbagliata per un tipo
+particolare. Confrontare due \cc|double| con \cc|==| è inaffidabile
+(\cc|0.1 + 0.2 == 0.3| è falso!); confrontare due \cc|const char*| con \cc|==|
+confronta gli indirizzi, non il testo. Si può allora scrivere una versione
+apposita per quel tipo, che ha la precedenza su quella generale:
+\begin{lstlisting}
+template <typename T>
+bool uguali(T a, T b) { return a == b; }          // versione generale
+
+template <>
+bool uguali<double>(double a, double b) {         // SOLO per double
+    double d = a - b;
+    return (d < 0 ? -d : d) < 1e-9;
+}
+\end{lstlisting}
+
+\subsection*{Template di classe}
+
+Lo stesso meccanismo vale per le classi. È il caso più importante per l'esame:
+liste, pile, code e alberi dei moduli 11--13 si scrivono come template.
+\begin{lstlisting}
+template <typename T>
+class Contenitore {
+    T dati[50];
+    int elementi;
+public:
+    Contenitore() : elementi(0) {}
+    void inserire(T el);
+    T estrarre();
+};
+Contenitore<int> interi;        // il tipo va SEMPRE scritto tra < >
+Contenitore<float> reali;       // per le classi non c'è deduzione
+\end{lstlisting}
+\cc|Contenitore| da solo non è un tipo: è un modello. \cc|Contenitore<int>| e
+\cc|Contenitore<float>| sono due \textbf{classi diverse}, generate dal
+compilatore, che non hanno nulla in comune (non puoi assegnare l'una all'altra).
+
+\textbf{Metodi definiti fuori dalla classe.} Ogni metodo scritto fuori va
+preceduto di nuovo da \cc|template <typename T>|, e il nome della classe va scritto
+con il parametro:
+\begin{lstlisting}
+template <typename T>
+void Contenitore<T>::inserire(T el) {
+    dati[elementi++] = el;
+}
+\end{lstlisting}
+Dentro la classe (e dentro i suoi metodi) si può scrivere semplicemente
+\cc|Contenitore| invece di \cc|Contenitore<T>|.
+
+\textbf{Template e memoria dinamica.} Un template di classe che usa \cc|new T[n]|
+segue esattamente le regole del Modulo 4: distruttore, costruttore di copia,
+\cc|operator=|. In più, \cc|new T[n]| richiede che \cc|T| abbia un costruttore di
+default, perché crea subito \cc|n| oggetti.
+
+\subsection*{Dove si scrivono i template: tutto nell'header}
+
+Nel Modulo 2 abbiamo diviso le classi in \texttt{.h} (dichiarazione) e \texttt{.cpp}
+(implementazione). Con i template \textbf{non si può fare}. Il motivo segue da come
+lavorano: il compilatore genera \cc|Contenitore<int>::inserire| solo quando, nello
+stesso file che sta compilando, vede sia l'uso (\cc|Contenitore<int>|) sia il corpo
+del template. Se il corpo sta in \texttt{contenitore.cpp} e l'uso in
+\texttt{main.cpp}, quando compila \texttt{main.cpp} conosce solo la dichiarazione;
+quando compila \texttt{contenitore.cpp} non sa che serve la versione \cc|int|.
+Nessuno dei due genera il codice, e il linker si ferma con \emph{undefined reference
+to `Contenitore<int>::inserire(int)'}.
+
+La soluzione standard: \textbf{tutto il template (dichiarazione e corpi dei metodi)
+va nel file header}, che viene incluso dove serve.
+
+\begin{inparole}
+\begin{itemize}
+  \item Un template è una ricetta: \cc|template <typename T>| e poi codice in cui
+        \cc|T| è un tipo qualunque.
+  \item Il compilatore genera una versione per ogni tipo usato (istanziazione), a
+        compile-time.
+  \item Per le funzioni il tipo di solito si deduce; altrimenti
+        \cc|f<double>(...)|. Per le classi si scrive sempre: \cc|Pila<int>|.
+  \item Il tipo deve supportare tutte le operazioni usate nel template (\cc|<|,
+        \cc|==|, \cc|<<|, \ldots); per le tue classi le devi definire tu.
+  \item Fuori dalla classe: \cc|template <typename T>| + \cc|Classe<T>::metodo|.
+  \item I template vanno interamente nell'header, non in un \texttt{.cpp} separato.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Un template, tante funzioni.} Il compilatore genera una versione per ogni
+tipo con cui il template viene usato; nell'eseguibile finiscono solo quelle.
+\begin{center}
+\begin{tikzpicture}
+  \node[processo,text width=4.2cm] (t) at (0,0) {\texttt{template <typename T>}\\\texttt{T massimo(T a, T b)}};
+  \node[etichetta,above=0.1cm of t] {codice sorgente (uno solo)};
+  \node[file,text width=5.4cm,font=\footnotesize\ttfamily,fill=green!15!sfondo] (i) at (9.2,1.6) {int massimo(int, int)};
+  \node[file,text width=5.4cm,font=\footnotesize\ttfamily,fill=green!15!sfondo] (d) at (9.2,0) {double massimo(double, double)};
+  \node[file,text width=5.4cm,font=\footnotesize\ttfamily,fill=green!15!sfondo] (s) at (9.2,-1.6) {string massimo(string, string)};
+  \node[etichetta,above=0.1cm of i] {codice compilato (una copia per tipo)};
+  \draw[freccia] (t.east) -- (i.west);
+  \draw[freccia] (t.east) -- (d.west);
+  \draw[freccia] (t.east) -- (s.west);
+  \node[etichetta,anchor=south] at ($(i.west)+(-2.0,0.12)$) {\texttt{massimo(3, 7)}};
+  \node[etichetta,anchor=south] at ($(d.west)+(-2.0,0.12)$) {\texttt{massimo(2.5, 1.5)}};
+  \node[etichetta,anchor=north] at ($(s.west)+(-2.0,-0.12)$) {\texttt{massimo(s1, s2)}};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Un template di classe, classi indipendenti.} \cc|Scatola<int>| e
+\cc|Scatola<string>| del pattern hanno la stessa struttura ma sono due tipi diversi,
+con array di elementi di tipo diverso nello heap.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=stackcol,minimum width=2.6cm] (si) at (0,0.8) {si: Scatola<int>};
+  \node[cella,fill=stackcol,minimum width=2.6cm] (ss) at (0,-0.8) {ss: Scatola<string>};
+  \foreach \v [count=\i] in {1,4,9,16,25,36,{},{}}
+    \node[cellina,fill=heapcol] (a\i) at (3.2+\i*0.75,0.8) {\v};
+  \node[cella,fill=heapcol,minimum width=1.4cm] (b1) at (4.6,-0.8) {\q{alfa}};
+  \node[cella,fill=heapcol,minimum width=1.4cm,right=0cm of b1] (b2) {\q{beta}};
+  \node[cella,fill=heapcol,minimum width=1cm,right=0cm of b2] (b3) {};
+  \node[cella,fill=heapcol,minimum width=1cm,right=0cm of b3] (b4) {};
+  \draw[freccia] (si.east) -- (a1.west);
+  \draw[freccia] (ss.east) -- (b1.west);
+  \node[etichetta,right=0.1cm of a8] {8 \texttt{int}};
+  \node[etichetta,right=0.1cm of b4] {4 \texttt{string}};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Perché un template non si separa in \texttt{.h} e \texttt{.cpp}.}
+\begin{center}
+\begin{tikzpicture}
+  \node[file,text width=3.4cm] (h) at (0,1.2) {pila.h\\ \footnotesize dichiarazione};
+  \node[file,text width=3.4cm] (c) at (0,-0.6) {pila.cpp\\ \footnotesize corpi dei metodi};
+  \node[file,text width=3.4cm] (m) at (0,-2.2) {main.cpp\\ \footnotesize usa \texttt{Pila<int>}};
+  \node[processo,text width=5.6cm] (cc) at (6.6,-0.6) {compilando \texttt{pila.cpp}: \emph{nessuno usa Pila<int>, non genero nulla}};
+  \node[processo,text width=5.6cm] (cm) at (6.6,-2.2) {compilando \texttt{main.cpp}: \emph{non vedo i corpi, non posso generare}};
+  \draw[freccia] (c) -- (cc);
+  \draw[freccia] (m) -- (cm);
+  \node[etichetta,text=red!75!black,text width=8cm,align=center] at (6.6,-3.4) {linker: \emph{undefined reference to Pila<int>::push(int)}};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Template di funzione (\cc|massimo|, \cc|scambia|, \cc|stampaArray|) e un template di
+classe con memoria dinamica e Regola dei Tre, con i metodi definiti fuori dalla
+classe: è la forma esatta che userai per liste e pile.
+
+\codice{codice/m05/pattern.cpp}
+\uscita{codice/m05/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item \cc|massimo(string("ciao"), string("mondo"))|: se scrivessi
+        \cc|massimo("ciao", "mondo")|, \cc|T| diventerebbe \cc|const char*| e il
+        confronto avverrebbe tra \textbf{indirizzi} (vedi l'Esercizio~5.9).
+  \item \cc|scambia(a, b)| e \cc|scambia(s1, s2)| generano due funzioni diverse,
+        \cc|scambia<int>| e \cc|scambia<string>|.
+  \item Ogni metodo di \cc|Scatola| scritto fuori dalla classe ripete
+        \cc|template <typename T>| e usa \cc|Scatola<T>::|.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: template diviso in .h e .cpp]
+Mettere i corpi dei metodi di un template in un \texttt{.cpp} separato produce
+\emph{undefined reference} al linker. Tutto il template va nell'header (o tutto
+nello stesso file del \cc|main|, come negli esercizi d'esame su file unico).
+\end{trappola}
+
+\begin{trappola}[: dimenticare template <typename T> fuori dalla classe]
+Ogni metodo definito fuori deve iniziare con \cc|template <typename T>| e usare
+\cc|NomeClasse<T>::|. Scrivere solo \cc|NomeClasse::metodo| dà errori come
+\emph{'NomeClasse' is not a class, namespace, or enumeration}.
+\end{trappola}
+
+\begin{trappola}[: deduzione ambigua]
+\cc|massimo(3, 4.5)| non compila (\emph{deduced conflicting types for parameter 'T'}).
+Usa \cc|massimo<double>(3, 4.5)| oppure due parametri di tipo diversi.
+\end{trappola}
+
+\begin{trappola}[: la classe non supporta l'operatore]
+Un template che usa \cc|<| applicato a una tua classe senza \cc|operator<| dà un
+errore che indica la riga \emph{dentro il template} (\emph{no match for 'operator<'}).
+Il problema però è nella classe: aggiungi l'operatore.
+\end{trappola}
+
+\begin{trappola}[: stringhe C nei template]
+Con \cc|"ciao"| \cc|T| è \cc|const char*|: \cc|==| e \cc|<| confrontano indirizzi.
+Usa \cc|string| o scrivi una specializzazione.
+\end{trappola}
+
+\begin{consiglio}[: scrivere prima la versione con un tipo concreto]
+Se un template non ti viene, scrivi prima la funzione o la classe per \cc|int|,
+provala, poi sostituisci \cc|int| con \cc|T| dove serve e aggiungi
+\cc|template <typename T>|. Gli errori di compilazione dei template sono lunghi:
+leggi la \textbf{prima} riga che contiene il tuo file e il tuo numero di riga.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Quando vengono generate le versioni concrete di un template?}
+  \item durante l'esecuzione, la prima volta che vengono chiamate
+  \item durante la compilazione, per ogni tipo con cui il template viene usato
+  \item durante il linking, per tutti i tipi possibili
+  \item mai: il template viene interpretato
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{template <typename T> T massimo(T a, T b);} quale chiamata \textbf{non} compila?}
+  \item \texttt{massimo(3, 7)}
+  \item \texttt{massimo(2.5, 1.0)}
+  \item \texttt{massimo(3, 4.5)}
+  \item \texttt{massimo<double>(3, 4.5)}
+\end{quiz}
+
+\begin{quiz}{In \texttt{template <typename T>}, la parola \texttt{typename} può essere sostituita da:}
+  \item \texttt{type}
+  \item \texttt{class}
+  \item \texttt{struct}
+  \item \texttt{auto}
+\end{quiz}
+
+\begin{quiz}{Come si dichiara un oggetto della classe template \texttt{Pila} per contenere stringhe?}
+  \item \texttt{Pila p<string>;}
+  \item \texttt{Pila<string> p;}
+  \item \texttt{Pila p(string);}
+  \item \texttt{template Pila<string> p;}
+\end{quiz}
+
+\begin{quiz}{Un template \texttt{ordina(T a[], int n)} usa l'operatore \texttt{<}. Cosa serve per ordinare un array di \texttt{Rettangolo}?}
+  \item niente: il compilatore confronta i rettangoli byte per byte
+  \item che \texttt{Rettangolo} definisca \texttt{operator<}
+  \item una specializzazione obbligatoria \texttt{ordina<Rettangolo>}
+  \item che \texttt{Rettangolo} sia una \texttt{struct}
+\end{quiz}
+
+\begin{quiz}{Come si definisce fuori dalla classe il metodo \texttt{push} della classe template \texttt{Pila<T>}?}
+  \item \texttt{void Pila::push(T x) \{...\}}
+  \item \texttt{template <typename T> void Pila<T>::push(T x) \{...\}}
+  \item \texttt{void Pila<T>::push(T x) \{...\}}
+  \item \texttt{template void Pila::push(T x) \{...\}}
+\end{quiz}
+
+\begin{quiz}{Un template di classe è dichiarato in \texttt{pila.h} e i suoi metodi sono definiti in \texttt{pila.cpp}. Il \texttt{main} usa \texttt{Pila<int>}. Cosa succede tipicamente?}
+  \item funziona tutto normalmente
+  \item errore del linker: \emph{undefined reference}
+  \item errore del preprocessore
+  \item il programma funziona ma è più lento
+\end{quiz}
+
+\begin{quiz}{\texttt{Contenitore<int>} e \texttt{Contenitore<double>} sono:}
+  \item la stessa classe con due nomi
+  \item due classi distinte generate dallo stesso template
+  \item due oggetti della stessa classe
+  \item una classe e una sua sottoclasse
+\end{quiz}
+
+\begin{quiz}{Cosa indica \texttt{template <>} prima di \texttt{bool uguali<double>(double a, double b)}?}
+  \item un template senza parametri, quindi un errore
+  \item una specializzazione esplicita del template per il tipo \texttt{double}
+  \item un template che accetta qualunque tipo tranne \texttt{double}
+  \item una funzione template con parametri di default
+\end{quiz}
+
+\begin{quiz}{In \texttt{template <typename T, int N> class Buffer \{ T dati[N]; \};} cos'è \texttt{N}?}
+  \item un secondo tipo
+  \item un parametro non di tipo: un valore intero costante noto a compile-time
+  \item una variabile che si può cambiare durante l'esecuzione
+  \item un errore: i template accettano solo tipi
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. L'istanziazione avviene a compile-time, solo per i tipi effettivamente usati.
+  \item \textbf{C}. \cc|T| dedotto in modo contraddittorio (\cc|int| e \cc|double|). La D
+        risolve indicandolo esplicitamente.
+  \item \textbf{B}. \cc|template <class T>| è equivalente.
+  \item \textbf{B}. Per le classi il tipo si specifica sempre tra \cc|< >| dopo il nome.
+  \item \textbf{B}. Il template funziona con qualunque tipo che fornisca le operazioni
+        usate. La specializzazione (C) è possibile ma non obbligatoria.
+  \item \textbf{B}. Servono sia \cc|template <typename T>| sia \cc|Pila<T>::|.
+  \item \textbf{B}. Nessuna unità di traduzione genera il codice di \cc|Pila<int>|.
+  \item \textbf{B}. Ogni istanziazione è una classe a sé.
+  \item \textbf{B}. È la sintassi della specializzazione esplicita.
+  \item \textbf{B}. Infatti si può usare come dimensione di un array statico.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: magazzino generico]
+Si vuole scrivere un piccolo insieme di strumenti generici (funzioni e classi
+template) per memorizzare, ordinare e stampare oggetti di qualunque tipo, e usarli
+con interi, caratteri, stringhe e una classe \cc|Rettangolo|. Niente STL.
+\end{traccia}
+
+\begin{step}{template di funzione}
+Scrivi \cc|template <typename T> void stampa(const T v[], int n)| (elementi separati
+da virgole) e \cc|int indiceMassimo(const T v[], int n)|, che usa \textbf{solo}
+l'operatore \cc|<|. Provale con un array di \cc|int| e uno di \cc|string|.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|template <typename T>|, deduzione del tipo.
+\end{step}
+
+\begin{step}{ordinamento generico}
+Scrivi \cc|void ordina(T a[], int n)| (selection sort, usando solo \cc|<|) e
+applicalo ad array di \cc|int|, \cc|char| e \cc|string|.\\[0.3em]
+\textbf{Concetto nuovo:} un algoritmo, molti tipi.
+\end{step}
+
+\begin{step}{una classe compatibile}
+Scrivi \cc|Rettangolo| (base, altezza, \cc|area()|) con \cc|operator<| che confronta
+le aree e \cc|operator<<| per la stampa (usa la forma fornita negli esempi). Ordina
+un array di rettangoli e trova il più grande con le funzioni degli step 1--2.
+(È l'esercizio delle slide del corso.)\\[0.3em]
+\textbf{Concetto nuovo:} requisiti che un tipo deve soddisfare per un template.
+\end{step}
+
+\begin{step}{template di classe}
+Scrivi \cc|template <typename T> class Magazzino| con un array dinamico che
+raddoppia, Regola dei Tre, \cc|inserire|, \cc|estrarre| (lancia
+\cc|underflow_error| se vuoto), \cc|numero|, \cc|vuoto|, \cc|ordinaTutto()| (riusa
+\cc|ordina|) e \cc|stampaTutto()|. Usalo con \cc|double| e con \cc|Rettangolo|.\\[0.3em]
+\textbf{Concetto nuovo:} template di classe con memoria dinamica.
+\end{step}
+
+\begin{step}{due parametri e template annidati}
+Scrivi \cc|template <typename K, typename V> class Coppia| (chiave e valore,
+\cc|operator<| sulla chiave, \cc|operator<<|) e crea un
+\cc|Magazzino< Coppia<string, int> >| come inventario: inserisci tre articoli,
+ordinali per nome e stampali.\\[0.3em]
+\textbf{Concetto nuovo:} più parametri di tipo, istanziazione con un tipo template.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m05/lab.cpp}
+\uscita{codice/m05/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item Nello step 3 \cc|6x0.5| (area 3) viene prima di \cc|2x5| (area 10): l'ordine
+        è per area, non per base.
+  \item \cc|Coppia()| inizializza con \cc|chiave()| e \cc|valore()|: per \cc|string|
+        è la stringa vuota, per \cc|int| è 0. Serve perché \cc|new T[cap]| crea
+        subito oggetti con il costruttore di default.
+  \item \cc|Magazzino< Coppia<string, int> >|: lo spazio tra le due \cc|>| finali
+        era obbligatorio nel vecchio C++98 (altrimenti \cc|>>| era letto come
+        operatore); oggi non serve, ma non fa danni.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è un template e a cosa serve?]
+Un template è un modello di funzione o di classe parametrizzato su uno o più tipi,
+che permette di scrivere un algoritmo o una struttura dati una sola volta,
+indipendentemente dal tipo degli elementi su cui opera: è lo strumento della
+programmazione generica in C++. Il tipo viene specificato come se fosse un
+parametro. Si evita così di duplicare codice identico per tipi diversi, mantenendo
+la tipizzazione statica: i tipi sono determinati e controllati a compile-time.
+\end{orale}
+
+\begin{orale}[D2. Cosa significa istanziare un template?]
+Significa che il compilatore, quando incontra un uso del template con un tipo
+concreto, genera una versione specializzata del codice sostituendo il parametro con
+quel tipo. Per i template di funzione il tipo viene di solito dedotto dagli
+argomenti, ma si può indicare esplicitamente con \cc|f<tipo>(...)|; per i template
+di classe va sempre indicato (\cc|Pila<int>|). Il codice sorgente contiene un solo
+template, quello compilato contiene una copia per ogni tipo usato.
+\end{orale}
+
+\begin{orale}[D3. Perché i template si scrivono interamente negli header?]
+Perché per istanziare un template il compilatore deve vederne la definizione
+completa nel punto in cui viene usato. Se i corpi dei metodi stessero in un
+\texttt{.cpp} separato, compilando il file che usa il template il compilatore
+vedrebbe solo le dichiarazioni, e compilando il \texttt{.cpp} del template non
+saprebbe per quali tipi generarlo: il risultato è un errore del linker. Per questo
+dichiarazione e definizione si mettono insieme nell'header.
+\end{orale}
+
+\begin{orale}[D4. Cos'è la specializzazione di un template?]
+È una versione alternativa del template scritta per un tipo particolare, che il
+compilatore usa al posto di quella generale quando il parametro è proprio quel
+tipo. Si scrive con \cc|template <>| seguito dalla funzione o classe con il tipo
+indicato. Si usa quando l'algoritmo generale non è corretto o efficiente per quel
+tipo: ad esempio il confronto con \cc|==| tra \cc|double|, che va fatto con una
+tolleranza, o tra stringhe C, dove \cc|==| confronterebbe gli indirizzi.
+\end{orale}
+
+\begin{orale}[D5. Che requisiti deve avere un tipo per essere usato in un template?]
+Deve supportare tutte le operazioni che il template usa sugli oggetti di quel tipo:
+operatori di confronto, aritmetici, di stampa, costruttore di default se il template
+crea array con \cc|new T[n]|, costruttore di copia e assegnamento se li copia. Se un
+requisito manca, l'errore emerge in compilazione al momento dell'istanziazione. Per
+le classi definite dall'utente bisogna quindi sovraccaricare gli operatori necessari.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Massimo e minimo}{facile}
+Scrivi i template \cc|massimo| e \cc|minimo| e provali con \cc|int|, \cc|double|,
+\cc|char| e \cc|string|. Prova a chiamare \cc|massimo(3, 4.5)|, leggi l'errore, poi
+risolvi in due modi diversi.
+\end{esercizio}
+
+\begin{esercizio}{Scambia e ruota}{facile}
+Scrivi \cc|template <typename T> void scambia(T&, T&)| e, usandola,
+\cc|void ruota(T& a, T& b, T& c)| che sposta i valori a sinistra (\cc|a| prende il
+valore di \cc|b|, \cc|b| quello di \cc|c|, \cc|c| quello di \cc|a|). Provala con
+interi, stringhe e reali.
+\end{esercizio}
+
+\begin{esercizio}{Stampa e somma}{facile}
+Scrivi \cc|stampaArray| e \cc|T somma(const T v[], int n)|, partendo da
+\cc|T s = T();|. Provala con \cc|int|, \cc|double| e \cc|string|: cosa vuol dire
+``sommare'' delle stringhe?
+\end{esercizio}
+
+\begin{esercizio}{Contare le occorrenze}{facile}
+Scrivi \cc|int conta(const T v[], int n, const T& x)| e un template con due
+parametri di tipo, \cc|int contaMaggiori(const T v[], int n, U soglia)|, che
+permette di confrontare un array di \cc|double| con una soglia \cc|int|.
+\end{esercizio}
+
+\begin{esercizio}{Ricerca generica}{medio}
+Scrivi \cc|int ricerca(T dato, T v[], int dim)| (indice della prima occorrenza, o
+$-1$) e una classe \cc|Punto| con \cc|operator==|. Cerca nei tre array (\cc|int|,
+\cc|char|, \cc|Punto|) valori letti da tastiera. (Esercizio delle slide.)
+\end{esercizio}
+
+\begin{esercizio}{Ordinamento generico}{medio}
+Scrivi \cc|void ordina(T a[], int n)| (bubble sort, usando solo \cc|<|) e ordinaci
+un array di \cc|int|, uno di \cc|char| e uno di \cc|Rettangolo| confrontati per area.
+Stampa prima e dopo. (Esercizio delle slide.)
+\end{esercizio}
+
+\begin{esercizio}{Coppia di due tipi}{medio}
+Scrivi \cc|template <typename T, typename U> class Coppia| con getter, setter,
+\cc|stampa()| e un metodo \cc|invertita()| che restituisce una \cc|Coppia<U, T>|.
+Scrivi anche una funzione template \cc|creaCoppia(a, b)| che deduce i tipi da sola.
+\end{esercizio}
+
+\begin{esercizio}{Contenitore a dimensione fissa}{medio}
+Scrivi \cc|template <typename T = int, int N = 5> class Contenitore| con un array
+\textbf{statico} \cc|T dati[N]|, \cc|inserire| (lancia \cc|overflow_error| se pieno),
+\cc|estrarre| (lancia \cc|underflow_error| se vuoto), \cc|numero|, \cc|vuoto|,
+\cc|capacita|. Crea un \cc|Contenitore<>| e un \cc|Contenitore<char, 3>|.
+\end{esercizio}
+
+\begin{esercizio}{Specializzazioni}{difficile}
+Scrivi \cc|template <typename T> bool uguali(T a, T b)| con \cc|==| e due
+specializzazioni: per \cc|double| (tolleranza $10^{-9}$) e per \cc|const char*|
+(confronto carattere per carattere). Mostra che \cc|0.1 + 0.2 == 0.3| è falso ma
+\cc|uguali(0.1 + 0.2, 0.3)| è vero.
+\end{esercizio}
+
+\begin{esercizio}{Pila generica}{difficile}
+Scrivi \cc|template <typename T> class Pila| su array dinamico (Regola dei Tre,
+\cc|push|, \cc|pop| con eccezione, \cc|vuota|). Usala in una funzione template
+\cc|invertiConPila(T v[], int n)| e per controllare se le parentesi di
+un'espressione come \texttt{\{[(a+b)*c]-(d)\}} sono bilanciate.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m05/}.

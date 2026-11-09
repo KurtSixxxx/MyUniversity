@@ -1,0 +1,2 @@
+struct: distanza = 5
+class:  distanza = 5

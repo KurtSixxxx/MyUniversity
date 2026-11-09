@@ -1,0 +1,5 @@
+Rettangolo 3x4 rosso, area 12
+Cerchio r=1 blu, area 3.14159
+Triangolo 6x2 verde, area 6
+Rettangolo 5x5 verde, area 25
+Area media: 11.5354

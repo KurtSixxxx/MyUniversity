@@ -1,0 +1,4 @@
+4721: somma cifre 14, cifre 4
+9: somma cifre 9, cifre 1
+100000: somma cifre 1, cifre 6
+987654321: somma cifre 45, cifre 9

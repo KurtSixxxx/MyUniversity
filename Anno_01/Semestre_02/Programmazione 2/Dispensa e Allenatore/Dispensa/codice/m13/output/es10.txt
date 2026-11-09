@@ -1,0 +1,12 @@
+15: predecessore 13, successore 17
+6: predecessore 4, successore 7
+18: predecessore 17, successore 20
+3: predecessore 2, successore 4
+7: predecessore 6, successore 9
+17: predecessore 15, successore 18
+20: predecessore 18, successore -
+2: predecessore -, successore 3
+4: predecessore 3, successore 6
+13: predecessore 9, successore 15
+9: predecessore 7, successore 13
+scorrimento in ordine con i successori: 2 3 4 6 7 9 13 15 17 18 20 

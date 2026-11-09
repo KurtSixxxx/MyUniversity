@@ -1,0 +1,22 @@
+# eseguibile: va nelle Release, non nel repository
+rilascio/
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.toc
+*.lol
+*.synctex.gz
+
+# Python / costruzione dell'app
+__pycache__/
+.ambiente/
+Allenatore/build/
+Allenatore/dist/
+Allenatore/web/tema-iniziale.js
+Allenatore/web/qr-telefono.svg
+
+# binari compilati del codice della dispensa
+*.exe
+*.o

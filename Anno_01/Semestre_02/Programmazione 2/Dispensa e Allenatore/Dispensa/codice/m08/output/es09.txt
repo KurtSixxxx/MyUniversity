@@ -1,0 +1,17 @@
+3 dischi da A a C:
+  disco 1: A -> C
+  disco 2: A -> B
+  disco 1: C -> B
+  disco 3: A -> C
+  disco 1: B -> A
+  disco 2: B -> C
+  disco 1: A -> C
+mosse: 7
+1 dischi: 1 mosse
+2 dischi: 3 mosse
+3 dischi: 7 mosse
+4 dischi: 15 mosse
+5 dischi: 31 mosse
+10 dischi: 1023 mosse
+15 dischi: 32767 mosse
+20 dischi: 1048575 mosse

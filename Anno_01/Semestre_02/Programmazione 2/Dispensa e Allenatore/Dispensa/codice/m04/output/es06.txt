@@ -1,0 +1,5 @@
+10h 30m 0s
+Eccezione: ore valide: 0-23
+10h 30m 0s
+Costruzione fallita: minuti validi: 0-59
+Eccezione sconosciuta catturata

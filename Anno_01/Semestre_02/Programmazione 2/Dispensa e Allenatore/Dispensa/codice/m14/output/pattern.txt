@@ -1,0 +1,32 @@
+--- Matrice di adiacenza ---
+  A B C D E F 
+A 0 1 1 0 0 0 
+B 1 0 0 1 0 0 
+C 1 0 0 1 1 0 
+D 0 1 1 0 0 1 
+E 0 0 1 0 0 1 
+F 0 0 0 1 1 0 
+A e C adiacenti? 1
+A e F adiacenti? 0
+--- Liste di adiacenza ---
+A: B C
+B: A D
+C: A D E
+D: B C F
+E: C F
+F: D E
+--- Visite ---
+BFS da A: A B C D E F 
+  A: distanza 0, cammino A
+  B: distanza 1, cammino A -> B
+  C: distanza 1, cammino A -> C
+  D: distanza 2, cammino A -> B -> D
+  E: distanza 2, cammino A -> C -> E
+  F: distanza 3, cammino A -> B -> D -> F
+DFS: A B D C E F 
+  A: d=0 f=11, pred=-
+  B: d=1 f=10, pred=A
+  C: d=3 f=8, pred=D
+  D: d=2 f=9, pred=B
+  E: d=4 f=7, pred=C
+  F: d=5 f=6, pred=E

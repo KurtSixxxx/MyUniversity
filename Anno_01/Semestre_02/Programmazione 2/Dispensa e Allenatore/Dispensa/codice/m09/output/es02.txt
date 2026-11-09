@@ -1,0 +1,4 @@
+meth1 (public)
+meth2 (protected)
+meth2 (protected)
+meth1 (public)

@@ -1,0 +1,10 @@
+potenza(3, 4)
+  potenza(3, 3)
+    potenza(3, 2)
+      potenza(3, 1)
+        potenza(3, 0)
+      -> 3
+    -> 9
+  -> 27
+-> 81
+3^4 = 81

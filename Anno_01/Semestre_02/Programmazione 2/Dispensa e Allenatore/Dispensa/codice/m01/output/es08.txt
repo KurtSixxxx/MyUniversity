@@ -1,0 +1,8 @@
+Panda: accelerazione di 45 rifiutata
+Panda: accelerazione di 90 rifiutata
+[Panda] vel=50 km/h, carburante=0 L
+[Punto] vel=180 km/h, carburante=3.2 L
+[Tipo] vel=180 km/h, carburante=6.6 L
+La piu' veloce e': Punto
+Messi 40 litri nella Panda
+[Panda] vel=0 km/h, carburante=40 L

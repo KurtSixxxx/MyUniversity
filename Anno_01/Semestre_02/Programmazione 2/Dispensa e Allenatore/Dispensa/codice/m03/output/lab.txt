@@ -1,0 +1,11 @@
+STEP 1  min = 4.2, max = 21.3
+STEP 2  Inserisci le temperature (0 per finire):
+(capacita' finale 8 per 7 misure)
+[ 18.5 22 14 30.5 25 11 27.5 ]
+STEP 3  sopra 20.75 (4): [ 22 30.5 25 27.5 ]
+STEP 4
+  giorno 1: 25 18 20 18
+  giorno 2: 29 10 29 14
+  giorno 3: 22 13 23 29
+  medie: [ 20.25 20.5 21.75 ]
+STEP 5  memoria liberata, tab = nullptr

@@ -1,0 +1,53 @@
+% Soluzioni degli esercizi del Modulo 11
+\chapter{Soluzioni -- Modulo 11 -- Liste Concatenate}
+
+\textbf{Esercizio 11.1} --- \cc|new Nodo{5, primo}| crea il nodo inizializzando i campi
+nell'ordine in cui sono dichiarati nella \cc|struct|.
+\codice{codice/m11/es01.cpp}
+\uscita{codice/m11/output/es01.txt}
+
+\textbf{Esercizio 11.2}
+\codice{codice/m11/es02.cpp}
+\uscita{codice/m11/output/es02.txt}
+
+\textbf{Esercizio 11.3}
+\codice{codice/m11/es03.cpp}
+\uscita{codice/m11/output/es03.txt}
+
+\textbf{Esercizio 11.4} --- La testa va passata per reference perché
+\cc|rimuoviTesta| (e \cc|rimuoviCoda| con un solo nodo) deve cambiare il puntatore del
+chiamante, non una sua copia.
+\codice{codice/m11/es04.cpp}
+\uscita{codice/m11/output/es04.txt}
+
+\textbf{Esercizio 11.5} --- In \cc|rimuovi| il ciclo si ferma al primo valore non minore:
+in una lista ordinata, se lì non c'è il valore cercato, non c'è nemmeno più avanti.
+\codice{codice/m11/es05.cpp}
+\uscita{codice/m11/output/es05.txt}
+
+\textbf{Esercizio 11.6} --- Nella versione ricorsiva, \cc|testa->succ| è (prima della
+chiamata) il secondo nodo, che dopo l'inversione del resto è diventato l'ultimo: gli si
+aggancia la testa.
+\codice{codice/m11/es06.cpp}
+\uscita{codice/m11/output/es06.txt}
+
+\textbf{Esercizio 11.7} --- Nell'inserimento prima di \cc|pos| si aggiornano quattro
+frecce: \cc|nuovo->succ|, \cc|nuovo->prec|, il \cc|succ| del vecchio precedente (o la
+testa) e \cc|pos->prec|.
+\codice{codice/m11/es07.cpp}
+\uscita{codice/m11/output/es07.txt}
+
+\textbf{Esercizio 11.8} --- Il nodo \cc|finto| è una variabile locale: non va
+cancellato, e la lista risultato parte da \cc|finto.succ|.
+\codice{codice/m11/es08.cpp}
+\uscita{codice/m11/output/es08.txt}
+
+\textbf{Esercizio 11.9}
+\codice{codice/m11/es09.cpp}
+\uscita{codice/m11/output/es09.txt}
+
+\textbf{Esercizio 11.10} --- Nessun \cc|if| per la lista vuota o per la testa: è il
+vantaggio della sentinella. Il costruttore usa \cc|T()| per il valore (inutile) della
+sentinella.
+\codice{codice/m11/es10.cpp}
+\uscita{codice/m11/output/es10.txt}

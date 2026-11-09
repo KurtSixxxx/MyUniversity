@@ -1,0 +1,2 @@
+Quanti numeri? v[0] = v[1] = v[2] = v[3] = 
+Al contrario: 5 13 -2 7 

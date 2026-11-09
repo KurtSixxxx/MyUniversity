@@ -1,0 +1,5 @@
+1x1: area 1, perimetro 4, diagonale 1.41421 (quadrato)
+4x1: area 4, perimetro 10, diagonale 4.12311
+3x4: area 12, perimetro 14, diagonale 5
+1x5: area 5, perimetro 12, diagonale 5.09902
+Area del rettangolo costante: 4

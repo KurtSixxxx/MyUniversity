@@ -1,0 +1,5 @@
+15: trovato in 3, si inserirebbe in posizione 3
+4: trovato in -1, si inserirebbe in posizione 1
+8: trovato in 2, si inserirebbe in posizione 1
+50: trovato in -1, si inserirebbe in posizione 6
+1: trovato in -1, si inserirebbe in posizione 0

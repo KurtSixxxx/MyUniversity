@@ -1,0 +1,10 @@
+cerco 23:
+  passo 1: sx=0 dx=9 m=4 a[m]=16
+  passo 2: sx=5 dx=9 m=7 a[m]=56
+  passo 3: sx=5 dx=6 m=5 a[m]=23
+-> indice 5
+cerco 7:
+  passo 1: sx=0 dx=9 m=4 a[m]=16
+  passo 2: sx=0 dx=3 m=1 a[m]=5
+  passo 3: sx=2 dx=3 m=2 a[m]=8
+-> indice -1

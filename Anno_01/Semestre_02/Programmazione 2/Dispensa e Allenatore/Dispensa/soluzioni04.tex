@@ -1,0 +1,48 @@
+% Soluzioni degli esercizi del Modulo 4 (generato da separa_soluzioni.py)
+\chapter{Soluzioni -- Modulo 4 -- Classi e Oggetti: Costruttori, Distruttore, Regola dei Tre}
+\textbf{Esercizio 4.1}
+\codice{codice/m04/es01.cpp}
+\uscita{codice/m04/output/es01.txt}
+
+\textbf{Esercizio 4.2} --- \texttt{GLOBALE} nasce prima di \texttt{inizio main} e
+muore dopo \texttt{fine main}. \texttt{HEAP} muore quando lo decide il \cc|delete|,
+non alla fine del blocco.
+\codice{codice/m04/es02.cpp}
+\uscita{codice/m04/output/es02.txt}
+
+\textbf{Esercizio 4.3} --- Dentro \cc|perValore| i vivi sono 3: il parametro è una
+copia, creata con il costruttore di copia e distrutta all'uscita.
+\codice{codice/m04/es03.cpp}
+\uscita{codice/m04/output/es03.txt}
+
+\textbf{Esercizio 4.4}
+\codice{codice/m04/es04.cpp}
+\uscita{codice/m04/output/es04.txt}
+
+\textbf{Esercizio 4.5} --- \cc|Punto2D(int x = 0, int y = 0) : x(x), y(y)|
+funziona: nella lista, fuori dalle parentesi c'è l'attributo, dentro il parametro.
+\codice{codice/m04/es05.cpp}
+\uscita{codice/m04/output/es05.txt}
+
+\textbf{Esercizio 4.6}
+\codice{codice/m04/es06.cpp}
+\uscita{codice/m04/output/es06.txt}
+
+\textbf{Esercizio 4.7}
+\codice{codice/m04/es07.cpp}
+\uscita{codice/m04/output/es07.txt}
+
+\textbf{Esercizio 4.8} --- In \cc|concatena| la stringa temporanea \cc|tmp| va
+liberata, perché il costruttore di \cc|MiaStringa| ne fa una copia sua.
+\codice{codice/m04/es08.cpp}
+\uscita{codice/m04/output/es08.txt}
+
+\textbf{Esercizio 4.9} --- I metodi privati \cc|allocaMemoria| e \cc|liberaMemoria|
+evitano di ripetere lo stesso codice in costruttori, \cc|operator=| e distruttore.
+\codice{codice/m04/es09.cpp}
+\uscita{codice/m04/output/es09.txt}
+
+\textbf{Esercizio 4.10} --- \cc|explicit| davanti al costruttore impedisce
+conversioni automatiche indesiderate, come \cc|Pila p = 5;|.
+\codice{codice/m04/es10.cpp}
+\uscita{codice/m04/output/es10.txt}

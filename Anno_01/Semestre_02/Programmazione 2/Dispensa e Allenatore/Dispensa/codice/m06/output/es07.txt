@@ -1,0 +1,3 @@
+2^10 = 1024     lenta: 10 molt. veloce: 6 molt.
+2^30 = 1073741824       lenta: 30 molt. veloce: 9 molt.
+2^62 = 4611686018427387904      lenta: 62 molt. veloce: 11 molt.

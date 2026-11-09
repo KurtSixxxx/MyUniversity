@@ -1,0 +1,51 @@
+% Soluzioni degli esercizi del Modulo 5 (generato da separa_soluzioni.py)
+\chapter{Soluzioni -- Modulo 5 -- Template di Funzione e di Classe}
+\textbf{Esercizio 5.1}
+\codice{codice/m05/es01.cpp}
+\uscita{codice/m05/output/es01.txt}
+
+\textbf{Esercizio 5.2}
+\codice{codice/m05/es02.cpp}
+\uscita{codice/m05/output/es02.txt}
+
+\textbf{Esercizio 5.3} --- \cc|T()| è il ``valore zero'' del tipo: 0 per i numeri,
+stringa vuota per \cc|string|. Per le stringhe \cc|+=| concatena.
+\codice{codice/m05/es03.cpp}
+\uscita{codice/m05/output/es03.txt}
+
+\textbf{Esercizio 5.4} --- Per contare \q{rosso} serve \cc|string("rosso")|:
+con il letterale \cc|"rosso"| il terzo argomento sarebbe un \cc|const char*| e
+\cc|T| risulterebbe dedotto in due modi diversi.
+\codice{codice/m05/es04.cpp}
+\uscita{codice/m05/output/es04.txt}
+
+\textbf{Esercizio 5.5}
+\codice{codice/m05/es05.cpp}
+\ingresso{codice/m05/input/es05.txt}
+\uscita{codice/m05/output/es05.txt}
+
+\textbf{Esercizio 5.6}
+\codice{codice/m05/es06.cpp}
+\uscita{codice/m05/output/es06.txt}
+
+\textbf{Esercizio 5.7} --- \cc|invertita()| restituisce un tipo diverso da quello
+dell'oggetto (\cc|Coppia<U, T>|): dentro un template si possono usare altre
+istanziazioni dello stesso template.
+\codice{codice/m05/es07.cpp}
+\uscita{codice/m05/output/es07.txt}
+
+\textbf{Esercizio 5.8} --- Attenzione a
+\cc|cout << lettere.estrarre() << lettere.estrarre()|: dal C++17 le espressioni
+concatenate con \cc|<<| sono valutate da sinistra a destra, quindi esce prima
+\texttt{b} e poi \texttt{a}. Con compilatori più vecchi l'ordine non era garantito:
+meglio usare due istruzioni separate.
+\codice{codice/m05/es08.cpp}
+\uscita{codice/m05/output/es08.txt}
+
+\textbf{Esercizio 5.9}
+\codice{codice/m05/es09.cpp}
+\uscita{codice/m05/output/es09.txt}
+
+\textbf{Esercizio 5.10}
+\codice{codice/m05/es10.cpp}
+\uscita{codice/m05/output/es10.txt}

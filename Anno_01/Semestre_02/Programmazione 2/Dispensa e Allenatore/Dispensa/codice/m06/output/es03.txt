@@ -1,0 +1,7 @@
+n = 1   passi = 0
+n = 10  passi = 4
+n = 100 passi = 7
+n = 1000        passi = 10
+n = 10000       passi = 14
+n = 100000      passi = 17
+n = 1000000     passi = 20

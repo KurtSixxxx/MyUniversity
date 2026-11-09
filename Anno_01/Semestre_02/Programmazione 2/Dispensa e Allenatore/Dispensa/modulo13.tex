@@ -1,0 +1,627 @@
+% =====================================================================
+\chapter{Modulo 13 -- Alberi Binari e Alberi Binari di Ricerca (BST)}
+% =====================================================================
+
+\tikzset{
+  albero/.style={every node/.style={circle,draw,fill=heapcol,font=\small,minimum size=7mm,inner sep=1pt},
+                 level distance=1.05cm, edge from parent/.style={draw,thick}},
+  evid/.style={fill=green!30!sfondo},
+  tolto/.style={fill=red!25!sfondo},
+}
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Dalle liste agli alberi}
+
+In una lista ogni nodo ha \textbf{un solo} successivo. In un \textbf{albero} ogni nodo
+può avere \textbf{più} successori, chiamati \emph{figli}. È la struttura naturale per
+tutto ciò che è gerarchico: le cartelle del computer, l'organigramma di un'azienda,
+l'albero genealogico, i capitoli e paragrafi di un libro.
+
+\begin{analogia}[: l'albero genealogico (capovolto)]
+Gli alberi dell'informatica si disegnano a testa in giù: la \textbf{radice} in alto,
+le \textbf{foglie} in basso. Come in un albero genealogico, ogni nodo ha un
+\textbf{padre} (tranne la radice) e zero o più \textbf{figli}; nodi con lo stesso padre
+sono \textbf{fratelli}; risalendo si incontrano gli \textbf{antenati}, scendendo i
+\textbf{discendenti}.
+\end{analogia}
+
+Il vocabolario delle slide (da sapere per i quiz):
+\begin{itemize}
+  \item un albero è un insieme di nodi collegati da archi in cui ogni nodo ha
+        \textbf{al più un arco entrante} (un solo padre); il nodo senza padre è la
+        \textbf{radice}, ed è unica;
+  \item una \textbf{foglia} è un nodo senza figli; gli altri sono \textbf{nodi interni};
+  \item il \textbf{livello} (o profondità) di un nodo è la sua distanza dalla radice: la
+        radice è a livello 0, i suoi figli a livello 1, e così via;
+  \item la \textbf{profondità} (o \textbf{altezza}) dell'albero è la lunghezza del
+        cammino più lungo dalla radice a una foglia;
+  \item ogni nodo è la radice di un \textbf{sottoalbero}, formato da lui e da tutti i suoi
+        discendenti.
+\end{itemize}
+
+\textbf{Definizione ricorsiva} (la più importante): un albero è
+\begin{itemize}
+  \item \textbf{vuoto},
+  \item oppure è formato da un nodo radice da cui discendono zero o più
+        \textbf{sottoalberi}, che sono a loro volta alberi.
+\end{itemize}
+Un albero ``contiene'' alberi più piccoli: per questo quasi tutti gli algoritmi sugli
+alberi sono \textbf{ricorsivi}, con il caso base sull'albero vuoto (Modulo 8). Riguarda le
+``tre domande'' del Modulo 8: qui la risposta è quasi sempre ``faccio qualcosa con la
+radice e chiedo il resto ai due sottoalberi''.
+
+\subsection*{Alberi binari}
+
+Un albero è \textbf{binario} se ogni nodo ha \textbf{al più due figli}, distinti in
+\textbf{sinistro} e \textbf{destro}. In C++:
+\begin{lstlisting}
+template <typename T>
+struct Nodo {
+    T val;
+    Nodo<T>* left = nullptr;     // figlio sinistro
+    Nodo<T>* right = nullptr;    // figlio destro
+    Nodo<T>* padre = nullptr;    // facoltativo: serve per cancellazione e successore
+    Nodo(T v) : val(v) {}
+};
+\end{lstlisting}
+È come il nodo di una lista doppia, ma i due puntatori vanno ``in giù'' verso due figli
+invece che avanti e indietro.
+
+Due numeri utili (dalle slide): al livello $k$ ci sono \textbf{al più} $2^k$ nodi, e un
+albero binario di altezza $h$ ha al più $2^{h+1} - 1$ nodi. Rovesciando: con $n$ nodi,
+un albero ben ``riempito'' (\textbf{bilanciato}) ha altezza circa $\log_2 n$; un albero
+\textbf{degenere}, in cui ogni nodo ha un solo figlio, è in pratica una lista e ha
+altezza $n - 1$.
+
+\subsection*{Le tre visite}
+
+\textbf{Visitare} un albero significa passare da tutti i nodi, una volta ciascuno.
+Per un albero binario ci sono tre ordini classici, che differiscono solo per
+\textbf{quando} si visita la radice rispetto ai due sottoalberi:
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Visita} & \textbf{Ordine} & \textbf{Uso tipico} \\
+\midrule
+pre-order  & radice, sinistro, destro & copiare l'albero, stamparne la struttura \\
+in-order   & sinistro, radice, destro & in un BST: valori \textbf{in ordine crescente} \\
+post-order & sinistro, destro, radice & distruggere l'albero (prima i figli, poi il padre) \\
+\bottomrule
+\end{tabular}
+\end{center}
+\begin{lstlisting}
+void inOrder(Nodo<T>* p) {
+    if (p != nullptr) {              // caso base: albero vuoto, non faccio niente
+        inOrder(p->left);            // 1. tutto il sottoalbero sinistro
+        cout << p->val << " ";       // 2. la radice
+        inOrder(p->right);           // 3. tutto il sottoalbero destro
+    }
+}
+\end{lstlisting}
+Spostando la riga del \cc|cout| prima o dopo le due chiamate si ottengono pre-order e
+post-order: è lo stesso ``prima o dopo la chiamata'' del Modulo 8. Ogni visita tocca ogni
+nodo una volta: costo $\Theta(n)$.
+
+C'è anche una quarta visita, \textbf{per livelli} (in ampiezza): prima la radice, poi
+tutti i nodi di livello 1, poi quelli di livello 2\ldots{} Non è ricorsiva: usa una
+\textbf{coda} (Modulo 12; Esercizio~13.6). È la stessa idea della visita BFS dei grafi
+(Modulo 14).
+
+\subsection*{L'albero binario di ricerca (BST)}
+
+\begin{definizione}[: proprietà del BST]
+Un \textbf{albero binario di ricerca} (\emph{Binary Search Tree}) è un albero binario
+in cui, per \textbf{ogni} nodo $x$:
+\begin{itemize}
+  \item tutti i valori nel sottoalbero \textbf{sinistro} di $x$ sono \textbf{minori} di
+        $x$;
+  \item tutti i valori nel sottoalbero \textbf{destro} di $x$ sono \textbf{maggiori o
+        uguali} a $x$.
+\end{itemize}
+\end{definizione}
+Attenzione: la regola vale per \emph{tutto} il sottoalbero, non solo per i figli diretti
+(Esercizio~13.8).
+
+\begin{analogia}[: il gioco ``più alto o più basso'']
+Penso un numero da 1 a 100 e tu provi a indovinarlo. Dici 50: ``più basso''. Allora
+scarti tutti i numeri da 50 in su e provi 25\ldots{} Un BST è questo gioco già
+preparato: in ogni nodo chiedi ``più piccolo o più grande?'' e scendi a sinistra o a
+destra, scartando ogni volta un intero sottoalbero. È la ricerca binaria del Modulo 7, ma
+su una struttura dinamica in cui si può anche inserire e cancellare.
+\end{analogia}
+
+\textbf{Conseguenza fondamentale}: la visita \textbf{in-order} di un BST restituisce i
+valori \textbf{in ordine crescente}. Inserire $n$ valori in un BST e fare una visita
+in-order è un modo di ordinarli.
+
+\subsection*{Ricerca, minimo e massimo}
+
+\textbf{Ricerca} di un valore: parti dalla radice; se il valore è quello del nodo hai
+finito; se è minore scendi a sinistra, altrimenti a destra; se arrivi a \cc|nullptr| il
+valore non c'è.
+\begin{lstlisting}
+Nodo<T>* search(T elemento) const {
+    Nodo<T>* x = root;
+    while (x != nullptr && !(elemento == x->val))
+        x = (elemento < x->val) ? x->left : x->right;
+    return x;                    // nullptr se non trovato
+}
+\end{lstlisting}
+\textbf{Minimo}: scendi sempre a sinistra finché puoi. \textbf{Massimo}: sempre a destra.
+
+Tutte queste operazioni seguono un solo cammino dalla radice verso il basso: costano
+$O(h)$, dove $h$ è l'altezza. Su un albero bilanciato $h \approx \log_2 n$ e la ricerca è
+velocissima (1000 nodi: 10 confronti). Su un albero degenere $h = n - 1$ e la ricerca
+diventa lineare (1000 confronti). Succede inserendo i valori \textbf{già ordinati}: ogni
+nuovo nodo finisce sempre a destra (Esercizio~13.5).
+
+\subsection*{Inserimento}
+
+\begin{passopasso}[: inserimento in un BST (slide)]
+I nuovi elementi vengono \textbf{sempre inseriti come foglie}.
+\begin{enumerate}
+  \item Parti dalla radice con un puntatore \cc|x|, e tieni in \cc|y| il padre di \cc|x|.
+  \item Finché \cc|x| non è \cc|nullptr|: \cc|y = x|, poi scendi a sinistra se il
+        valore è minore di \cc|x->val|, altrimenti a destra.
+  \item Ora \cc|x| è il posto vuoto in cui va il nuovo nodo e \cc|y| è il suo futuro
+        padre. Crea il nodo e agganciagli \cc|y| come padre.
+  \item Se \cc|y| è \cc|nullptr| l'albero era vuoto: il nodo diventa la radice.
+        Altrimenti diventa figlio sinistro o destro di \cc|y|, a seconda del confronto.
+\end{enumerate}
+\end{passopasso}
+Esiste anche una versione ricorsiva molto compatta (usata negli esercizi):
+\begin{lstlisting}
+Nodo* inserisci(Nodo* r, int v) {
+    if (r == nullptr) return new Nodo(v);          // posto vuoto: il nodo nasce qui
+    if (v < r->val) r->left = inserisci(r->left, v);
+    else r->right = inserisci(r->right, v);
+    return r;                                      // la radice di questo sottoalbero non cambia
+}
+radice = inserisci(radice, 42);
+\end{lstlisting}
+
+\subsection*{Cancellazione: i tre casi}
+
+È l'operazione più delicata, e una domanda d'orale classica. Per cancellare il nodo
+\cc|z| bisogna mantenere la proprietà del BST. Tre casi:
+\begin{enumerate}
+  \item \textbf{\cc|z| è una foglia}: lo si toglie, e il puntatore del padre diventa
+        \cc|nullptr|.
+  \item \textbf{\cc|z| ha un solo figlio}: il figlio (con tutto il suo sottoalbero) prende
+        il posto di \cc|z|. ``Il nonno adotta il nipote''.
+  \item \textbf{\cc|z| ha due figli}: si cerca il suo \textbf{successore} \cc|y|, cioè
+        il \textbf{minimo del sottoalbero destro}: è il valore immediatamente più grande di
+        \cc|z|, e ha al più un figlio (quello destro: se avesse un figlio sinistro, quello
+        sarebbe più piccolo). \cc|y| prende il posto di \cc|z|: così a sinistra restano
+        tutti valori minori e a destra tutti valori maggiori. Se \cc|y| non è figlio
+        diretto di \cc|z|, prima lo si stacca dal suo posto mettendo al suo posto il suo
+        figlio destro.
+\end{enumerate}
+Le slide implementano tutto con una procedura di supporto, \textbf{\cc|Trapianta(u, v)|},
+che sostituisce il sottoalbero di radice \cc|u| con quello di radice \cc|v|
+aggiornando il padre di \cc|u|: con questa i casi 1 e 2 diventano una sola riga, e il caso
+3 qualche riga in più (lo trovi nel pattern di codice). Costo: $O(h)$.
+
+\textbf{Successore di un nodo} (slide): se il nodo ha un sottoalbero destro, è il minimo
+di quel sottoalbero; altrimenti si risale verso la radice finché si arriva a un nodo
+\emph{da sinistra}: quel padre è il successore (Esercizio~13.10).
+
+\subsection*{Distruggere un albero}
+
+Il distruttore deve liberare ogni nodo, e un nodo va liberato \textbf{dopo} i suoi figli
+(altrimenti i puntatori ai figli si perdono): è una visita \textbf{post-order}.
+\begin{lstlisting}
+void distruggi(Nodo<T>* p) {
+    if (p) { distruggi(p->left); distruggi(p->right); delete p; }
+}
+\end{lstlisting}
+
+\begin{inparole}
+\begin{itemize}
+  \item Albero = radice + sottoalberi, che sono alberi: algoritmi ricorsivi, caso base
+        sull'albero vuoto.
+  \item Visite: pre (radice prima), in (radice in mezzo), post (radice dopo). In-order di
+        un BST = valori ordinati.
+  \item BST: a sinistra i minori, a destra i maggiori o uguali, in \emph{tutto} il sottoalbero.
+  \item Ricerca, inserimento, cancellazione: $O(h)$. Bilanciato $h \approx \log n$,
+        degenere $h \approx n$.
+  \item Inserimento: sempre come nuova foglia.
+  \item Cancellazione: foglia (si toglie), un figlio (il figlio sale), due figli (sale il
+        successore, cioè il minimo del sottoalbero destro).
+  \item Distruzione: in post-order.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Il BST del pattern} (prima delle cancellazioni), con i nomi delle parti.
+\begin{center}
+\begin{tikzpicture}[albero,level 1/.style={sibling distance=4.2cm},level 2/.style={sibling distance=2.1cm},level 3/.style={sibling distance=1.1cm}]
+  \node {50}
+    child {node {30}
+      child {node {20}}
+      child {node {40} child {node {35}} child {node {45}}}}
+    child {node {70}
+      child {node {60} child[missing] child {node {65}}}
+      child {node {80}}};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west] at (1.2,0.1) {radice (livello 0)};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west] at (4.6,-2.1) {foglie: 20, 35, 45, 65, 80};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west] at (4.6,-2.6) {altezza = 3};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Inserire 42}: il cammino dalla radice (in verde) e la nuova foglia.
+\begin{center}
+\begin{tikzpicture}[albero,level 1/.style={sibling distance=4.2cm},level 2/.style={sibling distance=2.1cm},level 3/.style={sibling distance=1.1cm}]
+  \node[evid] {50}
+    child {node[evid] {30}
+      child {node {20}}
+      child {node[evid] {40} child {node {35}} child {node[evid] {45} child {node[fill=green!55!sfondo] {42}} child[missing]}}}
+    child {node {70}
+      child {node {60}}
+      child {node {80}}};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west,text width=4.6cm] at (4.6,-3.0) {42 < 50: sinistra; 42 > 30: destra; 42 > 40: destra; 42 < 45: sinistra $\to$ posto vuoto};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Cancellazione con due figli}: si toglie 30. Il successore è il minimo del
+sottoalbero destro di 30, cioè 35, che prende il suo posto.
+\begin{center}
+\begin{tikzpicture}[albero,level 1/.style={sibling distance=2.2cm},level 2/.style={sibling distance=1.1cm}]
+  \node[tolto] at (0,0) {30}
+    child {node {20}}
+    child {node {40} child {node[evid] {35}} child {node {45}}};
+  \node[draw=none,fill=none,font=\Large] at (2.8,-1) {$\Rightarrow$};
+  \node[evid] at (5.4,0) {35}
+    child {node {20}}
+    child {node {40} child[missing] child {node {45}}};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,text width=5cm,anchor=west] at (7.2,-1) {a sinistra di 35 restano tutti valori minori, a destra tutti maggiori: la proprietà del BST è salva};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Bilanciato contro degenere}: gli stessi 7 valori inseriti in ordine diverso.
+\begin{center}
+\begin{tikzpicture}[albero,level 1/.style={sibling distance=2.2cm},level 2/.style={sibling distance=1.1cm}]
+  \node at (0,0) {4}
+    child {node {2} child {node {1}} child {node {3}}}
+    child {node {6} child {node {5}} child {node {7}}};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70] at (0,-3.0) {inseriti 4 2 6 1 3 5 7: altezza 2};
+  \begin{scope}[xshift=5cm,level distance=0.62cm,level 1/.style={sibling distance=0.9cm},level 2/.style={sibling distance=0.9cm},level 3/.style={sibling distance=0.9cm},level 4/.style={sibling distance=0.9cm},level 5/.style={sibling distance=0.9cm},level 6/.style={sibling distance=0.9cm},every node/.style={circle,draw,fill=heapcol,font=\scriptsize,minimum size=5mm,inner sep=0pt}]
+    \node {1} child[missing] child {node {2} child[missing] child {node {3} child[missing] child {node {4} child[missing] child {node {5} child[missing] child {node {6} child[missing] child {node {7}}}}}}};
+  \end{scope}
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west] at (7.4,-1.0) {inseriti 1 2 3 4 5 6 7:};
+  \node[draw=none,fill=none,font=\footnotesize\itshape,text=black!70,anchor=west] at (7.4,-1.5) {altezza 6 (una lista!)};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Il BST generico con gli algoritmi delle slide: inserimento iterativo con il padre,
+ricerca iterativa, minimo e massimo, le tre visite ricorsive, altezza, \cc|trapianta| e
+cancellazione nei tre casi, distruttore in post-order. Il \cc|main| prova la
+cancellazione di una foglia, di un nodo con un figlio, di uno con due figli e della radice.
+
+\codice{codice/m13/pattern.cpp}
+\uscita{codice/m13/output/pattern.txt}
+
+\textbf{Cosa osservare:} dopo ogni cancellazione la visita in-order resta
+\textbf{ordinata}: è il modo più rapido per controllare di non aver rotto il BST.
+Togliendo la radice 50 (due figli) sale 65, il minimo del sottoalbero destro.
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: dimenticare il caso dell'albero vuoto]
+\cc|root->val| con \cc|root == nullptr| è un crash. Ogni funzione ricorsiva parte da
+\cc|if (p == nullptr) ...|; \cc|min()| e \cc|max()| su un albero vuoto vanno gestiti a parte.
+\end{trappola}
+
+\begin{trappola}[: controllare solo i figli]
+Verificare che ogni nodo sia maggiore del figlio sinistro e minore del destro
+\textbf{non basta} per dire che è un BST: conta tutto il sottoalbero
+(Esercizio~13.8).
+\end{trappola}
+
+\begin{trappola}[: inserimento ricorsivo senza assegnare]
+\cc|inserisci(r->left, v);| senza \cc|r->left = ...| perde il nuovo nodo: la funzione
+restituisce il nuovo sottoalbero, e il risultato va \textbf{agganciato}. Lo stesso vale
+per \cc|radice = inserisci(radice, v);|.
+\end{trappola}
+
+\begin{trappola}[: distruggere in pre-order]
+\cc|delete p; distruggi(p->left);| legge un nodo già cancellato. Prima i figli, poi il
+padre: post-order.
+\end{trappola}
+
+\begin{trappola}[: duplicati]
+Decidi una regola e rispettala in \emph{tutte} le funzioni: nelle slide i valori uguali
+vanno a \textbf{destra} (\cc|<| a sinistra, \cc|>=| a destra). Se ricerca e
+inserimento usano regole diverse, la ricerca non trova i duplicati.
+\end{trappola}
+
+\begin{consiglio}[: le funzioni ricorsive ``privata + pubblica'']
+Nella classe, la versione ricorsiva lavora su un \cc|Nodo*| (privata); quella pubblica
+non ha parametri e la chiama sulla radice: \cc|int altezza() const { return altezza(root); }|.
+Così chi usa la classe non vede mai i nodi.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Quale visita di un BST restituisce i valori in ordine crescente?}
+  \item pre-order
+  \item in-order
+  \item post-order
+  \item per livelli
+\end{quiz}
+
+\begin{quiz}{Si inseriscono nell'ordine 50, 30, 70, 20, 40 in un BST vuoto. Qual è la visita pre-order?}
+  \item 20 30 40 50 70
+  \item 50 30 20 40 70
+  \item 20 40 30 70 50
+  \item 50 30 70 20 40
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità della ricerca in un BST di altezza $h$ con $n$ nodi?}
+  \item $O(1)$
+  \item $O(h)$, cioè $O(\log n)$ se bilanciato e $O(n)$ nel caso peggiore
+  \item sempre $O(\log n)$
+  \item sempre $O(n^2)$
+\end{quiz}
+
+\begin{quiz}{Inserendo in un BST vuoto i valori 1, 2, 3, \ldots, $n$ in quest'ordine, che albero si ottiene?}
+  \item un albero bilanciato di altezza $\log n$
+  \item un albero degenere di altezza $n - 1$
+  \item un albero con tutte le foglie allo stesso livello
+  \item un errore: i valori devono essere inseriti in ordine casuale
+\end{quiz}
+
+\begin{quiz}{Dove si trova il minimo di un BST?}
+  \item nella radice
+  \item nel nodo più a sinistra (si scende sempre a sinistra)
+  \item in una foglia qualunque
+  \item nel nodo più a destra
+\end{quiz}
+
+\begin{quiz}{Cancellando da un BST un nodo con due figli, quale nodo ne prende il posto (nella procedura delle slide)?}
+  \item il figlio sinistro
+  \item il figlio destro
+  \item il successore, cioè il minimo del sottoalbero destro
+  \item la radice
+\end{quiz}
+
+\begin{quiz}{Quale visita è adatta a distruggere un albero liberando tutti i nodi?}
+  \item pre-order
+  \item in-order
+  \item post-order
+  \item nessuna: bisogna usare una coda
+\end{quiz}
+
+\begin{quiz}{Quanti nodi può avere al massimo un albero binario di altezza 3?}
+  \item 7
+  \item 8
+  \item 15
+  \item 16
+\end{quiz}
+
+\begin{quiz}{Dove vengono sempre inseriti i nuovi elementi in un BST?}
+  \item come nuova radice
+  \item come nuove foglie
+  \item a metà dell'albero
+  \item nel sottoalbero più basso
+\end{quiz}
+
+\begin{quiz}{Un albero binario ha radice 10, figlio sinistro 5 e, come figlio destro di 5, il nodo 12. È un BST?}
+  \item sì, perché 12 > 5
+  \item no, perché 12 si trova nel sottoalbero sinistro di 10 ma è maggiore di 10
+  \item sì, perché ogni nodo ha al più due figli
+  \item non si può dire senza conoscere l'altezza
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}.
+  \item \textbf{B}. Radice 50, poi tutto il sottoalbero sinistro (30, 20, 40), poi il destro (70).
+        La A è l'in-order, la C il post-order.
+  \item \textbf{B}.
+  \item \textbf{B}. Ogni nuovo valore va a destra dell'ultimo: è una lista.
+  \item \textbf{B}.
+  \item \textbf{C}.
+  \item \textbf{C}. Prima i figli, poi il padre.
+  \item \textbf{C}. $2^{3+1} - 1 = 15$ (1 + 2 + 4 + 8).
+  \item \textbf{B}.
+  \item \textbf{B}. La proprietà vale per tutto il sottoalbero.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: BST Persone (traccia d'esame delle slide)]
+Considerando la gerarchia \cc|Persona| $\to$ \cc|Studente|, \cc|Lavoratore|,
+\cc|Pensionato|: (a) creare 6 persone (2 per categoria) con nome, cognome ed età casuale
+negli intervalli 5--30 (studenti), 20--70 (lavoratori), 65--95 (pensionati); (b) inserirle
+in un unico BST con l'età come chiave; (c) scrivere una funzione che calcola e stampa l'età
+media per categoria effettuando \textbf{una sola visita} della struttura dati.
+\end{traccia}
+
+\begin{step}{un BST chiave--valore}
+Scrivi \cc|template <typename K, typename V> class BST| in cui ogni nodo contiene una
+\cc|chiave| (che decide la posizione) e un \cc|valore| (il dato associato). Distruttore in
+post-order.\\[0.3em]
+\textbf{Concetto nuovo:} separare chiave e dato.
+\end{step}
+
+\begin{step}{inserimento ricorsivo}
+Scrivi l'inserimento in versione ricorsiva (funzione privata che riceve e restituisce un
+\cc|Nodo*|) più quella pubblica \cc|insert(K, V)|.\\[0.3em]
+\textbf{Concetto nuovo:} ricorsione che restituisce il sottoalbero aggiornato.
+\end{step}
+
+\begin{step}{visita con funzione}
+Scrivi \cc|visitaInOrder(void (*visita)(K, V))|, che applica la funzione passata a ogni
+nodo in ordine di chiave, e \cc|altezza()|.\\[0.3em]
+\textbf{Concetto nuovo:} visita generica tramite puntatore a funzione.
+\end{step}
+
+\begin{step}{la gerarchia}
+Classe astratta \cc|Persona| (nome, cognome, età, \cc|categoria()| virtuale pura) e le
+tre derivate.\\[0.3em]
+\textbf{Concetto nuovo:} riuso del Modulo 9.
+\end{step}
+
+\begin{step}{creazione e inserimento}
+Con \cc|srand(111222333)| e una funzione \cc|casuale(a, b)| crea le 6 persone negli
+intervalli richiesti e inseriscile in un \cc|BST<int, Persona*>|. Stampale con una visita
+in-order (risultano ordinate per età).\\[0.3em]
+\textbf{Concetto nuovo:} BST di puntatori a oggetti polimorfici.
+\end{step}
+
+\begin{step}{medie con una sola visita}
+Con una sola \cc|visitaInOrder| accumula, per ogni categoria (riconosciuta con
+\cc|dynamic_cast|), la somma delle età e il numero di persone; poi stampa le tre medie.
+Libera la memoria delle persone.\\[0.3em]
+\textbf{Concetto nuovo:} calcoli aggregati durante una visita.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m13/lab.cpp}
+\uscita{codice/m13/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item Il BST contiene \textbf{puntatori}: il suo distruttore libera i nodi, non le
+        persone. Le persone le ha create il \cc|main| ed è il \cc|main| a liberarle.
+  \item Gli accumulatori sono globali perché la funzione di visita deve avere la firma
+        \cc|void(K, V)|. Una soluzione più elegante userebbe un oggetto con i contatori,
+        ma questa è più vicina a quanto richiesto in laboratorio.
+  \item L'altezza (4) è grande per 6 nodi: le età sono arrivate quasi in ordine crescente,
+        e l'albero è sbilanciato.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è un albero binario di ricerca?]
+È un albero binario in cui per ogni nodo $x$ tutte le chiavi del sottoalbero sinistro sono
+minori della chiave di $x$ e tutte quelle del sottoalbero destro sono maggiori o uguali.
+Questa proprietà permette di cercare un valore scendendo dalla radice e scegliendo a ogni
+nodo un solo sottoalbero, come nella ricerca binaria. Ricerca, inserimento, cancellazione,
+minimo e massimo costano $O(h)$, dove $h$ è l'altezza: $O(\log n)$ se l'albero è bilanciato,
+$O(n)$ se è degenere. La visita in-order restituisce le chiavi in ordine crescente.
+\end{orale}
+
+\begin{orale}[D2. Quali sono le visite di un albero binario?]
+Le tre visite in profondità, definite ricorsivamente, differiscono per il momento in cui si
+visita la radice: in pre-order prima la radice, poi il sottoalbero sinistro e il destro; in
+in-order il sinistro, la radice, il destro; in post-order il sinistro, il destro e infine la
+radice. Hanno tutte costo $\Theta(n)$, perché visitano ogni nodo una volta. La visita per
+livelli (in ampiezza) usa invece una coda e visita i nodi livello per livello.
+\end{orale}
+
+\begin{orale}[D3. Come si cancella un nodo da un BST?]
+Si distinguono tre casi. Se il nodo non ha figli, lo si elimina e il puntatore del padre
+diventa nullo. Se ha un solo figlio, il figlio con il suo sottoalbero prende il posto del
+nodo. Se ha due figli, si individua il successore, cioè il minimo del sottoalbero destro,
+che non ha figlio sinistro: il successore prende il posto del nodo, e se non era figlio
+diretto del nodo viene prima sostituito dal proprio figlio destro. Nelle slide gli
+spostamenti si fanno con la procedura \emph{Trapianta}, che sostituisce un sottoalbero con
+un altro aggiornando il padre. Il costo è $O(h)$.
+\end{orale}
+
+\begin{orale}[D4. Perché un BST può degenerare e cosa comporta?]
+La forma di un BST dipende dall'ordine di inserimento. Inserendo chiavi già ordinate, ogni
+nuovo nodo diventa figlio destro dell'ultimo inserito e l'albero si riduce a una lista di
+altezza $n - 1$: tutte le operazioni, che costano $O(h)$, diventano $O(n)$. Un albero
+bilanciato ha invece altezza $O(\log n)$. Esistono BST autobilancianti (come gli alberi
+AVL o rosso-neri) che mantengono l'altezza logaritmica; nei casi semplici si può
+costruire un albero bilanciato inserendo prima il mediano dei valori.
+\end{orale}
+
+\begin{orale}[D5. Perché gli algoritmi sugli alberi sono quasi sempre ricorsivi?]
+Perché l'albero è una struttura ricorsiva: un albero è vuoto oppure è formato da una radice
+e da sottoalberi che sono a loro volta alberi. Un'operazione sull'intero albero si
+scompone quindi nell'operazione sulla radice e nella stessa operazione sui sottoalberi, con
+caso base l'albero vuoto: visite, altezza, conteggio dei nodi, distruzione. La profondità
+della ricorsione è pari all'altezza dell'albero.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Le tre visite}{facile}
+Con un nodo semplice (\cc|struct Nodo { int val; Nodo* sx; Nodo* dx; }|) e un inserimento
+ricorsivo, costruisci il BST di 50, 30, 70, 20, 40, 60, 80 e stampa le visite pre, in e
+post-order. Prima di eseguire, scrivi su carta cosa ti aspetti.
+\end{esercizio}
+
+\begin{esercizio}{Contare}{facile}
+Scrivi funzioni ricorsive per contare i nodi, contare le foglie e sommare i valori.
+Ricava il numero di nodi interni.
+\end{esercizio}
+
+\begin{esercizio}{Altezza e livello}{facile}
+Scrivi \cc|altezza(r)| (albero vuoto $-1$, foglia 0) e \cc|livello(r, x)|, che restituisce
+la profondità del nodo con valore \cc|x| (o $-1$).
+\end{esercizio}
+
+\begin{esercizio}{Minimo e massimo}{facile}
+Minimo e massimo di un BST, in versione iterativa e ricorsiva.
+\end{esercizio}
+
+\begin{esercizio}{Bilanciato o degenere}{medio}
+Inserisci i numeri da 1 a 1000 in un BST in ordine crescente, e in un altro inserendo
+prima il mediano e poi, ricorsivamente, i mediani delle due metà. Conta i confronti
+necessari a cercare 1000 nei due alberi. (Usa un inserimento iterativo: quello ricorsivo
+sull'albero degenere farebbe 1000 chiamate annidate.)
+\end{esercizio}
+
+\begin{esercizio}{Visita per livelli}{medio}
+Stampa i nodi di un albero livello per livello usando una coda di puntatori a nodo, con il
+numero di livello all'inizio di ogni riga.
+\end{esercizio}
+
+\begin{esercizio}{k-esimo e intervallo}{medio}
+Trova il $k$-esimo valore più piccolo con una visita in-order che conta i nodi, e stampa
+tutti i valori compresi in $[a, b]$ visitando solo i sottoalberi che possono contenerne.
+\end{esercizio}
+
+\begin{esercizio}{È un BST?}{medio}
+Scrivi una funzione che verifica se un albero binario è un BST. Prova prima la versione
+``ingenua'' (ogni nodo confrontato solo con i figli) sull'albero 10, 5, 20 con 12 figlio
+destro di 5, e mostra che sbaglia; poi la versione corretta, che passa a ogni chiamata
+l'intervallo $[\text{min}, \text{max})$ ammesso.
+\end{esercizio}
+
+\begin{esercizio}{Da array ordinato a BST bilanciato}{difficile}
+Costruisci un BST di altezza minima a partire da un array ordinato: il mediano diventa la
+radice, e le due metà diventano ricorsivamente i sottoalberi. Verifica con le visite e
+l'altezza per un array di 15 elementi.
+\end{esercizio}
+
+\begin{esercizio}{Successore e predecessore}{difficile}
+Con nodi dotati di puntatore al padre, implementa \cc|successore(x)| e
+\cc|predecessore(x)| come nelle slide. Usali per scorrere tutto l'albero in ordine
+partendo dal minimo, senza ricorsione.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m13/}.

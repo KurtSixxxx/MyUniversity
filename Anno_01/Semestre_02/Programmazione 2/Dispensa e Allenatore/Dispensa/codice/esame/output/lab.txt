@@ -1,0 +1,28 @@
+--- Veicoli generati ---
+0) 4Auto VI672XI, 28798 km, 7 posti
+1) 4Moto XN647VG, 55368 km, 1000 cc
+2) 4Moto NJ973WJ, 36594 km, 250 cc
+3) 4Moto RC451OY, 750 km, 1000 cc
+4) 4Moto NM244BU, 63937 km, 500 cc
+5) 4Auto XG570UV, 10506 km, 3 posti
+6) 4Moto YD430SQ, 59625 km, 625 cc
+7) 4Auto BC532CY, 119026 km, 2 posti
+8) 4Moto IH308XW, 46519 km, 1000 cc
+9) 4Auto UR586BD, 45652 km, 6 posti
+--- Servizio (10 in attesa) ---
+Eccezione: coda vuota: nessun veicolo in attesa
+Incasso totale: 1665.46 euro
+--- Per costo crescente ---
+  85 euro: 4Moto NJ973WJ, 36594 km, 250 cc
+  110 euro: 4Moto NM244BU, 63937 km, 500 cc
+  121.012 euro: 4Auto XG570UV, 10506 km, 3 posti
+  122.5 euro: 4Moto YD430SQ, 59625 km, 625 cc
+  160 euro: 4Moto XN647VG, 55368 km, 1000 cc
+  160 euro: 4Moto RC451OY, 750 km, 1000 cc
+  160 euro: 4Moto IH308XW, 46519 km, 1000 cc
+  187.596 euro: 4Auto VI672XI, 28798 km, 7 posti
+  221.304 euro: 4Auto UR586BD, 45652 km, 6 posti
+  338.052 euro: 4Auto BC532CY, 119026 km, 2 posti
+Tagliando piu' caro: 4Auto BC532CY, 119026 km, 2 posti
+Auto: 4, km medi 50995
+Moto da almeno 500 cc: 5

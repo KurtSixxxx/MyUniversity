@@ -1,0 +1,816 @@
+% =====================================================================
+\chapter{Modulo 9 -- Ereditarietà, Polimorfismo, Classi Astratte e RTTI}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Questo è il modulo che compare in \textbf{quasi tutte} le prove di laboratorio:
+una classe base astratta, alcune classi derivate, un array di puntatori alla base
+riempito con oggetti di tipo diverso, e poi un ciclo che li tratta tutti allo stesso
+modo. Se capisci bene questo modulo, hai già metà del laboratorio.
+
+\subsection*{Ereditarietà: costruire una classe a partire da un'altra}
+
+Spesso la classe che ti serve è \emph{quasi} uguale a una che hai già. Uno
+\cc|Studente| è una \cc|Persona| con in più una matricola; un \cc|Quadrato| è un
+\cc|Rettangolo| con i lati uguali; un \cc|Cane| e un \cc|Gatto| sono entrambi
+\cc|Animale|. Invece di riscrivere tutto, si \textbf{eredita}.
+
+\begin{definizione}[: ereditarietà]
+L'\textbf{ereditarietà} permette di definire una nuova classe (\textbf{derivata},
+o \emph{sottoclasse}) a partire da una esistente (\textbf{base}, o
+\emph{sopraclasse}). La derivata riceve automaticamente tutti gli attributi e i
+metodi della base, e può:
+\begin{itemize}
+  \item \textbf{estenderla}, aggiungendo nuovi attributi e metodi;
+  \item \textbf{ridefinire} alcuni metodi ereditati, dandone un'implementazione diversa.
+\end{itemize}
+\end{definizione}
+
+\begin{lstlisting}
+class Persona {
+protected:
+    string nome;
+public:
+    Persona(string n) : nome(n) {}
+    void saluta() const { cout << "Ciao, sono " << nome; }
+};
+
+class Studente : public Persona {       // Studente EREDITA da Persona
+    int matricola;                      // estensione: attributo in più
+public:
+    Studente(string n, int m) : Persona(n), matricola(m) {}
+    void presentaMatricola() const { cout << nome << ": " << matricola; }
+};
+
+Studente s("Mario", 1000123);
+s.saluta();               // metodo ereditato
+s.presentaMatricola();    // metodo aggiunto
+\end{lstlisting}
+
+\begin{analogia}[: la relazione ``è un'']
+L'ereditarietà esprime la relazione \textbf{``è un''}: uno studente \emph{è una}
+persona, un cane \emph{è un} animale, un quadrato \emph{è un} rettangolo. Il test
+è semplice: se la frase ``ogni X è un Y'' suona vera, X può derivare da Y. Se suona
+strana (``un'automobile è un motore''?) non serve l'ereditarietà, ma la composizione
+del Modulo 1: un'automobile \emph{ha un} motore, quindi il motore sarà un attributo.
+\end{analogia}
+
+Le classi formano così una \textbf{gerarchia} (un albero): \cc|MezzoDiTrasporto| in
+cima, sotto \cc|MezzoAMotore| e \cc|MezzoNonAMotore|, sotto ancora \cc|Automobile|,
+\cc|Moto|, \cc|Bicicletta|\ldots{} Con l'\textbf{ereditarietà singola} ogni classe ha
+una sola base; con l'\textbf{ereditarietà multipla} può averne più d'una (fine modulo).
+
+\subsection*{Cosa vede la classe derivata: protected e i tipi di ereditarietà}
+
+La derivata eredita \emph{tutto}, anche i membri privati della base: sono fisicamente
+dentro ogni suo oggetto. Però \textbf{non può accedere ai membri \texttt{private}}
+della base: per lei sono chiusi a chiave come per chiunque altro. Per questo esiste il
+terzo specificatore:
+\begin{itemize}
+  \item \cc|public|: visibile a tutti;
+  \item \cc|protected|: visibile alla classe e alle sue \textbf{derivate}, ma non
+        all'esterno (non al \cc|main|);
+  \item \cc|private|: visibile solo alla classe stessa.
+\end{itemize}
+Le slide dicono che una classe ha così \textbf{due interfacce}: quella
+\cc|public| per chiunque e quella \cc|protected| per le classi derivate. Nel codice
+d'esame si usa di solito \cc|protected| per gli attributi della base che le
+derivate devono leggere (come \cc|nome| qui sopra).
+
+La parola dopo i due punti (\cc|class Studente : public Persona|) è il
+\textbf{tipo di ereditarietà}, e decide come i membri ereditati appaiono
+\emph{dall'esterno} della derivata:
+\begin{center}
+\begin{tabular}{llll}
+\toprule
+\textbf{Nella base è} & \textbf{eredità public} & \textbf{eredità protected} & \textbf{eredità private} \\
+\midrule
+\cc|public|    & resta public    & diventa protected & diventa private \\
+\cc|protected| & resta protected & resta protected   & diventa private \\
+\cc|private|   & inaccessibile   & inaccessibile     & inaccessibile \\
+\bottomrule
+\end{tabular}
+\end{center}
+In pratica si usa (quasi) sempre l'ereditarietà \cc|public|, l'unica che esprime
+davvero ``è un''. Una classe marcata \cc|final| (\cc|class X final { ... };|) non può
+essere derivata.
+
+\subsection*{Costruttori e distruttori nella gerarchia}
+
+Un oggetto \cc|Studente| \emph{contiene} una parte \cc|Persona|. Per costruirlo,
+quindi, prima si costruisce la parte \cc|Persona| e poi la parte \cc|Studente|:
+\textbf{i costruttori vengono eseguiti dalla base verso la derivata}. La derivata
+sceglie quale costruttore della base usare nella \textbf{lista di inizializzazione}:
+\cc|Studente(string n, int m) : Persona(n), matricola(m) {}|. Se non lo indica, viene
+chiamato automaticamente il costruttore di default della base (e se non esiste, errore
+di compilazione).
+
+I \textbf{distruttori} vengono eseguiti nell'\textbf{ordine inverso}: prima la
+derivata, poi la base. È come costruire una casa (fondamenta, poi muri, poi tetto) e
+demolirla (prima il tetto, poi i muri, poi le fondamenta). L'Esercizio~9.1 e il pattern
+lo stampano.
+
+\subsection*{Ridefinire un metodo e richiamare quello della base}
+
+Una derivata può riscrivere un metodo ereditato con la stessa firma (\textbf{override},
+``sovrascrivere''). Spesso però non vuole buttare via la versione della base, ma
+\emph{aggiungerci} qualcosa: in quel caso la richiama con il nome della base e
+l'operatore \cc|::|
+\begin{lstlisting}
+void Cane::stampa() const {
+    Animale::stampa();               // fai quello che fa la base...
+    cout << ", razza " << razza;     // ...e aggiungi la parte del cane
+}
+\end{lstlisting}
+Da non confondere con l'\textbf{overload} (``sovraccaricare'', Modulo 4): stesso nome
+ma \emph{parametri diversi}, nella stessa classe. Le slide distinguono tre forme di
+polimorfismo: l'overloading, il \textbf{subtyping} (quello di questo modulo, legato
+all'ereditarietà) e la programmazione generica (i template del Modulo 5). Quando si dice
+``polimorfismo'' senza altro, si intende il subtyping.
+
+\subsection*{Un oggetto derivato si può usare al posto della base}
+
+Questo è il punto chiave. Siccome uno studente \emph{è una} persona, ovunque serva una
+\cc|Persona| si può usare uno \cc|Studente|. È il \textbf{principio di sostituzione di
+Liskov} delle slide: se S è un sottotipo di T, gli oggetti di tipo T si possono
+sostituire con oggetti di tipo S senza rompere il programma.
+\begin{lstlisting}
+void cammina(const Persona& p);   // accetta una Persona...
+cammina(studente);                // ...quindi anche uno Studente: OK
+void studia(Studente& s);
+studia(persona);                  // ERRORE: una persona qualunque non è uno studente
+Persona* p = &studente;           // un puntatore alla base può puntare a una derivata
+\end{lstlisting}
+Il contrario non vale. Questo è ciò che rende possibile un \textbf{array di puntatori
+alla base} che contiene oggetti di tipi diversi:
+\begin{lstlisting}
+Figura* figure[3];
+figure[0] = new Rettangolo(3, 4);
+figure[1] = new Cerchio(1);
+figure[2] = new Quadrato(2);
+\end{lstlisting}
+
+\begin{trappola}[: lo slicing (affettamento)]
+Funziona con \textbf{puntatori} e \textbf{reference}, non con le copie. Se scrivi
+\cc|Figura f = cerchio;| (oppure passi un oggetto \emph{per valore} a una funzione che
+riceve \cc|Figura|), viene copiata \emph{solo la parte Figura}: la parte Cerchio viene
+``tagliata via'' e l'oggetto risultante è una semplice Figura (Esercizio~9.3). Per il
+polimorfismo servono \cc|Figura*| o \cc|Figura&|.
+\end{trappola}
+
+\subsection*{Binding statico e dinamico: la parola virtual}
+
+Ora la domanda cruciale. \cc|figure[1]| è un \cc|Figura*| che punta a un \cc|Cerchio|.
+Se scrivo \cc|figure[1]->area()|, quale \cc|area| viene eseguita: quella di
+\cc|Figura| o quella di \cc|Cerchio|?
+
+L'associazione tra una chiamata e il codice da eseguire si chiama \textbf{binding}
+(collegamento):
+\begin{itemize}
+  \item \textbf{binding statico}: deciso dal compilatore, \emph{in base al tipo del
+        puntatore} (\cc|Figura*|), quindi viene chiamata \cc|Figura::area|. È il
+        comportamento di \textbf{default} in C++;
+  \item \textbf{binding dinamico}: deciso durante l'esecuzione, \emph{in base al tipo
+        vero dell'oggetto puntato} (\cc|Cerchio|), quindi viene chiamata
+        \cc|Cerchio::area|. Si ottiene dichiarando il metodo \cc|virtual| nella classe base.
+\end{itemize}
+
+\begin{analogia}[: il telecomando universale]
+Hai un telecomando ``generico'' (il puntatore \cc|Figura*|) e lo punti contro un
+apparecchio. Premendo ``accendi'':
+\begin{itemize}
+  \item con il binding \textbf{statico}, il telecomando esegue sempre la procedura
+        generica scritta sul telecomando stesso, qualunque cosa ci sia davanti;
+  \item con il binding \textbf{dinamico} (\cc|virtual|), il telecomando chiede
+        all'apparecchio ``tu chi sei?'' e fa partire la procedura giusta per quella TV,
+        quel condizionatore, quello stereo.
+\end{itemize}
+\end{analogia}
+
+\begin{lstlisting}
+class Figura {
+public:
+    virtual double area() const { return 0; }   // virtual: binding dinamico
+    virtual ~Figura() {}
+};
+class Cerchio : public Figura {
+    double r;
+public:
+    Cerchio(double raggio) : r(raggio) {}
+    double area() const override { return 3.14159 * r * r; }
+};
+Figura* f = new Cerchio(2);
+cout << f->area();      // 12.5664: viene chiamata Cerchio::area
+\end{lstlisting}
+
+Regole dalle slide (da sapere per i quiz):
+\begin{itemize}
+  \item basta dichiarare \cc|virtual| il metodo \textbf{nella classe base}: nelle
+        derivate resta virtuale anche senza ripeterlo;
+  \item \cc|virtual| si scrive nella \textbf{dichiarazione} (dentro la classe), non
+        nella definizione fuori dalla classe;
+  \item una funzione esterna (non membro) e un metodo \cc|static| \textbf{non} possono
+        essere virtuali;
+  \item \cc|override| (dopo i parametri) dice ``sto ridefinendo un metodo virtuale
+        della base'': se sbagli la firma, il compilatore ti avvisa invece di creare in
+        silenzio un metodo nuovo. Usalo sempre;
+  \item \cc|final| su un metodo impedisce alle classi derivate di ridefinirlo;
+  \item il distruttore della classe base dovrebbe \textbf{sempre} essere virtuale
+        (vedi sotto).
+\end{itemize}
+Il binding dinamico è più flessibile ma leggermente meno efficiente: per questo in C++
+non è il default.
+
+\textbf{Come funziona dentro} (per l'orale, in breve). Per ogni classe con metodi
+virtuali il compilatore crea una \textbf{tabella dei metodi virtuali} (\emph{vtable}),
+con gli indirizzi delle versioni giuste per quella classe. Ogni oggetto contiene un
+puntatore nascosto alla vtable della \emph{sua} classe. Una chiamata virtuale legge
+quel puntatore, consulta la tabella e salta al metodo giusto. Il disegno nella prossima
+sezione lo mostra.
+
+\subsection*{Il distruttore virtuale}
+
+\begin{lstlisting}
+Figura* f = new Cerchio(2);
+delete f;
+\end{lstlisting}
+Quale distruttore parte? Con \cc|~Figura()| \emph{non} virtuale vale il binding
+statico: parte solo \cc|~Figura|, e la parte Cerchio non viene distrutta. Se il
+\cc|Cerchio| possedeva memoria dinamica, è un memory leak (formalmente è
+\emph{comportamento indefinito}). Con \cc|virtual ~Figura()| parte prima
+\cc|~Cerchio| e poi \cc|~Figura|, come deve essere (Esercizio~9.6).
+\textbf{Regola: se una classe ha anche un solo metodo virtuale, il suo distruttore deve
+essere virtuale.}
+
+\subsection*{Classi astratte e metodi virtuali puri}
+
+Che area ha una ``figura generica''? Nessuna: ha senso solo per figure concrete.
+In casi come questo il metodo della base non deve avere un corpo: si dichiara
+\textbf{virtuale puro}, scrivendo \cc|= 0|:
+\begin{lstlisting}
+class Figura {
+public:
+    virtual double area() const = 0;    // virtuale PURO: nessuna implementazione qui
+    virtual ~Figura() {}
+};
+\end{lstlisting}
+
+\begin{definizione}[: classe astratta]
+Una classe con \textbf{almeno un metodo virtuale puro} è \textbf{astratta}: non si
+possono creare oggetti di quella classe (\cc|Figura f;| non compila), ma si possono
+usare puntatori e reference. Una classe derivata diventa ``concreta'' (istanziabile)
+solo se ridefinisce \textbf{tutti} i metodi virtuali puri ereditati; altrimenti resta
+astratta anche lei.
+\end{definizione}
+
+Le classi astratte servono da \textbf{interfaccia}: stabiliscono cosa devono saper fare
+tutte le classi della gerarchia (``ogni figura deve saper calcolare la propria area''),
+lasciando a ciascuna il \emph{come}. È esattamente lo schema delle prove d'esame.
+
+\begin{passopasso}[: lo schema d'esame con una gerarchia]
+\begin{enumerate}
+  \item Classe base \textbf{astratta}: attributi comuni \cc|protected|, costruttore,
+        \cc|virtual ~Base() {}|, metodi virtuali puri per i comportamenti che cambiano,
+        metodi normali per quelli comuni.
+  \item Classi derivate: costruttore che chiama quello della base nella lista di
+        inizializzazione, attributi propri, \cc|override| di tutti i virtuali puri.
+  \item Nel \cc|main|: array di puntatori alla base (\cc|Base* v[N];|), riempito con
+        \cc|new| di oggetti derivati scelti a caso con \cc|rand()|.
+  \item Un ciclo che chiama i metodi virtuali su tutti: polimorfismo.
+  \item Se serve sapere il tipo vero (contare i cani, usare un metodo solo dei gatti):
+        \cc|dynamic_cast| o \cc|typeid|.
+  \item Alla fine: \cc|delete| di ogni elemento.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{RTTI: scoprire il tipo vero durante l'esecuzione}
+
+\textbf{RTTI} (\emph{Run-Time Type Information}) è l'insieme degli strumenti per
+chiedere a un oggetto polimorfico ``di che tipo sei davvero?''. Funziona solo con classi
+che hanno almeno un metodo virtuale.
+
+\textbf{\texttt{dynamic\_cast}}: prova a convertire un puntatore alla base in un
+puntatore alla derivata. Se l'oggetto è davvero di quel tipo (o di una sua sottoclasse)
+restituisce il puntatore convertito, altrimenti \cc|nullptr|:
+\begin{lstlisting}
+Cane* c = dynamic_cast<Cane*>(animali[i]);
+if (c != nullptr) c->riporta();     // riporta() esiste solo in Cane
+\end{lstlisting}
+Con le reference (\cc|dynamic_cast<Cane&>(a)|), se fallisce lancia l'eccezione
+\cc|bad_cast|.
+
+\textbf{\texttt{typeid}} (\cc|#include <typeinfo>|): restituisce le informazioni sul
+tipo esatto. Si usa soprattutto per confronti:
+\begin{lstlisting}
+if (typeid(*animali[i]) == typeid(Cane)) cani++;   // attenzione all'asterisco!
+\end{lstlisting}
+Differenza: \cc|typeid| controlla il tipo \emph{esatto}, mentre \cc|dynamic_cast|
+accetta anche le sottoclassi. Per un \cc|Quadrato|, il confronto con
+\cc|typeid(Rettangolo)| è falso, ma \cc|dynamic_cast<Rettangolo*>| riesce, perché un
+quadrato \emph{è} un rettangolo. \cc|typeid(x).name()| dà un nome
+dipendente dal compilatore (con g++ ad esempio \texttt{4Auto}): va bene per il debug,
+non per il programma.
+
+Usare RTTI dappertutto è però un campanello d'allarme: se ti ritrovi a scrivere
+``se è un cane fai questo, se è un gatto fai quello'', probabilmente quel comportamento
+dovrebbe essere un metodo virtuale.
+
+\subsection*{Eccezioni e gerarchie}
+
+Le eccezioni standard formano una gerarchia con \cc|exception| in cima (Modulo 4).
+Anche tu puoi crearne di tue, derivando da \cc|exception| e ridefinendo \cc|what()|:
+\begin{lstlisting}
+class EtaNonValida : public exception {
+public:
+    const char* what() const noexcept override { return "eta' non valida"; }
+};
+\end{lstlisting}
+(Le slide scrivono \cc|throw()| al posto di \cc|noexcept|: è la forma vecchia dello
+stesso concetto, ``questa funzione non lancia eccezioni''.)
+
+Con più \cc|catch| in cascata, il primo compatibile vince. Un \cc|catch| della base
+cattura anche le derivate, quindi \textbf{i catch più specifici vanno scritti per
+primi}, altrimenti non verranno mai raggiunti. Si cattura per reference
+(\cc|const Base&|), così non si ha lo slicing e \cc|what()| resta virtuale.
+
+\subsection*{Ereditarietà multipla e problema del diamante}
+
+Una classe può derivare da più basi: \cc|class Anatra : public Volante, public Nuotante|.
+Il problema nasce con il \textbf{diamante}: B e C derivano entrambe da A, e D deriva da
+B e da C. Per default D contiene \textbf{due} copie di A (una passando da B, una da C), e
+scrivere \cc|d.x| è ambiguo. La soluzione è l'\textbf{ereditarietà virtuale}:
+\cc|class B : public virtual A| e \cc|class C : public virtual A| fanno sì che in D ci sia
+un'unica copia di A (Esercizio~9.10).
+
+\begin{inparole}
+\begin{itemize}
+  \item \cc|class D : public B|: D ``è un'' B, eredita tutto, può aggiungere e ridefinire.
+  \item \cc|protected| = visibile alle derivate, non all'esterno. I \cc|private| della
+        base le derivate non li vedono.
+  \item Costruttori: prima la base (si chiama nella lista di inizializzazione), poi la
+        derivata. Distruttori al contrario.
+  \item \cc|Base* p = new Derivata;| va bene. Le copie per valore tagliano via la parte
+        derivata (slicing).
+  \item Senza \cc|virtual| decide il tipo del puntatore; con \cc|virtual| decide il tipo
+        dell'oggetto (binding dinamico).
+  \item \cc|= 0| $\Rightarrow$ virtuale puro $\Rightarrow$ classe astratta, non
+        istanziabile.
+  \item Distruttore della base sempre \cc|virtual|.
+  \item \cc|dynamic_cast| (oppure \cc|nullptr|) e \cc|typeid| per scoprire il tipo vero.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{La gerarchia del pattern} (diagramma UML: la freccia con il triangolo vuoto si
+legge ``è un'').
+\begin{center}
+\begin{tikzpicture}[cl/.style={draw,fill=stackcol,font=\ttfamily\small,minimum width=2.6cm,minimum height=0.7cm,align=center}]
+  \node[cl,fill=privcol] (f) at (0,0) {\textit{Figura}\\ \footnotesize\textit{area() = 0}};
+  \node[cl] (r) at (-2.6,-1.8) {Rettangolo};
+  \node[cl] (c) at (2.6,-1.8) {Cerchio};
+  \node[cl] (q) at (-2.6,-3.4) {Quadrato};
+  \foreach \a/\b in {r/f,c/f,q/r}
+    \draw[-{Triangle[open,length=3mm,width=3mm]},thick] (\a.north) -- (\b.south);
+  \node[etichetta,right=0.2cm of f] {astratta (corsivo)};
+  \node[etichetta,right=0.2cm of q] {3 livelli};
+\end{tikzpicture}
+\end{center}
+
+\needspace{6cm}
+\textbf{Com'è fatto un oggetto derivato, e cosa succede con lo slicing.} Un \cc|Cerchio|
+contiene una parte \cc|Figura| più la sua parte. Copiandolo in una variabile
+\cc|Figura| per valore si perde la parte in basso.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=privcol,minimum width=3.4cm] (b) at (0,0.4) {parte Figura: nome};
+  \node[cella,fill=pubcol,minimum width=3.4cm,below=0cm of b] (d) {parte Cerchio: r};
+  \node[font=\small\bfseries,above=0.05cm of b] {oggetto Cerchio};
+  \node[cella,fill=privcol,minimum width=3.4cm] (b2) at (7,0.4) {parte Figura: nome};
+  \node[font=\small\bfseries,above=0.05cm of b2] {Figura f = cerchio;};
+  \draw[freccia] (b.east) -- node[above,etichetta]{copiata} (b2.west);
+  \draw[frecciarossa,dashed] (d.east) -- node[below,etichetta,text=red!75!black]{tagliata via} ($(b2.south west)+(0,-0.4)$);
+  \node[cella,fill=stackcol,minimum width=1.6cm] (p) at (0,-2.2) {Figura* p};
+  \draw[freccia] (p.north) -- node[right,etichetta]{punta all'oggetto INTERO} (d.south);
+\end{tikzpicture}
+\end{center}
+
+\needspace{7cm}
+\textbf{Come funziona il binding dinamico: le vtable.} Ogni oggetto ha un puntatore
+nascosto (\emph{vptr}) alla tabella dei metodi virtuali della sua classe. Una chiamata
+\cc|figure[i]->area()| segue il vptr e salta alla funzione indicata nella tabella.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \i in {0,1,2} \node[cellina,fill=stackcol,minimum width=1cm] (a\i) at (0,-\i*0.75) {[\i]};
+  \node[etichetta,above=0.05cm of a0] {figure};
+  \node[cella,fill=heapcol,minimum width=2.2cm] (o0) at (3.2,0.4) {vptr | b=3, h=4};
+  \node[cella,fill=heapcol,minimum width=2.2cm] (o1) at (3.2,-0.75) {vptr | r=1};
+  \node[cella,fill=heapcol,minimum width=2.2cm] (o2) at (3.2,-1.9) {vptr | b=2, h=2};
+  \foreach \i in {0,1,2} \draw[freccia] (a\i.east) -- (o\i.west);
+  \node[cella,fill=green!15!sfondo,minimum width=4.6cm,font=\ttfamily\footnotesize] (v0) at (9,0.4) {vtable Rettangolo: area $\to$ Rettangolo::area};
+  \node[cella,fill=green!15!sfondo,minimum width=4.6cm,font=\ttfamily\footnotesize] (v1) at (9,-0.75) {vtable Cerchio: area $\to$ Cerchio::area};
+  \node[cella,fill=green!15!sfondo,minimum width=4.6cm,font=\ttfamily\footnotesize] (v2) at (9,-1.9) {vtable Quadrato: stampa $\to$ Quadrato::stampa};
+  \foreach \i in {0,1,2} \draw[freccia,dashed] (o\i.east) -- (v\i.west);
+  \node[etichetta,below=0.15cm of o2] {oggetti nello heap};
+  \node[etichetta,below=0.15cm of v2] {una tabella per classe (memoria statica)};
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Costruzione e distruzione di un Quadrato} (dal pattern): le parti si costruiscono
+dalla base verso l'alto e si distruggono dall'alto verso la base.
+\begin{center}
+\begin{tikzpicture}
+  \node[cella,fill=privcol,minimum width=4cm] (l1) at (0,0) {Figura};
+  \node[cella,fill=pubcol,minimum width=4cm,above=0cm of l1] (l2) {Rettangolo};
+  \node[cella,fill=stackcol,minimum width=4cm,above=0cm of l2] (l3) {Quadrato};
+  \draw[freccia] (-2.6,-0.3) -- node[left,etichetta,text width=2.8cm,align=right]{costruttori:\\ 1.~Figura\\ 2.~Rettangolo\\ 3.~Quadrato} (-2.6,1.8);
+  \draw[freccia] (2.6,1.8) -- node[right,etichetta,text width=2.8cm]{distruttori:\\ 1.~Quadrato\\ 2.~Rettangolo\\ 3.~Figura} (2.6,-0.3);
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+La gerarchia completa: classe astratta con distruttore virtuale, attributo
+\cc|protected|, metodo virtuale puro e metodo virtuale con comportamento di default;
+tre livelli di ereditarietà; costruttori che chiamano quelli della base; \cc|override|;
+riuso della versione della base con \cc|Figura::stampa()|; array di puntatori e
+\cc|delete| polimorfico.
+
+\codice{codice/m09/pattern.cpp}
+\uscita{codice/m09/output/pattern.txt}
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item Per creare un \cc|Quadrato| partono tre costruttori, dalla base in su; alla
+        \cc|delete| tre distruttori, in ordine inverso. Questo funziona \textbf{solo}
+        perché \cc|~Figura| è virtuale.
+  \item \cc|Figura::stampa()| chiama \cc|area()|: anche se il codice è scritto nella
+        base, viene eseguita l'\cc|area| dell'oggetto vero (12, 3.14, 4). È il binding
+        dinamico all'opera \emph{dentro} la classe.
+  \item Il ciclo nel \cc|main| non sa e non deve sapere quali figure contiene
+        l'array.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: dimenticare virtual]
+Senza \cc|virtual| nella base, \cc|p->metodo()| su un \cc|Base*| chiama sempre la
+versione della base, anche se l'oggetto è una derivata. Il programma compila e gira, ma
+stampa le cose sbagliate. Se il polimorfismo ``non funziona'', controlla il \cc|virtual|.
+\end{trappola}
+
+\begin{trappola}[: firma diversa nell'override]
+\cc|double area()| nella derivata e \cc|double area() const| nella base sono
+\textbf{due metodi diversi}: non è un override, e il binding dinamico non scatta. Con la
+parola \cc|override| il compilatore se ne accorge e ti avvisa. Scrivila sempre.
+\end{trappola}
+
+\begin{trappola}[: classe derivata che resta astratta]
+Se una derivata non ridefinisce \textbf{tutti} i metodi virtuali puri, anche lei è
+astratta e \cc|new Derivata(...)| non compila (\emph{cannot allocate an object of
+abstract type}). L'errore elenca i metodi mancanti.
+\end{trappola}
+
+\begin{trappola}[: typeid senza asterisco]
+\cc|typeid(p)| con \cc|p| di tipo \cc|Animale*| restituisce il tipo del
+\emph{puntatore} (\cc|Animale*|), sempre. Serve \cc|typeid(*p)|.
+\end{trappola}
+
+\begin{trappola}[: accedere a private della base]
+Nella derivata, \cc|nome| dichiarato \cc|private| in \cc|Persona| non è accessibile
+(\emph{'std::string Persona::nome' is private within this context}). Rendilo
+\cc|protected| oppure usa un getter pubblico.
+\end{trappola}
+
+\begin{trappola}[: chiamare il costruttore della base nel corpo]
+\cc|Studente(string n) { Persona(n); }| \textbf{non} inizializza la parte Persona: crea
+e distrugge subito un oggetto Persona temporaneo. Il costruttore della base si chiama
+\textbf{nella lista di inizializzazione}: \cc|Studente(string n) : Persona(n) {}|.
+\end{trappola}
+
+\begin{consiglio}[: dynamic\_cast solo se serve]
+Per chiamare un metodo comune a tutti, usa un metodo virtuale. \cc|dynamic_cast| serve
+quando ti serve un metodo che esiste \emph{solo} in una derivata (come \cc|riporta()|
+dei cani) o quando la traccia ti chiede esplicitamente di contare o filtrare per tipo.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Una classe derivata con ereditarietà \texttt{public} può accedere ai membri \texttt{private} della classe base?}
+  \item sì, sempre
+  \item no: li eredita ma non può accedervi direttamente
+  \item sì, ma solo nel costruttore
+  \item no, e non li eredita nemmeno
+\end{quiz}
+
+\begin{quiz}{In che ordine vengono eseguiti i costruttori creando un oggetto di una classe C derivata da B, a sua volta derivata da A?}
+  \item C, B, A
+  \item A, B, C
+  \item solo C
+  \item l'ordine non è definito
+\end{quiz}
+
+\begin{quiz}{\texttt{Base* p = new Derivata();} Il metodo \texttt{f()} è definito in entrambe le classi ma \textbf{non} è \texttt{virtual}. Quale versione esegue \texttt{p->f()}?}
+  \item quella di \texttt{Derivata}
+  \item quella di \texttt{Base}
+  \item entrambe, prima Base poi Derivata
+  \item errore di compilazione
+\end{quiz}
+
+\begin{quiz}{Cosa rende una classe astratta?}
+  \item avere almeno un metodo \texttt{virtual}
+  \item avere almeno un metodo virtuale puro (\texttt{= 0})
+  \item essere dichiarata con la parola \texttt{abstract}
+  \item non avere costruttori
+\end{quiz}
+
+\begin{quiz}{Perché il distruttore di una classe base polimorfica dovrebbe essere virtuale?}
+  \item per poter essere chiamato più volte
+  \item perché con \texttt{delete} su un puntatore alla base venga chiamato anche il distruttore della derivata
+  \item perché i distruttori non virtuali non liberano la memoria dell'oggetto
+  \item non serve: è solo una convenzione di stile
+\end{quiz}
+
+\begin{quiz}{Cosa restituisce \texttt{dynamic\_cast<Cane*>(p)} se \texttt{p} punta a un \texttt{Gatto}?}
+  \item un puntatore al Gatto convertito in Cane
+  \item \texttt{nullptr}
+  \item lancia sempre un'eccezione
+  \item non compila
+\end{quiz}
+
+\begin{quiz}{Quale affermazione su \texttt{virtual} è \textbf{falsa}?}
+  \item un metodo \texttt{static} non può essere virtuale
+  \item \texttt{virtual} si scrive nella dichiarazione, non nella definizione fuori dalla classe
+  \item un metodo virtuale nella base resta virtuale nelle derivate anche senza ripetere \texttt{virtual}
+  \item una funzione esterna a qualunque classe può essere dichiarata \texttt{virtual}
+\end{quiz}
+
+\begin{quiz}{\texttt{Figura f = cerchio;} dove \texttt{cerchio} è un oggetto \texttt{Cerchio} derivato da \texttt{Figura}. Cosa succede?}
+  \item \texttt{f} è un Cerchio completo
+  \item errore di compilazione
+  \item viene copiata solo la parte Figura (slicing)
+  \item \texttt{f} diventa un riferimento a \texttt{cerchio}
+\end{quiz}
+
+\begin{quiz}{Due \texttt{catch} in sequenza: prima \texttt{catch (const exception\& e)}, poi \texttt{catch (const out\_of\_range\& e)}. Viene lanciata una \texttt{out\_of\_range}. Quale blocco la gestisce?}
+  \item il primo, perché \texttt{out\_of\_range} deriva da \texttt{exception}
+  \item il secondo, perché è più specifico
+  \item entrambi
+  \item nessuno
+\end{quiz}
+
+\begin{quiz}{Nel problema del diamante (D deriva da B e C, che derivano da A), come si ottiene un'unica copia di A dentro D?}
+  \item dichiarando A astratta
+  \item derivando B e C da A con \texttt{public virtual A}
+  \item derivando D con \texttt{private}
+  \item non si può
+\end{quiz}
+
+\begin{quiz}{Quale relazione esprime l'ereditarietà pubblica?}
+  \item ``ha un'' (composizione)
+  \item ``usa un'' (associazione)
+  \item ``è un''
+  \item ``contiene un array di''
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. I private sono dentro l'oggetto ma inaccessibili alla derivata.
+  \item \textbf{B}. Dalla base verso la derivata; i distruttori al contrario.
+  \item \textbf{B}. Senza \cc|virtual|, binding statico sul tipo del puntatore.
+  \item \textbf{B}. In C++ non esiste la parola \cc|abstract| (C).
+  \item \textbf{B}. Altrimenti parte solo il distruttore della base: comportamento
+        indefinito, tipicamente un memory leak.
+  \item \textbf{B}. Con i puntatori fallisce restituendo \cc|nullptr|; con le
+        reference lancia \cc|bad_cast|.
+  \item \textbf{D}. Solo i metodi (non statici) possono essere virtuali.
+  \item \textbf{C}.
+  \item \textbf{A}. Vince il primo catch compatibile: per questo i più specifici vanno
+        scritti prima.
+  \item \textbf{B}. Ereditarietà virtuale.
+  \item \textbf{C}.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: il rifugio per animali]
+Un rifugio ospita cani, gatti e pappagalli. Ogni animale ha un nome e un'età (0--30
+anni) e sa ``fare il suo verso''. I cani hanno una razza e sanno riportare la pallina, i
+gatti possono essere casalinghi o no, i pappagalli ripetono una parola. Si vuole
+generare a caso il contenuto del rifugio e calcolare alcune statistiche.
+\end{traccia}
+
+\begin{step}{la classe base}
+Scrivi \cc|Animale| con attributi \cc|protected| \cc|nome| ed \cc|eta|, costruttore,
+un metodo \cc|string verso() const| che restituisce \q{...} e un metodo
+\cc|void stampa() const| che stampa nome, età e verso.\\[0.3em]
+\textbf{Concetto nuovo:} attributi \cc|protected|.
+\end{step}
+
+\begin{step}{le derivate}
+Scrivi \cc|Cane| (con \cc|razza| e il metodo \cc|riporta()|), \cc|Gatto| (con
+\cc|casalingo|) e \cc|Pappagallo| (con \cc|parola|). Ogni costruttore chiama quello di
+\cc|Animale| nella lista di inizializzazione; ognuna ridefinisce \cc|verso()|; \cc|Cane|
+e \cc|Gatto| ridefiniscono \cc|stampa()| richiamando \cc|Animale::stampa()| e aggiungendo
+i propri dati. Prova a mettere un \cc|Cane| in un \cc|Animale*| e a chiamare
+\cc|stampa()|: che verso fa?\\[0.3em]
+\textbf{Concetto nuovo:} estensione, ridefinizione, costruttore della base, binding statico.
+\end{step}
+
+\begin{step}{polimorfismo}
+Rendi \cc|virtual| \cc|verso()| e \cc|stampa()| e ripeti la prova dello step 2.\\[0.3em]
+\textbf{Concetto nuovo:} binding dinamico, \cc|override|.
+\end{step}
+
+\begin{step}{classe astratta}
+Rendi \cc|verso()| virtuale puro e aggiungi \cc|virtual ~Animale() {}|. Verifica che
+\cc|Animale a("x", 1);| non compili più.\\[0.3em]
+\textbf{Concetto nuovo:} classe astratta, distruttore virtuale.
+\end{step}
+
+\begin{step}{il rifugio e le statistiche}
+Con \cc|srand(111222333)| riempi un array di 10 \cc|Animale*| con animali casuali (età
+casuale tra 0 e 15, tipo casuale, nome scelto in base al tipo). Stampali tutti, conta
+cani, gatti e pappagalli (usa sia \cc|typeid| sia \cc|dynamic_cast|), calcola l'età
+media dei gatti e fai \cc|riporta()| a tutti i cani. Libera la memoria.\\[0.3em]
+\textbf{Concetto nuovo:} array polimorfico, RTTI.
+\end{step}
+
+\begin{step}{eccezioni}
+Crea \cc|class EtaNonValida : public exception| con \cc|what()|; il costruttore di
+\cc|Animale| la lancia se l'età non è tra 0 e 30. Prova a creare un gatto di 99 anni e
+cattura l'eccezione, mettendo prima il \cc|catch| di \cc|EtaNonValida| e poi quello di
+\cc|exception|.\\[0.3em]
+\textbf{Concetto nuovo:} eccezioni personalizzate, gerarchia di eccezioni.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m09/lab.cpp}
+\uscita{codice/m09/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \cc|Animale::stampa()| chiama \cc|verso()|: il pappagallo, che \emph{non}
+        ridefinisce \cc|stampa|, usa quella della base, ma il verso stampato è il suo
+        (\texttt{Ciao!}).
+  \item Con \cc|typeid| si contano cani e pappagalli, con \cc|dynamic_cast| i gatti
+        (e intanto si ottiene un \cc|Gatto*| per leggerne l'età).
+  \item Il gatto di 99 anni non viene mai creato: il costruttore lancia, la memoria
+        presa da \cc|new| viene restituita automaticamente e il \cc|delete| nel
+        \cc|try| non viene eseguito.
+  \item \cc|to_string(i)| aggiunge un numero al nome per distinguere gli omonimi.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Cos'è l'ereditarietà e come si differenzia una sottoclasse?]
+L'ereditarietà permette di costruire una nuova classe a partire da una esistente: la
+classe derivata riceve tutti gli attributi e i metodi della classe base e può
+differenziarsene per estensione, aggiungendo nuovi attributi e metodi, o per
+ridefinizione, fornendo una nuova implementazione di metodi ereditati. Esprime la
+relazione ``è un''. In C++ si scrive \cc|class Derivata : public Base|; lo specificatore
+(public, protected, private) stabilisce con che livello di accesso i membri ereditati
+sono esposti. I membri privati della base sono ereditati ma non accessibili dalla
+derivata; quelli protected sì.
+\end{orale}
+
+\begin{orale}[D2. Differenza tra binding statico e dinamico?]
+Il binding è l'associazione tra una chiamata e il codice da eseguire. Nel binding
+statico l'associazione è fatta dal compilatore in base al tipo dichiarato del puntatore
+o della variabile; in quello dinamico è fatta durante l'esecuzione in base al tipo
+effettivo dell'oggetto. In C++ il default è statico; per avere il dinamico si dichiara
+il metodo \cc|virtual| nella classe base. Il binding dinamico realizza il polimorfismo e
+si implementa tramite le tabelle dei metodi virtuali: ogni oggetto ha un puntatore
+nascosto alla vtable della propria classe. È più flessibile ma leggermente meno efficiente.
+\end{orale}
+
+\begin{orale}[D3. Cos'è una classe astratta?]
+È una classe con almeno un metodo virtuale puro, dichiarato con \cc|= 0| e privo di
+implementazione. Non si possono creare oggetti di una classe astratta, ma si possono
+usare puntatori e reference al suo tipo. Serve a definire un'interfaccia comune per una
+gerarchia, cioè quali operazioni devono offrire tutte le classi derivate. Una classe
+derivata è istanziabile solo se ridefinisce tutti i metodi virtuali puri ereditati.
+\end{orale}
+
+\begin{orale}[D4. Perché il distruttore della base deve essere virtuale?]
+Perché quando si distrugge con \cc|delete| un oggetto derivato tramite un puntatore
+alla base, se il distruttore non è virtuale si applica il binding statico e viene
+eseguito solo il distruttore della base: la parte derivata non viene distrutta e le sue
+risorse, ad esempio la memoria dinamica, non vengono liberate. Formalmente è
+comportamento indefinito. Con il distruttore virtuale vengono eseguiti, in ordine, il
+distruttore della derivata e poi quello della base.
+\end{orale}
+
+\begin{orale}[D5. Cos'è il principio di sostituzione di Liskov?]
+Afferma che se S è un sottotipo di T, gli oggetti di tipo T possono essere sostituiti
+da oggetti di tipo S senza alterare le proprietà desiderabili del programma. In C++ ne
+deriva che dove è richiesto un oggetto della classe base (tramite puntatore o
+reference) si può usare un oggetto di una classe derivata: ad esempio una funzione che
+accetta una \cc|Persona&| accetta anche uno \cc|Studente|, ma non il contrario. È ciò che
+permette di gestire oggetti di tipi diversi in modo uniforme, ad esempio in un array di
+puntatori alla base.
+\end{orale}
+
+\begin{orale}[D6. Cosa sono dynamic\_cast e typeid?]
+Fanno parte dell'RTTI e permettono di conoscere a run-time il tipo effettivo di un
+oggetto di una classe polimorfica. \cc|dynamic_cast<Derivata*>(p)| converte un puntatore
+alla base in uno alla derivata se l'oggetto è di quel tipo (o di un suo sottotipo),
+altrimenti restituisce \cc|nullptr|; sulle reference, in caso di fallimento, lancia
+\cc|bad_cast|. \cc|typeid(*p)| restituisce le informazioni sul tipo esatto dell'oggetto e
+si usa per confronti come \cc|typeid(*p) == typeid(Cane)|.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Persona e Studente}{facile}
+Scrivi \cc|Persona| (nome \cc|protected|, \cc|saluta()|) e \cc|Studente| derivato (con
+matricola e \cc|presentaMatricola()|). Fai stampare a costruttori e distruttori un
+messaggio e verifica l'ordine in cui vengono chiamati, creando uno studente dentro un
+blocco \cc|{ }|.
+\end{esercizio}
+
+\begin{esercizio}{Trova l'errore}{facile}
+Ricopia l'esempio delle slide (\cc|Base| con \cc|meth1| public e \cc|meth2| protected,
+\cc|Derived|, \cc|DerivedDerived|) e scopri quale chiamata nel \cc|main| non compila.
+Aggiungi un metodo private e una classe derivata con ereditarietà \cc|private| e
+verifica cosa diventa accessibile.
+\end{esercizio}
+
+\begin{esercizio}{Statico o dinamico?}{facile}
+Una classe \cc|Veicolo| con un metodo \emph{non} virtuale e uno virtuale, ridefiniti in
+\cc|Moto|. Chiama entrambi su un oggetto \cc|Moto|, tramite un \cc|Veicolo*|, tramite
+un \cc|Veicolo&| e su una copia \cc|Veicolo copia = moto;|. Spiega ogni risultato.
+\end{esercizio}
+
+\begin{esercizio}{Liskov}{facile}
+Scrivi \cc|cammina(const Persona&)| e \cc|studia(Studente&)|. Verifica che a
+\cc|cammina| si possa passare uno \cc|Studente| e che \cc|studia(persona)| non compili.
+Crea un array di \cc|Persona*| che contenga anche uno studente.
+\end{esercizio}
+
+\begin{esercizio}{La gerarchia Shape delle slide}{medio}
+Implementa la gerarchia UML delle slide: \cc|Shape| astratta (colore, \cc|getArea()|
+virtuale puro, \cc|print()|), \cc|Rectangle| (con \cc|isASquare|), \cc|Circle| (con
+\cc|getCircumference|) e \cc|Triangle|. Nel \cc|main| leggi da tastiera il numero di
+figure e i loro dati, crea un array dinamico di \cc|Shape*|, stampalo e calcola l'area media.
+\end{esercizio}
+
+\begin{esercizio}{Il distruttore virtuale}{medio}
+Due coppie base/derivata in cui la derivata alloca un array nel costruttore e lo libera
+nel distruttore. In una coppia il distruttore della base è virtuale, nell'altra no.
+Distruggi un oggetto derivato tramite un puntatore alla base e confronta i messaggi.
+\end{esercizio}
+
+\begin{esercizio}{Parcheggio con RTTI}{medio}
+Classe astratta \cc|Veicolo| con \cc|ruote()| virtuale puro; \cc|Auto| (4), \cc|Moto|
+(2) e \cc|Camion| (4 per asse, con numero di assi). Con \cc|srand(111222333)| riempi un
+parcheggio di 12 veicoli casuali; conta auto e moto con \cc|typeid|, i camion e i loro
+assi con \cc|dynamic_cast|, e somma le ruote con il polimorfismo.
+\end{esercizio}
+
+\begin{esercizio}{Eccezioni bancarie}{medio}
+Crea \cc|ErroreBanca : public exception| e due sue derivate,
+\cc|SaldoInsufficiente| (con un messaggio che dice quanto manca) e \cc|ContoBloccato|.
+Scrivi una funzione di prelievo che le lancia e gestiscile con tre \cc|catch| nell'ordine
+giusto.
+\end{esercizio}
+
+\begin{esercizio}{Dipendenti}{difficile}
+Classe astratta \cc|Dipendente| (\cc|stipendio()| e \cc|ruolo()| virtuali puri), con
+\cc|Impiegato| (stipendio fisso), \cc|Manager| derivato da \cc|Impiegato| (fisso più
+bonus, riusando \cc|Impiegato::stipendio()|) e \cc|Operaio| (ore per paga oraria).
+Ordina un array di \cc|Dipendente*| per stipendio decrescente e calcola il monte stipendi.
+\end{esercizio}
+
+\begin{esercizio}{Il diamante}{difficile}
+Riproduci il problema del diamante delle slide (\cc|A|, \cc|B| e \cc|C| derivate da
+\cc|A|, \cc|D| da \cc|B| e \cc|C|) con un costruttore di \cc|A| che stampa un messaggio:
+quante volte viene costruito \cc|A|? Risolvi con l'ereditarietà virtuale. Infine scrivi
+un uso ``sano'' dell'ereditarietà multipla (\cc|Anatra| che deriva da \cc|Volante| e
+\cc|Nuotante|).
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m09/}.

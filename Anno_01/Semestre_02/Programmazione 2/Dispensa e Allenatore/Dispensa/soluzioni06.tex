@@ -1,0 +1,47 @@
+% Soluzioni degli esercizi del Modulo 6 (generato da separa_soluzioni.py)
+\chapter{Soluzioni -- Modulo 6 -- Complessità Computazionale}
+\textbf{Esercizio 6.1} --- Il rapporto resta fermo a 0.5: i passi crescono come $n$,
+quindi $O(n)$.
+\codice{codice/m06/es01.cpp}
+\uscita{codice/m06/output/es01.txt}
+
+\textbf{Esercizio 6.2} --- Il triangolo fa circa metà dei passi, ma il rapporto con
+$n^2$ si stabilizza: entrambi $O(n^2)$.
+\codice{codice/m06/es02.cpp}
+\uscita{codice/m06/output/es02.txt}
+
+\textbf{Esercizio 6.3} --- $n \times 10$ significa solo $+3$ o $+4$ passi:
+logaritmico.
+\codice{codice/m06/es03.cpp}
+\uscita{codice/m06/output/es03.txt}
+
+\textbf{Esercizio 6.4}
+\codice{codice/m06/es04.cpp}
+\uscita{codice/m06/output/es04.txt}
+
+\textbf{Esercizio 6.5} --- Caso medio $(n+1)/2 = 500.5$: sempre $O(n)$.
+\codice{codice/m06/es05.cpp}
+\uscita{codice/m06/output/es05.txt}
+
+\textbf{Esercizio 6.6} --- $O(n \log^2 n)$, cioè $n \cdot \log n \cdot \log n$.
+\codice{codice/m06/es06.cpp}
+\uscita{codice/m06/output/es06.txt}
+
+\textbf{Esercizio 6.7}
+\codice{codice/m06/es07.cpp}
+\uscita{codice/m06/output/es07.txt}
+
+\textbf{Esercizio 6.8} --- Se $n = a \cdot b$ con $a \le b$, allora $a \cdot a \le n$:
+il divisore più piccolo, se esiste, è al più la radice di $n$. Da $O(n)$ a
+$O(\sqrt{n})$.
+\codice{codice/m06/es08.cpp}
+\uscita{codice/m06/output/es08.txt}
+
+\textbf{Esercizio 6.9} --- Un milione di confronti contro 19.
+\codice{codice/m06/es09.cpp}
+\uscita{codice/m06/output/es09.txt}
+
+\textbf{Esercizio 6.10} --- A ogni $+5$ le chiamate si moltiplicano per circa 11:
+crescita esponenziale. Il ciclo invece cresce di 5 giri.
+\codice{codice/m06/es10.cpp}
+\uscita{codice/m06/output/es10.txt}

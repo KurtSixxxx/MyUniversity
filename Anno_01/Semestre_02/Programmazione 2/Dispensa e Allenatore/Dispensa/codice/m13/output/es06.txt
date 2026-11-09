@@ -1,0 +1,4 @@
+livello 0: 8 
+livello 1: 3 10 
+livello 2: 1 6 14 
+livello 3: 4 7 13 

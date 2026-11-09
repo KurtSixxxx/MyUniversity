@@ -1,0 +1,8 @@
+a   = 10   (il valore)
+&a  = 0x72a5ffa74   (l'indirizzo di a)
+p   = 0x72a5ffa74   (uguale a &a)
+*p  = 10   (il valore all'indirizzo p)
+&p  = 0x72a5ffa68   (anche p ha un indirizzo suo!)
+dopo *p = 20, a = 20
+dopo p = &b e *p = 0:  a = 20, b = 0
+dopo **pp = 7, b = 7

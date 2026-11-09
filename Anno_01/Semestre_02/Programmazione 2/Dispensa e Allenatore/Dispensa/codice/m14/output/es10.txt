@@ -1,0 +1,5 @@
+Esagono:
+  bipartito. Gruppo 0: 0 2 4 | Gruppo 1: 1 3 5
+Triangolo + cammino:
+  stesso colore ai due estremi dell'arco 1-2
+  NON bipartito

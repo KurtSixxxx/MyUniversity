@@ -1,0 +1,16 @@
+Creo a:
+  [costruttore n=3]
+Creo b come copia di a:
+  [costruttore di copia]
+a = [ 10 20 30 ]
+b = [ 99 20 30 ]
+Creo c e poi assegno c = a:
+  [costruttore n=5]
+  [operator=]
+c = [ 10 20 30 ]
+Provo un indice sbagliato:
+  eccezione catturata: indice non valido
+Fine del main: distruzione in ordine inverso (c, b, a)
+  [distruttore n=3]
+  [distruttore n=3]
+  [distruttore n=3]

@@ -1,0 +1,78 @@
+% Soluzioni della simulazione d'esame (Appendice A.2 della dispensa)
+\chapter{Soluzioni -- Simulazione d'esame}
+
+\section*{Prova 1 -- Quiz a crocette}
+
+Conta le risposte giuste: con 16 o più sei in buona forma; sotto le 12, ripassa i moduli
+delle domande sbagliate (indicati tra parentesi).
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B} (M1).
+  \item \textbf{A} (M2). La \texttt{x} interna è un'altra variabile che \q{nasconde} quella
+        esterna solo dentro il blocco; fuori, \texttt{x} vale ancora 5.
+  \item \textbf{C} (M3). Aritmetica dei puntatori: \texttt{p + 2} punta ad \texttt{a[2]},
+        l'asterisco ne legge il valore.
+  \item \textbf{B} (M3). La A è un dangling pointer.
+  \item \textbf{C} (M4). Regola dei Tre.
+  \item \textbf{B} (M4). Gli oggetti locali vengono distrutti in ordine inverso di creazione.
+  \item \textbf{B} (M5).
+  \item \textbf{D} (M6). Si tiene il termine che cresce di più: $n^2$ cresce più di
+        $n \log n$.
+  \item \textbf{B} (M6). Il ciclo interno fa $0 + 1 + \ldots + (n-1)$ giri, circa
+        $n^2/2$.
+  \item \textbf{A} (M7).
+  \item \textbf{C} (M7). Il quick sort è $O(n^2)$ nel caso peggiore.
+  \item \textbf{C} (M8).
+  \item \textbf{B} (M9). Senza \texttt{virtual} il binding è statico: decide il tipo del
+        puntatore, \texttt{Base*}.
+  \item \textbf{A} (M9). Può però avere costruttori, attributi, ed essere tipo di puntatori.
+  \item \textbf{B} (M10). In \texttt{cout << x} l'operando sinistro è \texttt{cout}: un
+        metodo dovrebbe appartenere a \texttt{ostream}.
+  \item \textbf{A} (M11).
+  \item \textbf{B} (M12). Dopo i tre push la pila è 1 2 3 (cima 3): pop dà 3, pop dà 2;
+        push(4) mette 4 in cima, pop dà 4.
+  \item \textbf{D} (M13).
+  \item \textbf{B} (M14).
+  \item \textbf{C} (M10). Così si possono concatenare gli assegnamenti
+        (\texttt{a = b = c}) senza copie inutili.
+\end{enumerate}
+\end{soluzione}
+
+\section*{Prova 2 -- Laboratorio: una soluzione completa}
+
+La soluzione segue i punti della traccia con commenti \texttt{// ===== STEP n =====}. Non
+è l'unica possibile: conta che ogni punto funzioni e sia mostrato nell'output.
+\codice{codice/esame/lab.cpp}
+\uscita{codice/esame/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item \texttt{typeid(...).name()} con MinGW stampa il nome \q{decorato} (\texttt{4Auto}:
+        la cifra è la lunghezza del nome). Su altri compilatori può essere diverso: è
+        normale.
+  \item Coda e BST contengono \texttt{Veicolo*}: i loro distruttori liberano i
+        \textbf{nodi}, non i veicoli. I veicoli li ha creati il \texttt{main}, ed è il
+        \texttt{main} a liberarli alla fine. Se anche le strutture li cancellassero, ogni
+        veicolo verrebbe cancellato due volte.
+  \item Nel BST i tre tagliandi da 160 euro hanno la stessa chiave: vanno a destra (regola
+        dei duplicati del Modulo 13) e la visita in-order li stampa nell'ordine di
+        inserimento.
+  \item L'eccezione viene lanciata dentro \texttt{dequeue} e catturata nel \texttt{main}
+        \textbf{per riferimento costante}; l'incasso calcolato fino a quel momento resta
+        valido.
+  \item \texttt{typeid} confronta il tipo \emph{esatto}, \texttt{dynamic\_cast} permette
+        anche di usare i metodi propri della derivata (\texttt{getCilindrata}).
+  \item Le scelte di progetto discutibili (l'eccezione \texttt{CodaVuota} riusata in
+        \texttt{massimo} del BST, le statistiche calcolate nel \texttt{main}) vanno sapute
+        giustificare all'orale: \q{per semplicità} è una risposta accettabile, se sai dire
+        come faresti meglio (un'eccezione \texttt{AlberoVuoto}, un metodo dedicato).
+\end{itemize}
+\end{consiglio}
+
+\section*{Prova 3 -- Orale}
+
+Le risposte modello sono nei moduli indicati nella tabella della simulazione. Valuta te
+stesso così: hai risposto per almeno un minuto senza fermarti? Hai usato i termini
+giusti (glossario)? Hai fatto un esempio o un disegno? Se una delle tre manca, ripeti la
+domanda il giorno dopo.

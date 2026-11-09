@@ -1,0 +1,5 @@
+Bonifico 200 da Anna a Bruno: ok
+Bonifico 1000 da Bruno ad Anna: rifiutato
+Bonifico 50 da Anna ad Anna: rifiutato
+  Anna: 300 euro
+  Bruno: 300 euro

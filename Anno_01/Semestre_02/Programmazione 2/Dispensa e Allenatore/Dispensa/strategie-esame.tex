@@ -1,0 +1,673 @@
+% =====================================================================
+\chapter{Superare l'esame: tutte le strade}
+% =====================================================================
+
+I moduli ti hanno insegnato il C++. Questo capitolo ti insegna l'\textbf{esame}: come è
+fatto davvero, dove si perdono i punti, cosa fare minuto per minuto in ognuna delle tre
+prove, quali aiuti puoi usare (e quasi nessuno usa) e cosa fare se una prova va male.
+Molti studenti preparati vengono bocciati non perché non sanno il C++, ma perché non
+sanno come funziona la prova: sprecano tempo sul quiz, consegnano un laboratorio che non
+compila, all'orale non sanno spiegare il proprio codice. Sono tutti errori evitabili.
+
+\begin{trappola}[: regole da verificare]
+Le regole che seguono vengono dalla scheda ufficiale del corso e dalle slide del docente
+(entrambe nel file \texttt{Prog2OMNIBUSpdf.pdf}). Le regole possono cambiare da un anno
+all'altro: prima dell'appello controlla la \textbf{pagina avvisi del docente} e, se hai un
+dubbio, chiedi a ricevimento. In questo capitolo le cose \q{da verificare} sono segnalate
+esplicitamente.
+\end{trappola}
+
+% ---------------------------------------------------------------------
+\section{Come funziona davvero l'esame}
+% ---------------------------------------------------------------------
+
+\begin{analogia}[: le tre porte]
+Immagina un corridoio con tre porte in fila. Ogni porta si apre solo con la chiave che
+trovi dietro la porta precedente. La prima porta (il \textbf{quiz}) ti dà la chiave per
+entrare in laboratorio. Il \textbf{laboratorio} ti dà la chiave per l'orale, ma
+\emph{solo} se il programma che consegni funziona. L'\textbf{orale} è la stanza dove si
+decide il voto. Non serve essere perfetti alla prima porta: serve passarla. Il voto si
+costruisce soprattutto nelle ultime due.
+\end{analogia}
+
+\begin{center}
+\begin{tikzpicture}[node distance=1.9cm,
+    porta/.style={processo, text width=2.9cm, minimum height=1.9cm}]
+  \node[porta] (quiz) {\textbf{1. Quiz}\\30 domande\\1 ora};
+  \node[porta, right=of quiz] (lab) {\textbf{2. Laboratorio}\\un programma C++\\circa 2 ore};
+  \node[porta, right=of lab] (orale) {\textbf{3. Orale}\\il tuo codice\\+ teoria};
+  \draw[freccia] (quiz) -- node[above, etichetta] {superato} (lab);
+  \draw[freccia] (lab) -- node[above, etichetta] {funziona} (orale);
+  \node[below=1.1cm of quiz, etichetta, text width=2.6cm, align=center] (no1)
+       {non superato:\\ritenti all'appello successivo};
+  \node[below=1.1cm of lab, etichetta, text width=2.6cm, align=center] (no2)
+       {non funziona:\\niente orale};
+  \node[below=1.1cm of orale, etichetta, text width=2.6cm, align=center] (voto)
+       {voto finale:\\valutazione complessiva};
+  \draw[frecciarossa] (quiz) -- (no1);
+  \draw[frecciarossa] (lab) -- (no2);
+  \draw[freccia] (orale) -- (voto);
+\end{tikzpicture}
+\end{center}
+
+Ecco le regole, una prova alla volta, con le parole della scheda del corso e delle slide
+del docente.
+
+\begin{center}\small
+\begin{tabular}{lp{5.2cm}p{6.2cm}}
+\toprule
+\textbf{Prova} & \textbf{Com'è fatta} & \textbf{Cosa significa per te} \\
+\midrule
+Quiz & 30 quesiti a risposta multipla su \emph{tutto} il programma, durata 1 ora. Tutti i
+fogli usati vanno consegnati. &
+Circa 2 minuti a domanda. È uno \textbf{sbarramento}: solo chi lo supera accede al
+laboratorio. Puoi (e devi) usare i fogli per disegnare e simulare il codice. \\
+\addlinespace
+Laboratorio & Un problema da risolvere scrivendo un programma C++. Circa 2 ore (la scheda
+dice \q{tipicamente 2/3 ore}). Si compila con \texttt{g++} su una macchina generica. Si può
+consultare la documentazione del C++, \textbf{niente Internet}. &
+Allenati \textbf{senza Internet e senza AI}, con il compilatore da terminale. Accede
+all'orale solo chi consegna una soluzione \textbf{funzionante}: un programma che non
+compila ti ferma qui. \\
+\addlinespace
+Orale & Si compila e si esegue il tuo progetto, poi domande sull'implementazione e su
+tutto il programma. &
+Devi saper spiegare \emph{ogni riga} che hai scritto e \emph{perché} l'hai scritta così.
+Poi teoria di tutti i 14 moduli. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Altre regole pratiche che vengono dalle stesse fonti:
+\begin{itemize}
+  \item Di solito le tre prove si fanno \textbf{nello stesso giorno}, se il numero di
+        prenotati lo permette. Quindi preparati a una giornata lunga: porta acqua e
+        qualcosa da mangiare.
+  \item La \textbf{prenotazione su SmartEdu è obbligatoria}. Senza prenotazione non sostieni
+        l'esame, anche se sei preparatissimo. Segna sul calendario l'apertura e la
+        chiusura delle prenotazioni.
+  \item Propedeuticità: serve aver superato Programmazione 1 (tu ce l'hai).
+  \item Il voto finale è \q{una valutazione complessiva delle tre prove}: non è una somma
+        aritmetica. Un laboratorio molto buono e un orale chiaro possono compensare un quiz
+        appena sufficiente.
+\end{itemize}
+
+\begin{consiglio}[: tre cose da chiedere al docente (o ai tutor) prima dell'appello]
+\begin{enumerate}
+  \item Nel quiz le risposte \textbf{sbagliate tolgono punti}? Quante risposte giuste
+        servono per passare? (La scheda parla di un minimo del 60\%: su 30 domande sono
+        18.)
+  \item In laboratorio, \textbf{quale documentazione} si può consultare e in che forma
+        (pagine offline sul PC del laboratorio, un libro)?
+  \item Come si \textbf{consegna} il laboratorio? Negli esami del 2022 la consegna avveniva
+        con \texttt{git} su GitHub Classroom (clone, add, commit, push). Se è ancora così,
+        devi saper usare quei quattro comandi senza pensarci.
+\end{enumerate}
+Ognuna di queste risposte cambia la tua strategia: è il miglior investimento di 10 minuti
+che puoi fare.
+\end{consiglio}
+
+\begin{trappola}[: frequenza e studenti lavoratori]
+La scheda del corso dice che la frequenza \q{è di norma obbligatoria}. Se lavori e non hai
+frequentato, \textbf{verifica subito} con la segreteria didattica o con il docente se
+questo ti riguarda e se esistono regole per gli studenti lavoratori. Meglio scoprirlo
+oggi che il giorno dell'appello.
+\end{trappola}
+
+\begin{inparole}
+Tre prove in fila, ognuna è un cancello per la successiva. Il quiz va solo
+\emph{superato}. Il laboratorio deve \emph{funzionare}. All'orale si decide il voto,
+partendo dal tuo codice. Prenotati su SmartEdu e chiedi al docente le tre regole che
+mancano.
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Prova 1 -- Il quiz: superare la prima porta}
+% ---------------------------------------------------------------------
+
+Il quiz ha 30 domande e un'ora di tempo: 2 minuti a domanda. Sembrano pochi, ma molte
+domande si risolvono in 20 secondi (definizioni) e ti lasciano tempo per quelle lunghe
+(output di un programma). La scheda del corso dà tre esempi di domande vere:
+\q{Qual è l'output del seguente programma?}, \q{Scegliere la corretta definizione di
+una funzione virtuale pura}, \q{Cosa intendiamo dire quando diciamo che un algoritmo X è
+asintoticamente più efficiente di un altro algoritmo Y?}. Sono i tre tipi di domanda che
+troverai: \textbf{output}, \textbf{definizione}, \textbf{complessità}.
+
+\subsection*{La tecnica delle due passate}
+
+\begin{passopasso}[: come gestire l'ora del quiz]
+\begin{enumerate}
+  \item \textbf{Prima passata (circa 25 minuti).} Leggi tutte le domande in ordine.
+        Rispondi subito a quelle che sai con sicurezza. Se una domanda ti fa esitare
+        più di un minuto, segnala con un cerchietto e vai avanti. Non restare bloccato:
+        ogni domanda vale come le altre.
+  \item \textbf{Seconda passata (circa 25 minuti).} Torna alle domande cerchiate. Ora
+        hai tempo per simularle sul foglio: disegna la memoria, fai la tabella delle
+        variabili.
+  \item \textbf{Controllo (ultimi 10 minuti).} Verifica di aver segnato una risposta per
+        ogni domanda (se gli errori non tolgono punti, \textbf{non lasciare nulla in
+        bianco}) e di averla segnata nella casella giusta.
+\end{enumerate}
+\end{passopasso}
+
+\subsection*{Un metodo per ogni tipo di domanda}
+
+\begin{center}\small
+\begin{tabular}{p{3.4cm}p{6.6cm}p{2.6cm}}
+\toprule
+\textbf{Tipo di domanda} & \textbf{Metodo} & \textbf{Dove ripassare} \\
+\midrule
+Output di un programma & Fai una \textbf{tabella} con una colonna per variabile e
+una riga per istruzione. Non \q{immaginare} l'output: scrivilo riga per riga. & M2, M3, M4 \\
+Puntatori e reference & Disegna stack e heap con le frecce, come nel Modulo 3. & M3 \\
+Costruttori e distruttori & Costruzione: dalla base alla derivata. Distruzione:
+l'ordine inverso. Oggetti locali distrutti in ordine inverso di creazione. & M4, M9 \\
+Ereditarietà e \texttt{virtual} & Chiediti: il metodo è \texttt{virtual}? Si chiama
+tramite puntatore/reference alla base? Solo se entrambe le risposte sono sì decide il tipo
+\emph{vero} dell'oggetto. & M9 \\
+Complessità & Conta quanti cicli annidati dipendono da $N$; se il problema si dimezza a
+ogni passo è $\log N$. Usa la tabella del Modulo 6. & M6, M7 \\
+Ordinamenti & Ricorda la tabella migliore/medio/peggiore e simula due passate a mano. & M7 \\
+Ricorsione & Le tre domande del Modulo 8; scrivi le chiamate una sotto l'altra. & M8 \\
+Strutture dati & Disegna i nodi. Pila: LIFO. Coda: FIFO. BST: sinistra minore, destra
+maggiore. & M11--M13 \\
+Visite di alberi e grafi & Pre (radice prima), in (radice in mezzo, nel BST esce
+ordinata), post (radice dopo). BFS: coda, per livelli. DFS: ricorsione, in profondità. & M13, M14 \\
+Definizioni & Elimina le risposte assurde, poi scegli la più \emph{precisa}. & Glossario (A.4) \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{consiglio}[: come eliminare le risposte sbagliate]
+Quando non sei sicuro, non cercare la risposta giusta: \textbf{elimina quelle
+sbagliate}. Di solito due risposte su quattro sono chiaramente fuori tema. Tra le due
+rimaste, diffida di quelle con parole assolute (\q{sempre}, \q{mai}, \q{solo},
+\q{qualsiasi}): in informatica le regole hanno quasi sempre un'eccezione. Passare da 4
+a 2 possibilità raddoppia le tue probabilità anche quando tiri a indovinare.
+\end{consiglio}
+
+\begin{trappola}[: le domande \q{a trabocchetto} più comuni]
+\begin{itemize}
+  \item Un programma che \textbf{non compila}: una delle risposte è quasi sempre
+        \q{errore di compilazione}. Prima di simulare, controlla: accesso a un membro
+        \texttt{private}? Istanza di una classe astratta? Metodo non \texttt{const} su un
+        oggetto \texttt{const}?
+  \item Divisione tra interi: \texttt{7/2} vale \texttt{3}, non \texttt{3.5}.
+  \item \texttt{delete} su un array allocato con \texttt{new[]}: serve \texttt{delete[]}.
+  \item Passaggio per valore: la funzione modifica una \emph{copia}, l'originale non
+        cambia.
+  \item Ordine delle visite: in-order su un albero \emph{qualsiasi} non è ordinata; lo è
+        solo su un BST.
+\end{itemize}
+\end{trappola}
+
+\subsection*{Come allenarsi}
+
+\begin{itemize}
+  \item I \textbf{quiz di tutti i 14 moduli} (circa 140 domande) e i 20 della simulazione:
+        sempre cronometrati, 2 minuti a domanda.
+  \item Il \textbf{quaderno degli errori}: per ogni domanda sbagliata scrivi in una riga
+        \emph{perché} l'hai sbagliata (non sapevo, ho letto male, ho calcolato male).
+        Se l'errore più frequente è \q{ho letto male}, il problema non è lo studio ma la
+        fretta.
+  \item Le domande del gioco \q{Chi vuol essere milionario} del tutorato 2024 sono
+        domande di teoria in stile quiz. Le trovi nella cartella del tutorato 2024 dentro
+        \texttt{Fonti/GitCatalogue/}, in \texttt{Esercizi/Soluzioni/}.
+\end{itemize}
+
+\begin{inparole}
+Due passate: prima quelle facili, poi quelle lunghe. Per l'output fai la tabella, per i
+puntatori fai il disegno, per il resto elimina le risposte sbagliate. L'obiettivo non è
+30/30: è stare comodamente sopra la soglia (punta a 22--23 risposte giuste).
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Prova 2 -- Il laboratorio: un programma che funziona}
+% ---------------------------------------------------------------------
+
+Il laboratorio è la prova più selettiva. La regola d'oro viene direttamente dalla scheda
+del corso: all'orale accede solo chi consegna una soluzione \textbf{funzionante}. Questo
+cambia tutto il modo di lavorare.
+
+\begin{analogia}[: costruire una casa abitabile]
+Due muratori hanno due ore per costruire una casetta. Il primo costruisce subito un
+monolocale con tetto, porta e finestre, e poi aggiunge stanze una alla volta: in ogni
+momento, se suona la sirena, ha una casa in cui si può vivere. Il secondo costruisce le
+fondamenta di una villa di dieci stanze, poi tutti i muri, e al suono della sirena non ha
+ancora il tetto: ha più mattoni del primo, ma nessuna casa. All'esame devi essere il
+primo muratore. \textbf{Un programma piccolo che compila e funziona vale più di un
+programma grande che non compila.}
+\end{analogia}
+
+\subsection*{Prima dell'esame: cosa devi avere in testa}
+
+Le tracce UNICT hanno quasi sempre la stessa struttura (lo vedi in
+\texttt{Fonti/GitCatalogue/}: Animale, Biblioteca, Frutto, Studente\_Borsista, Veicolo,
+gli esami del 2022). Ci sono due famiglie:
+\begin{enumerate}
+  \item \textbf{Gerarchia di classi}: una base astratta con metodi \texttt{virtual} puri,
+        due o tre classi derivate, il metodo \texttt{put} con \texttt{operator<<}, un array
+        di puntatori alla base riempito a caso con \texttt{rand}, e poi delle operazioni
+        sull'array (contare, filtrare per tipo con \texttt{typeid} o
+        \texttt{dynamic\_cast}, calcolare medie, lanciare eccezioni). Modulo 9.
+  \item \textbf{Struttura dati template}: lista, pila, coda o BST su nodi dinamici, con
+        inserimento, stampa e un'operazione \q{originale} (ad esempio la \q{distanza
+        successore} del 29 settembre 2022: il numero di archi tra il nodo con valore $X$
+        e il nodo del suo successore). Moduli 11--13.
+\end{enumerate}
+Spesso le due famiglie si combinano: una struttura dati che contiene oggetti della
+gerarchia.
+
+\begin{passopasso}[: il kit da sapere a memoria]
+Devi saper scrivere \textbf{senza guardare}, in meno di 20 minuti ciascuno:
+\begin{enumerate}
+  \item lo scheletro della gerarchia con \texttt{put} e \texttt{operator<<} (il
+        \q{template esami di laboratorio} del docente, nel Modulo 9);
+  \item il riempimento di un array di \texttt{Base*} con \texttt{rand} e la sua
+        liberazione con \texttt{delete};
+  \item una lista template con inserimento in testa, in coda e in ordine, stampa,
+        ricerca, cancellazione e distruttore (Modulo 11);
+  \item pila e coda template (Modulo 12);
+  \item un BST template con inserimento, ricerca, minimo, successore, visite e altezza
+        (Modulo 13);
+  \item una classe eccezione personalizzata e il blocco \texttt{try}/\texttt{catch}
+        (Modulo 9).
+\end{enumerate}
+Il test è semplice: foglio bianco, cronometro, compilatore. Se ci metti più di 20 minuti
+o devi guardare, rifallo il giorno dopo.
+\end{passopasso}
+
+\begin{consiglio}[: allenati nelle condizioni dell'esame]
+In laboratorio non avrai Internet, non avrai l'AI, forse non avrai il tuo editor
+preferito. Allenati così:
+\begin{itemize}
+  \item \textbf{Stacca il Wi-Fi} durante le tracce d'esame.
+  \item Compila \textbf{da terminale}, così sai farlo su qualunque macchina:
+        \texttt{g++ -Wall -Wextra -o prog main.cpp} e poi \texttt{./prog}
+        (su Windows \texttt{prog.exe}).
+  \item Abituati a leggere la documentazione del C++ invece di cercare la soluzione
+        già pronta: è l'unico aiuto che avrai.
+  \item Se la consegna è con \texttt{git}, prova almeno una volta tutto il giro:
+        \texttt{git clone}, \texttt{git add}, \texttt{git commit -m \q{...}},
+        \texttt{git push}.
+\end{itemize}
+\end{consiglio}
+
+\subsection*{Durante l'esame: il piano minuto per minuto}
+
+Questo piano è pensato per 2 ore. Se la prova dura di più, allarga le fasi centrali.
+
+\begin{center}\small
+\begin{tabular}{lp{11cm}}
+\toprule
+\textbf{Minuti} & \textbf{Cosa fare} \\
+\midrule
+0--10 & \textbf{Leggi tutta la traccia due volte}, con la penna. Sottolinea i nomi delle
+        classi, degli attributi e dei metodi richiesti, e ogni \q{deve}. Dividi la traccia
+        in punti numerati: sono i tuoi step. \\
+10--25 & \textbf{Scheletro che compila}: tutte le classi con gli attributi, costruttori,
+        \texttt{put}/\texttt{operator<<}, un \texttt{main} che crea un oggetto e lo
+        stampa. Compila. Da questo momento hai un programma funzionante. \\
+25--95 & \textbf{Un punto della traccia alla volta}. Per ogni punto: scrivi, compila,
+        prova nel \texttt{main} con una stampa che dice cosa stai provando. Solo quando
+        funziona passi al punto successivo. Ordine: prima i punti che sai fare. \\
+95--110 & \textbf{Pulizia}: \texttt{delete} di tutto ciò che hai allocato, distruttore
+        della base \texttt{virtual}, \texttt{main} che mostra chiaramente ogni punto. \\
+110--120 & \textbf{Consegna}: ricompila da zero, esegui un'ultima volta, consegna.
+        Non fare modifiche dell'ultimo minuto: se rompi qualcosa non hai il tempo di
+        sistemarlo. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{trappola}[: compilare troppo di rado]
+Lo sbaglio più costoso in laboratorio è scrivere cento righe e poi compilare. Gli errori
+si moltiplicano, si mescolano e il compilatore ne stampa cinquanta. Compila \textbf{ogni
+10--15 righe}: un errore trovato subito costa un minuto, cinquanta errori insieme costano
+mezz'ora e tanta ansia.
+\end{trappola}
+
+\subsection*{Quando qualcosa va storto}
+
+\begin{center}\small
+\begin{tabular}{p{3.6cm}p{9.6cm}}
+\toprule
+\textbf{Problema} & \textbf{Cosa fare} \\
+\midrule
+Tanti errori di compilazione & Leggi \textbf{solo il primo} errore e la riga che
+indica: gli altri sono spesso conseguenze del primo. Correggi, ricompila. \\
+Errore incomprensibile nei template & Cerca il nome della \emph{tua} funzione e il numero
+di riga del \emph{tuo} file nel messaggio. Controlla di aver scritto
+\texttt{template <typename T>} prima di ogni metodo definito fuori dalla classe, oppure
+definisci tutti i metodi \emph{dentro} la classe: è più sicuro. \\
+Errori del linker (\texttt{undefined reference}) & Un metodo è dichiarato ma non definito,
+oppure hai messo un template in un file \texttt{.cpp} separato. Con i template tieni
+tutto in un file. \\
+Il programma si chiude da solo (segmentation fault) & Quasi sempre un puntatore
+\texttt{nullptr} o già cancellato. Metti una stampa (\texttt{cout << \q{qui 1} << endl;})
+prima e dopo il punto sospetto per capire dove si ferma. Controlla i casi limite:
+struttura vuota, un solo elemento. \\
+Il programma non finisce mai & Un ciclo che non avanza (ti sei dimenticato
+\texttt{p = p->succ}?) o una ricorsione senza caso base. Interrompi con Ctrl+C. \\
+Un punto della traccia non ti riesce & Lascialo da parte, \textbf{commenta} il codice
+che non compila (con una riga che spiega cosa manca) e vai avanti. Torna dopo. Un
+punto mancante è meglio di un programma che non compila. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{consiglio}[: prima di consegnare]
+\begin{itemize}
+  \item Compila senza errori? (Un programma che non compila non ti porta all'orale.)
+  \item Il distruttore della base è \texttt{virtual}? I metodi ridefiniti sono
+        \texttt{virtual} nella base?
+  \item Ogni \texttt{new} ha il suo \texttt{delete} (\texttt{delete[]} per gli array)?
+        Le strutture dati liberano i loro nodi nel distruttore?
+  \item Le classi con memoria dinamica rispettano la Regola dei Tre (o vietano la copia
+        con \texttt{= delete})?
+  \item Hai gestito i casi limite: struttura vuota, un solo elemento, elemento non
+        trovato?
+  \item L'output del \texttt{main} mostra \emph{chiaramente} che ogni punto della traccia
+        funziona, con delle scritte che dicono cosa si sta stampando? (La traccia del
+        2022 lo chiedeva esplicitamente: \q{L'output del main deve mostrare chiaramente
+        [\ldots] il funzionamento}.)
+  \item Niente STL dove è vietata.
+\end{itemize}
+\end{consiglio}
+
+\begin{inparole}
+Arriva con il kit a memoria. In laboratorio: leggi la traccia due volte, costruisci
+subito uno scheletro che compila, aggiungi un punto alla volta compilando spesso, e
+consegna sempre un programma che compila, anche se incompleto.
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Prova 3 -- L'orale: dove si decide il voto}
+% ---------------------------------------------------------------------
+
+L'orale comincia dal tuo laboratorio: si compila e si esegue il progetto, poi ti
+chiedono delle \textbf{scelte implementative}. Poi si passa alla teoria di tutto il
+programma. È una conversazione, non un'interrogazione a memoria: il docente vuole capire
+se hai \emph{capito} quello che hai scritto.
+
+\subsection*{Parte 1: il tuo codice}
+
+Le domande tipiche sono:
+\begin{itemize}
+  \item Perché questo metodo è \texttt{virtual}? Cosa succederebbe senza?
+  \item Perché il distruttore della base è \texttt{virtual}?
+  \item Qual è la complessità di questo metodo? (Conta i cicli, come nel Modulo 6.)
+  \item Cosa succede se la lista è vuota? Se l'elemento non c'è?
+  \item Perché hai usato \texttt{dynamic\_cast} (o \texttt{typeid}) e non l'altro?
+  \item Hai liberato la memoria? Dove?
+  \item Come miglioreresti questo punto?
+\end{itemize}
+
+\begin{trappola}[: il codice che non sai spiegare]
+Se all'esame scrivi un pezzo di codice che funziona ma che non sai spiegare (per esempio
+copiato a memoria senza averlo capito), all'orale emerge in due domande. Quando ti alleni
+sulle tracce, per ogni riga chiediti: \q{saprei dire perché c'è?}. Se la risposta è no,
+quella riga è il tuo prossimo argomento di studio.
+\end{trappola}
+
+\subsection*{Parte 2: la teoria}
+
+Ogni modulo ha da 3 a 5 domande d'orale con risposta modello (box viola): sono circa 70
+in tutto. Prepararle \textbf{ad alta voce} è molto diverso dal leggerle.
+
+\begin{passopasso}[: la risposta in tre tempi]
+Per ogni domanda di teoria, rispondi in tre tempi:
+\begin{enumerate}
+  \item \textbf{Una frase di definizione}: \q{Un metodo virtuale puro è un metodo
+        dichiarato con \texttt{= 0}, senza implementazione nella classe base.}
+  \item \textbf{Un esempio o un disegno}: \q{Per esempio \texttt{Forma} ha
+        \texttt{area()} virtuale pura, e \texttt{Cerchio} e \texttt{Quadrato} la
+        implementano.} Se c'è un foglio, disegna.
+  \item \textbf{Perché serve / cosa comporta}: \q{La classe diventa astratta: non si
+        può istanziare, serve come interfaccia comune per il polimorfismo.}
+\end{enumerate}
+Tre frasi, trenta secondi: una risposta completa. Se il docente vuole sapere di più, te
+lo chiede.
+\end{passopasso}
+
+\begin{consiglio}[: come allenarsi per l'orale]
+\begin{itemize}
+  \item \textbf{Registrati con il telefono} mentre rispondi a una domanda, poi
+        riascoltati. Ti accorgi subito di frasi vaghe e di \q{ehm}.
+  \item \textbf{Spiega a qualcuno} che non sa programmare (un familiare, un amico): se
+        riesci a farti capire da lui, hai capito davvero. Le analogie della dispensa
+        (scatoloni, indirizzi, fila al cinema) servono anche a questo.
+  \item \textbf{Studia in coppia}: con un compagno di corso interrogatevi a vicenda
+        sulle domande dei moduli. È uno degli allenamenti più efficaci.
+  \item Allenati sulle \textbf{domande di collegamento}, quelle che separano il 24 dal
+        28: \q{Perché l'inserimento in un BST può costare $O(N)$?}, \q{Che differenza c'è
+        tra la visita per livelli di un albero e la BFS di un grafo?}, \q{Cosa hanno in
+        comune la ricorsione e una pila?}
+\end{itemize}
+\end{consiglio}
+
+\begin{trappola}[: non sai la risposta]
+Succede a tutti. Non inventare e non restare in silenzio: dì \q{Non ne sono sicuro, provo
+a ragionarci} e ragiona ad alta voce partendo da quello che sai. Un ragionamento
+corretto, anche incompleto, vale molto più di una definizione recitata a memoria o di un
+silenzio.
+\end{trappola}
+
+% ---------------------------------------------------------------------
+\section{Il voto: cosa separa un 18 da un 28}
+% ---------------------------------------------------------------------
+
+La scheda del corso descrive le fasce di voto. Leggerle con attenzione ti dice dove
+mettere lo sforzo.
+
+\begin{center}\small
+\begin{tabular}{lp{6cm}p{5.4cm}}
+\toprule
+\textbf{Voto} & \textbf{Cosa dice la scheda} & \textbf{In pratica} \\
+\midrule
+Non approvato & Non risponde ad almeno il 60\% delle domande né svolge gli esercizi. &
+Quiz sotto soglia o laboratorio che non funziona. \\
+18--23 & Padronanza minima, collegamenti modesti, risolve semplici esercizi. &
+Laboratorio funzionante ma incompleto; all'orale sa le definizioni. \\
+24--27 & Buona padronanza, buoni collegamenti, esercizi con pochi errori. &
+Laboratorio quasi completo; all'orale spiega il proprio codice e collega gli
+argomenti. \\
+28--30 e lode & Padronanza completa, collegamenti con spirito critico, esercizi
+completi e senza errori. &
+Laboratorio completo e pulito (memoria liberata, casi limite); all'orale ragiona sulle
+scelte e sulle alternative. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{consiglio}[: dove guadagnare punti]
+\begin{itemize}
+  \item Il salto da \textbf{18 a 24} si fa in laboratorio: completare tutti i punti
+        della traccia. Si ottiene con le tracce d'esame fatte a cronometro.
+  \item Il salto da \textbf{24 a 28} si fa all'orale: spiegare le scelte e collegare gli
+        argomenti (complessità delle operazioni, perché una struttura e non un'altra).
+  \item La parola che ritorna in tutte le fasce alte è \textbf{collegamenti}: non basta
+        sapere i moduli uno per uno, bisogna vedere come si parlano.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Tutti gli aiuti che hai a disposizione}
+% ---------------------------------------------------------------------
+
+Molti studenti preparano l'esame da soli, con un solo libro. Hai molte più risorse di
+quelle che pensi, e quasi tutte sono gratuite.
+
+\begin{center}\small
+\begin{tabular}{p{3.6cm}p{9.6cm}}
+\toprule
+\textbf{Risorsa} & \textbf{Come usarla} \\
+\midrule
+Questa dispensa & Moduli, quiz, laboratori a step, 140 esercizi, simulazione d'esame,
+formulario. È la base. \\
+Tracce d'esame passate & In \texttt{Fonti/GitCatalogue/}: Animale, Biblioteca, Frutto,
+Studente\_Borsista (anche nella versione con coda), Veicolo, gli esami del 2022 e
+\q{Distanza successore}. Falle \textbf{a cronometro} senza guardare la soluzione. \\
+Tutorato didattico & La scheda del corso prevede ore di lezione con un tutor
+per \q{colmare eventuali lacune}. Partecipa e porta le tue domande. Nel 2024 il tutorato
+ha fatto una lezione su \q{Consigli su come affrontare l'esame di laboratorio} e una
+simulazione in aula. \\
+Ricevimento del docente & Per le regole d'esame (vedi le tre domande all'inizio del
+capitolo) e per i dubbi di teoria che non riesci a sciogliere. Vai con domande precise:
+\q{non capisco perché qui serve \texttt{virtual}} è meglio di \q{non capisco
+l'ereditarietà}. \\
+Piattaforma Coding Contest & Consigliata dal docente per esercitarsi e autovalutarsi.
+Alcuni esercizi sono in \texttt{Fonti/GitCatalogue/Programmazione2-main/.../Coding
+Contest/}. \\
+Simulazioni ed esercitazioni del corso & Il docente fa esercitazioni e simulazioni
+d'esame durante il corso: se puoi, partecipa. \\
+Compagni di corso e gruppi & Gruppi di studio e gruppi Telegram del corso: per sapere
+com'è andato l'ultimo appello, che tipo di traccia è uscita, e per interrogarvi a
+vicenda. \\
+Libri di testo & Aguilar (testo 1) e Cormen (testo 2), citati nella scheda. Utili per un
+argomento che non ti torna, non da leggere tutti. \\
+Misure compensative & Se hai una certificazione DSA o di disabilità, contatta con
+anticipo il docente e il referente CInAP del DMI: hai diritto a misure compensative
+(per esempio più tempo). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{consiglio}[: andare a vedere un appello]
+Se riesci, partecipa da \textbf{spettatore} agli orali di un appello prima del tuo (di
+solito gli orali sono pubblici; chiedi conferma). In un'ora capisci che domande fa il
+docente, quanto approfondisce e cosa apprezza. È l'informazione più preziosa che puoi
+avere e nessuno la usa.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Piano B: se una prova va male}
+% ---------------------------------------------------------------------
+
+Un esame che va male non è una sconfitta: è la simulazione più realistica che potessi
+fare. Molti superano Programmazione 2 al secondo tentativo, e quasi sempre con un voto
+migliore. L'importante è usare l'esperienza.
+
+\begin{passopasso}[: subito dopo un appello andato male]
+\begin{enumerate}
+  \item \textbf{Il giorno stesso}, scrivi tutto quello che ricordi: le domande del quiz
+        che ti hanno messo in difficoltà, la traccia del laboratorio, le domande
+        dell'orale. Il giorno dopo l'avrai già dimenticato.
+  \item \textbf{Capisci dove si è rotto}: quiz (teoria), laboratorio (velocità o
+        mancanza di allenamento), orale (spiegare a voce)?
+  \item \textbf{Rifai a casa la traccia del laboratorio} con calma, fino a farla
+        funzionare. Poi rifalla a cronometro.
+  \item \textbf{Controlla la data del prossimo appello} e la scadenza della prenotazione
+        su SmartEdu, e prenotati subito.
+  \item Ricalibra il piano di studio sulle debolezze che hai scoperto, non su tutto.
+\end{enumerate}
+\end{passopasso}
+
+\begin{center}\small
+\begin{tabular}{p{3.4cm}p{9.8cm}}
+\toprule
+\textbf{Cosa è andato storto} & \textbf{Cosa fare per l'appello successivo} \\
+\midrule
+Quiz non superato & Rifai tutti i quiz dei moduli e annota il \emph{tipo} di errore. Se
+sbagli gli output, allenati con la tabella delle variabili; se sbagli le definizioni,
+usa formulario e glossario. \\
+Laboratorio non funzionante & Quasi sempre è un problema di \textbf{metodo}, non di
+conoscenze: troppo codice scritto senza compilare, oppure un punto difficile affrontato
+per primo. Fai 3--4 tracce in più seguendo il piano minuto per minuto. \\
+Orale debole & Hai studiato leggendo e non parlando. Riprendi tutte le domande d'orale
+\emph{ad alta voce}, registrandoti. \\
+Ansia & Le simulazioni a cronometro servono proprio a questo: più la situazione è
+familiare, meno fa paura. Fai la simulazione completa (quiz, laboratorio e orale) di
+nuovo, nelle stesse condizioni. \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{trappola}[: rinunciare a presentarsi]
+Non saltare un appello perché \q{non sono ancora pronto al 100\%}: nessuno lo è mai. Se
+hai fatto il piano di studio e almeno 5--6 tracce d'esame, presentati. Nel peggiore dei
+casi hai fatto la migliore simulazione possibile e sai esattamente cosa ti aspetta.
+\end{trappola}
+
+% ---------------------------------------------------------------------
+\section{Gli ultimi giorni e il giorno dell'esame}
+% ---------------------------------------------------------------------
+
+\subsection*{Gli ultimi tre giorni}
+
+\begin{itemize}
+  \item \textbf{Niente argomenti nuovi.} Ripassa formulario e glossario, rifai i quiz
+        sbagliati, riscrivi a memoria il kit del laboratorio una volta.
+  \item Controlla la \textbf{prenotazione} su SmartEdu, l'orario e l'aula. Guarda la
+        pagina avvisi del docente: a volte cambiano aula o orario.
+  \item Dormi. Il sonno è il momento in cui il cervello fissa quello che hai studiato:
+        una notte in bianco prima dell'esame ti fa perdere più di quanto ti fa
+        guadagnare.
+\end{itemize}
+
+\subsection*{La mattina dell'esame}
+
+\begin{consiglio}[: cosa portare e cosa fare]
+\begin{itemize}
+  \item \textbf{Documento d'identità} (e tesserino universitario se lo hai).
+  \item Penne (almeno due), acqua, qualcosa da mangiare: la giornata può essere lunga.
+  \item Arriva con \textbf{almeno 15 minuti} di anticipo: arrivare di corsa ti fa
+        cominciare il quiz con il cuore a mille.
+  \item Al PC del laboratorio, prima di scrivere codice: apri un terminale, scrivi un
+        \q{ciao mondo}, compilalo con \texttt{g++} ed eseguilo. In due minuti sai che
+        l'ambiente funziona e sai come si usa.
+  \item \textbf{Leggi tutta la traccia prima di scrivere}, e rileggila a metà prova.
+\end{itemize}
+\end{consiglio}
+
+\begin{analogia}[: l'ansia è energia]
+Prima di una gara anche gli atleti esperti hanno il cuore che batte forte: è il corpo
+che si prepara a dare il massimo. Il problema non è l'ansia, è non sapere cosa fare. Se
+hai un piano per ogni prova (quello di questo capitolo) e l'hai provato nelle
+simulazioni, quando l'ansia arriva hai già una cosa concreta da fare: leggere la
+traccia, costruire lo scheletro, compilare.
+\end{analogia}
+
+\clearpage
+% ---------------------------------------------------------------------
+\section{La checklist finale}
+% ---------------------------------------------------------------------
+
+Stampa questa pagina e spunta le voci man mano.
+
+\begin{center}\small
+\begin{tabular}{p{0.5cm}p{12.6cm}}
+\toprule
+\multicolumn{2}{l}{\textbf{Burocrazia}} \\
+\midrule
+$\square$ & Ho verificato la questione della frequenza obbligatoria (studente lavoratore). \\
+$\square$ & Ho chiesto: penalità del quiz, documentazione consentita, modalità di consegna del laboratorio. \\
+$\square$ & Sono prenotato su SmartEdu e conosco data, ora e aula. \\
+\midrule
+\multicolumn{2}{l}{\textbf{Quiz}} \\
+\midrule
+$\square$ & Ho fatto i quiz di tutti i 14 moduli a cronometro. \\
+$\square$ & Ho fatto i 20 quiz della simulazione e supero il 60\% con margine. \\
+$\square$ & So simulare un programma con la tabella delle variabili e disegnare stack e heap. \\
+\midrule
+\multicolumn{2}{l}{\textbf{Laboratorio}} \\
+\midrule
+$\square$ & So scrivere a memoria la gerarchia con \texttt{put}/\texttt{operator<<} e l'array di \texttt{Base*}. \\
+$\square$ & So scrivere a memoria lista, pila, coda e BST template (20 minuti ciascuno). \\
+$\square$ & Ho fatto almeno 5--6 tracce d'esame vere a cronometro, senza Internet. \\
+$\square$ & So compilare ed eseguire da terminale con \texttt{g++} (e, se serve, consegnare con \texttt{git}). \\
+\midrule
+\multicolumn{2}{l}{\textbf{Orale}} \\
+\midrule
+$\square$ & Ho risposto ad alta voce a tutte le domande d'orale dei moduli. \\
+$\square$ & So spiegare ogni riga delle mie soluzioni di laboratorio. \\
+$\square$ & So rispondere alle domande di collegamento (complessità delle strutture, ricorsione e pila, BFS e visita per livelli). \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+\begin{inparole}
+Superare Programmazione 2 non richiede di essere un genio: richiede di conoscere le
+regole, avere il kit del laboratorio a memoria, allenarsi nelle condizioni vere e
+saper spiegare a voce quello che si è scritto. Se hai spuntato questa lista, sei pronto.
+\end{inparole}

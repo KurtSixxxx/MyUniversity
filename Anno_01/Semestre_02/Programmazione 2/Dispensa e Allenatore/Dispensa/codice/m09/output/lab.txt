@@ -1,0 +1,22 @@
+=== Ospiti del rifugio ===
+Polly0 (2 anni) fa Ciao!
+Polly1 (2 anni) fa Ciao!
+Rex2 (4 anni) fa Bau, razza meticcio
+Rex3 (11 anni) fa Bau, razza labrador
+Rex4 (0 anni) fa Bau, razza meticcio
+Tom5 (2 anni) fa Miao, esce di casa
+Luna6 (14 anni) fa Miao, esce di casa
+Fido7 (13 anni) fa Bau, razza meticcio
+Luna8 (14 anni) fa Miao, esce di casa
+Micia9 (5 anni) fa Miao, esce di casa
+
+Cani: 4, gatti: 4, pappagalli: 2
+Eta' media dei gatti: 8.75
+
+I cani giocano:
+Rex2 riporta la pallina!
+Rex3 riporta la pallina!
+Rex4 riporta la pallina!
+Fido7 riporta la pallina!
+
+Errore specifico: eta' non valida (0-30)

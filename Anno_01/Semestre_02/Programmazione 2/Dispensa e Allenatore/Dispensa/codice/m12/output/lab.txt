@@ -1,0 +1,15 @@
+STEP 2:
+  {[(a+b)*c]-d}  bilanciata
+  (a+b))  NON bilanciata
+  ([)]  NON bilanciata
+  ((a)  NON bilanciata
+STEP 4: sportello per 60 minuti
+  arrivati 37, serviti 31, ancora in fila 6, fila massima 7
+  attesa media 3.93548 minuti
+STEP 5: coda circolare da 3
+  coda piena
+  esce 1, poi escono: 2 3 4
+STEP 6:
+  3 4 + 2 *  =  14
+  5 1 2 + 4 * + 3 -  =  14
+  10 2 8 * + 3 -  =  23

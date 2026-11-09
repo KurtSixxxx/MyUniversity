@@ -1,0 +1,654 @@
+% =====================================================================
+\chapter{Modulo 7 -- Algoritmi di Ordinamento e Ricerca}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+\subsection*{Perché ordinare}
+
+Ordinare un array significa disporre i suoi elementi in ordine crescente (o
+decrescente). Sembra un problema banale, ma è uno dei più studiati
+dell'informatica, per due motivi:
+\begin{itemize}
+  \item i dati ordinati si \textbf{cercano} enormemente più in fretta: la ricerca
+        binaria su un milione di elementi ordinati richiede 20 confronti, quella
+        lineare un milione (Esercizio~6.9);
+  \item molti altri problemi diventano facili sui dati ordinati: trovare i
+        duplicati, il mediano, gli elementi comuni a due elenchi (Esercizio~7.10).
+\end{itemize}
+In questo modulo vediamo cinque algoritmi di ordinamento: tre semplici e lenti
+($O(n^2)$) e due ``intelligenti'' e veloci ($O(n \log n)$), basati sul divide et
+impera del Modulo 6. Per ognuno devi sapere: \textbf{l'idea}, \textbf{il codice}
+e \textbf{la complessità}.
+
+Due proprietà che compaiono nei quiz:
+\begin{itemize}
+  \item un algoritmo è \textbf{stabile} se due elementi con la stessa chiave
+        restano nell'ordine in cui erano. Esempio: ordino per voto degli studenti
+        già in ordine alfabetico; con un algoritmo stabile, a parità di voto restano
+        in ordine alfabetico (Esercizio~7.6);
+  \item un algoritmo è \textbf{in loco} (\emph{in place}) se usa solo una quantità
+        costante di memoria in più oltre all'array.
+\end{itemize}
+
+\subsection*{Bubble sort (ordinamento a bolle)}
+
+\textbf{Idea.} Scorri l'array confrontando gli elementi \emph{vicini}, \cc|a[j]| e
+\cc|a[j+1]|: se sono nell'ordine sbagliato li scambi. Alla fine della prima passata
+l'elemento più grande è ``salito'' fino in fondo, come una bolla nell'acqua. Ripeti:
+la seconda passata porta in fondo il secondo più grande, e così via. Dopo $n-1$
+passate l'array è ordinato.
+
+\begin{lstlisting}
+for (int i = 0; i < n - 1; i++) {            // n-1 passate
+    bool scambiato = false;
+    for (int j = 0; j < n - 1 - i; j++)      // gli ultimi i sono già a posto
+        if (a[j] > a[j + 1]) { scambia(a[j], a[j + 1]); scambiato = true; }
+    if (!scambiato) break;                   // nessuno scambio: già ordinato
+}
+\end{lstlisting}
+
+\textbf{Complessità.} Due cicli annidati ``a triangolo'': circa $n^2/2$ confronti,
+quindi $O(n^2)$ nel caso peggiore (array al contrario) e medio. Con il controllo
+\cc|scambiato|, se l'array è già ordinato basta una passata: caso migliore $O(n)$.
+Stabile e in loco.
+
+\subsection*{Selection sort (ordinamento per selezione)}
+
+\textbf{Idea.} Cerca il \textbf{minimo} di tutto l'array e scambialo con il primo
+elemento. Poi cerca il minimo tra gli elementi dal secondo in poi e mettilo in
+seconda posizione. E così via: alla passata $i$ selezioni il minimo della parte
+non ancora ordinata e lo metti in posizione $i$.
+
+\begin{lstlisting}
+for (int i = 0; i < n - 1; i++) {
+    int iMin = i;
+    for (int j = i + 1; j < n; j++)
+        if (a[j] < a[iMin]) iMin = j;
+    scambia(a[i], a[iMin]);
+}
+\end{lstlisting}
+
+\textbf{Complessità.} I confronti sono sempre $n(n-1)/2$, \emph{qualunque} sia
+l'input: $O(n^2)$ in tutti i casi, anche se l'array è già ordinato. Fa però
+pochissimi scambi (al più $n-1$). In loco, non stabile nella versione con scambi.
+
+\subsection*{Insertion sort (ordinamento per inserimento)}
+
+\begin{analogia}[: le carte in mano]
+È il modo in cui ordini le carte da gioco: le prendi una alla volta e
+\textbf{inserisci} ognuna al posto giusto tra quelle che hai già in mano, facendo
+scorrere a destra quelle più grandi.
+\end{analogia}
+
+\begin{lstlisting}
+for (int i = 1; i < n; i++) {
+    int x = a[i];                  // la carta da inserire
+    int j = i - 1;
+    while (j >= 0 && a[j] > x) {   // sposto a destra le carte più grandi
+        a[j + 1] = a[j];
+        j--;
+    }
+    a[j + 1] = x;                  // la metto nel buco rimasto
+}
+\end{lstlisting}
+
+\textbf{Complessità.} Caso peggiore (array al contrario): ogni elemento attraversa
+tutti i precedenti, $O(n^2)$. Caso migliore (già ordinato): il \cc|while| non parte
+mai, $O(n)$. Su array \emph{quasi} ordinati è molto veloce. Stabile e in loco. Tra i
+tre algoritmi semplici è il migliore nella pratica (nel laboratorio fa circa metà
+dei confronti del bubble sort).
+
+\subsection*{Merge sort (ordinamento per fusione)}
+
+È il primo algoritmo \textbf{divide et impera}, ed è \textbf{ricorsivo} (la
+ricorsione si approfondisce nel Modulo 8).
+\begin{passopasso}[: merge sort]
+\begin{enumerate}
+  \item \textbf{Dividi}: taglia l'array a metà.
+  \item \textbf{Conquista}: ordina ricorsivamente la metà sinistra e la metà destra.
+        Il caso base è un pezzo con 0 o 1 elementi, che è già ordinato.
+  \item \textbf{Combina}: \textbf{fondi} (\emph{merge}) le due metà ordinate in un
+        unico array ordinato.
+\end{enumerate}
+\end{passopasso}
+
+Il cuore è la \textbf{fusione}. Hai due mazzetti di carte già ordinati, a faccia in
+su: guardi le due carte in cima, prendi la più piccola e la metti nel mazzo
+risultato. Ripeti finché uno dei due mazzetti finisce, poi accodi il resto
+dell'altro. Ogni carta viene toccata una volta: fondere costa $O(n)$. Serve però un
+\textbf{array di appoggio} dove scrivere il risultato: il merge sort \textbf{non} è
+in loco.
+
+\begin{lstlisting}
+void merge(int a[], int sx, int centro, int dx) {
+    int* b = new int[dx - sx + 1];          // appoggio
+    int i = sx, j = centro + 1, k = 0;
+    while (i <= centro && j <= dx)          // finché entrambe le metà hanno elementi
+        b[k++] = (a[i] <= a[j]) ? a[i++] : a[j++];
+    while (i <= centro) b[k++] = a[i++];    // avanzi della sinistra
+    while (j <= dx) b[k++] = a[j++];        // avanzi della destra
+    for (k = 0; k < dx - sx + 1; k++) a[sx + k] = b[k];
+    delete[] b;
+}
+void mergeSort(int a[], int sx, int dx) {
+    if (sx >= dx) return;                   // caso base
+    int centro = (sx + dx) / 2;
+    mergeSort(a, sx, centro);
+    mergeSort(a, centro + 1, dx);
+    merge(a, sx, centro, dx);
+}
+\end{lstlisting}
+
+\textbf{Complessità.} È la ricorrenza $C_N = 2C_{N/2} + N$ del Modulo 6: $\log n$
+livelli di dimezzamento, lavoro $n$ per livello, quindi $O(n \log n)$ \textbf{in
+tutti i casi} (migliore, medio e peggiore), perché divide sempre a metà
+indipendentemente dai dati. Spazio $O(n)$ per l'appoggio. È \textbf{stabile} grazie
+al \cc|<=| nella fusione: a parità prende prima l'elemento di sinistra.
+
+\subsection*{Quick sort (ordinamento rapido)}
+
+\begin{passopasso}[: quick sort]
+\begin{enumerate}
+  \item Scegli un elemento, il \textbf{pivot} (perno). Nella versione delle slide è
+        l'elemento centrale.
+  \item \textbf{Partiziona}: sposta a sinistra tutti gli elementi minori del pivot e a
+        destra tutti quelli maggiori. Ora ogni elemento della parte sinistra è
+        $\le$ di ogni elemento della parte destra.
+  \item Ordina ricorsivamente la parte sinistra e la parte destra. Non serve nessuna
+        fusione: le due parti sono già ``in ordine tra loro''.
+\end{enumerate}
+\end{passopasso}
+
+La partizione delle slide usa due indici che si vengono incontro: \cc|i| parte da
+sinistra e avanza finché trova un elemento che \emph{non} è minore del pivot (sta
+dalla parte sbagliata); \cc|j| parte da destra e arretra finché trova un elemento che
+non è maggiore del pivot. Quando entrambi si fermano, scambi \cc|a[i]| e \cc|a[j]|
+e prosegui. Quando \cc|i| supera \cc|j| la partizione è finita.
+
+\begin{lstlisting}
+void quickSort(int a[], int sx, int dx) {
+    int i = sx, j = dx;
+    int pivot = a[(sx + dx) / 2];
+    while (i <= j) {
+        while (a[i] < pivot) i++;
+        while (a[j] > pivot) j--;
+        if (i <= j) { scambia(a[i], a[j]); i++; j--; }
+    }
+    if (sx < j) quickSort(a, sx, j);    // ci sono ancora elementi a sinistra
+    if (i < dx) quickSort(a, i, dx);    // ci sono ancora elementi a destra
+}
+\end{lstlisting}
+
+\textbf{Complessità.} Dipende da quanto bene il pivot divide l'array:
+\begin{itemize}
+  \item \textbf{caso migliore e medio}: il pivot divide in due parti più o meno
+        uguali, quindi $\log n$ livelli da $n$: $O(n \log n)$. Le slide precisano
+        che basta una divisione ``proporzionale'' (anche 10\%--90\%) perché resti
+        $O(n \log n)$;
+  \item \textbf{caso peggiore}: il pivot è sempre il minimo o il massimo, le parti
+        hanno $0$ e $n-1$ elementi e i livelli diventano $n$: $O(n^2)$. Succede ad
+        esempio scegliendo come pivot il \emph{primo} elemento di un array già
+        ordinato (Esercizio~7.7: 1\,999\,000 confronti contro 20\,010).
+\end{itemize}
+In pratica è il più veloce di tutti (nel laboratorio batte il merge sort in tempo),
+perché lavora in loco e fa operazioni semplici. Non è stabile.
+
+\subsection*{Riepilogo da memorizzare}
+
+\begin{center}\small
+\begin{tabular}{lllllcc}
+\toprule
+\textbf{Algoritmo} & \textbf{Migliore} & \textbf{Medio} & \textbf{Peggiore} & \textbf{Spazio extra} & \textbf{Stabile} & \textbf{In loco} \\
+\midrule
+Bubble    & $O(n)$       & $O(n^2)$      & $O(n^2)$      & $O(1)$      & sì & sì \\
+Selection & $O(n^2)$     & $O(n^2)$      & $O(n^2)$      & $O(1)$      & no & sì \\
+Insertion & $O(n)$       & $O(n^2)$      & $O(n^2)$      & $O(1)$      & sì & sì \\
+Merge     & $O(n\log n)$ & $O(n\log n)$  & $O(n\log n)$  & $O(n)$      & sì & no \\
+Quick     & $O(n\log n)$ & $O(n\log n)$  & $O(n^2)$      & $O(\log n)$ (stack) & no & sì \\
+\bottomrule
+\end{tabular}
+\end{center}
+Ricorda dal Modulo 6 che \textbf{nessun} algoritmo che ordina confrontando gli
+elementi può fare meglio di $\Omega(n \log n)$ nel caso peggiore: merge sort è
+quindi \textbf{ottimo}. Si può fare meglio solo \emph{senza} confronti, quando si
+sa qualcosa sui valori: ad esempio il counting sort per valori interi in un
+intervallo piccolo, come i voti da 18 a 30 (Esercizio~7.8).
+
+\subsection*{Ricerca lineare e ricerca binaria}
+
+\textbf{Ricerca lineare}: controlla gli elementi uno a uno. Funziona su qualunque
+array, ordinato o no. Costo $O(n)$ nel caso peggiore e medio.
+
+\textbf{Ricerca binaria} (o dicotomica): funziona \textbf{solo su array
+ordinati}. Guarda l'elemento centrale: se è quello cercato hai finito; se è più
+piccolo, il valore può stare solo nella metà destra; se è più grande, solo nella metà
+sinistra. Butti via metà dell'array e ripeti. È la rubrica del Modulo 6: $O(\log n)$.
+
+\begin{lstlisting}
+int ricercaBinaria(const int a[], int n, int x) {
+    int sx = 0, dx = n - 1;
+    while (sx <= dx) {                   // finché l'intervallo non è vuoto
+        int m = (sx + dx) / 2;
+        if (a[m] == x) return m;
+        if (a[m] < x) sx = m + 1;        // butto la metà sinistra (m compreso)
+        else dx = m - 1;                 // butto la metà destra (m compreso)
+    }
+    return -1;                           // non trovato
+}
+\end{lstlisting}
+Se devi cercare \emph{molte} volte nello stesso array, conviene ordinarlo una volta
+($O(n \log n)$) e poi fare tante ricerche binarie ($O(\log n)$ ciascuna).
+
+\begin{inparole}
+\begin{itemize}
+  \item Bubble: scambi tra vicini, il massimo ``sale'' in fondo. Selection: scegli il
+        minimo e mettilo davanti. Insertion: inserisci come le carte.
+        Tutti $O(n^2)$.
+  \item Merge: dividi a metà, ordina le metà, fondi. Sempre $O(n \log n)$, serve un
+        array d'appoggio, stabile.
+  \item Quick: pivot, partiziona, ricorri. $O(n \log n)$ in media, $O(n^2)$ con pivot
+        sfortunati, in loco, il più veloce in pratica.
+  \item Ricerca binaria: solo su array ordinati, dimezza a ogni passo, $O(\log n)$.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{Bubble sort: la prima passata.} In giallo la coppia confrontata; il
+massimo (82) arriva in fondo.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \riga/\vals/\hl in {0/{38,27,43,3,9,82,10}/0, 1/{27,38,43,3,9,82,10}/2, 2/{27,38,3,43,9,82,10}/3, 3/{27,38,3,9,43,82,10}/4, 4/{27,38,3,9,43,10,82}/9} {
+    \foreach \v [count=\i from 0] in \vals {
+      \pgfmathsetmacro{\evid}{(\i==\hl || \i==\hl+1) ? 1 : 0}
+      \ifdim\evid pt>0.5pt
+        \node[cellina,fill=yellow!40!sfondo] at (\i*0.8,-\riga*0.7) {\v};
+      \else
+        \node[cellina,fill=sfondo] at (\i*0.8,-\riga*0.7) {\v};
+      \fi
+    }
+  }
+  \node[etichetta,anchor=west,text width=5cm] at (6,-1.4) {si confrontano coppie vicine e si scambiano se fuori ordine; righe intermedie omesse};
+  \node[cellina,fill=green!25!sfondo] at (4.8,-2.8) {82};
+\end{tikzpicture}
+\end{center}
+
+\needspace{7cm}
+\textbf{Merge sort sull'esempio delle slide.} In alto le divisioni, in basso le
+fusioni.
+\begin{center}
+\begin{tikzpicture}[blocco/.style={draw,fill=stackcol,font=\ttfamily\footnotesize,minimum height=0.55cm,inner sep=2pt}]
+  \node[blocco] (a) at (0,0) {38 27 43 3 9 82 10};
+  \node[blocco] (b1) at (-2.4,-0.9) {38 27 43 3};
+  \node[blocco] (b2) at (2.4,-0.9) {9 82 10};
+  \node[blocco] (c1) at (-3.4,-1.8) {38 27};
+  \node[blocco] (c2) at (-1.4,-1.8) {43 3};
+  \node[blocco] (c3) at (1.6,-1.8) {9 82};
+  \node[blocco] (c4) at (3.4,-1.8) {10};
+  \foreach \x/\v [count=\i] in {-3.9/38,-2.9/27,-1.9/43,-0.9/3,1.1/9,2.1/82}
+    \node[blocco] (d\i) at (\x,-2.7) {\v};
+  \draw (a) -- (b1); \draw (a) -- (b2);
+  \draw (b1) -- (c1); \draw (b1) -- (c2); \draw (b2) -- (c3); \draw (b2) -- (c4);
+  \draw (c1) -- (d1); \draw (c1) -- (d2); \draw (c2) -- (d3); \draw (c2) -- (d4); \draw (c3) -- (d5); \draw (c3) -- (d6);
+  \node[blocco,fill=heapcol] (e1) at (-3.4,-3.7) {27 38};
+  \node[blocco,fill=heapcol] (e2) at (-1.4,-3.7) {3 43};
+  \node[blocco,fill=heapcol] (e3) at (1.6,-3.7) {9 82};
+  \node[blocco,fill=heapcol] (e4) at (3.4,-3.7) {10};
+  \node[blocco,fill=heapcol] (f1) at (-2.4,-4.6) {3 27 38 43};
+  \node[blocco,fill=heapcol] (f2) at (2.4,-4.6) {9 10 82};
+  \node[blocco,fill=green!20!sfondo] (g) at (0,-5.5) {3 9 10 27 38 43 82};
+  \draw (d1) -- (e1); \draw (d2) -- (e1); \draw (d3) -- (e2); \draw (d4) -- (e2); \draw (d5) -- (e3); \draw (d6) -- (e3); \draw (c4) -- (e4);
+  \draw (e1) -- (f1); \draw (e2) -- (f1); \draw (e3) -- (f2); \draw (e4) -- (f2);
+  \draw (f1) -- (g); \draw (f2) -- (g);
+  \node[etichetta,anchor=west] at (4.6,-1.3) {DIVIDI};
+  \node[etichetta,anchor=west] at (4.6,-4.6) {FONDI (merge)};
+\end{tikzpicture}
+\end{center}
+
+\needspace{5cm}
+\textbf{Quick sort: una partizione.} Pivot = elemento centrale (3). \cc|i| avanza
+finché \cc|a[i] < 3|, \cc|j| arretra finché \cc|a[j] > 3|; poi si scambia.
+\begin{center}
+\begin{tikzpicture}
+  \foreach \v [count=\i from 0] in {38,27,43,3,9,82,10}
+    \node[cellina,fill=sfondo] (q\i) at (\i*0.8,0) {\v};
+  \node[cellina,fill=yellow!40!sfondo] at (q3) {3};   % il pivot evidenziato
+  \draw[freccia] ($(q0.south)+(0,-0.5)$) node[below,font=\small] {i} -- (q0.south);
+  \draw[freccia] ($(q3.south)+(0,-0.5)$) node[below,font=\small] {j} -- (q3.south);
+  \node[etichetta,anchor=west,text width=7.6cm] at (6,0) {
+    \texttt{a[0] = 38} non è $< 3$: \texttt{i} si ferma subito. \texttt{j} arretra da 10
+    fino a \texttt{a[3] = 3}, che non è $> 3$. Si scambiano: \texttt{3 27 43 38 9 82 10}.
+    Alla fine a sinistra c'è solo \texttt{3}, a destra tutto il resto: si ricorre sulla destra.};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+I cinque algoritmi e la ricerca binaria, scritti nella forma più compatta e
+leggibile, provati sullo stesso array delle slide (con un 27 doppio, per verificare
+i duplicati). I tre algoritmi semplici hanno la stessa firma e sono chiamati tramite
+un array di puntatori a funzione.
+
+\codice{codice/m07/pattern.cpp}
+\uscita{codice/m07/output/pattern.txt}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: ricerca binaria su array non ordinato]
+Compila e gira, ma dà risultati sbagliati senza nessun errore. La ricerca binaria
+richiede che l'array sia \textbf{ordinato}: se non lo è, ordinalo prima.
+\end{trappola}
+
+\begin{trappola}[: indici fuori di uno]
+I bug più comuni: \cc|j < n - i| invece di \cc|j < n - 1 - i| nel bubble sort (si
+legge \cc|a[n]|), \cc|while (sx < dx)| invece di \cc|<=| nella ricerca binaria (salta
+l'ultimo elemento), \cc|mergeSort(a, 0, n)| invece di \cc|n - 1|. Prova sempre con
+array di 0, 1 e 2 elementi.
+\end{trappola}
+
+\begin{trappola}[: l'array d'appoggio del merge]
+Un array locale \cc|int b[n];| con \cc|n| variabile non è C++ standard (alcuni
+compilatori lo accettano) e con $n$ grande esaurisce lo stack. Usa \cc|new int[...]|
+e \cc|delete[]|, oppure allocalo una volta sola e passalo alle chiamate (come nel
+laboratorio).
+\end{trappola}
+
+\begin{trappola}[: complessità ``tutti i casi'']
+Domande tipiche: il merge sort è $O(n \log n)$ \textbf{anche} nel caso peggiore; il
+quick sort no ($O(n^2)$). Il selection sort è $O(n^2)$ \textbf{anche} nel caso
+migliore; bubble (con il flag) e insertion no ($O(n)$).
+\end{trappola}
+
+\begin{consiglio}[: overload con l'involucro]
+Merge sort e quick sort lavorano su \cc|(a, sx, dx)|. Scrivi anche una versione
+\cc|ordina(int a[], int n)| che chiama \cc|mergeSort(a, 0, n - 1)|: così chi usa la
+funzione non deve preoccuparsi degli indici.
+\end{consiglio}
+
+\begin{consiglio}[: l'operatore virgola]
+Nel laboratorio \cc|while (j >= 0 && (confronti++, a[j] > x))| usa l'operatore
+virgola: esegue \cc|confronti++| e poi vale \cc|a[j] > x|. Serve solo a contare i
+confronti senza cambiare l'algoritmo; nel codice d'esame non serve.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{Qual è la complessità del merge sort nel caso peggiore?}
+  \item $O(n)$
+  \item $O(n \log n)$
+  \item $O(n^2)$
+  \item $O(\log n)$
+\end{quiz}
+
+\begin{quiz}{Qual è la complessità del quick sort nel caso peggiore?}
+  \item $O(n \log n)$
+  \item $O(n)$
+  \item $O(n^2)$
+  \item $O(2^n)$
+\end{quiz}
+
+\begin{quiz}{Quale algoritmo esegue sempre lo stesso numero di confronti, anche se l'array è già ordinato?}
+  \item bubble sort con controllo sugli scambi
+  \item insertion sort
+  \item selection sort
+  \item nessuno
+\end{quiz}
+
+\begin{quiz}{Cosa richiede la ricerca binaria per funzionare correttamente?}
+  \item un array di numeri interi
+  \item un array ordinato
+  \item un array di dimensione pari
+  \item un array senza duplicati
+\end{quiz}
+
+\begin{quiz}{Quale affermazione sul merge sort è \textbf{falsa}?}
+  \item segue il paradigma divide et impera
+  \item è stabile
+  \item ordina in loco senza memoria aggiuntiva
+  \item la fusione di due metà ordinate costa tempo lineare
+\end{quiz}
+
+\begin{quiz}{Nel quick sort, cosa garantisce la fase di partizione?}
+  \item che le due parti abbiano la stessa dimensione
+  \item che ogni elemento della parte sinistra sia $\le$ di ogni elemento della parte destra
+  \item che la parte sinistra sia già ordinata
+  \item che il pivot sia il mediano
+\end{quiz}
+
+\begin{quiz}{Un algoritmo di ordinamento si dice stabile se:}
+  \item non va mai in crash
+  \item ha la stessa complessità in tutti i casi
+  \item mantiene l'ordine relativo degli elementi con chiave uguale
+  \item non usa memoria aggiuntiva
+\end{quiz}
+
+\begin{quiz}{Quanti confronti servono al più per trovare un elemento con la ricerca binaria in un array ordinato di 1000 elementi?}
+  \item circa 10
+  \item circa 100
+  \item circa 500
+  \item 1000
+\end{quiz}
+
+\begin{quiz}{Quale algoritmo ha complessità $O(n)$ nel caso migliore (array già ordinato)?}
+  \item merge sort
+  \item selection sort
+  \item insertion sort
+  \item quick sort
+\end{quiz}
+
+\begin{quiz}{Si può ordinare per confronti con complessità $O(n)$ nel caso peggiore?}
+  \item sì, con il quick sort
+  \item sì, con il bubble sort ottimizzato
+  \item no: ogni ordinamento per confronti è $\Omega(n \log n)$ nel caso peggiore
+  \item no, il limite è $\Omega(n^2)$
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. Divide sempre a metà: $O(n \log n)$ in ogni caso.
+  \item \textbf{C}. Con pivot sempre estremo le partizioni sono sbilanciate.
+  \item \textbf{C}. Cerca comunque il minimo in tutta la parte restante.
+  \item \textbf{B}. I duplicati (D) non sono un problema.
+  \item \textbf{C}. Serve un array d'appoggio di dimensione $n$.
+  \item \textbf{B}. Le dimensioni possono essere molto diverse (A falsa); le due
+        parti vanno poi ordinate ricorsivamente (C falsa).
+  \item \textbf{C}.
+  \item \textbf{A}. $2^{10} = 1024$: circa 10 dimezzamenti.
+  \item \textbf{C}. Il \cc|while| interno non parte mai: un confronto per elemento.
+        Vale anche per il bubble sort con il flag, che però non è tra le risposte.
+  \item \textbf{C}. Limite inferiore del problema (Modulo 6). Il counting sort è
+        lineare perché \emph{non} confronta.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+\begin{traccia}[: prestazioni degli algoritmi di ordinamento (dalle slide)]
+Implementare un metodo \cc|generaArrayCasuale(int* a, int num)| e gli algoritmi
+di ordinamento; generare array di dimensioni crescenti per potenze di 10 e
+confrontare le prestazioni degli algoritmi al crescere della dimensione, misurando
+il tempo con \cc|<chrono>| come indicato nelle slide.
+\end{traccia}
+
+\begin{step}{gli strumenti}
+Scrivi \cc|generaArrayCasuale|, \cc|copia| (per ordinare ogni volta la
+\emph{stessa} sequenza) e \cc|bool ordinato(const int* a, int n)| per verificare il
+risultato. Dichiara un contatore globale di confronti.\\[0.3em]
+\textbf{Concetto nuovo:} misurare in modo equo (stessi dati per tutti).
+\end{step}
+
+\begin{step}{due algoritmi quadratici}
+Implementa bubble sort (con uscita anticipata) e insertion sort, incrementando il
+contatore a ogni confronto tra elementi.\\[0.3em]
+\textbf{Concetto nuovo:} algoritmi $O(n^2)$.
+\end{step}
+
+\begin{step}{merge sort}
+Implementa il merge sort allocando l'array d'appoggio \textbf{una sola volta} in una
+funzione involucro \cc|mergeSort(int a[], int n)| e passandolo alle chiamate
+ricorsive.\\[0.3em]
+\textbf{Concetto nuovo:} divide et impera, fusione, memoria aggiuntiva $O(n)$.
+\end{step}
+
+\begin{step}{quick sort}
+Implementa il quick sort con pivot centrale e partizione a due indici, come nelle
+slide, più l'involucro \cc|quickSort(int a[], int n)|.\\[0.3em]
+\textbf{Concetto nuovo:} partizione, ordinamento in loco.
+\end{step}
+
+\begin{step}{il confronto}
+Scrivi \cc|misura(nome, puntatoreAFunzione, array, n)|, che copia l'array, azzera
+il contatore, cronometra l'ordinamento con \cc|high_resolution_clock| e stampa
+confronti e millisecondi. Usala per $n$ = $10^2$, $10^3$, $10^4$, $10^5$ (i quadratici
+solo fino a $10^4$).\\[0.3em]
+\textbf{Concetto nuovo:} misurare i tempi reali; puntatori a funzione come parametri.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m07/lab.cpp}
+\uscita{codice/m07/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item I \textbf{tempi} cambiano a ogni esecuzione e da PC a PC; i
+        \textbf{confronti} no. Per questo il contatore è più affidabile per studiare la
+        complessità.
+  \item Da $n = 1000$ a $n = 10\,000$ il bubble sort passa da circa 0{,}5 a 50 milioni
+        di confronti ($\times 100$): quadratico. Merge e quick crescono di poco più di
+        $\times 10$: $n \log n$.
+  \item Il quick sort fa \emph{più} confronti del merge sort ma impiega \emph{meno}
+        tempo: non copia avanti e indietro in un array d'appoggio.
+  \item \cc|setw(10)| (da \cc|<iomanip>|) stampa il numero in una colonna larga 10
+        caratteri, così la tabella resta allineata.
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Come funziona il merge sort e qual è la sua complessità?]
+È un algoritmo divide et impera: divide l'array in due metà, le ordina
+ricorsivamente fino ad arrivare a sottoarray di un elemento (caso base) e poi le
+fonde con la procedura merge, che scorre le due metà ordinate e prende ogni volta il
+minore dei due elementi in testa. La fusione costa $O(n)$ e i livelli di ricorsione
+sono $\log n$, perciò la complessità è $O(n \log n)$ nel caso migliore, medio e
+peggiore. Richiede un array d'appoggio, quindi spazio $O(n)$, ed è stabile.
+\end{orale}
+
+\begin{orale}[D2. Come funziona il quick sort? Qual è il suo caso peggiore?]
+Si sceglie un pivot e si partiziona l'array in modo che a sinistra ci siano gli
+elementi minori o uguali al pivot e a destra quelli maggiori o uguali; poi si
+ordinano ricorsivamente le due parti, senza bisogno di fusione. Se le partizioni sono
+bilanciate (anche solo in proporzione costante) la complessità è $O(n \log n)$, che è
+anche il caso medio. Il caso peggiore si ha quando il pivot è sempre il minimo o il
+massimo: le partizioni hanno dimensione $0$ e $n-1$ e la complessità diventa
+$O(n^2)$, ad esempio con pivot sul primo elemento di un array già ordinato. Ordina in
+loco e in pratica è il più veloce.
+\end{orale}
+
+\begin{orale}[D3. Differenza tra bubble, selection e insertion sort?]
+Sono tutti $O(n^2)$ nel caso peggiore. Il bubble sort scambia elementi adiacenti
+fuori ordine, portando a ogni passata il massimo in fondo; con il controllo sugli
+scambi termina in $O(n)$ se l'array è ordinato. Il selection sort cerca a ogni
+passata il minimo della parte non ordinata e lo mette in posizione: fa sempre
+$n(n-1)/2$ confronti ma pochi scambi. L'insertion sort inserisce ogni elemento al suo
+posto tra i precedenti già ordinati: $O(n)$ nel caso migliore ed efficiente su array
+quasi ordinati. Bubble e insertion sono stabili.
+\end{orale}
+
+\begin{orale}[D4. Come funziona la ricerca binaria e perché è logaritmica?]
+Si applica a un array ordinato. Si confronta il valore cercato con l'elemento
+centrale: se coincide si è trovato; se è maggiore si prosegue nella metà destra,
+altrimenti nella sinistra. A ogni passo l'intervallo di ricerca si dimezza, quindi
+dopo al più circa $\log_2 n$ confronti l'intervallo diventa vuoto. La ricorrenza è
+$C_N = C_{N/2} + 1$, con soluzione $O(\log n)$.
+\end{orale}
+
+\begin{orale}[D5. Cosa significa che un ordinamento è stabile? E in loco?]
+È stabile se elementi con la stessa chiave mantengono, dopo l'ordinamento, l'ordine
+relativo che avevano prima: ad esempio studenti già in ordine alfabetico, ordinati
+per voto, restano in ordine alfabetico a parità di voto. Merge, insertion e bubble
+sort sono stabili; selection e quick sort no. È in loco se usa solo memoria
+aggiuntiva costante (o al più lo stack della ricorsione): tutti tranne il merge sort,
+che ha bisogno di un array d'appoggio.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+\begin{esercizio}{Bubble sort e passate}{facile}
+Modifica il bubble sort con uscita anticipata in modo che restituisca il numero di
+passate eseguite. Provalo su un array già ordinato, su uno quasi ordinato (due
+elementi scambiati) e su uno al contrario.
+\end{esercizio}
+
+\begin{esercizio}{Selection sort decrescente}{facile}
+Scrivi un selection sort che ordina in modo \textbf{decrescente} (cerca il massimo)
+e stampa l'array dopo ogni passata.
+\end{esercizio}
+
+\begin{esercizio}{Insertion sort di stringhe}{facile}
+Ordina in ordine alfabetico un array di \cc|string| con l'insertion sort. Inserisci
+anche un nome che inizia con la minuscola: dove finisce, e perché?
+\end{esercizio}
+
+\begin{esercizio}{Ricerca binaria al rallentatore}{facile}
+Scrivi la ricerca binaria iterativa stampando a ogni passo \cc|sx|, \cc|dx|, \cc|m| e
+\cc|a[m]|. Cerca un valore presente e uno assente.
+\end{esercizio}
+
+\begin{esercizio}{Ricerca binaria ricorsiva}{medio}
+Scrivi la ricerca binaria in versione ricorsiva e una funzione
+\cc|posizioneInserimento(a, n, x)| che restituisce la prima posizione in cui
+\cc|x| si può inserire mantenendo l'ordine (con duplicati: la prima occorrenza).
+\end{esercizio}
+
+\begin{esercizio}{Merge sort stabile di studenti}{medio}
+Ordina per voto con il merge sort un array di \cc|struct Studente| (nome, voto) già
+in ordine alfabetico, e verifica che a parità di voto l'ordine alfabetico resti.
+Cosa succederebbe usando \cc|<| invece di \cc|<=| nella fusione?
+\end{esercizio}
+
+\begin{esercizio}{Il caso peggiore del quick sort}{medio}
+Implementa un quick sort con pivot sul \textbf{primo} elemento e confronta i suoi
+confronti con quelli della versione delle slide (pivot centrale) su un array già
+ordinato di 2000 elementi.
+\end{esercizio}
+
+\begin{esercizio}{Counting sort dei voti}{medio}
+Ordina 20 voti casuali tra 18 e 30 senza confronti: conta quante volte compare ogni
+voto in un array di contatori, poi riscrivi l'array. Che complessità ha?
+\end{esercizio}
+
+\begin{esercizio}{Ordinare con un criterio a scelta}{difficile}
+Scrivi \cc|template <typename T> void ordina(T a[], int n, bool (*minore)(const T&, const T&))|
+e usalo per ordinare un array di \cc|Persona| per età, per nome e per età
+decrescente, e un array di \cc|int| in ordine decrescente, passando ogni volta una
+funzione di confronto diversa.
+\end{esercizio}
+
+\begin{esercizio}{Sfruttare l'ordine}{difficile}
+Su array ordinati scrivi in $O(n)$: (a) una funzione che trova due elementi con somma
+data usando due indici che si vengono incontro; (b) una funzione che trova gli elementi
+comuni a due array, con un procedimento simile alla fusione.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m07/}.

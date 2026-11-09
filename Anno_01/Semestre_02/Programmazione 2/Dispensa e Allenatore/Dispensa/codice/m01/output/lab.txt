@@ -1,0 +1,29 @@
+=== STEP 1-2 ===
+  "Il nome della rosa" di Eco (1980) - disponibile
+  "Senza titolo" di Anonimo (0) - disponibile
+presta l1: 1
+presta l1: 0
+restituisci l1: 1
+
+=== STEP 3 ===
+tentativo di prestito di "Il Gattopardo": ok
+tentativo di prestito di "Il Gattopardo": RIFIUTATO
+tentativo di prestito di "Il Gattopardo": RIFIUTATO
+tentativo di prestito di "I promessi sposi": ok
+tentativo di prestito di "Odissea": ok
+
+=== STEP 4 ===
+Biblioteca (6 libri, 2 disponibili):
+  "Odissea" di Omero (1488) - in prestito
+  "I promessi sposi" di Manzoni (1840) - in prestito
+  "Il Gattopardo" di Tomasi (1958) - in prestito
+  "Fosca" di Tarchetti (1869) - disponibile
+  "Il nome della rosa" di Eco (1980) - disponibile
+  "Baudolino" di Eco (2000) - in prestito
+
+=== STEP 5 ===
+Libri di Eco:
+  "Il nome della rosa" di Eco (1980) - disponibile
+  "Baudolino" di Eco (2000) - in prestito
+Il piu' vecchio (indice 0):
+  "Odissea" di Omero (1488) - in prestito

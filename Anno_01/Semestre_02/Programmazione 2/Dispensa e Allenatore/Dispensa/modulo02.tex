@@ -1,0 +1,798 @@
+% =====================================================================
+\chapter{Modulo 2 -- Introduzione al C++ ed Elementi Base}
+% =====================================================================
+
+% ---------------------------------------------------------------------
+\section{Teoria \& Analogia Chiave}
+% ---------------------------------------------------------------------
+
+Questo modulo raccoglie gli ``attrezzi di base'' del C++: come un programma
+diventa eseguibile, come si scrive e si legge (input/output), come si
+organizzano i nomi (namespace e scope). Sono cose che userai in
+\textbf{ogni} esercizio d'esame: vale la pena capirle bene una volta per tutte.
+
+\subsection*{Dal sorgente all'eseguibile: le tre fasi}
+
+Il file \texttt{.cpp} che scrivi è solo testo. Il processore non capisce il
+testo: capisce istruzioni in linguaggio macchina, sequenze di numeri. Per
+passare dall'uno all'altro servono tre programmi diversi, in fila. Quando
+scrivi \texttt{g++ main.cpp -o main.exe}, \texttt{g++} li lancia tutti e tre per
+te, uno dopo l'altro, ed è per questo che di solito non li vedi.
+
+\begin{enumerate}
+  \item \textbf{Preprocessore.} Legge il file e cerca le righe che iniziano con
+        \cc|#| (le \emph{direttive}). Non capisce il C++: lavora sul testo.
+        \cc|#include <iostream>| significa letteralmente ``copia qui dentro tutto
+        il contenuto del file \texttt{iostream}''; \cc|#define N 10| significa
+        ``ovunque trovi la parola \texttt{N}, scrivi \texttt{10}''.
+        Il risultato è un file di testo più lungo, senza più direttive.
+  \item \textbf{Compilatore.} Prende quel testo e lo traduce in
+        \textbf{codice oggetto}: linguaggio macchina, ma ancora a pezzi. Ogni
+        \texttt{.cpp} viene tradotto \emph{da solo}, in un file \texttt{.o}
+        (\texttt{.obj} con Visual Studio). È qui che vengono segnalati gli
+        errori di sintassi (``\emph{expected ';'}''), di tipo e di accesso
+        (``\emph{is private}''): sono gli \textbf{errori di compilazione}.
+  \item \textbf{Linker} (``collegatore''). Prende tutti i file oggetto e le
+        \textbf{librerie} (codice già compilato, ad esempio quello che c'è
+        dietro \cc|cout|) e li unisce in un unico \textbf{eseguibile}
+        (\texttt{.exe} su Windows). Se il \cc|main| chiama una funzione che è
+        stata \emph{dichiarata} ma che nessun file \emph{definisce}, il linker non
+        sa dove andarla a prendere e si ferma con
+        ``\emph{undefined reference to \ldots}''. Se la stessa funzione è definita
+        in due file diversi, si ferma con ``\emph{multiple definition of \ldots}''.
+\end{enumerate}
+
+\begin{analogia}[: la redazione di un giornale]
+Il \textbf{preprocessore} è la segretaria che, dove un giornalista ha scritto
+``inserire qui il box meteo'', incolla fisicamente il box meteo
+(\cc|#include|). Il \textbf{compilatore} è il traduttore: traduce ogni articolo
+\emph{separatamente} e segna in rosso gli errori di grammatica. Il
+\textbf{linker} è l'impaginatore: mette insieme tutti gli articoli tradotti e le
+foto d'archivio (le librerie) in un solo giornale. Se un articolo dice ``vedi
+foto a pagina 3'' ma la foto non esiste, chi protesta è l'impaginatore, non il
+traduttore: per questo \emph{undefined reference} è un errore del \textbf{linker}.
+\end{analogia}
+
+\subsection*{Compilazione separata: header e file di implementazione}
+
+All'esame, e in qualunque progetto reale, una classe non si scrive tutta nel
+file del \cc|main|. Si divide in due file:
+\begin{itemize}
+  \item \texttt{conto.h}, l'\textbf{header} (``intestazione''), che contiene
+        l'\textbf{interfaccia}: la dichiarazione della classe, cioè attributi e
+        prototipi dei metodi, senza i corpi;
+  \item \texttt{conto.cpp}, l'\textbf{implementazione}: i corpi dei metodi,
+        scritti con il nome della classe davanti,
+        \cc|bool ContoBancario::deposita(double x) { ... }|. L'operatore \cc|::|
+        dice ``questo \cc|deposita| è quello della classe \cc|ContoBancario|'';
+  \item \texttt{main.cpp}, che fa \cc|#include "conto.h"| e usa la classe.
+\end{itemize}
+Si compila passando \textbf{tutti} i \texttt{.cpp} (mai gli \texttt{.h}):
+\texttt{g++ main.cpp conto.cpp -o prog.exe}. Il \cc|main| ha bisogno solo
+dell'header per sapere \emph{che} i metodi esistono e come si chiamano; sarà il
+linker a collegarlo al codice vero dentro \texttt{conto.o}.
+
+\textbf{Parentesi angolari o virgolette?}
+\cc|#include <iostream>| cerca il file nelle cartelle di sistema (librerie
+standard); \cc|#include "conto.h"| lo cerca \emph{prima} nella cartella del
+progetto. Regola pratica: \cc|<...>| per la libreria standard, \cc|"..."| per i
+tuoi file.
+
+\textbf{Include guard.} Poiché \cc|#include| è un copia-incolla, se due file
+includono lo stesso header (o lo includi due volte per sbaglio) la classe
+verrebbe dichiarata due volte, e il compilatore protesterebbe
+(``\emph{redefinition of class}''). Si evita così:
+\begin{lstlisting}
+#ifndef CONTO_H      // "se CONTO_H non è ancora definito..."
+#define CONTO_H      // "...definiscilo, e tieni il contenuto"
+class ContoBancario { /* ... */ };
+#endif               // la seconda volta CONTO_H esiste già: tutto il blocco viene saltato
+\end{lstlisting}
+
+\subsection*{Struttura di un programma e differenze con il C}
+
+Un programma C++ ha in genere questo ordine: \cc|#include| $\rightarrow$
+\cc|using namespace std;| $\rightarrow$ dichiarazioni (prototipi di funzioni,
+classi) $\rightarrow$ \cc|main| $\rightarrow$ definizioni delle altre funzioni.
+Rispetto al C cambiano diverse cose che userai subito:
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Aspetto} & \textbf{C} & \textbf{C++} \\
+\midrule
+Libreria I/O   & \cc|#include <stdio.h>| & \cc|#include <iostream>| \\
+Output         & \cc|printf("%d", x);|     & \cc|cout << x;| \\
+Input          & \cc|scanf("%d", &x);|     & \cc|cin >> x;| \\
+Stringhe       & \cc|char s[20];|          & \cc|string s;| (\cc|<string>|) \\
+Booleani       & \cc|int| (o \cc|<stdbool.h>|) & \cc|bool| nativo: \cc|true|/\cc|false| \\
+Memoria dinamica & \cc|malloc|/\cc|free| & \cc|new|/\cc|delete| (Modulo 3) \\
+Namespace      & non esistono              & \cc|namespace|, \cc|std::| \\
+\bottomrule
+\end{tabular}
+\end{center}
+In C++ non servono più i segnaposto \cc|%d|, \cc|%f|, \cc|%s|: lo stream
+\textbf{riconosce da solo il tipo} della variabile che gli passi. Le
+librerie del C si possono ancora usare, con il nome senza \texttt{.h} e con una
+\texttt{c} davanti: \cc|<cstdlib>|, \cc|<cmath>|, \cc|<ctime>|.
+
+\subsection*{Namespace}
+
+Immagina un programma grande, con codice scritto da persone diverse e con
+librerie esterne. Prima o poi due funzioni avranno lo stesso nome: due
+\cc|area|, due \cc|stampa|, due \cc|max|. Il compilatore non saprebbe quale usare.
+
+\begin{definizione}[: namespace]
+Un \textbf{namespace} (``spazio dei nomi'') è un contenitore con un nome che
+raggruppa identificatori (variabili, costanti, funzioni, classi) per evitare
+conflitti. Si accede a un elemento con l'\textbf{operatore di risoluzione di
+scope} \cc|::|, ad esempio \cc|geometria::area(2)|.
+\end{definizione}
+
+\begin{analogia}[: il cognome]
+In classe ci sono due ``Marco''. Se il professore chiama ``Marco!'' si girano
+tutti e due. Per distinguerli usa il cognome: Marco Rossi e Marco Bianchi. Il
+namespace è il \textbf{cognome} delle funzioni: \cc|geometria::area| e
+\cc|finanza::area| non si confondono. Tutta la libreria standard ha cognome
+\cc|std|: \cc|std::cout|, \cc|std::string|, \cc|std::endl|.
+Scrivere \cc|using namespace std;| equivale a dire ``in questa stanza, se dico
+Marco, intendo Marco Rossi'': puoi chiamarli solo per nome.
+\end{analogia}
+
+Si dichiara così, e si può usare in tre modi:
+\begin{lstlisting}
+namespace geometria {
+    const double PI = 3.14159;
+    double area(double r) { return PI * r * r; }
+}
+double a1 = geometria::area(2);   // 1. nome completo: sempre chiaro
+using geometria::area;            // 2. importo SOLO area
+double a2 = area(2);
+using namespace geometria;        // 3. importo TUTTO il namespace
+double p = PI;
+\end{lstlisting}
+Se importi con \cc|using namespace| due namespace che hanno lo stesso nome
+dentro, quel nome diventa \textbf{ambiguo} e il compilatore dà errore: in quel
+caso devi tornare al nome completo.
+
+\subsection*{Scope (visibilità) e tempo di vita}
+
+Lo \textbf{scope} di una variabile è la zona del programma in cui il suo nome
+``si vede''; il \textbf{tempo di vita} è il periodo in cui la variabile esiste
+in memoria. Ci sono tre casi da conoscere:
+\begin{itemize}
+  \item \textbf{Globale}: dichiarata fuori da ogni funzione. Si vede da
+        ovunque, nasce prima del \cc|main| e vive fino alla fine del programma.
+  \item \textbf{Locale}: dichiarata dentro una funzione (parametri compresi).
+        Si vede solo lì; nasce quando la funzione viene chiamata e
+        \textbf{muore} quando la funzione termina. Sta nello \emph{stack}
+        (Modulo 3).
+  \item \textbf{Di blocco}: dichiarata dentro un paio di graffe \cc|{ }|, anche
+        quelle di un \cc|for|, di un \cc|if| o di un \cc|while|. Muore alla graffa
+        di chiusura. La \cc|i| di \cc|for (int i = 0; ...)| non esiste più dopo il ciclo.
+\end{itemize}
+
+Il blocco più interno vede quelli più esterni, mai il contrario. Se una
+variabile interna ha lo \textbf{stesso nome} di una esterna, la
+\textbf{nasconde} (\emph{shadowing}, ``mettere in ombra''): finché sei nel blocco
+interno, quel nome indica la variabile interna. Quella esterna non è stata
+cancellata, è solo coperta, e torna visibile all'uscita dal blocco. Con
+\cc|::x| (\cc|::| senza niente davanti) si raggiunge comunque la \cc|x|
+\textbf{globale}.
+
+\begin{analogia}[: le stanze di una casa]
+Gli scope sono come stanze una dentro l'altra, con i vetri che guardano solo
+verso fuori. Dalla stanza più interna vedi tutto quello che c'è nelle stanze
+esterne; dall'esterno non vedi dentro. Se nella tua stanza c'è un tavolo e
+anche nel salone c'è un tavolo, quando dici ``il tavolo'' intendi il tuo: è lo
+shadowing.
+\end{analogia}
+
+\subsection*{Stream: cin, cout, cerr}
+
+\begin{analogia}[: il nastro trasportatore]
+Uno \textbf{stream} (``flusso'') è un nastro trasportatore di caratteri tra il
+programma e il mondo esterno: tastiera, schermo, file, persino una stringa.
+Il programma non sa e non deve sapere da dove arrivano i caratteri: usa
+sempre lo stesso sportello, \cc|>>| per prendere dal nastro (estrazione) e
+\cc|<<| per mettere sul nastro (inserimento). Se un giorno invece della tastiera
+c'è un file, il codice resta quasi identico.
+\end{analogia}
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+\textbf{Oggetto} & \textbf{Collegato a} & \textbf{Operatore} \\
+\midrule
+\cc|cout| & schermo (output standard)    & \cc|<<| inserimento \\
+\cc|cin|  & tastiera (input standard)    & \cc|>>| estrazione \\
+\cc|cerr| & schermo, per gli \textbf{errori} (non bufferizzato) & \cc|<<| \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Gli operatori si possono concatenare: \cc|cout << "x = " << x << endl;|
+esegue tre inserimenti di fila, da sinistra a destra.
+
+\textbf{Il buffer.} I caratteri non vanno direttamente dalla tastiera alla
+variabile. Quando scrivi e premi Invio, tutta la riga (Invio compreso, che è il
+carattere \nl) finisce in una zona di memoria chiamata \textbf{buffer}. Ogni
+\cc|cin >> x| \emph{preleva} dal buffer i caratteri che gli servono e lascia lì
+il resto per la lettura successiva. Questo dettaglio spiega quasi tutti i
+problemi di input che incontrerai.
+
+\textbf{Come legge esattamente} \cc|cin >> x|:
+\begin{enumerate}
+  \item salta gli spazi, i tab e gli \nl{} iniziali;
+  \item legge i caratteri finché sono compatibili con il tipo di \cc|x| (cifre
+        per un \cc|int|, cifre e punto per un \cc|double|, non-spazi per una
+        \cc|string|);
+  \item \textbf{si ferma} al primo carattere non compatibile e lo
+        \textbf{lascia nel buffer}. Il \nl{} dell'Invio, in particolare, resta
+        \textbf{sempre} nel buffer.
+\end{enumerate}
+
+\cc|endl| va a capo \textbf{e svuota il buffer di uscita} (\emph{flush}),
+garantendo che il testo compaia subito sullo schermo. \cc|'\n'| va solo a capo:
+è più veloce, e in genere basta.
+
+\subsection*{Errori di input: fail, clear, ignore}
+
+Cosa succede se il programma chiede un \cc|int| e l'utente scrive \texttt{ciao}?
+\cc|cin >> x| non riesce a convertire \texttt{c} in un numero: \cc|x| non riceve
+un valore valido (dal C++11 viene messo a 0) e lo stream accende una
+``spia d'errore'', il \textbf{failbit}. Da quel momento \textbf{ogni} \cc|cin|
+successivo viene saltato senza nemmeno aspettare l'utente, finché qualcuno non
+spegne la spia. È il motivo per cui certi programmi ``impazziscono'' e
+stampano all'infinito la stessa domanda.
+
+\begin{passopasso}[: recuperare da un input sbagliato]
+\begin{enumerate}
+  \item \cc|cin.fail()| restituisce \cc|true| se la spia è accesa. In alternativa
+        si può scrivere \cc|if (cin >> x)|: l'espressione vale ``vero'' se la
+        lettura è riuscita.
+  \item \cc|cin.clear()| \textbf{spegne la spia}. Attenzione: \emph{non} cancella
+        i caratteri sbagliati, che sono ancora lì nel buffer.
+  \item \cc|cin.ignore(numeric_limits<streamsize>::max(), '\n')| \textbf{butta via}
+        tutti i caratteri fino al prossimo \nl{} compreso, cioè il resto della
+        riga sbagliata. Richiede \cc|#include <limits>|. Il primo argomento
+        significa ``quanti caratteri vuoi, senza limite''.
+  \item Si richiede il dato, di solito dentro un ciclo \cc|while|.
+\end{enumerate}
+L'ordine è importante: \textbf{prima} \cc|clear()|, \textbf{poi} \cc|ignore()|.
+Con la spia accesa anche \cc|ignore| viene saltato.
+\end{passopasso}
+
+\subsection*{string, getline e stringstream}
+
+\begin{itemize}
+  \item \cc|string| (\cc|#include <string>|) è una stringa che gestisce da sola
+        la propria memoria: niente \cc|char[20]| che si riempiono, niente
+        \cc|strcpy|. Si confronta con \cc|==|, si concatena con \cc|+|,
+        \cc|s.length()| ne dà la lunghezza, \cc|s[i]| il carattere $i$-esimo,
+        \cc|s.empty()| dice se è vuota.
+  \item \cc|cin >> s| legge \textbf{una parola}: si ferma al primo spazio.
+        Con l'input \texttt{Mario Rossi}, \cc|s| vale solo \texttt{Mario}.
+  \item \cc|getline(cin, s)| legge \textbf{tutta la riga}, spazi compresi,
+        fino al \nl, che consuma e scarta. Con \cc|getline(stream, s, ';')|
+        il separatore diventa \texttt{;} invece di \nl.
+\end{itemize}
+
+\begin{trappola}[: getline subito dopo cin \texttt{>>}]
+\cc|cin >> eta;| legge \texttt{22} e lascia il \nl{} nel buffer. La
+\cc|getline(cin, nome);| successiva trova \emph{subito} quel \nl, si ferma e
+restituisce una stringa \textbf{vuota}: sembra che il programma ``salti'' la
+domanda. Rimedio: \cc|cin.ignore(...)| tra le due letture. È di gran lunga
+l'errore più frequente su questo argomento, sia nei quiz sia in laboratorio.
+\end{trappola}
+
+\textbf{stringstream} (\cc|#include <sstream>|) è uno stream che invece di
+leggere dalla tastiera legge da una \cc|string|, oppure scrive in una
+\cc|string| invece che sullo schermo. Si usa con gli stessi operatori di
+\cc|cin| e \cc|cout|, e risolve due problemi tipici d'esame:
+\begin{itemize}
+  \item \textbf{spezzare una riga nei suoi campi}: leggi la riga intera con
+        \cc|getline|, poi \cc|stringstream ss(riga); ss >> nome >> eta;|. Se la
+        riga è sbagliata, la lettura da \cc|ss| fallisce, ma \cc|cin| resta pulito;
+  \item \textbf{costruire una stringa} mescolando testo e numeri:
+        \cc|stringstream out; out << "STU-" << 7; string s = out.str();|.
+\end{itemize}
+
+\subsection*{Numeri pseudo-casuali}
+
+Il computer non sa tirare un dado: segue istruzioni. I numeri ``casuali'' sono
+in realtà una lunghissima sequenza fissa, calcolata con una formula, che
+\emph{sembra} casuale: per questo si chiamano \textbf{pseudo}-casuali.
+Con \cc|#include <cstdlib>| e \cc|#include <ctime>|:
+\begin{itemize}
+  \item \cc|srand(seme)| sceglie \textbf{da quale punto} della sequenza
+        partire. Si chiama \textbf{una sola volta}, all'inizio del \cc|main|.
+        Con un seme fisso, ad esempio \cc|srand(111222333)|, a ogni esecuzione
+        esce la stessa sequenza: comodo per gli esercizi, perché i risultati sono
+        riproducibili, ed è quello che fanno le tracce d'esame. Con
+        \cc|srand(time(NULL))| il seme è l'ora attuale in secondi, quindi ogni
+        esecuzione è diversa.
+  \item \cc|rand()| restituisce il numero successivo della sequenza, tra 0 e
+        \cc|RAND_MAX| (almeno 32767).
+  \item Per un intero nell'intervallo $[a, b]$: \cc|a + rand() % (b - a + 1)|.
+        Esempio, un dado: \cc|1 + rand() % 6|, perché \cc|rand() % 6| dà un
+        valore da 0 a 5.
+\end{itemize}
+
+\begin{inparole}
+\begin{itemize}
+  \item Preprocessore (copia-incolla degli \cc|#include|) $\to$ compilatore
+        (errori di sintassi, un \texttt{.o} per ogni \texttt{.cpp}) $\to$ linker
+        (unisce i pezzi, errori \emph{undefined reference}).
+  \item Header \texttt{.h} = interfaccia, \texttt{.cpp} = implementazione;
+        si compilano insieme tutti i \texttt{.cpp}. Gli header vanno protetti con
+        le include guard.
+  \item Namespace = cognome dei nomi; \cc|::| = ``quello di''.
+  \item La variabile più interna nasconde quella esterna; \cc|::x| è la globale.
+  \item \cc|cin >>| lascia il \nl{} nel buffer: prima di \cc|getline| serve \cc|ignore|.
+  \item Input sbagliato: \cc|clear()| poi \cc|ignore()|, in quest'ordine.
+  \item \cc|srand| una volta, \cc|rand() % N| ogni volta.
+\end{itemize}
+\end{inparole}
+
+% ---------------------------------------------------------------------
+\section{Rappresentazione Visiva della Memoria (TikZ)}
+% ---------------------------------------------------------------------
+
+\textbf{La catena di compilazione.} In alto i file che entrano ``di lato'':
+l'header viene incollato dal preprocessore, gli altri file oggetto e le librerie
+vengono uniti dal linker.
+\begin{center}
+\resizebox{\linewidth}{!}{%
+\begin{tikzpicture}[node distance=0.55cm]
+  \node[file] (cpp) {main.cpp};
+  \node[processo,right=of cpp] (pre) {Preprocessore\\ \footnotesize\#include, \#define};
+  \node[processo,right=of pre] (comp) {Compilatore\\ \footnotesize sintassi e tipi};
+  \node[file,right=of comp] (obj) {main.o};
+  \node[processo,right=of obj] (link) {Linker\\ \footnotesize unisce i pezzi};
+  \node[file,right=of link,fill=green!20!sfondo] (exe) {main.exe};
+
+  \node[file,above=0.7cm of pre] (h) {conto.h};
+  \node[file,above=0.7cm of obj] (obj2) {conto.o};
+  \node[file,above=0.7cm of link,text width=2.3cm] (lib) {librerie\\ \footnotesize(iostream...)};
+
+  \draw[freccia] (cpp) -- (pre);
+  \draw[freccia] (pre) -- (comp);
+  \draw[freccia] (comp) -- (obj);
+  \draw[freccia] (obj) -- (link);
+  \draw[freccia] (link) -- (exe);
+  \draw[freccia,dashed] (h) -- node[right,etichetta]{copia-incolla} (pre);
+  \draw[freccia] (obj2) -- (link);
+  \draw[freccia] (lib) -- (link);
+
+  \node[etichetta,below=0.2cm of comp,text=red!70!black] {errori di sintassi qui};
+  \node[etichetta,below=0.2cm of link,text=red!70!black] {\emph{undefined reference} qui};
+\end{tikzpicture}}
+\end{center}
+
+\textbf{Il buffer di \texttt{cin} e la trappola di \texttt{getline}.}
+L'utente scrive \texttt{42}, preme Invio, poi scrive \texttt{Neri} e Invio.
+Nel buffer ci sono questi caratteri:
+
+\begin{center}
+\begin{tikzpicture}
+  \node[etichetta,anchor=east] at (0.2,0) {buffer iniziale};
+  \foreach \c/\f [count=\i] in {4/sfondo,2/sfondo,{\textbackslash n}/sfondo,N/sfondo,e/sfondo,r/sfondo,i/sfondo,{\textbackslash n}/sfondo}
+    \node[cellina,fill=\f] (a\i) at (0.6+\i*0.8,0) {\c};
+
+  \node[etichetta,anchor=east] at (0.2,-1.5) {dopo \texttt{cin >> eta}};
+  \foreach \c/\f [count=\i] in {4/black!20!sfondo,2/black!20!sfondo,{\textbackslash n}/yellow!50!sfondo,N/sfondo,e/sfondo,r/sfondo,i/sfondo,{\textbackslash n}/sfondo}
+    \node[cellina,fill=\f] (b\i) at (0.6+\i*0.8,-1.5) {\c};
+  \draw[frecciarossa] ($(b3.south)+(0,-0.6)$) -- (b3.south);
+  \node[etichetta,text=red!75!black,anchor=north] at ($(b3.south)+(0,-0.6)$) {qui riparte la lettura};
+
+  \draw[decorate,decoration={brace,amplitude=5pt,mirror}] ($(b1.south west)+(0,-0.05)$) -- ($(b2.south east)+(0,-0.05)$)
+     node[midway,below=5pt,etichetta,xshift=-0.4cm] {\texttt{eta = 42}};
+
+  \node[text width=5.4cm,font=\small,anchor=west] at (7.9,-0.75) {%
+    \texttt{getline} legge fino al primo \nl{} e lo trova \textbf{subito}:
+    restituisce una stringa \textbf{vuota}, e \texttt{Neri} resta nel buffer.\\[0.3em]
+    \textbf{Rimedio}: \texttt{cin.ignore(...)} tra \texttt{cin >>} e \texttt{getline}
+    butta via il \nl{} giallo.};
+\end{tikzpicture}
+\end{center}
+
+\textbf{Scope annidati e shadowing} (la funzione \cc|demoScope| del pattern).
+Ogni rettangolo è uno scope; dall'interno si vede verso l'esterno, mai il
+contrario. Il nome più interno vince.
+
+\begin{center}
+\begin{tikzpicture}
+  \draw[rounded corners,fill=blue!6!sfondo] (0,0) rectangle (13.6,5.4);
+  \node[anchor=north west] at (0.2,5.3) {\textbf{Scope globale}: \texttt{int x = 100;} \quad (vive per tutto il programma)};
+  \draw[rounded corners,fill=green!8!sfondo] (0.6,0.3) rectangle (13.0,4.4);
+  \node[anchor=north west] at (0.8,4.3) {\textbf{Funzione} \texttt{demoScope()}: \texttt{int x = 5;} \quad (nello stack, muore a fine funzione)};
+  \draw[rounded corners,fill=orange!12!sfondo] (1.2,0.6) rectangle (12.4,3.3);
+  \node[anchor=north west] at (1.4,3.2) {\textbf{Blocco} \texttt{\{ \}}: \texttt{int x = 7;} \quad (muore alla \texttt{\}})};
+  \node[anchor=north west,text width=9cm,font=\small] at (1.4,2.4) {%
+    Qui dentro: \texttt{x} vale \textbf{7}, \texttt{::x} vale \textbf{100}.\\
+    La \texttt{x = 5} esiste ancora ma è \textbf{nascosta} (shadowing): tornerà
+    visibile dopo la \texttt{\}}.};
+\end{tikzpicture}
+\end{center}
+
+% ---------------------------------------------------------------------
+\section{Pattern di Codice di Laboratorio}
+% ---------------------------------------------------------------------
+
+Un solo file che riunisce i quattro pattern del modulo: namespace, scoping,
+lettura sicura di un intero e \cc|stringstream|. La funzione \cc|leggiIntero| è
+da \textbf{saper riscrivere a memoria}: la userai in moltissimi esercizi.
+
+\codice{codice/m02/pattern.cpp}
+\ingresso{codice/m02/input/pattern.txt}
+\uscita{codice/m02/output/pattern.txt}
+
+L'input digitato dall'utente non compare nell'output, perché qui il programma
+legge da un file e non dalla tastiera; per questo le risposte sembrano
+``attaccate'' alle domande.
+
+\textbf{Cosa osservare:}
+\begin{itemize}
+  \item In \cc|leggiIntero| il \cc|cin.ignore| c'è \textbf{anche} nel ramo
+        corretto: toglie il \nl{} e permette la \cc|getline| successiva.
+        Senza, ``Nome e cognome'' verrebbe saltato.
+  \item \cc|1.80| viene stampato \cc|1.8|: \cc|cout| non stampa gli zeri finali
+        (per forzarli servono \cc|fixed| e \cc|setprecision| di \cc|<iomanip>|).
+  \item Lo stesso nome \cc|area| esiste in due namespace senza conflitti.
+\end{itemize}
+
+% ---------------------------------------------------------------------
+\section{Tips \& Trappole da Esame}
+% ---------------------------------------------------------------------
+
+\begin{trappola}[: ciclo infinito sull'input]
+Se in un ciclo di lettura gestisci l'errore con \cc|clear()| ma \textbf{senza}
+\cc|ignore()|, i caratteri sbagliati restano nel buffer: la lettura successiva
+fallisce di nuovo, all'infinito. Servono entrambi, e in quest'ordine.
+\end{trappola}
+
+\begin{trappola}[: using namespace std negli header]
+Non scrivere \cc|using namespace std;| in un file \texttt{.h}: verrebbe copiato
+in ogni file che lo include, con rischio di conflitti di nomi. Nell'header scrivi
+\cc|std::string|; nei \texttt{.cpp} puoi usare \cc|using|.
+\end{trappola}
+
+\begin{trappola}[: srand nel ciclo]
+\cc|srand(time(NULL))| dentro un ciclo reimposta il seme a ogni giro. Il tempo
+cambia una volta al secondo, quindi \cc|rand()| restituisce \textbf{sempre lo
+stesso numero}. \cc|srand| si chiama una sola volta, all'inizio del \cc|main|.
+\end{trappola}
+
+\begin{trappola}[: divisione intera]
+\cc|int somma = 7; int n = 2;| \quad \cc|somma / n| vale \textbf{3}, non 3.5,
+anche se lo assegni a un \cc|double|: la divisione avviene \emph{prima},
+tra interi. Scrivi \cc|(double)somma / n|.
+\end{trappola}
+
+\begin{trappola}[: compilare solo il main]
+\texttt{g++ main.cpp -o prog} con la classe in \texttt{conto.cpp} dà
+\emph{undefined reference}: il linker non ha il codice dei metodi. Tutti i
+\texttt{.cpp} vanno passati insieme. Non si compilano invece gli \texttt{.h},
+e non si fa mai \cc|#include "conto.cpp"|.
+\end{trappola}
+
+\begin{consiglio}[: apici singoli e doppi]
+\cc|'a'| è un \cc|char| (un carattere), \cc|"a"| è una stringa (due caratteri:
+\texttt{a} e il terminatore). \cc|riga == 'fine'| è un errore: si scrive
+\cc|riga == "fine"|.
+\end{consiglio}
+
+\begin{consiglio}[: leggere gli errori del compilatore]
+Leggi sempre il \textbf{primo} errore: gli altri sono spesso conseguenze del primo.
+``\emph{was not declared in this scope}'' $\Rightarrow$ manca un \cc|#include|,
+un \cc|std::| o una dichiarazione, oppure stai usando la variabile fuori dal suo
+blocco. ``\emph{undefined reference}'' $\Rightarrow$ problema del linker: non
+hai compilato insieme il \texttt{.cpp} con le definizioni.
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Quiz a Crocette (Prova Scritta)}
+% ---------------------------------------------------------------------
+
+\begin{quiz}{L'utente digita \texttt{42} e Invio. Il codice esegue \texttt{cin >> n;} e subito dopo \texttt{getline(cin, s);}. Cosa contiene \texttt{s}?}
+  \item la riga che l'utente scriverà dopo
+  \item una stringa vuota
+  \item \texttt{\textquotedbl 42\textquotedbl}
+  \item il codice non compila
+\end{quiz}
+
+\begin{quiz}{Cosa fa \texttt{cin.clear()}?}
+  \item svuota il buffer di input
+  \item azzera i flag di errore dello stream
+  \item chiude lo stream
+  \item assegna 0 all'ultima variabile letta
+\end{quiz}
+
+\begin{quiz}{Cosa stampa il seguente codice? \\
+\texttt{int x = 1;  int main() \{ int x = 2; cout << ::x << x; \}}}
+  \item \texttt{22}
+  \item \texttt{12}
+  \item \texttt{21}
+  \item errore di compilazione: \texttt{x} è dichiarata due volte
+\end{quiz}
+
+\begin{quiz}{Qual è l'ordine corretto delle fasi di traduzione di un programma C++?}
+  \item linker, compilatore, preprocessore
+  \item preprocessore, compilatore, linker
+  \item compilatore, preprocessore, linker
+  \item compilatore, linker, preprocessore
+\end{quiz}
+
+\begin{quiz}{Dato \texttt{stringstream ss(\textquotedbl 10 abc\textquotedbl); int a, b; ss >> a >> b;} quale affermazione è vera?}
+  \item \texttt{a} vale 10, \texttt{b} vale \texttt{abc}
+  \item \texttt{a} vale 10 e la lettura di \texttt{b} fallisce: \texttt{ss.fail()} è \texttt{true}
+  \item errore di compilazione
+  \item \texttt{a} vale 0 perché lo stream non è \texttt{cin}
+\end{quiz}
+
+\begin{quiz}{Che differenza c'è tra \texttt{endl} e \texttt{'\textbackslash n'}?}
+  \item nessuna
+  \item \texttt{endl} va a capo e in più svuota il buffer di output
+  \item \texttt{'\textbackslash n'} funziona solo con \texttt{cerr}
+  \item \texttt{endl} stampa due righe vuote
+\end{quiz}
+
+\begin{quiz}{Un programma compila senza errori, ma alla fine compare \emph{undefined reference to `f(int)'}. Quale fase ha segnalato il problema?}
+  \item il preprocessore
+  \item il compilatore
+  \item il linker
+  \item il programma in esecuzione
+\end{quiz}
+
+\begin{quiz}{A cosa servono \texttt{\#ifndef}, \texttt{\#define} ed \texttt{\#endif} all'inizio e alla fine di un header?}
+  \item a rendere più veloce la compilazione del \texttt{main}
+  \item a evitare che il contenuto dell'header venga incluso più volte
+  \item a dichiarare il namespace dell'header
+  \item a definire le costanti globali del programma
+\end{quiz}
+
+\begin{quiz}{Quale espressione restituisce un intero casuale da 1 a 6 compresi?}
+  \item \texttt{rand() \% 6}
+  \item \texttt{rand() \% 7}
+  \item \texttt{1 + rand() \% 6}
+  \item \texttt{1 + rand() \% 5}
+\end{quiz}
+
+\begin{quiz}{Con l'input \texttt{Mario Rossi}, cosa contiene \texttt{s} dopo \texttt{cin >> s;}?}
+  \item \texttt{Mario Rossi}
+  \item \texttt{Mario}
+  \item \texttt{Casella}
+  \item una stringa vuota
+\end{quiz}
+
+\begin{soluzione}[: risposte commentate]
+\begin{enumerate}[label=\textbf{\arabic*.}]
+  \item \textbf{B}. \cc|cin >> n| lascia il \nl{} nel buffer; \cc|getline| lo
+        trova subito e si ferma.
+  \item \textbf{B}. \cc|clear| spegne solo la spia d'errore. Per svuotare il
+        buffer (A) serve \cc|ignore|.
+  \item \textbf{B}. \cc|::x| è la globale (1), \cc|x| la locale (2). Non è un
+        errore (D) perché le due \cc|x| sono in scope diversi: è shadowing.
+  \item \textbf{B}. Il preprocessore lavora sul testo (\cc|#include|), il
+        compilatore produce i \texttt{.o}, il linker li unisce.
+  \item \textbf{B}. \texttt{abc} non è un intero: lo stream va in errore. Dal
+        C++11 \cc|b| viene messo a 0, ma l'importante è che \cc|ss.fail()| sia \cc|true|.
+  \item \textbf{B}. \cc|endl| equivale a \cc|'\n'| più \cc|flush|.
+  \item \textbf{C}. Il compilatore si accontenta del prototipo; è il linker a non
+        trovare il corpo della funzione.
+  \item \textbf{B}. Sono le \emph{include guard}: la seconda inclusione viene saltata.
+  \item \textbf{C}. \cc|rand() % 6| va da 0 a 5; sommando 1 si ottiene da 1 a 6.
+        La B va da 0 a 6, la D da 1 a 5.
+  \item \textbf{B}. \cc|>>| con una \cc|string| si ferma al primo spazio; per la
+        riga intera serve \cc|getline|.
+\end{enumerate}
+\end{soluzione}
+
+% ---------------------------------------------------------------------
+\section{Laboratorio a Step (Simulazione d'Esame)}
+% ---------------------------------------------------------------------
+
+Come nel Modulo 1, costruisci il programma un passo alla volta, compilando e
+provando dopo ogni step. Per provare l'input conviene scrivere le righe in un
+file \texttt{input.txt} e lanciare \texttt{lab.exe < input.txt}: così non devi
+riscriverle ogni volta.
+
+\begin{traccia}[: registro dei voti]
+Un docente vuole inserire da tastiera i voti di un appello, una riga per
+studente nel formato \texttt{cognome voto}, e ottenere un riepilogo.
+Non si può usare la STL: i dati vanno in array statici.
+\end{traccia}
+
+\begin{step}{lettura sicura di un intero}
+Scrivi \cc|int leggiIntero(string messaggio, int min, int max)|, che stampa il
+messaggio e legge un intero, ripetendo la richiesta finché l'utente non inserisce
+un numero valido compreso tra \cc|min| e \cc|max|. Gli errori vanno stampati su
+\cc|cerr|. Usala per chiedere quanti studenti al massimo inserire (da 1 a 100).\\[0.3em]
+\textbf{Concetto nuovo:} \cc|cin.fail|, \cc|clear|, \cc|ignore|, \cc|cerr|.
+\end{step}
+
+\begin{step}{un namespace per il registro}
+Sposta le costanti (\cc|MAX = 100|, \cc|VOTO_MIN = 18|, \cc|VOTO_MAX = 30|) e
+tutte le funzioni in un \cc|namespace registro|. Nel \cc|main| usa
+\cc|using namespace registro;|.\\[0.3em]
+\textbf{Concetto nuovo:} namespace, operatore \cc|::|, \cc|using|.
+\end{step}
+
+\begin{step}{analizzare una riga}
+Scrivi \cc|bool analizzaRiga(string riga, string& cognome, int& voto)| che,
+usando uno \cc|stringstream|, accetta una riga solo se contiene
+\textbf{esattamente} un cognome e un voto intero tra 18 e 30. Nel \cc|main|
+leggi le righe con \cc|getline| fino a \texttt{fine} (o alla capienza),
+salta le righe vuote e segnala su \cc|cerr| quelle non valide.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|getline|, \cc|stringstream| in lettura, parametri
+\cc|&| per restituire più valori.
+\end{step}
+
+\begin{step}{statistiche}
+Memorizza cognomi e voti in due array paralleli. Scrivi
+\cc|double media(const int voti[], int n)| (attenzione alla divisione intera) e
+stampa l'elenco, la media e lo studente con il voto più alto.\\[0.3em]
+\textbf{Concetto nuovo:} array paralleli, cast a \cc|double|.
+\end{step}
+
+\begin{step}{codici ed estrazione casuale}
+Scrivi \cc|string codice(int numero)|, che con uno \cc|stringstream| costruisce
+codici a tre cifre del tipo \texttt{STU-007}, e usali nell'elenco. Infine chiedi
+un seme con \cc|leggiIntero|, chiama \cc|srand| e estrai \textbf{due studenti
+diversi} da interrogare.\\[0.3em]
+\textbf{Concetto nuovo:} \cc|stringstream| in scrittura, \cc|srand|/\cc|rand|.
+\end{step}
+
+\subsection*{Soluzione completa}
+\codice{codice/m02/lab.cpp}
+\ingresso{codice/m02/input/lab.txt}
+\uscita{codice/m02/output/lab.txt}
+
+\begin{consiglio}[: cosa notare nella soluzione]
+\begin{itemize}
+  \item La riga vuota nell'input viene saltata senza contarla come errore,
+        grazie a \cc|riga.empty()|.
+  \item \cc|while (n < capienza && getline(cin, riga))|: prima si controlla che
+        ci sia posto nell'array (niente sforamento), poi si legge. Il ciclo si
+        ferma anche se l'input finisce senza la parola \texttt{fine}.
+  \item Il secondo estratto si cerca con un \cc|while| finché non è diverso dal
+        primo. La condizione \cc|n > 1| evita un ciclo infinito se c'è un solo studente.
+  \item Gli errori vanno su \cc|cerr| e il resto su \cc|cout|: in un terminale
+        compaiono mescolati, ma sono due canali distinti (si potrebbero salvare
+        in file diversi).
+\end{itemize}
+\end{consiglio}
+
+% ---------------------------------------------------------------------
+\section{Domande e Risposte Modello per l'Orale}
+% ---------------------------------------------------------------------
+
+\begin{orale}[D1. Che cos'è uno stream?]
+È un oggetto che fa da \textbf{intermediario} tra il programma e una sorgente o
+destinazione di dati: tastiera, schermo, file o stringa. Il programma usa sempre
+la stessa interfaccia (\cc|>>| per estrarre, \cc|<<| per inserire),
+indipendentemente dal dispositivo. Gli stream standard sono \cc|cin| (input da
+tastiera), \cc|cout| (output su schermo) e \cc|cerr| (messaggi di errore, non
+bufferizzato). Lo stream mantiene anche dei flag di stato: ad esempio, se una
+lettura fallisce si attiva il \emph{failbit}.
+\end{orale}
+
+\begin{orale}[D2. Cos'è un namespace? Perché evitare using namespace std negli header?]
+Un namespace è un ambito con nome che raggruppa identificatori per evitare
+collisioni: due funzioni con lo stesso nome possono convivere in namespace
+diversi e si distinguono con l'operatore di scope \cc|::|. La libreria standard
+sta nel namespace \cc|std|. \cc|using namespace std;| rende visibili tutti i suoi
+nomi senza prefisso. In un header è sconsigliato perché \cc|#include| è un
+copia-incolla: la direttiva finirebbe in ogni file che include l'header, con
+possibili conflitti di nomi.
+\end{orale}
+
+\begin{orale}[D3. Quali sono le fasi della compilazione?]
+Prima il \textbf{preprocessore} esegue le direttive \cc|#|: inclusione di file,
+macro, include guard. Poi il \textbf{compilatore} traduce ogni unità di
+traduzione in codice oggetto, controllando sintassi e tipi. Infine il
+\textbf{linker} collega i file oggetto tra loro e con le librerie e produce
+l'eseguibile. Una funzione dichiarata ma mai definita supera la compilazione ma
+dà errore al linker (\emph{undefined reference}).
+\end{orale}
+
+\begin{orale}[D4. Come si gestisce un input non valido?]
+Se l'estrazione non riesce a convertire i caratteri nel tipo richiesto, lo
+stream imposta il failbit e le letture successive vengono ignorate. Si controlla
+con \cc|cin.fail()|. Poi si chiama \cc|cin.clear()| per azzerare i flag e
+\cc|cin.ignore(numeric_limits<streamsize>::max(), '\n')| per scartare i caratteri
+errati rimasti nel buffer. Di solito tutto questo sta in un ciclo che richiede il
+dato finché non è valido.
+\end{orale}
+
+\begin{orale}[D5. Che differenza c'è tra scope e tempo di vita di una variabile?]
+Lo \textbf{scope} è la porzione di codice in cui il nome della variabile è
+visibile; il \textbf{tempo di vita} è l'intervallo di tempo, durante
+l'esecuzione, in cui la variabile esiste in memoria. Per una variabile locale
+coincidono quasi: nasce quando si entra nel blocco e muore quando se ne esce.
+Una variabile globale ha scope su tutto il file e vive per tutta l'esecuzione.
+Se una variabile interna ha lo stesso nome di una esterna la nasconde
+(shadowing); la globale resta raggiungibile con \cc|::nome|.
+\end{orale}
+
+% ---------------------------------------------------------------------
+\section{Esercizi al PC}
+% ---------------------------------------------------------------------
+
+Per gli esercizi che leggono da tastiera, prepara un file di input e lancia
+\texttt{es.exe < input.txt}. Le soluzioni mostrano anche l'input usato.
+
+\begin{esercizio}{Saluto}{facile}
+Chiedi l'età con \cc|cin >>| e poi nome e cognome con \cc|getline|. Stampa
+\texttt{Ciao <nome>! Tra 10 anni avrai <eta+10> anni.} Prova prima
+\emph{senza} \cc|cin.ignore| e osserva cosa succede, poi correggi.
+\end{esercizio}
+
+\begin{esercizio}{Calcolatrice}{facile}
+Leggi ripetutamente espressioni del tipo \texttt{3 + 4} (un \cc|double|, un
+\cc|char|, un \cc|double|) fino a fine input. Gestisci \texttt{+ - * /} con uno
+\cc|switch|; la divisione per zero e gli operatori sconosciuti vanno segnalati su \cc|cerr|.
+\end{esercizio}
+
+\begin{esercizio}{Due lingue}{facile}
+Crea i namespace \cc|italiano| e \cc|inglese|, ognuno con una funzione
+\cc|string saluta(string nome)| e una costante \cc|LINGUA|. Chiamale con il nome
+completo, poi usa \cc|using namespace inglese;| \textbf{dentro un blocco}
+\cc|{ }| e verifica che fuori dal blocco non valga più.
+\end{esercizio}
+
+\begin{esercizio}{Indovina l'output}{facile}
+Senza eseguirlo, scrivi su un foglio cosa stampa la soluzione
+\texttt{es04.cpp} (righe da A a F). Poi eseguilo e confronta. Per ogni riga
+sbagliata, ritrova la regola di scope che non avevi applicato.
+\end{esercizio}
+
+\begin{esercizio}{Lettura robusta}{medio}
+Scrivi una funzione che chiede un intero tra 1 e 10 e ripete finché non è
+valido, distinguendo ``non è un numero'' da ``fuori intervallo''. Conta i
+tentativi. Se l'input finisce (\cc|cin.eof()|), restituisci $-1$ invece di
+ciclare all'infinito.
+\end{esercizio}
+
+\begin{esercizio}{Conta parole}{medio}
+Per ogni riga letta con \cc|getline| fino a fine input, usa uno
+\cc|stringstream| per contare le parole e trovare la più lunga. Una riga vuota o
+fatta di soli spazi ha 0 parole.
+\end{esercizio}
+
+\begin{esercizio}{Somma dei soli numeri}{medio}
+Leggi una riga come \texttt{3 4.5 abc 2 12abc -1.5} e somma solo le parole che
+sono \emph{interamente} numeri. \emph{Suggerimento}: leggi parola per parola
+come \cc|string|, poi prova a convertirla con un secondo \cc|stringstream| e
+controlla che non avanzino caratteri.
+\end{esercizio}
+
+\begin{esercizio}{Istogramma del dado}{medio}
+Con \cc|srand(111222333)| simula 6000 lanci di un dado, conta le uscite in un
+array e stampa per ogni faccia la frequenza e una barra di asterischi (uno ogni
+50 lanci). Le frequenze dovrebbero essere tutte vicine a 1000.
+\end{esercizio}
+
+\begin{esercizio}{Compilazione separata}{difficile}
+Dividi in tre file un piccolo modulo di geometria: \texttt{geometria.h}
+(namespace \cc|geometria| con la costante \cc|PI| e i prototipi di
+\cc|areaCerchio|, \cc|perimetroCerchio|, \cc|areaRettangolo|, protetto da
+include guard), \texttt{geometria.cpp} (i corpi) e \texttt{main.cpp}.
+Compila con \texttt{g++ main.cpp geometria.cpp -o es09.exe}. Poi prova a
+compilare solo \texttt{main.cpp} e leggi l'errore del linker; prova anche a
+togliere la guard e a includere l'header due volte.
+\end{esercizio}
+
+\begin{esercizio}{Scontrino}{difficile}
+Leggi righe \texttt{prodotto;quantita;prezzo} fino a una riga vuota.
+Separa i campi con \cc|getline(ss, campo, ';')|, convertili con
+\cc|stringstream| e scarta (su \cc|cerr|, con il numero di riga) le righe con
+campi mancanti o in più, nome vuoto, quantità non positiva o prezzo negativo.
+Stampa ogni riga valida con il parziale e infine il totale.
+\end{esercizio}
+
+\subsection*{Soluzioni}
+Le soluzioni commentate, con il codice e l'output reale, sono nel PDF separato
+\textbf{Soluzioni} (\texttt{soluzioni-light.pdf} / \texttt{soluzioni-dark.pdf}),
+allo stesso numero di esercizio. Il codice è anche in \texttt{codice/m02/}.

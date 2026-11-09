@@ -1,0 +1,8 @@
+Uscita raggiunta in 19 passi
+  S.#.......
+  o##.####.#
+  ooo.#....#
+  ##o##.##.#
+  ..o#..#ooo
+  .#ooo##o#o
+  ...#oooo#U

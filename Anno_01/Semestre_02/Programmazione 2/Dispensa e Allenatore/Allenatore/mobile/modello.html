@@ -1,0 +1,913 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#000000">
+<meta name="color-scheme" content="dark">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Prog2">
+<meta name="description" content="Allenatore per l'esame di Programmazione 2: quiz, orale, codice, con il compagno Bit.">
+<title>Allenatore Prog2</title>
+<!--__PWA__-->
+<style>
+/*__GIOCO_CSS__*/
+</style>
+<style>
+/* Layout: app a schede (Oggi, Quiz, Orale, Codice, Bit) con barra in basso.
+   Stile «Terminale», lo stesso dell'app per PC: nero, fosforo, monospazio, angoli vivi.
+   Il colore del fosforo si cambia nelle impostazioni (Gioco.applicaAccento). */
+:root {
+  color-scheme: dark;
+  --sfondo: #000000; --superficie: #010603; --superficie-2: #000302;
+  --testo: #c9ffe2; --testo-2: #5fb88a; --testo-3: #2c6447;
+  --linea: rgba(51,255,153,.16); --linea-forte: rgba(51,255,153,.34); --riempi: rgba(51,255,153,.045); --riempi-2: rgba(51,255,153,.085);
+  --fosforo: #33ff99; --fosforo-rgb: 51, 255, 153; --fosforo-chiaro: #7dffbf;
+  --accento: #33ff99; --accento-tenue: rgba(51,255,153,.14); --su-accento: #000000;
+  --verde: #b6ff3b; --verde-testo: #b6ff3b; --verde-tenue: rgba(182,255,59,.13);
+  --rosso: #ff3b5c; --rosso-testo: #ff5c77; --rosso-tenue: rgba(255,59,92,.14);
+  --arancio: #ffb000; --arancio-testo: #ffc23d; --arancio-tenue: rgba(255,176,0,.14);
+  --viola: #00e5ff; --viola-tenue: rgba(0,229,255,.14);
+  --barra: rgba(0,0,0,.94); --codice: #000000;
+  --c-kw: #00e5ff; --c-str: #ffb000; --c-com: #3a8a62; --c-num: #ff6ad5; --c-pre: #b6ff3b; --c-tipo: #7dffd4; --c-fn: #eaffef;
+  --mono: ui-monospace, "SF Mono", "Cascadia Mono", Menlo, Consolas, "Roboto Mono", monospace;
+  --font: var(--mono); --font-titoli: var(--mono);
+  --bagliore: 0 0 8px rgba(var(--fosforo-rgb), .45);
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; border-radius: 0 !important; }
+html, body { height: 100%; }
+body { background: var(--sfondo); color: var(--testo); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased;
+  -webkit-text-size-adjust: 100%; margin: 0; letter-spacing: .005em; }
+/* scanline leggere, come il terminale del PC */
+body::after { content: ""; position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+  background: repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,.18) 3px); }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; }
+::selection { background: var(--fosforo); color: #000; }
+:focus-visible { outline: 2px solid var(--fosforo); outline-offset: 2px; }
+.ic { width: 22px; height: 22px; flex: none; }
+
+.app { min-height: 100%; padding-bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+.pagina { max-width: 720px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px)); padding-top: calc(14px + env(safe-area-inset-top, 0px)); padding-bottom: 24px; }
+.testa { display: flex; align-items: flex-end; justify-content: space-between; gap: 12px; margin: 6px 0 18px; }
+.sopra { font-size: 11.5px; font-weight: 600; letter-spacing: .14em; text-transform: uppercase; color: var(--testo-2); }
+.sopra::before { content: "// "; color: var(--testo-3); }
+.sopra.accento { color: var(--accento); }
+h1 { font: 700 27px/1.15 var(--font-titoli); margin: 2px 0 0; text-transform: uppercase; color: var(--fosforo); text-shadow: var(--bagliore); text-wrap: balance; }
+h1::after { content: "_"; margin-left: 3px; animation: cursore 1.05s steps(1) infinite; }
+@keyframes cursore { 50% { opacity: 0; } }
+h2 { font: 700 19px/1.3 var(--font-titoli); margin: 0; text-wrap: balance; }
+h3 { font: 700 16px/1.35 var(--font-titoli); margin: 0; }
+.secondario { color: var(--testo-2); }
+.piccolo { font-size: 12.5px; }
+.sezione { font-size: 12px; text-transform: uppercase; letter-spacing: .12em; color: var(--fosforo); margin: 26px 2px 8px; }
+.sezione::before { content: "> "; color: var(--testo-3); }
+
+.card { background: var(--superficie); border: 1px solid var(--linea); padding: 16px; position: relative; }
+.card::before { content: ""; position: absolute; inset: -1px; pointer-events: none;
+  background: linear-gradient(var(--fosforo), var(--fosforo)) top left / 10px 1px no-repeat, linear-gradient(var(--fosforo), var(--fosforo)) top left / 1px 10px no-repeat,
+  linear-gradient(var(--fosforo), var(--fosforo)) bottom right / 10px 1px no-repeat, linear-gradient(var(--fosforo), var(--fosforo)) bottom right / 1px 10px no-repeat; }
+.pila { display: flex; flex-direction: column; gap: 12px; }
+.riga { display: flex; align-items: center; gap: 12px; }
+.spazio { flex: 1; }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 48px; padding: 0 20px;
+  border: 1px solid var(--linea-forte); font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: .06em;
+  background: transparent; color: var(--testo); transition: transform .12s, opacity .2s; }
+.btn:active { transform: scale(.97); }
+.btn:disabled { opacity: .4; }
+.btn.primario { background: var(--fosforo); color: #000; border-color: var(--fosforo); box-shadow: 0 0 16px rgba(var(--fosforo-rgb), .35); }
+.btn.pieno { width: 100%; }
+.btn.piccolo { min-height: 36px; padding: 0 12px; font-size: 12px; }
+.btn .ic { width: 20px; height: 20px; }
+.tondo { width: 38px; height: 38px; border: 1px solid var(--linea); background: transparent; color: var(--testo-2);
+  display: grid; place-items: center; flex: none; }
+.tondo .ic { width: 18px; height: 18px; }
+
+.segmentato { display: flex; border: 1px solid var(--linea); }
+.segmentato button { flex: 1; border: 0; background: transparent; padding: 9px 4px; font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: .05em; color: var(--testo-2); }
+.segmentato button + button { border-left: 1px solid var(--linea); }
+.segmentato button.attivo { background: var(--accento-tenue); color: var(--fosforo); box-shadow: inset 0 -2px 0 var(--fosforo); }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { min-height: 36px; padding: 0 12px; border: 1px solid var(--linea); background: transparent; font-size: 13px; color: var(--testo-2); }
+.chip.on { background: var(--accento-tenue); border-color: var(--fosforo); color: var(--fosforo); font-weight: 700; }
+
+/* barra delle schede */
+.schede { position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; background: var(--barra);
+  border-top: 1px solid var(--linea); display: flex; justify-content: space-around;
+  padding: 6px max(6px, env(safe-area-inset-right, 0px)) calc(6px + env(safe-area-inset-bottom, 0px)) max(6px, env(safe-area-inset-left, 0px)); }
+.schede button { flex: 1; max-width: 110px; border: 0; background: transparent; display: flex; flex-direction: column;
+  align-items: center; gap: 3px; padding: 5px 0; font-size: 10.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--testo-3); }
+.schede button.attiva { color: var(--fosforo); text-shadow: var(--bagliore); }
+.schede button.attiva .ic { filter: drop-shadow(0 0 4px rgba(var(--fosforo-rgb), .6)); }
+.schede .ic { width: 24px; height: 24px; }
+.app.immersa .schede { display: none; }
+.app.immersa { padding-bottom: 0; }
+
+/* OGGI */
+.eroe { display: flex; align-items: center; gap: 18px; }
+.numero { font: 200 76px/0.9 var(--font-titoli); letter-spacing: -.04em; font-variant-numeric: tabular-nums; color: var(--fosforo); text-shadow: 0 0 22px rgba(var(--fosforo-rgb), .55); }
+.numero-sotto { font: 700 15px var(--font-titoli); text-transform: uppercase; letter-spacing: .04em; }
+.piano { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--linea); }
+.piano h3 { margin: 4px 0 4px; font-size: 17px; color: var(--fosforo); text-transform: uppercase; }
+.anelli-box { display: flex; align-items: center; gap: 18px; }
+.legenda { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 14px; flex: 1; min-width: 0; }
+.leg-nome { font-size: 12px; color: var(--testo-2); display: flex; align-items: center; gap: 6px; }
+.leg-nome i { width: 8px; height: 8px; }
+.leg-val { font: 700 18px var(--font-titoli); font-variant-numeric: tabular-nums; }
+.leg-val span { font-size: 12px; color: var(--testo-3); font-weight: 400; }
+.arco { transition: stroke-dashoffset 1.1s cubic-bezier(.2,.8,.2,1); }
+.elenco-card { background: var(--superficie); border: 1px solid var(--linea); overflow: hidden; }
+.voce { display: flex; align-items: center; gap: 12px; width: 100%; border: 0; background: transparent; text-align: left;
+  padding: 12px 14px; min-height: 54px; }
+.voce + .voce { border-top: 1px solid var(--linea); }
+.voce .icona { width: 32px; height: 32px; display: grid; place-items: center; flex: none; border: 1px solid currentColor; }
+.voce .icona .ic { width: 18px; height: 18px; }
+.voce .testo { flex: 1; min-width: 0; }
+.voce .titolo { font-size: 14.5px; font-weight: 700; }
+.voce .sotto { font-size: 12px; color: var(--testo-2); }
+.voce .freccia { color: var(--testo-3); width: 16px; height: 16px; }
+.blu { background: var(--accento-tenue); color: var(--accento); } .rosso { background: var(--rosso-tenue); color: var(--rosso); }
+.verde { background: var(--verde-tenue); color: var(--verde-testo); } .arancio { background: var(--arancio-tenue); color: var(--arancio); }
+.viola { background: var(--viola-tenue); color: var(--viola); }
+
+/* SESSIONE QUIZ */
+.sessione { min-height: 100%; display: flex; flex-direction: column; }
+.sess-testa { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--sfondo);
+  display: flex; align-items: center; gap: 12px; padding-block: 10px; border-bottom: 1px solid var(--linea);
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--sfondo); }
+.progresso { flex: 1; height: 6px; border: 1px solid var(--linea-forte); overflow: hidden; }
+.progresso i { display: block; height: 100%; background: var(--fosforo); box-shadow: 0 0 10px rgba(var(--fosforo-rgb), .6); transition: width .35s; }
+.conta { font-size: 13px; color: var(--testo-2); font-variant-numeric: tabular-nums; }
+.timer { font: 700 14px var(--font-titoli); font-variant-numeric: tabular-nums; padding: 5px 8px; border: 1px solid var(--linea-forte); }
+.timer.urgente { background: var(--rosso-tenue); color: var(--rosso-testo); border-color: var(--rosso); }
+.sess-corpo { flex: 1; max-width: 720px; width: 100%; margin: 0 auto; padding-block: 12px 130px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.domanda { font: 600 17px/1.45 var(--font-titoli); margin: 8px 0 20px; }
+.domanda p { margin: 0 0 8px; }
+.opzioni { display: flex; flex-direction: column; gap: 10px; }
+.opzione { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; padding: 12px 14px; min-height: 56px;
+  border: 1px solid var(--linea); background: var(--superficie); font-size: 14.5px; line-height: 1.45;
+  transition: background .2s, border-color .2s, opacity .2s; }
+.opzione .lettera { width: 28px; height: 28px; flex: none; display: grid; place-items: center;
+  border: 1px solid var(--linea-forte); font-size: 13px; font-weight: 700; color: var(--testo-2); }
+.opzione .lettera .ic { width: 16px; height: 16px; stroke-width: 2.6; }
+.opz-testo { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.opzione.scelta { border-color: var(--fosforo); }
+.opzione.scelta .lettera { background: var(--fosforo); color: #000; border-color: var(--fosforo); }
+.opzione.giusta { border-color: var(--verde); background: var(--verde-tenue); }
+.opzione.giusta .lettera { background: var(--verde); color: #000; border-color: var(--verde); }
+.opzione.sbagliata { border-color: var(--rosso); background: var(--rosso-tenue); }
+.opzione.sbagliata .lettera { background: var(--rosso); color: #000; border-color: var(--rosso); }
+.opzione.attenuata { opacity: .45; }
+.riscontro { margin-top: 16px; padding: 14px; border: 1px solid var(--linea); background: var(--superficie); animation: sale .3s ease; }
+.riscontro b.titolo { display: flex; align-items: center; gap: 6px; font-size: 15px; margin-bottom: 4px; text-transform: uppercase; }
+.riscontro.ok b.titolo { color: var(--verde-testo); } .riscontro.no b.titolo { color: var(--rosso-testo); }
+.riscontro .ricco { color: var(--testo-2); font-size: 14px; }
+@keyframes sale { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.punti { display: flex; gap: 6px; overflow-x: auto; padding: 18px 2px 4px; scrollbar-width: none; }
+.punto { width: 32px; height: 32px; flex: none; border: 1px solid var(--linea); background: transparent;
+  font-size: 12px; font-weight: 600; color: var(--testo-2); }
+.punto.data { background: var(--fosforo); border-color: var(--fosforo); color: #000; }
+.punto.ok { background: var(--verde-tenue); border-color: var(--verde); color: var(--verde-testo); }
+.punto.no { background: var(--rosso-tenue); border-color: var(--rosso); color: var(--rosso-testo); }
+.punto.qui { box-shadow: 0 0 0 2px var(--fosforo); }
+.piede { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; background: var(--barra); border-top: 1px solid var(--linea);
+  display: flex; gap: 10px; padding-top: 10px; padding-bottom: calc(10px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.piede .btn { flex: 1; }
+.piede .btn.stretto { flex: 0 0 auto; }
+
+/* ESITO */
+.esito { text-align: center; padding-top: 20px; }
+.esito-anello { position: relative; width: 190px; height: 190px; margin: 0 auto 18px; }
+.esito-num { position: absolute; inset: 0; display: grid; place-content: center; }
+.esito-num b { font: 200 52px/1 var(--font-titoli); color: var(--fosforo); text-shadow: 0 0 22px rgba(var(--fosforo-rgb), .55); }
+.esito-num span { color: var(--testo-2); font-size: 13px; }
+.esito h1::after { content: none; }
+
+/* testo dalla dispensa */
+.ricco p { margin: 0 0 10px; } .ricco p:last-child { margin-bottom: 0; }
+.ricco code { font-family: var(--mono); font-size: .92em; padding: 0 3px; color: var(--fosforo-chiaro); background: var(--riempi); overflow-wrap: anywhere; }
+.ricco .elenco { margin: 0 0 10px; }
+.ricco .voce { display: flex; gap: 8px; padding: 2px 0 2px calc(var(--l, 0) * 18px); min-height: 0; border: 0; }
+.ricco .segno { flex: none; min-width: 18px; font-weight: 600; color: var(--testo-2); }
+pre.cpp, pre.uscita { font: 12px/1.55 var(--mono); background: var(--codice); border: 1px solid var(--linea);
+  padding: 12px; margin: 0 0 10px; overflow-x: auto; white-space: pre; -webkit-overflow-scrolling: touch; max-width: 100%;
+  font-variant-ligatures: none; }
+pre.uscita { color: var(--fosforo); text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .3); }
+.c-kw { color: var(--c-kw); font-weight: 600; } .c-str { color: var(--c-str); } .c-com { color: var(--c-com); font-style: italic; }
+.c-num { color: var(--c-num); } .c-pre { color: var(--c-pre); } .c-tipo { color: var(--c-tipo); } .c-fn { color: var(--c-fn); }
+
+/* ORALE */
+.flash h2 { font-size: 19px; margin: 10px 0 10px; }
+.livello { display: inline-flex; gap: 4px; } .livello i { width: 16px; height: 5px; background: var(--riempi-2); }
+.livello i.on { background: var(--fosforo); box-shadow: 0 0 6px rgba(var(--fosforo-rgb), .6); }
+.risposta { margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--linea); animation: sale .3s ease; }
+.valuta { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
+.valuta .btn { font-size: 12.5px; padding: 0 6px; min-height: 54px; flex-direction: column; gap: 0; line-height: 1.2; }
+.valuta .btn.r { background: var(--rosso-tenue); color: var(--rosso-testo); border-color: var(--rosso); }
+.valuta .btn.a { background: var(--arancio-tenue); color: var(--arancio-testo); border-color: var(--arancio); }
+.valuta .btn.v { background: var(--verde-tenue); color: var(--verde-testo); border-color: var(--verde); }
+select.scelta { width: 100%; min-height: 44px; border: 1px solid var(--linea); background: #000; padding: 0 12px; font-size: 14px; }
+
+/* CODICE */
+.gruppo summary { list-style: none; display: flex; align-items: center; gap: 10px; padding: 13px 14px; cursor: pointer; }
+.gruppo summary::-webkit-details-marker { display: none; }
+.gruppo summary .freccia { transition: transform .2s; color: var(--testo-3); width: 16px; height: 16px; }
+.gruppo[open] summary .freccia { transform: rotate(90deg); color: var(--fosforo); }
+.gruppo + .gruppo { border-top: 1px solid var(--linea); }
+.gruppo .voce { padding-left: 42px; border-top: 1px solid var(--linea); }
+.stato { width: 20px; height: 20px; border: 1px solid var(--testo-3); flex: none; display: grid; place-items: center; }
+.stato.fatto { background: var(--fosforo); border-color: var(--fosforo); color: #000; }
+.stato .ic { width: 12px; height: 12px; stroke-width: 3.2; }
+.tag { font-size: 10px; font-weight: 700; padding: 1px 6px; border: 1px solid currentColor; text-transform: uppercase; letter-spacing: .06em; color: var(--testo-2); }
+.tag.facile { color: var(--verde-testo); } .tag.medio { color: var(--arancio-testo); }
+.tag.difficile { color: var(--rosso-testo); } .tag.esame { color: var(--accento); }
+.indietro { display: inline-flex; align-items: center; gap: 2px; border: 0; background: none; color: var(--fosforo); font-size: 14px; text-transform: uppercase; letter-spacing: .06em; padding: 6px 0; }
+
+/* BIT */
+.bit-palco { display: grid; place-items: center; min-height: 150px; }
+.bit-palco { min-height: 200px; }
+.bit-dati { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 14px; }
+.bit-dati div { border: 1px solid var(--linea); padding: 8px; display: flex; flex-direction: column; font-size: 11px; color: var(--testo-2); }
+.bit-dati b { font-size: 18px; color: var(--testo); }
+.traguardi { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); }
+.colori { display: flex; gap: 10px; flex-wrap: wrap; }
+.colore { width: 34px; height: 34px; border-radius: 50% !important; border: 2px solid transparent; background: var(--c); padding: 0; position: relative; overflow: hidden;
+  box-shadow: 0 0 0 1px var(--linea-forte); }
+.colore.attivo { border-color: #fff; box-shadow: 0 0 0 2px var(--c), 0 0 14px var(--c); }
+.colore.libero { background: conic-gradient(#ff4d6d, #ffb000, #33ff99, #00e5ff, #4d9fff, #b388ff, #ff4fd8, #ff4d6d); }
+.colore.libero.attivo { background: var(--c); }
+.colore input { position: absolute; inset: 0; opacity: 0; width: 100%; height: 100%; }
+.musica-dock { left: 8px; right: 8px; width: auto; bottom: calc(76px + env(safe-area-inset-bottom, 0px)); }
+.app.immersa ~ .musica-dock { bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+.musica-mini { background: var(--superficie); }
+
+/* foglio impostazioni */
+.velo { position: fixed; inset: 0; z-index: 30; background: rgba(0,0,0,.78); display: flex; align-items: flex-end; justify-content: center;
+  animation: appare .2s ease; }
+@keyframes appare { from { opacity: 0; } to { opacity: 1; } }
+.foglio { background: #000; border-top: 1px solid var(--linea-forte); width: 100%; max-width: 720px; max-height: 92%; overflow-y: auto;
+  padding-top: 8px; padding-bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+  animation: sale .3s ease; box-shadow: 0 -10px 40px rgba(var(--fosforo-rgb), .12); }
+.foglio h2 { color: var(--fosforo); text-transform: uppercase; }
+.maniglia { width: 38px; height: 4px; background: var(--linea-forte); margin: 0 auto 12px; }
+.campo { width: 100%; min-height: 44px; border: 1px solid var(--linea); background: #000; padding: 10px 12px; font-size: 16px; }
+.campo:focus { border-color: var(--fosforo); outline: none; box-shadow: 0 0 10px rgba(var(--fosforo-rgb), .25); }
+textarea.campo { min-height: 90px; font: 12px/1.4 var(--mono); resize: vertical; }
+.etichetta { font-size: 12px; color: var(--testo-2); margin: 12px 2px 6px; }
+.stato-sync { display: flex; align-items: center; gap: 8px; font-size: 13px; }
+.pallino { width: 8px; height: 8px; border-radius: 50% !important; background: var(--testo-3); flex: none; }
+.pallino.ok { background: var(--fosforo); }
+.avviso { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(90px + env(safe-area-inset-bottom, 0px)); z-index: 8600;
+  background: #000; color: var(--fosforo); border: 1px solid var(--fosforo); box-shadow: 0 0 20px rgba(var(--fosforo-rgb), .25);
+  padding: 10px 16px; font-size: 13px; font-weight: 600; animation: sale .25s ease; white-space: nowrap; max-width: calc(100% - 32px); overflow: hidden; text-overflow: ellipsis; }
+.avviso::before { content: ">> "; }
+.conferma { display: flex; gap: 8px; margin-top: 8px; }
+.passi { margin: 0; padding-left: 20px; font-size: 13px; color: var(--testo-2); }
+.passi li { margin: 4px 0; }
+.passi b { color: var(--testo); }
+@media (prefers-reduced-motion: reduce) { *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *), *::before, *::after { animation: none !important; transition: none !important; } }
+@media (min-width: 700px) { h1 { font-size: 32px; } .numero { font-size: 92px; } }
+</style>
+</head>
+<body>
+<div class="app" id="app">
+  <main id="vista"></main>
+  <nav class="schede" id="schede" aria-label="Sezioni"></nav>
+</div>
+<div id="foglio-box"></div>
+<div id="avviso-box"></div>
+
+<div id="musica-dock"></div>
+<script id="dati" type="application/json">/*__DATI__*/</script>
+<script>/*__CONFIG__*/</script>
+<script>/*__GIOCO__*/</script>
+<script>/*__MUSICA__*/</script>
+<script>
+'use strict';
+const CAT = JSON.parse(document.getElementById('dati').textContent);
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const ICONE = {
+  oggi: '<circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>',
+  quiz: '<path d="m3 17 2 2 4-4"/><path d="m3 7 2 2 4-4"/><path d="M13 6h8"/><path d="M13 12h8"/><path d="M13 18h8"/>',
+  orale: '<path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><path d="M12 19v3"/>',
+  codice: '<path d="m16 18 6-6-6-6"/><path d="m8 6-6 6 6 6"/>',
+  check: '<path d="M20 6 9 17l-5-5"/>', x: '<path d="M18 6 6 18"/><path d="m6 6 12 12"/>',
+  avanti: '<path d="m9 18 6-6-6-6"/>', indietro: '<path d="m15 18-6-6 6-6"/>',
+  ingranaggio: '<path d="M20 7h-9"/><path d="M14 17H5"/><circle cx="17" cy="17" r="3"/><circle cx="7" cy="7" r="3"/>',
+  orologio: '<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>', ripeti: '<path d="M17 2l4 4-4 4"/><path d="M3 11v-1a4 4 0 0 1 4-4h14"/><path d="M7 22l-4-4 4-4"/><path d="M21 13v1a4 4 0 0 1-4 4H3"/>',
+  occhio: '<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/>',
+  terminale: '<path d="m5 17 5-5-5-5"/><path d="M12 19h7"/>', sync: '<path d="M21 12a9 9 0 0 1-15 6.7L3 16"/><path d="M3 12a9 9 0 0 1 15-6.7L21 8"/><path d="M21 3v5h-5"/><path d="M3 21v-5h5"/>',
+  libro: '<path d="M2 4h6a4 4 0 0 1 4 4v13a3 3 0 0 0-3-3H2z"/><path d="M22 4h-6a4 4 0 0 0-4 4v13a3 3 0 0 1 3-3h7z"/>',
+  bit: '<rect x="4" y="7" width="16" height="12" rx="2"/><path d="M12 3v4"/><circle cx="12" cy="3" r="1"/><path d="M9 12h.01M15 12h.01"/><path d="M9.5 15.5h5"/><path d="M2 12v3M22 12v3"/>',
+  musica: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',
+  scarica: '<path d="M12 3v12"/><path d="m7 10 5 5 5-5"/><path d="M5 21h14"/>',
+};
+const ic = (n, c = '') => `<svg class="ic ${c}" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONE[n] || ''}</svg>`;
+const CORTI = { 1: 'OOP', 2: 'C++ base', 3: 'Puntatori', 4: 'Classi', 5: 'Template', 6: 'Complessità', 7: 'Ordinamento', 8: 'Ricorsione',
+  9: 'Ereditarietà', 10: 'Operatori', 11: 'Liste', 12: 'Pile e code', 13: 'Alberi', 14: 'Grafi' };
+const MODULI = Object.keys(CAT.moduli).map(Number).sort((a, b) => a - b);
+const titoloModulo = m => CAT.moduli[String(m)] || '';
+const nomeModulo = m => +m === 0 ? 'Simulazione d\'esame' : 'Modulo ' + m;
+const percento = (a, b) => b ? Math.round(100 * a / b) : 0;
+const oggiISO = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const mmss = s => { s = Math.max(0, Math.round(s)); return String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(s % 60).padStart(2, '0'); };
+const mescola = a => { a = a.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const campione = (l, p, k) => l.map((x, i) => [Math.pow(Math.random(), 1 / Math.max(p[i], 1e-6)), x]).sort((a, b) => b[0] - a[0]).slice(0, k).map(z => z[1]);
+
+/* ---------------------------------------------------------------- progressi */
+const VUOTO = () => ({ quiz: {}, orale: {}, esercizi: {}, prevedi: {}, simulazioni: [], attivita: {}, data_esame: '' });
+const CHIAVE = 'allenatore-prog2-progressi', CHIAVE_IMP = 'allenatore-prog2-impostazioni';
+let P = VUOTO();
+try { const l = JSON.parse(localStorage.getItem(CHIAVE) || 'null'); if (l) P = Object.assign(VUOTO(), l); } catch (e) { /* nessuna memoria locale */ }
+/* impostazioni del telefono (profilo, colore, musica): restano su questo dispositivo */
+let IMP = {};
+try { IMP = JSON.parse(localStorage.getItem(CHIAVE_IMP) || '{}') || {}; } catch (e) { IMP = {}; }
+function salvaImp(parz) { Object.assign(IMP, parz); try { localStorage.setItem(CHIAVE_IMP, JSON.stringify(IMP)); } catch (e) { /* ignorato */ } }
+const CAMPI_PROFILO = ['nome', 'data_esame', 'professore', 'corso', 'sigla', 'accento', 'nome_pet', 'obiettivo_xp'];
+const nomePet = () => (IMP.nome_pet || '').trim() || 'Bit';
+let docRif = null, salvataggio = 'locale', inScrittura = false, ancora = false, tSalva = null;
+
+/* stessa regola dell'app per PC (gioco.js): per ogni voce vince la più recente */
+function unisci(a, b) {
+  const out = Gioco.unisci(a, b);
+  out.data_esame = (b && b.data_esame) || (a && a.data_esame) || '';
+  return out;
+}
+function salva() {
+  try { localStorage.setItem(CHIAVE, JSON.stringify(P)); } catch (e) { /* ignorato */ }
+  clearTimeout(tSalva); tSalva = setTimeout(scriviCloud, 700);
+  aggiornaGioco();
+}
+async function scriviCloud() {
+  if (!docRif) return;
+  if (inScrittura) { ancora = true; return; }
+  inScrittura = true;
+  try { await docRif.set({ prog: JSON.parse(JSON.stringify(P)), aggiornato: new Date().toISOString() }); salvataggio = 'cloud'; }
+  catch (e) { if (e && (e.code === 'invalid_argument' || e.code === 'revoked' || e.code === 'not_granted')) { docRif = null; salvataggio = 'locale'; } }
+  inScrittura = false;
+  if (ancora) { ancora = false; scriviCloud(); }
+}
+async function collegaCloud() {
+  if (!window.claude || !window.claude.use) return;
+  try {
+    const [db, utente] = await Promise.all([claude.use('db'), claude.use('user')]);
+    if (!db || !utente) return;
+    const id = await utente.id();
+    if (!id) return;
+    const rif = db.doc('data/users/' + id + '/progressi');
+    const istantanea = await Promise.race([rif.get(), new Promise((_, no) => setTimeout(() => no({ code: 'lento' }), 10000))]);
+    const remoto = istantanea.exists ? (istantanea.data() || {}).prog : null;
+    docRif = rif; salvataggio = 'cloud';
+    if (remoto) P = unisci(JSON.parse(JSON.stringify(remoto)), P);
+    salva(); disegna();
+  } catch (e) { /* resta il salvataggio sul dispositivo */ }
+}
+function codiceEsporta() {
+  const profilo = Object.fromEntries(CAMPI_PROFILO.filter(k => IMP[k] !== undefined && IMP[k] !== '').map(k => [k, IMP[k]]));
+  if (P.data_esame) profilo.data_esame = P.data_esame;
+  const testo = JSON.stringify({ v: 1, prog: P, profilo });
+  return 'P2:' + btoa(unescape(encodeURIComponent(testo)));
+}
+function leggiCodice(c) {
+  c = (c || '').trim().replace(/\s+/g, '');
+  if (!c.startsWith('P2:')) throw new Error('Il codice deve iniziare con P2:');
+  const o = JSON.parse(decodeURIComponent(escape(atob(c.slice(3)))));
+  if (!o || !o.prog) throw new Error('Codice non valido');
+  return { prog: o.prog, profilo: o.profilo || {} };
+}
+
+/* ---------------------------------------------------------------- statistiche */
+function statModulo(m) {
+  const qs = CAT.quiz.filter(q => q.modulo === m), pq = P.quiz;
+  const provati = qs.filter(q => pq[q.id]), giusti = provati.filter(q => pq[q.id].ultima);
+  const os = CAT.orale.filter(o => o.modulo === m), sapute = os.filter(o => (P.orale[o.id]?.box || 0) >= 3);
+  const es = CAT.esercizi.filter(e => e.modulo === m && e.tipo === 'es'), fatti = es.filter(e => P.esercizi[e.id]?.fatto);
+  return { quiz: qs.length, provati: provati.length, giusti: giusti.length, orale: os.length, sapute: sapute.length, es: es.length, fatti: fatti.length };
+}
+function giorniAllEsame() {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(P.data_esame || '')) return null;
+  const d = new Date(P.data_esame + 'T00:00:00'), o = new Date(); o.setHours(0, 0, 0, 0);
+  return Math.round((d - o) / 86400000);
+}
+function pianoDiOggi() {
+  const cal = CAT.calendario || [], n = cal.length, g = giorniAllEsame(), giorno = n + 1 - g;
+  if (!n || g === null || g <= 0) return null;
+  if (giorno < 1) return { prima: true, tra: 1 - giorno, n };
+  const v = cal[Math.min(giorno, n) - 1];
+  return { giorno: Math.min(giorno, n), n, ...v, moduli: [...(v.argomento.match(/M(\d+)/g) || [])].map(x => +x.slice(1)) };
+}
+
+/* ---------------------------------------------------------------- evidenziatore C++ */
+const KW = new Set(('auto bool break case catch char class const const_cast continue default delete do double dynamic_cast else enum explicit false float for friend if inline int long namespace new nullptr operator override private protected public return short signed sizeof static static_cast struct switch template this throw true try typedef typeid typename unsigned using virtual void while').split(' '));
+const RE_CPP = /(\/\/[^\n]*|\/\*[\s\S]*?(?:\*\/|$))|("(?:\\.|[^"\\\n])*"?|'(?:\\.|[^'\\\n])*'?)|(^[ \t]*#[^\n]*)|(\b\d[\w.']*)|([A-Za-z_]\w*)/gm;
+function cpp(src) {
+  let out = '', ult = 0, m; RE_CPP.lastIndex = 0;
+  while ((m = RE_CPP.exec(src))) {
+    if (!m[0]) { RE_CPP.lastIndex++; continue; }
+    out += esc(src.slice(ult, m.index));
+    const t = m[0];
+    const c = m[1] ? 'c-com' : m[2] ? 'c-str' : m[3] ? 'c-pre' : m[4] ? 'c-num' : KW.has(t) ? 'c-kw' : /^[A-Z]/.test(t) ? 'c-tipo'
+      : /^\s*\(/.test(src.slice(RE_CPP.lastIndex, RE_CPP.lastIndex + 3)) ? 'c-fn' : '';
+    out += c ? '<span class="' + c + '">' + esc(t) + '</span>' : esc(t);
+    ult = RE_CPP.lastIndex;
+  }
+  return out + esc(src.slice(ult));
+}
+function evidenzia(r) { $$('pre.cpp:not(.fatto)', r).forEach(p => { p.innerHTML = cpp(p.textContent); p.classList.add('fatto'); }); }
+
+/* ---------------------------------------------------------------- navigazione */
+const SCHEDE = [['oggi', 'Oggi'], ['quiz', 'Quiz'], ['orale', 'Orale'], ['codice', 'Codice'], ['bit', 'Bit']];
+let vista = 'oggi';
+const Q = { fase: 'scelta', modo: 'allenamento', moduli: new Set(MODULI.filter(m => CAT.quiz.some(q => q.modulo === m))), num: 10 };
+const O = { filtro: 'tutti', corrente: null, mostrata: false };
+const C = { modo: 'prevedi', corrente: null, mostrato: false, aperto: null, gruppiAperti: new Set() };
+
+function disegnaSchede() {
+  $('#schede').innerHTML = SCHEDE.map(([k, t]) => '<button class="' + (k === vista ? 'attiva' : '') + '" data-a="vai" data-v="' + k + '">' + ic(k) + '<span>' + esc(k === 'bit' ? nomePet() : t) + '</span></button>').join('');
+}
+function vai(v) { vista = v; if (location.hash.slice(1) !== v) { try { history.replaceState(null, '', '#' + v); } catch (e) { location.hash = v; } } disegna(); window.scrollTo(0, 0); }
+function disegna() {
+  const immersa = (vista === 'quiz' && Q.fase === 'sessione');
+  $('#app').classList.toggle('immersa', immersa);
+  disegnaSchede();
+  ({ oggi: vistaOggi, quiz: vistaQuiz, orale: vistaOrale, codice: vistaCodice, bit: vistaBit })[vista]();
+}
+function avviso(t) { const b = $('#avviso-box'); b.innerHTML = '<div class="avviso">' + esc(t) + '</div>'; clearTimeout(avviso.t); avviso.t = setTimeout(() => { b.innerHTML = ''; }, 2200); }
+
+function anelli(vals, dim, sp, gap) {
+  const c = dim / 2; let s = '<svg viewBox="0 0 ' + dim + ' ' + dim + '" width="' + dim + '" height="' + dim + '" aria-hidden="true" style="flex:none">';
+  vals.forEach((v, i) => {
+    const r = c - sp / 2 - i * (sp + gap), C2 = 2 * Math.PI * r, p = Math.max(0, Math.min(1, v.p));
+    s += '<circle cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" style="stroke:var(--' + v.c + ')" stroke-opacity=".18" stroke-width="' + sp + '"/>';
+    s += '<circle class="arco" cx="' + c + '" cy="' + c + '" r="' + r + '" fill="none" style="stroke:var(--' + v.c + ')" stroke-width="' + sp + '" stroke-linecap="round" stroke-dasharray="' + C2 + '" stroke-dashoffset="' + (C2 * (1 - p)) + '" transform="rotate(-90 ' + c + ' ' + c + ')"/>';
+  });
+  return s + '</svg>';
+}
+
+/* ================================================================ OGGI */
+function vistaOggi() {
+  const g = giorniAllEsame(), p = pianoDiOggi();
+  const t = MODULI.reduce((a, m) => { const s = statModulo(m); for (const k in s) a[k] = (a[k] || 0) + s[k]; return a; }, {});
+  const lab = CAT.esercizi.filter(e => e.tipo === 'lab' || e.tipo === 'esame');
+  const labFatti = lab.filter(e => P.esercizi[e.id]?.fatto).length;
+  const prev = Object.values(P.prevedi).filter(x => x.ok).length;
+  const vals = [{ n: 'Quiz', c: 'accento', a: t.giusti, b: t.quiz }, { n: 'Orale', c: 'viola', a: t.sapute, b: t.orale },
+    { n: 'Esercizi', c: 'verde', a: t.fatti, b: t.es }, { n: 'Laboratori', c: 'arancio', a: labFatti, b: lab.length }];
+  const sbagliate = CAT.quiz.filter(q => P.quiz[q.id]?.ultima === false).length;
+  const data = g === null ? 'Data dell\'appello non impostata' : new Date(P.data_esame + 'T00:00:00').toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' });
+  const corso = [(IMP.corso || '').trim() || 'Programmazione 2', (IMP.professore || '').trim() && 'prof. ' + IMP.professore.trim()].filter(Boolean).join(' · ');
+  const nome = (IMP.nome || '').trim();
+  let piano = '';
+  if (p && !p.prima) piano = '<div class="piano"><div class="sopra accento">Oggi · giorno ' + p.giorno + ' di ' + p.n + '</div><h3>' + esc(p.argomento) + '</h3><div class="secondario">' + esc(p.obiettivo.charAt(0).toUpperCase() + p.obiettivo.slice(1)) + '.</div>'
+    + (p.moduli.length ? '<button class="btn primario pieno" style="margin-top:14px" data-a="quiz-piano">' + ic('quiz') + 'Quiz di oggi</button>' : '') + '</div>';
+  else if (p && p.prima) piano = '<div class="piano secondario">Il piano di ' + p.n + ' giorni parte tra ' + p.tra + ' giorni.</div>';
+  else if (g === null) piano = '<div class="piano"><button class="btn primario pieno" data-a="impostazioni">Imposta la data dell\'appello</button></div>';
+  const st = G(), pet = Gioco.pet(st, nomePet());
+  $('#vista').innerHTML = '<div class="pagina">'
+    + '<div class="testa"><div><div class="sopra">' + esc(new Date().toLocaleDateString('it-IT', { weekday: 'long', day: 'numeric', month: 'long' })) + ' · ' + esc(corso) + '</div><h1>' + (nome ? 'Ciao, ' + esc(nome) : 'Oggi') + '</h1></div>'
+    + '<button class="tondo" data-a="impostazioni" aria-label="Impostazioni e sincronizzazione">' + ic('ingranaggio') + '</button></div>'
+    + '<div class="card"><div class="eroe"><div class="numero">' + (g > 0 ? g : g === 0 ? '0' : '–') + '</div><div><div class="numero-sotto">' + (g === 1 ? 'giorno' : 'giorni') + ' all\'esame</div><div class="secondario">' + esc(data) + '</div></div></div>' + piano + '</div>'
+    + '<button class="card riga" data-a="vai" data-v="bit" style="margin-top:12px;width:100%;text-align:left;color:inherit;font:inherit">'
+    + svgPet(pet.indice, pet.umore, 84)
+    + '<span style="flex:1;min-width:0"><span class="sopra">' + esc(pet.nome) + ' · ' + esc(Gioco.UMORI[pet.umore]) + '</span><br><b style="color:var(--fosforo)">LV ' + st.livello + '</b> <span class="secondario piccolo">' + esc(st.titolo) + '</span>'
+    + '<span class="xp-barra" style="display:block;margin:8px 0 6px"><i style="width:' + percento(st.xp - st.base, st.prossimo - st.base) + '%"></i></span>'
+    + '<span class="secondario piccolo">' + st.missioni.filter(m => m.fatto).length + '/3 missioni · serie ' + st.serie + ' · oggi ' + st.xpOggi + ' XP</span></span></button>'
+    + '<div class="sezione">Il tuo allenamento</div>'
+    + '<div class="card anelli-box">' + anelli(vals.map(v => ({ p: v.b ? v.a / v.b : 0, c: v.c })), 120, 10, 4)
+    + '<div class="legenda">' + vals.map(v => '<div><div class="leg-nome"><i style="background:var(--' + v.c + ')"></i>' + v.n + '</div><div class="leg-val">' + v.a + '<span>/' + v.b + '</span></div></div>').join('') + '</div></div>'
+    + '<div class="sezione">Allenati adesso</div><div class="elenco-card">'
+    + (sbagliate ? voceMenu('ripeti', 'rosso', 'Correggi gli errori', sbagliate + (sbagliate === 1 ? ' risposta sbagliata' : ' risposte sbagliate'), 'quiz-errori') : '')
+    + voceMenu('orologio', 'blu', 'Simulazione del quiz', '30 domande in 60 minuti, soglia 18', 'quiz-esame')
+    + voceMenu('terminale', 'verde', 'Prevedi l\'output', prev + ' programmi indovinati', 'vai-prevedi')
+    + voceMenu('orale', 'viola', 'Domande d\'orale', t.sapute + ' su ' + t.orale + ' sicure', 'vai-orale')
+    + '</div>'
+    + '<div class="sezione">Sincronizzazione</div><div class="elenco-card">'
+    + voceMenu('sync', 'arancio', 'Progressi con il PC', salvataggio === 'cloud' ? 'Salvati nel tuo account. Tocca per scambiarli con l\'app' : 'Salvati su questo dispositivo. Tocca per scambiarli', 'impostazioni')
+    + '</div></div>';
+}
+function voceMenu(icona, colore, titolo, sotto, azione, extra) {
+  return '<button class="voce" data-a="' + azione + '"' + (extra || '') + '><span class="icona ' + colore + '">' + ic(icona) + '</span><span class="testo"><span class="titolo">' + esc(titolo) + '</span><br><span class="sotto">' + esc(sotto) + '</span></span>' + ic('avanti', 'freccia') + '</button>';
+}
+
+/* ================================================================ QUIZ */
+const MODI = { allenamento: ['Allenamento', 'Correzione subito, con il commento della dispensa. Le domande sbagliate tornano più spesso.'],
+  errori: ['Errori', 'Solo le domande a cui l\'ultima volta hai risposto male.'],
+  esame: ['Esame', 'Come la prova vera: 30 domande, 60 minuti, correzione alla consegna. Soglia: 18.'] };
+function poolQuiz() {
+  let p = CAT.quiz.filter(q => Q.moduli.has(q.modulo));
+  if (Q.modo === 'errori') p = p.filter(q => P.quiz[q.id]?.ultima === false);
+  return p;
+}
+function vistaQuiz() {
+  if (Q.fase === 'sessione') return vistaSessione();
+  if (Q.fase === 'esito') return vistaEsito();
+  const pool = poolQuiz(), esame = Q.modo === 'esame';
+  const n = esame ? Math.min(30, pool.length) : Math.min(Q.num, pool.length);
+  const sim = (P.simulazioni || []).slice(-5).reverse();
+  $('#vista').innerHTML = '<div class="pagina"><div class="testa"><div><div class="sopra">Prova scritta</div><h1>Quiz</h1></div></div>'
+    + '<div class="pila"><div class="segmentato">' + Object.entries(MODI).map(([k, [t]]) => '<button class="' + (k === Q.modo ? 'attivo' : '') + '" data-a="quiz-modo" data-m="' + k + '">' + t + '</button>').join('') + '</div>'
+    + '<div class="secondario piccolo" style="padding:0 4px">' + MODI[Q.modo][1] + '</div></div>'
+    + '<div class="sezione riga"><span>Argomenti</span><span class="spazio"></span><button class="btn piccolo" style="min-height:28px;background:none;padding:0" data-a="quiz-tutti">Tutti</button><button class="btn piccolo" style="min-height:28px;background:none;padding:0 0 0 12px" data-a="quiz-nessuno">Nessuno</button></div>'
+    + '<div class="chips">' + MODULI.filter(m => CAT.quiz.some(q => q.modulo === m)).map(m => '<button class="chip ' + (Q.moduli.has(m) ? 'on' : '') + '" data-a="quiz-chip" data-m="' + m + '">' + (m ? 'M' + m + ' ' + (CORTI[m] || '') : 'Simulazione') + '</button>').join('') + '</div>'
+    + (esame ? '' : '<div class="sezione">Quante domande</div><div class="segmentato">' + [5, 10, 20, 30].map(k => '<button class="' + (k === Q.num ? 'attivo' : '') + '" data-a="quiz-num" data-n="' + k + '">' + k + '</button>').join('') + '</div>')
+    + '<div style="margin-top:22px"><button class="btn primario pieno" data-a="quiz-inizia"' + (pool.length ? '' : ' disabled') + '>Inizia · ' + n + ' domande' + (esame ? ' in ' + Math.round(60 * n / 30) + ' min' : '') + '</button>'
+    + '<div class="secondario piccolo" style="text-align:center;margin-top:8px">' + pool.length + ' domande disponibili</div></div>'
+    + (sim.length ? '<div class="sezione">Le tue simulazioni</div><div class="elenco-card">' + sim.map(s => '<div class="voce"><span class="testo"><span class="titolo">' + s.giuste + ' su ' + s.totale + '</span><br><span class="sotto">' + esc(new Date(s.data + 'T00:00:00').toLocaleDateString('it-IT', { day: 'numeric', month: 'long' })) + '</span></span><span class="tag ' + (s.superato ? 'facile' : 'difficile') + '">' + (s.superato ? 'superato' : 'sotto soglia') + '</span></div>').join('') + '</div>' : '')
+    + '</div>';
+}
+function iniziaQuiz() {
+  const pool = poolQuiz(); if (!pool.length) return avviso('Nessuna domanda con questi filtri');
+  let lista;
+  if (Q.modo === 'esame') lista = mescola(pool).slice(0, 30);
+  else lista = campione(pool, pool.map(q => { const s = P.quiz[q.id]; return !s ? 3 : s.ultima === false ? 5 : 1 / (1 + (s.g || 0)); }), Math.min(Q.num, pool.length));
+  Object.assign(Q, { fase: 'sessione', lista, i: 0, risposte: {}, esame: Q.modo === 'esame', finito: false, inizio: Date.now() });
+  clearInterval(Q.timer);
+  if (Q.esame) { Q.scadenza = Date.now() + 3600000 * lista.length / 30; Q.timer = setInterval(tick, 1000); }
+  disegna(); window.scrollTo(0, 0);
+}
+function tick() {
+  const r = (Q.scadenza - Date.now()) / 1000, t = $('#timer');
+  if (t) { t.textContent = mmss(r); t.classList.toggle('urgente', r < 300); }
+  if (r <= 0) { clearInterval(Q.timer); consegna(true); }
+}
+function vistaSessione() {
+  const q = Q.lista[Q.i], n = Q.lista.length, sc = Q.risposte[Q.i];
+  const rivela = sc !== undefined && (!Q.esame || Q.finito), date = Object.keys(Q.risposte).length;
+  const opz = q.opzioni.map((o, k) => {
+    let c = '';
+    if (rivela) c = k === q.giusta ? 'giusta' : k === sc ? 'sbagliata' : 'attenuata'; else if (k === sc) c = 'scelta';
+    const segno = rivela && k === q.giusta ? ic('check') : rivela && k === sc ? ic('x') : 'ABCD'[k];
+    return '<button class="opzione ' + c + '" data-a="quiz-scegli" data-k="' + k + '"><span class="lettera">' + segno + '</span><span class="opz-testo ricco">' + o + '</span></button>';
+  }).join('');
+  let risc = '';
+  if (rivela) { const ok = sc === q.giusta; risc = '<div class="riscontro ' + (ok ? 'ok' : 'no') + '"><b class="titolo">' + (ok ? ic('check') + 'Esatto' : ic('x') + 'La risposta giusta è la ' + 'ABCD'[q.giusta]) + '</b>' + (q.commento ? '<div class="ricco">' + q.commento + '</div>' : '') + '</div>'; }
+  const dove = q.modulo === 0 ? 'Simulazione d\'esame' + (q.rif ? ' · M' + q.rif : '') : nomeModulo(q.modulo) + ' · ' + (CORTI[q.modulo] || '');
+  const ultima = Q.i === n - 1;
+  const etichetta = ultima ? (Q.finito ? 'Risultati' : Q.esame ? 'Consegna' : 'Fine') : 'Avanti';
+  $('#vista').innerHTML = '<div class="sessione"><div class="sess-testa"><button class="tondo" data-a="quiz-esci" aria-label="Esci">' + ic('x') + '</button>'
+    + '<div class="progresso"><i style="width:' + percento(Q.esame && !Q.finito ? date : Q.i + 1, n) + '%"></i></div><span class="conta">' + (Q.i + 1) + '/' + n + '</span>'
+    + (Q.esame && !Q.finito ? '<span class="timer" id="timer">' + mmss((Q.scadenza - Date.now()) / 1000) + '</span>' : '') + '</div>'
+    + '<div class="sess-corpo"><div class="sopra accento">' + esc(dove) + '</div><div class="domanda ricco">' + q.domanda + '</div><div class="opzioni">' + opz + '</div>' + risc
+    + (Q.esame ? '<div class="punti">' + Q.lista.map((x, k) => { let c = k === Q.i ? 'qui' : ''; if (Q.finito) c += Q.risposte[k] === x.giusta ? ' ok' : ' no'; else if (Q.risposte[k] !== undefined) c += ' data'; return '<button class="punto ' + c + '" data-a="quiz-vai" data-k="' + k + '">' + (k + 1) + '</button>'; }).join('') + '</div>' : '')
+    + '</div><div class="piede">'
+    + ((Q.esame || Q.finito) ? '<button class="btn stretto" data-a="quiz-prec"' + (Q.i ? '' : ' disabled') + ' aria-label="Precedente">' + ic('indietro') + '</button>' : '')
+    + (Q.esame && !Q.finito && !ultima ? '<button class="btn stretto" data-a="quiz-consegna">Consegna</button>' : '')
+    + '<button class="btn primario" data-a="quiz-succ"' + (!Q.esame && !Q.finito && sc === undefined ? ' disabled' : '') + '>' + etichetta + '</button></div></div>';
+  evidenzia($('#vista'));
+  $('.punto.qui')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+}
+function registra(q, ok) { const s = P.quiz[q.id] || (P.quiz[q.id] = { g: 0, s: 0 }); s[ok ? 'g' : 's'] = (s[ok ? 'g' : 's'] || 0) + 1; s.ultima = ok; s.data = oggiISO();
+  Gioco.registra(P, 'q'); if (ok) Gioco.registra(P, 'g'); }
+function scegli(k) {
+  if (Q.fase !== 'sessione' || Q.finito) return;
+  const q = Q.lista[Q.i];
+  if (!Q.esame) { if (Q.risposte[Q.i] !== undefined) return; Q.risposte[Q.i] = k; registra(q, k === q.giusta); salva(); }
+  else Q.risposte[Q.i] = k;
+  vistaSessione();
+  if (!Q.esame) $('.riscontro')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+function successiva() {
+  if (!Q.esame && !Q.finito && Q.risposte[Q.i] === undefined) return;
+  if (Q.i < Q.lista.length - 1) { Q.i++; vistaSessione(); window.scrollTo(0, 0); }
+  else if (Q.finito || !Q.esame) { Q.finito = true; Q.fase = 'esito'; disegna(); window.scrollTo(0, 0); }
+  else consegna();
+}
+function consegna(forza) {
+  if (!Q.esame || Q.finito) return;
+  const manca = Q.lista.length - Object.keys(Q.risposte).length;
+  if (!forza && manca && !Q.chiedi) { Q.chiedi = true; avviso('Mancano ' + manca + ' risposte: tocca di nuovo Consegna per confermare'); return; }
+  Q.chiedi = false; clearInterval(Q.timer); Q.finito = true;
+  let g = 0; Q.lista.forEach((q, i) => { const r = Q.risposte[i]; const ok = r === q.giusta; g += ok; if (r !== undefined) registra(q, ok); });
+  const tot = Q.lista.length;
+  P.simulazioni.push({ data: oggiISO(), giuste: g, totale: tot, superato: g >= Math.ceil(tot * 0.6) });
+  if (tot >= 30) Gioco.registra(P, 's');
+  Q.durata = (Date.now() - Q.inizio) / 1000;
+  salva(); Q.fase = 'esito'; disegna(); window.scrollTo(0, 0);
+}
+function vistaEsito() {
+  const tot = Q.lista.length, g = Q.lista.filter((q, i) => Q.risposte[i] === q.giusta).length, soglia = Math.ceil(tot * 0.6), sup = g >= soglia;
+  const sbagliate = Q.lista.map((q, i) => [q, i]).filter(([q, i]) => Q.risposte[i] !== q.giusta);
+  const titolo = Q.esame ? (sup ? 'Superato.' : 'Non ancora.') : (g / tot >= .8 ? 'Ottimo lavoro.' : g / tot >= .6 ? 'Buon allenamento.' : 'Continua così.');
+  $('#vista').innerHTML = '<div class="pagina esito"><div class="esito-anello">' + anelli([{ p: g / tot, c: Q.esame ? (sup ? 'verde' : 'rosso') : 'accento' }], 190, 16, 0)
+    + '<div class="esito-num"><b>' + g + '</b><span>su ' + tot + '</span></div></div><h1>' + titolo + '</h1>'
+    + '<p class="secondario">' + (Q.esame ? 'Soglia: ' + soglia + ' su ' + tot + (Q.durata ? ' · tempo ' + mmss(Q.durata) : '') : percento(g, tot) + '% di risposte giuste') + '</p>'
+    + '<div class="pila" style="margin-top:18px"><button class="btn primario pieno" data-a="quiz-nuovo">Nuovo quiz</button>'
+    + (sbagliate.length ? '<button class="btn pieno" data-a="quiz-rivedi" data-k="' + sbagliate[0][1] + '">Rivedi le risposte</button>' : '') + '</div>'
+    + (sbagliate.length ? '<div class="sezione" style="text-align:left">Da rivedere</div><div class="elenco-card" style="text-align:left">' + sbagliate.map(([q, i]) => '<button class="voce" data-a="quiz-rivedi" data-k="' + i + '"><span class="icona rosso" style="font-weight:700;font-size:13px">' + (i + 1) + '</span><span class="testo"><span class="titolo" style="display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">' + esc(q.domanda.replace(/<[^>]+>/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')) + '</span><span class="sotto">Risposta ' + (Q.risposte[i] !== undefined ? 'ABCD'[Q.risposte[i]] : 'non data') + ', giusta ' + 'ABCD'[q.giusta] + '</span></span>' + ic('avanti', 'freccia') + '</button>').join('') + '</div>' : '')
+    + '</div>';
+}
+
+/* ================================================================ ORALE */
+function poolOrale() { return O.filtro === 'tutti' ? CAT.orale : CAT.orale.filter(o => o.modulo === +O.filtro); }
+function prossimaOrale() {
+  const pool = poolOrale(); if (!pool.length) return;
+  O.corrente = campione(pool, pool.map(o => (o.id === O.corrente?.id && pool.length > 1) ? 1e-4 : Math.pow(5 - (P.orale[o.id]?.box || 0), 2)), 1)[0];
+  O.mostrata = false; vistaOrale(); window.scrollTo(0, 0);
+}
+function vistaOrale() {
+  if (!O.corrente || (O.filtro !== 'tutti' && O.corrente.modulo !== +O.filtro)) { O.corrente = null; return prossimaOrale(); }
+  const o = O.corrente, box = P.orale[o.id]?.box || 0, sicure = CAT.orale.filter(x => (P.orale[x.id]?.box || 0) >= 3).length;
+  $('#vista').innerHTML = '<div class="pagina"><div class="testa"><div><div class="sopra">Prova orale · ' + sicure + ' su ' + CAT.orale.length + ' sicure</div><h1>Orale</h1></div></div>'
+    + '<label class="sopra" for="filtro-orale" style="display:block;margin:0 4px 6px">Argomento</label><select class="scelta" id="filtro-orale" data-c="orale-filtro"><option value="tutti">Tutti i moduli</option>'
+    + MODULI.filter(m => CAT.orale.some(x => x.modulo === m)).map(m => '<option value="' + m + '"' + (String(m) === String(O.filtro) ? ' selected' : '') + '>Modulo ' + m + ' · ' + esc(CORTI[m] || '') + '</option>').join('') + '</select>'
+    + '<div class="card flash" style="margin-top:14px"><div class="riga"><span class="sopra accento">' + esc(nomeModulo(o.modulo)) + ' · ' + esc(CORTI[o.modulo] || '') + '</span><span class="spazio"></span><span class="livello" aria-label="Livello ' + box + ' di 4">' + [1, 2, 3, 4].map(i => '<i class="' + (i <= box ? 'on' : '') + '"></i>').join('') + '</span></div>'
+    + '<h2>' + o.domanda + '</h2><div class="secondario piccolo">Rispondi ad alta voce prima di guardare: una definizione, un esempio, perché serve.</div>'
+    + (O.mostrata ? '<div class="risposta ricco">' + o.risposta + '</div>' : '') + '</div>'
+    + '<div style="margin-top:14px">' + (O.mostrata
+      ? '<div class="valuta"><button class="btn r" data-a="orale-voto" data-v="0">Non<br>la sapevo</button><button class="btn a" data-a="orale-voto" data-v="1">In<br>parte</button><button class="btn v" data-a="orale-voto" data-v="2">La<br>sapevo</button></div>'
+      : '<button class="btn primario pieno" data-a="orale-mostra">' + ic('occhio') + 'Mostra la risposta</button><button class="btn pieno" style="margin-top:10px;background:none" data-a="orale-salta">Salta</button>')
+    + '</div></div>';
+  evidenzia($('#vista'));
+}
+function votaOrale(v) {
+  const o = O.corrente, s = P.orale[o.id] || (P.orale[o.id] = { box: 0, n: 0 });
+  s.box = v === 0 ? 0 : v === 1 ? Math.min(s.box || 0, 2) : Math.min(4, (s.box || 0) + 1);
+  s.n = (s.n || 0) + 1; s.data = oggiISO(); Gioco.registra(P, 'o'); salva(); prossimaOrale();
+}
+
+/* ================================================================ CODICE */
+const PREVEDI = CAT.esercizi.filter(e => (e.tipo === 'es' || e.tipo === 'pattern') && e.soluzione.files.length === 1 && e.soluzione.output
+  && e.soluzione.output.split('\n').length <= 30 && e.soluzione.files[0].contenuto.split('\n').length <= 150);
+function prossimoPrevedi() {
+  C.corrente = campione(PREVEDI, PREVEDI.map(e => { const s = P.prevedi[e.id]; return e.id === C.corrente?.id ? 1e-4 : !s ? 3 : s.ok ? 0.5 : 4; }), 1)[0];
+  C.mostrato = false; vistaCodice(); window.scrollTo(0, 0);
+}
+function vistaCodice() {
+  if (C.aperto) return vistaEsercizio();
+  const seg = '<div class="segmentato" style="margin-bottom:16px"><button class="' + (C.modo === 'prevedi' ? 'attivo' : '') + '" data-a="cod-modo" data-m="prevedi">Prevedi l\'output</button><button class="' + (C.modo === 'esercizi' ? 'attivo' : '') + '" data-a="cod-modo" data-m="esercizi">Esercizi</button></div>';
+  let corpo;
+  if (C.modo === 'prevedi') {
+    if (!C.corrente) C.corrente = campione(PREVEDI, PREVEDI.map(e => !P.prevedi[e.id] ? 3 : P.prevedi[e.id].ok ? .5 : 4), 1)[0];
+    const e = C.corrente, sol = e.soluzione, fatti = Object.values(P.prevedi).filter(x => x.ok).length;
+    corpo = '<div class="secondario piccolo" style="margin:0 4px 12px">Leggi il programma e scrivi su carta cosa stampa, poi controlla. È il tipo di domanda «Qual è l\'output?» del quiz d\'esame. Indovinati: ' + fatti + ' su ' + PREVEDI.length + '.</div>'
+      + '<div class="card"><div class="sopra accento">' + esc(nomeModulo(e.modulo)) + ' · ' + esc(e.tipo === 'es' ? 'Esercizio ' + e.numero : 'Pattern') + '</div><h3 style="margin:4px 0 12px">' + esc(e.titolo) + '</h3>'
+      + '<pre class="cpp">' + esc(sol.files[0].contenuto.replace(/\n$/, '')) + '</pre>'
+      + (sol.input ? '<div class="sopra" style="margin:4px 0 6px">Input da tastiera</div><pre class="uscita">' + esc(sol.input.replace(/\n$/, '')) + '</pre>' : '')
+      + (C.mostrato ? '<div class="sopra" style="margin:4px 0 6px">Output</div><pre class="uscita">' + esc(sol.output.replace(/\n$/, '')) + '</pre>' : '') + '</div>'
+      + '<div style="margin-top:14px">' + (C.mostrato
+        ? '<div class="valuta" style="grid-template-columns:1fr 1fr"><button class="btn r" data-a="prev-voto" data-v="0">Sbagliato</button><button class="btn v" data-a="prev-voto" data-v="1">Ci ho preso</button></div>'
+        : '<button class="btn primario pieno" data-a="prev-mostra">' + ic('terminale') + 'Mostra l\'output</button><button class="btn pieno" style="margin-top:10px;background:none" data-a="prev-salta">Un altro programma</button>') + '</div>';
+  } else {
+    corpo = '<div class="elenco-card">' + MODULI.map(m => {
+      const es = CAT.esercizi.filter(e => e.modulo === m).sort((a, b) => ({ esame: 0, lab: 1, pattern: 2, es: 3 }[a.tipo] - { esame: 0, lab: 1, pattern: 2, es: 3 }[b.tipo]) || (a.numero || 0) - (b.numero || 0));
+      const fatti = es.filter(e => P.esercizi[e.id]?.fatto).length;
+      return '<details class="gruppo" data-m="' + m + '"' + (C.gruppiAperti.has(m) ? ' open' : '') + '><summary>' + ic('avanti', 'freccia') + '<span class="testo" style="flex:1;min-width:0"><b>' + (m ? 'M' + m : '') + '</b> ' + esc(m ? (CORTI[m] || '') : 'Simulazione d\'esame') + '</span><span class="secondario piccolo">' + fatti + '/' + es.length + '</span></summary>'
+        + es.map(e => '<button class="voce" data-a="es-apri" data-id="' + e.id + '"><span class="stato ' + (P.esercizi[e.id]?.fatto ? 'fatto' : '') + '">' + (P.esercizi[e.id]?.fatto ? ic('check') : '') + '</span><span class="testo"><span class="titolo" style="font-size:15px">' + esc(e.tipo === 'es' ? e.numero + '. ' + e.titolo : e.titolo) + '</span></span><span class="tag ' + esc(e.difficolta) + '">' + esc(e.difficolta) + '</span></button>').join('') + '</details>';
+    }).join('') + '</div>';
+  }
+  $('#vista').innerHTML = '<div class="pagina"><div class="testa"><div><div class="sopra">Laboratorio</div><h1>Codice</h1></div></div>' + seg + corpo + '</div>';
+  $$('details.gruppo').forEach(d => d.addEventListener('toggle', () => { const m = +d.dataset.m; d.open ? C.gruppiAperti.add(m) : C.gruppiAperti.delete(m); }));
+  evidenzia($('#vista'));
+}
+function vistaEsercizio() {
+  const e = CAT.esercizi.find(x => x.id === C.aperto), sol = e.soluzione, fatto = !!P.esercizi[e.id]?.fatto;
+  $('#vista').innerHTML = '<div class="pagina"><button class="indietro" data-a="es-chiudi">' + ic('indietro') + 'Esercizi</button>'
+    + '<div class="sopra" style="margin-top:8px">' + esc(nomeModulo(e.modulo)) + ' · ' + esc(e.tipo === 'es' ? 'Esercizio ' + e.numero : e.tipo === 'lab' ? 'Laboratorio a step' : e.tipo === 'pattern' ? 'Pattern' : 'Laboratorio d\'esame') + '</div>'
+    + '<h2 style="margin:4px 0 14px">' + esc(e.titolo) + ' <span class="tag ' + esc(e.difficolta) + '">' + esc(e.difficolta) + '</span></h2>'
+    + '<div class="card ricco">' + e.testo + '</div>'
+    + '<div class="secondario piccolo" style="margin:10px 4px 0">Sul telefono non si compila: ragiona sulla traccia o scrivi lo schema su carta, poi confronta con la soluzione. Al PC usa l\'app per scriverlo davvero.</div>'
+    + '<button class="btn pieno ' + (fatto ? '' : 'primario') + '" style="margin-top:14px" data-a="es-fatto">' + ic('check') + (fatto ? 'Completato · tocca per annullare' : 'Segna come fatto') + '</button>'
+    + '<details class="card" style="margin-top:14px"' + (C.solAperta ? ' open' : '') + ' id="sol"><summary style="cursor:pointer;font-weight:600;color:var(--accento)">Mostra la soluzione</summary><div style="margin-top:12px">'
+    + (sol.commento ? '<div class="ricco secondario" style="margin-bottom:10px">' + sol.commento + '</div>' : '')
+    + sol.files.map(f => '<div class="sopra" style="margin:6px 0">' + esc(f.nome) + '</div><pre class="cpp">' + esc(f.contenuto.replace(/\n$/, '')) + '</pre>').join('')
+    + (sol.input ? '<div class="sopra" style="margin:6px 0">Input di prova</div><pre class="uscita">' + esc(sol.input.replace(/\n$/, '')) + '</pre>' : '')
+    + (sol.output ? '<div class="sopra" style="margin:6px 0">Output atteso</div><pre class="uscita">' + esc(sol.output.replace(/\n$/, '')) + '</pre>' : '')
+    + '</div></details></div>';
+  $('#sol').addEventListener('toggle', ev => { C.solAperta = ev.target.open; if (ev.target.open) { const s = P.esercizi[e.id] || (P.esercizi[e.id] = {}); if (!s.visto) { s.visto = true; s.data = s.data || oggiISO(); salva(); } } });
+  evidenzia($('#vista'));
+}
+
+/* ================================================================ IMPOSTAZIONI E SINCRONIZZAZIONE */
+/* ================================================================ GIOCO: XP, missioni, traguardi, Bit */
+let STATO = null, traguardiVisti = null;
+function G() { return STATO || (STATO = Gioco.calcola(P, CAT, { obiettivo: IMP.obiettivo_xp || 300 })); }
+function aggiornaGioco() {
+  const prima = STATO; STATO = null; const dopo = G();
+  if (!traguardiVisti) traguardiVisti = new Set(IMP.traguardi_visti || dopo.traguardi.filter(t => t.ok).map(t => t.id));
+  if (!prima) return;
+  const xp = dopo.xp - prima.xp;
+  if (xp > 0) { xpVolante(xp); LETTORE?.effetto('xp'); setTimeout(saltaPet, 30); }
+  const mp = prima.missioni.filter(m => m.fatto).length, md = dopo.missioni.filter(m => m.fatto).length;
+  if (md > mp) { setTimeout(() => avviso(md === 3 ? 'Tutte le missioni completate! +100 XP' : 'Missione completata: +40 XP'), 300); LETTORE?.effetto('missione'); }
+  const nuovi = dopo.traguardi.filter(t => t.ok && !traguardiVisti.has(t.id));
+  if (nuovi.length) { nuovi.forEach(t => traguardiVisti.add(t.id)); salvaImp({ traguardi_visti: [...traguardiVisti] });
+    setTimeout(() => { avviso('Traguardo: ' + nuovi.map(t => t.nome).join(', ')); LETTORE?.effetto('traguardo'); }, 1200); }
+  if (dopo.livello > prima.livello) setTimeout(() => livelloNuovo(dopo, prima), 600);
+}
+function xpVolante(n) {
+  const el = document.createElement('div'); el.className = 'xp-volante'; el.textContent = '+' + n + ' XP';
+  el.style.left = '50%'; el.style.top = '38%'; el.style.marginLeft = '-30px';
+  document.body.appendChild(el); setTimeout(() => el.remove(), 1500);
+}
+function livelloNuovo(st, prima) {
+  const pet = Gioco.pet(st, nomePet()), cambio = Gioco.pet(prima, nomePet()).indice !== pet.indice;
+  const el = document.createElement('div'); el.className = 'livello-nuovo';
+  el.innerHTML = '<div class="ln-box"><div class="ln-sopra">LIVELLO RAGGIUNTO</div><div class="ln-num">' + st.livello + '</div><div class="ln-titolo">' + esc(st.titolo) + '</div>'
+    + '<div class="evoluzione">' + (cambio ? svgPet(Gioco.pet(prima, nomePet()).indice, 'felice', 140, 'vecchio') + svgPet(pet.indice, 'euforico', 140, 'nuovo') + '<div class="lampo"></div>' : svgPet(pet.indice, 'euforico', 140)) + '</div><div class="ln-nota">'
+    + (cambio ? esc(pet.nome) + ' si è evoluto: ora è un <b>' + esc(pet.stadio) + '</b>. ' + esc(pet.descr) : esc(pet.nome) + ' è fiero di te. Prossimo livello a ' + st.prossimo + ' XP.')
+    + '</div><div class="ln-chiudi">[ TOCCA PER CONTINUARE ]</div></div>';
+  el.onclick = () => el.remove(); document.body.appendChild(el); LETTORE?.effetto('livello');
+}
+function vistaBit() {
+  const st = G(), pet = Gioco.pet(st, nomePet()), ok = st.traguardi.filter(t => t.ok).length;
+  $('#vista').innerHTML = '<div class="pagina"><div class="testa"><div><div class="sopra">Il tuo compagno di studio</div><h1>' + esc(pet.nome) + '</h1></div>'
+    + '<button class="tondo" data-a="impostazioni" aria-label="Impostazioni">' + ic('ingranaggio') + '</button></div>'
+    + '<div class="card"><div class="bit-palco">' + svgPet(pet.indice, pet.umore, 190) + '</div>'
+    + '<div class="pet-nuvola" style="margin-left:8px">' + esc(pet.frase) + '</div>'
+    + '<div class="bit-dati"><div>stadio<b>' + esc(pet.stadio) + '</b></div><div>umore<b>' + esc(Gioco.UMORI[pet.umore]) + '</b></div><div>serie<b>' + st.serie + ' gg</b></div></div>'
+    + '<div class="sopra" style="margin:14px 0 6px">Sazietà di oggi · ' + st.xpOggi + '/' + st.obiettivo + ' XP</div><div class="xp-barra cibo"><i style="width:' + percento(Math.min(st.xpOggi, st.obiettivo), st.obiettivo) + '%"></i></div>'
+    + '<div class="secondario piccolo" style="margin-top:8px">' + esc(pet.descr) + (pet.prossimo ? ' Diventa ' + esc(pet.prossimo.nome) + ' al livello ' + pet.prossimo.livello + '.' : '') + '</div></div>'
+    + '<div class="sezione">Livello ' + st.livello + ' · ' + esc(st.titolo) + '</div><div class="card"><div class="riga"><b style="font-size:32px;font-weight:200;color:var(--fosforo)">' + st.xp + '</b><span class="secondario">XP · prossimo livello a ' + st.prossimo + '</span></div>'
+    + '<div class="xp-barra" style="margin-top:8px"><i style="width:' + percento(st.xp - st.base, st.prossimo - st.base) + '%"></i></div></div>'
+    + '<div class="sezione">Missioni di oggi</div><div class="card"><div class="missioni">' + st.missioni.map(m => '<div class="missione ' + (m.fatto ? 'fatta' : '') + '"><span class="ms-casella">' + (m.fatto ? '[x]' : '[ ]') + '</span><span class="ms-testo">' + esc(m.t) + '</span><span class="ms-conta">' + m.valore + '/' + m.n + '</span></div>').join('') + '</div>'
+    + '<div class="secondario piccolo" style="margin-top:10px">40 XP a missione, 60 in più se le fai tutte. Sono le stesse dell\'app per PC.</div></div>'
+    + '<div class="sezione">Musica</div><div class="musica-mini" id="musica-mini-bit"></div>'
+    + '<div class="sezione">Traguardi · ' + ok + '/' + st.traguardi.length + '</div><div class="traguardi">' + st.traguardi.map(t => '<div class="traguardo ' + (t.ok ? 'ok' : '') + '"><div class="tg-icona">' + esc(t.icona) + '</div><div class="tg-nome">' + esc(t.nome) + '</div><div class="tg-descr">' + esc(t.descr) + '</div>'
+      + (t.prog && !t.ok ? '<div class="xp-barra sottile"><i style="width:' + percento(t.prog[0], t.prog[1]) + '%"></i></div>' : '') + '</div>').join('') + '</div></div>';
+  LETTORE?.aggiorna();
+}
+/* Bit in pixel art: colore del corpo = colore scelto; salta quando arrivano XP */
+const svgPet = (indice, umore, lato, classe) => Gioco.svgPet(indice, umore, { colore: IMP.accento || Gioco.COLORI[0][0], lato, classe: classe || '' });
+function saltaPet() { $$('.pet-svg').forEach(el => { el.classList.remove('salta'); void el.getBoundingClientRect(); el.classList.add('salta'); setTimeout(() => el.classList.remove('salta'), 800); }); }
+
+/* ================================================================ COLORE, BENVENUTO, INSTALLAZIONE */
+function applicaColore() { Gioco.applicaAccento(IMP.accento || Gioco.COLORI[0][0], true); const m = $('meta[name="theme-color"]'); if (m) m.content = '#000000'; }
+function coloriHTML() {
+  const att = (IMP.accento || Gioco.COLORI[0][0]).toLowerCase(), preset = Gioco.COLORI.some(([c]) => c === att);
+  return Gioco.COLORI.map(([c, n]) => '<button class="colore ' + (c === att ? 'attivo' : '') + '" data-a="colore" data-c="' + c + '" aria-label="' + n + '" style="--c:' + c + '"></button>').join('')
+    + '<label class="colore libero ' + (preset ? '' : 'attivo') + '" aria-label="Altro colore" style="--c:' + (preset ? '#888' : att) + '"><input type="color" id="colore-libero" value="' + (preset ? '#33ff99' : att) + '"></label>';
+}
+function collegaColori() {
+  const inp = $('#colore-libero'); if (!inp) return;
+  inp.addEventListener('input', ev => Gioco.applicaAccento(ev.target.value, true));
+  inp.addEventListener('change', ev => { salvaImp({ accento: ev.target.value.toLowerCase() }); applicaColore(); $$('.colori').forEach(c => { c.innerHTML = coloriHTML(); }); collegaColori(); });
+}
+let installa = null;
+window.addEventListener('beforeinstallprompt', ev => { ev.preventDefault(); installa = ev; });
+const installata = () => matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
+const ios = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+function istruzioniInstalla() {
+  if (installata()) return '<div class="secondario piccolo">L\'app è installata: la apri dall\'icona sulla schermata Home e funziona anche offline.</div>';
+  return (installa ? '<button class="btn primario pieno" data-a="installa">' + ic('scarica') + 'Installa l\'app</button>' : '')
+    + '<ol class="passi"><li><b>iPhone / iPad</b>: in Safari tocca Condividi (il quadrato con la freccia) → <b>Aggiungi alla schermata Home</b>.</li>'
+    + '<li><b>Android</b>: in Chrome tocca il menu ⋮ → <b>Installa app</b> (o Aggiungi a schermata Home).</li>'
+    + '<li>Da lì si apre a schermo intero, senza barra del browser, e funziona anche offline.</li></ol>';
+}
+function benvenuto() {
+  $('#foglio-box').innerHTML = '<div class="velo"><div class="foglio" role="dialog" aria-label="Benvenuto"><div class="maniglia"></div>'
+    + '<div class="sopra">Primo avvio</div><h2>Benvenuto nell\'Allenatore</h2>'
+    + '<div class="secondario piccolo" style="margin-top:6px">Quiz, orale e codice di Programmazione 2. Personalizzalo (si cambia quando vuoi). Se usi già l\'app per PC, puoi saltare tutto e incollare il codice dei progressi nelle impostazioni.</div>'
+    + '<div class="etichetta">Come ti chiami?</div><input class="campo" id="bv-nome" value="' + esc(IMP.nome || '') + '" placeholder="Il tuo nome">'
+    + '<div class="etichetta">Data dell\'appello</div><input type="date" class="campo" id="bv-data" value="' + esc(P.data_esame || '') + '">'
+    + '<div class="etichetta">Docente (facoltativo)</div><input class="campo" id="bv-prof" value="' + esc(IMP.professore || '') + '" placeholder="Cognome">'
+    + '<div class="etichetta">Colore</div><div class="colori">' + coloriHTML() + '</div>'
+    + '<div class="etichetta">Nome del tuo compagno</div><input class="campo" id="bv-pet" value="' + esc(IMP.nome_pet || '') + '" placeholder="Bit">'
+    + '<button class="btn primario pieno" style="margin-top:20px" data-a="benvenuto-ok">Iniziamo</button>'
+    + '<button class="btn pieno" style="margin-top:8px;border:0" data-a="benvenuto-sync">Ho già i progressi del PC</button></div></div>';
+  collegaColori();
+}
+
+function apriFoglio() {
+  $('#foglio-box').innerHTML = '<div class="velo" data-a="foglio-chiudi-velo"><div class="foglio" role="dialog" aria-label="Impostazioni"><div class="maniglia"></div>'
+    + '<div class="riga" style="margin-bottom:8px"><h2>Impostazioni</h2><span class="spazio"></span><button class="tondo" data-a="foglio-chiudi" aria-label="Chiudi">' + ic('x') + '</button></div>'
+    + '<div class="sezione">Profilo</div>'
+    + '<div class="etichetta">Il tuo nome</div><input class="campo" data-imp="nome" value="' + esc(IMP.nome || '') + '" placeholder="Facoltativo">'
+    + '<div class="etichetta">Data dell\'appello</div><input type="date" class="campo" id="data-esame" value="' + esc(P.data_esame || '') + '">'
+    + '<div class="etichetta">Docente</div><input class="campo" data-imp="professore" value="' + esc(IMP.professore || '') + '" placeholder="Cognome del docente">'
+    + '<div class="etichetta">Corso</div><input class="campo" data-imp="corso" value="' + esc(IMP.corso || '') + '" placeholder="Programmazione 2">'
+    + '<div class="sezione">Aspetto e ' + esc(nomePet()) + '</div>'
+    + '<div class="etichetta">Colore del terminale</div><div class="colori">' + coloriHTML() + '</div>'
+    + '<div class="etichetta">Nome del compagno</div><input class="campo" data-imp="nome_pet" value="' + esc(IMP.nome_pet || '') + '" placeholder="Bit" maxlength="16">'
+    + '<div class="etichetta">Obiettivo giornaliero</div><div class="segmentato">' + [150, 300, 500, 800].map(k => '<button class="' + ((IMP.obiettivo_xp || 300) === k ? 'attivo' : '') + '" data-a="obiettivo" data-n="' + k + '">' + k + ' XP</button>').join('') + '</div>'
+    + '<div class="sezione">Musica e suoni</div><button class="btn pieno" data-a="musica-apri">' + ic('musica') + 'Apri il lettore musicale</button>'
+    + '<div class="etichetta">Effetti sonori (XP, missioni, livelli)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.effetti !== false) === k ? 'attivo' : '') + '" data-a="effetti" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
+    + '<div class="sezione">Installa sul telefono</div><div class="card pila">' + istruzioniInstalla() + '</div>'
+    + '<div class="sezione">Dove sono salvati i progressi</div><div class="card stato-sync"><span class="pallino ' + (salvataggio === 'cloud' ? 'ok' : '') + '"></span>'
+    + (salvataggio === 'cloud' ? 'Nel tuo account claude.ai, in uno spazio privato: li ritrovi su qualsiasi dispositivo che apre questa pagina.' : 'Solo su questo dispositivo (anche offline). Usa il codice qui sotto per portarli sul PC o su un altro telefono.') + '</div>'
+    + '<div class="sezione">Dal telefono al PC</div><div class="card pila"><div class="secondario piccolo">Copia il codice e incollalo nell\'app per PC: Impostazioni → Telefono.</div>'
+    + '<textarea class="campo" id="codice-out" readonly></textarea><button class="btn primario pieno" data-a="copia">Copia il codice</button></div>'
+    + '<div class="sezione">Dal PC al telefono</div><div class="card pila"><div class="secondario piccolo">Nell\'app per PC copia il codice dei progressi, poi incollalo qui. Le due cronologie vengono unite: per ogni domanda vale il tentativo più recente.</div>'
+    + '<textarea class="campo" id="codice-in" placeholder="P2:…"></textarea><button class="btn pieno" data-a="importa">Unisci i progressi del PC</button></div>'
+    + '<div class="sezione">Ricomincia</div><div class="card" id="zona-azzera"><button class="btn pieno" style="color:var(--rosso-testo)" data-a="azzera">Azzera tutti i progressi</button></div>'
+    + '<div class="secondario piccolo" style="text-align:center;margin-top:16px">Contenuti della dispensa aggiornati al ' + esc((CAT.generato || '').slice(0, 10).split('-').reverse().join('/')) + ' · ' + CAT.quiz.length + ' quiz, ' + CAT.orale.length + ' domande d\'orale, ' + CAT.esercizi.length + ' esercizi<br>Un progetto di Giulio Casella</div>'
+    + '</div></div>';
+  $('#codice-out').value = codiceEsporta();
+  $('#data-esame').addEventListener('change', ev => { P.data_esame = ev.target.value; P.data_esame_agg = oggiISO(); salva(); });
+  $$('#foglio-box [data-imp]').forEach(inp => inp.addEventListener('input', ev => { salvaImp({ [inp.dataset.imp]: ev.target.value.trim() }); STATO = null; }));
+  collegaColori();
+}
+function chiudiFoglio() { $('#foglio-box').innerHTML = ''; disegna(); }
+
+/* ================================================================ EVENTI */
+const AZ = {
+  'vai': d => { if (vista === 'quiz' && Q.fase === 'sessione') return; vai(d.v); },
+  'impostazioni': () => apriFoglio(), 'foglio-chiudi': () => chiudiFoglio(),
+  'foglio-chiudi-velo': (d, el, ev) => { if (ev.target === el) chiudiFoglio(); },
+  'quiz-piano': () => { const p = pianoDiOggi(); Q.moduli = new Set(p.moduli); Q.modo = 'allenamento'; vista = 'quiz'; iniziaQuiz(); },
+  'quiz-errori': () => { Q.moduli = new Set(MODULI); Q.modo = 'errori'; Q.num = Math.max(Q.num, 10); vista = 'quiz'; iniziaQuiz(); },
+  'quiz-esame': () => { Q.moduli = new Set(MODULI); Q.modo = 'esame'; vista = 'quiz'; iniziaQuiz(); },
+  'vai-prevedi': () => { C.modo = 'prevedi'; C.aperto = null; vai('codice'); },
+  'vai-orale': () => vai('orale'),
+  'quiz-modo': d => { Q.modo = d.m; vistaQuiz(); },
+  'quiz-chip': d => { const m = +d.m; Q.moduli.has(m) ? Q.moduli.delete(m) : Q.moduli.add(m); vistaQuiz(); },
+  'quiz-tutti': () => { Q.moduli = new Set(MODULI); vistaQuiz(); }, 'quiz-nessuno': () => { Q.moduli = new Set(); vistaQuiz(); },
+  'quiz-num': d => { Q.num = +d.n; vistaQuiz(); }, 'quiz-inizia': () => iniziaQuiz(),
+  'quiz-scegli': d => scegli(+d.k), 'quiz-succ': () => successiva(),
+  'quiz-prec': () => { if (Q.i > 0) { Q.i--; vistaSessione(); window.scrollTo(0, 0); } },
+  'quiz-vai': d => { Q.i = +d.k; vistaSessione(); window.scrollTo(0, 0); },
+  'quiz-consegna': () => consegna(),
+  'quiz-esci': () => {
+    if (Q.finito) { Q.fase = 'esito'; return disegna(); }
+    if (Q.esame && !Q.esci) { Q.esci = true; return avviso('Tocca di nuovo per uscire: la simulazione andrà persa'); }
+    Q.esci = false; clearInterval(Q.timer); Q.fase = 'scelta'; disegna();
+  },
+  'quiz-rivedi': d => { Q.fase = 'sessione'; Q.finito = true; Q.i = +d.k; disegna(); window.scrollTo(0, 0); },
+  'quiz-nuovo': () => { Q.fase = 'scelta'; disegna(); },
+  'orale-mostra': () => { O.mostrata = true; vistaOrale(); }, 'orale-salta': () => prossimaOrale(),
+  'orale-voto': d => votaOrale(+d.v),
+  'cod-modo': d => { C.modo = d.m; vistaCodice(); },
+  'prev-mostra': () => { C.mostrato = true; vistaCodice(); $$('pre.uscita').at(-1)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
+  'prev-salta': () => prossimoPrevedi(),
+  'prev-voto': d => { const s = P.prevedi[C.corrente.id] || (P.prevedi[C.corrente.id] = { n: 0 }); s.ok = d.v === '1'; s.n = (s.n || 0) + 1; s.data = oggiISO(); if (s.ok) Gioco.registra(P, 'p'); salva(); prossimoPrevedi(); },
+  'es-apri': d => { C.aperto = d.id; C.solAperta = false; vistaCodice(); window.scrollTo(0, 0); },
+  'es-chiudi': () => { C.aperto = null; vistaCodice(); },
+  'es-fatto': () => { const s = P.esercizi[C.aperto] || (P.esercizi[C.aperto] = {}); s.fatto = !s.fatto; s.data = oggiISO();
+    if (s.fatto && !s.contato) { s.contato = true; Gioco.registra(P, 'e'); } salva(); vistaEsercizio(); },
+  'copia': () => {
+    const t = $('#codice-out'), testo = t.value;
+    const ripiego = () => { t.focus(); t.select(); avviso('Codice selezionato: copialo dal menu'); };
+    try { navigator.clipboard.writeText(testo).then(() => avviso('Codice copiato'), ripiego); } catch (e) { ripiego(); }
+  },
+  'importa': () => {
+    try {
+      const { prog: remoto, profilo } = leggiCodice($('#codice-in').value);
+      P = unisci(P, remoto);
+      // il profilo del PC riempie solo i campi ancora vuoti sul telefono
+      for (const [k, v] of Object.entries(profilo)) {
+        if (!CAMPI_PROFILO.includes(k) || !v) continue;
+        if (k === 'data_esame') { if (!P.data_esame) P.data_esame = v; } else if (!IMP[k]) salvaImp({ [k]: v });
+      }
+      if (!IMP.configurato) salvaImp({ configurato: true });
+      applicaColore(); salva(); avviso('Progressi uniti'); apriFoglio();
+    }
+    catch (e) { avviso(e.message && e.message.length < 60 ? e.message : 'Codice non valido: ricopialo per intero'); }
+  },
+  'azzera': () => { $('#zona-azzera').innerHTML = '<div class="secondario piccolo">Quiz, orale, esercizi e simulazioni ripartono da zero. Confermi?</div><div class="conferma"><button class="btn pieno" data-a="azzera-no">Annulla</button><button class="btn pieno" style="background:var(--rosso);color:#fff" data-a="azzera-si">Azzera</button></div>'; },
+  'azzera-no': () => apriFoglio(),
+  'azzera-si': () => { const d = P.data_esame; P = VUOTO(); P.data_esame = d; STATO = null; salva(); chiudiFoglio(); avviso('Progressi azzerati'); },
+  'colore': d => { salvaImp({ accento: d.c }); applicaColore(); $$('.colori').forEach(c => { c.innerHTML = coloriHTML(); }); collegaColori(); },
+  'obiettivo': (d, b) => { salvaImp({ obiettivo_xp: +d.n }); STATO = null; $$('[data-a="obiettivo"]').forEach(x => x.classList.toggle('attivo', x === b)); },
+  'effetti': (d, b) => { salvaImp({ effetti: d.v === 'true' }); $$('[data-a="effetti"]').forEach(x => x.classList.toggle('attivo', x === b)); },
+  'musica-apri': () => { $('#foglio-box').innerHTML = ''; LETTORE.apri(); },
+  'installa': async () => { if (!installa) return; installa.prompt(); try { await installa.userChoice; } catch (e) { /* annullato */ } installa = null; apriFoglio(); },
+  'benvenuto-ok': () => {
+    salvaImp({ nome: $('#bv-nome').value.trim(), professore: $('#bv-prof').value.trim(), nome_pet: $('#bv-pet').value.trim(), configurato: true });
+    if ($('#bv-data').value) P.data_esame = $('#bv-data').value;
+    salva(); $('#foglio-box').innerHTML = ''; disegna();
+  },
+  'benvenuto-sync': () => { salvaImp({ configurato: true }); apriFoglio(); setTimeout(() => $('#codice-in')?.scrollIntoView({ block: 'center' }), 100); },
+};
+document.addEventListener('click', ev => {
+  const t = ev.target.closest('[data-a]'); if (!t || t.disabled) return;
+  const f = AZ[t.dataset.a]; if (f) f(t.dataset, t, ev);
+});
+document.addEventListener('change', ev => {
+  if (ev.target.dataset.c === 'orale-filtro') { O.filtro = ev.target.value; O.corrente = null; prossimaOrale(); }
+});
+document.addEventListener('keydown', ev => {
+  if (/^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName)) return;
+  if (vista === 'quiz' && Q.fase === 'sessione') {
+    const k = { a: 0, b: 1, c: 2, d: 3, 1: 0, 2: 1, 3: 2, 4: 3 }[ev.key.toLowerCase()];
+    if (k !== undefined) return scegli(k);
+    if (ev.key === 'Enter') return successiva();
+  }
+});
+window.addEventListener('hashchange', () => { const h = location.hash.slice(1); if (SCHEDE.some(s => s[0] === h) && h !== vista && !(vista === 'quiz' && Q.fase === 'sessione')) { vista = h; disegna(); } });
+
+/* ================================================================ AVVIO */
+applicaColore();
+const LETTORE = new Musica.Lettore({ imp: () => IMP, salva: p => salvaImp(p), dock: $('#musica-dock'), avviso: t => avviso(t),
+  mini: () => $$('#musica-mini-bit') });
+document.addEventListener('keydown', ev => { if (ev.key === 'Escape') LETTORE.chiudi(); });
+const iniziale = location.hash.slice(1);
+if (SCHEDE.some(s => s[0] === iniziale)) vista = iniziale;
+G(); aggiornaGioco();
+disegna();
+collegaCloud();
+if (!IMP.configurato) benvenuto();
+if ('serviceWorker' in navigator && window.PWA && location.protocol === 'https:') navigator.serviceWorker.register('sw.js').catch(() => {});
+</script>
+</body>
+</html>

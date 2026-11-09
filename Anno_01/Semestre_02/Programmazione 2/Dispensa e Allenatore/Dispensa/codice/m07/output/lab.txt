@@ -1,0 +1,18 @@
+n = 100
+  bubble     confronti:       4845   tempo:     0.022 ms
+  insertion  confronti:       2590   tempo:     0.007 ms
+  merge      confronti:        546   tempo:     0.007 ms
+  quick      confronti:        967   tempo:     0.006 ms
+n = 1000
+  bubble     confronti:     495035   tempo:     1.497 ms
+  insertion  confronti:     233975   tempo:     0.471 ms
+  merge      confronti:       8699   tempo:     0.082 ms
+  quick      confronti:      12862   tempo:     0.069 ms
+n = 10000
+  bubble     confronti:   49990814   tempo:   168.715 ms
+  insertion  confronti:   25064257   tempo:    54.130 ms
+  merge      confronti:     120343   tempo:     1.053 ms
+  quick      confronti:     175546   tempo:     0.997 ms
+n = 100000
+  merge      confronti:    1536381   tempo:    13.681 ms
+  quick      confronti:    2326409   tempo:    11.686 ms

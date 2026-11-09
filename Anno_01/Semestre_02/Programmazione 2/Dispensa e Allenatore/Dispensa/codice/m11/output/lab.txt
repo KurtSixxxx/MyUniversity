@@ -1,0 +1,5 @@
+STEP 1-2: 1  2  3
+STEP 4: letti 5: 2x3(6)  4x5(20)  1x1(1)  3x4(12)  6x5(30)
+        tolti 3 con area in [10, 30]: 2x3(6)  1x1(1)
+STEP 5: ordinati per area: 1x2(2)  2x2(4)  5x1(5)  3x3(9)
+STEP 6: invertiti (+ uno in coda): 3x3(9)  5x1(5)  2x2(4)  1x2(2)  0.5x1(0.5)

@@ -1,0 +1,182 @@
+% =====================================================================
+%  PREAMBOLO - Dispensa Programmazione 2 (UNICT)
+%  Compilare main.tex con pdflatex (2 volte per l'indice).
+% =====================================================================
+
+% ---------- Lingua, font, codifica ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[italian]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\DisableLigatures{encoding = T1, family = tt*}   % evita che >> diventi » nel codice
+\usepackage{textcomp}
+
+% ---------- Pagina ----------
+\usepackage[a4paper,margin=2.3cm,headheight=14pt]{geometry}
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+\fancyhf{}
+\renewcommand{\chaptermark}[1]{\markboth{#1}{}}
+\fancyhead[L]{\small\nouppercase{\leftmark}}
+\fancyfoot[L]{\small Programmazione 2 -- UNICT}
+\fancyfoot[R]{\thepage}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0.55em}
+
+% ---------- Matematica ----------
+\usepackage{amsmath}
+\usepackage{amssymb}
+
+% ---------- Colori: versione LIGHT (stampa) o DARK (schermo) ----------
+% dispensa-dark.tex definisce \modalitadark prima di caricare il preambolo.
+% Trucco per il dark: si ridefiniscono "white" (= sfondo) e "black" (= testo).
+% Così tutte le miscele tipo blue!8!sfondo (8% blu + 92% "white") diventano
+% automaticamente tinte scure, e red!70!black diventa un rosso chiaro.
+\usepackage[dvipsnames,table]{xcolor}
+\ifdefined\modalitadark
+  \definecolor{sfondo}{HTML}{1E1F22}   % usa SEMPRE "sfondo" nelle tinte: x!8!sfondo
+  \definecolor{black}{HTML}{E3E3E3}    % il testo (e le miscele x!y!black) diventano chiari
+  \definecolor{codebg}{HTML}{27292E}
+  \definecolor{codekw}{HTML}{6CB6FF}
+  \definecolor{codecom}{HTML}{7EC699}
+  \definecolor{codestr}{HTML}{F0A35E}
+  \definecolor{codenum}{HTML}{7A7A7A}
+  \definecolor{stackcol}{HTML}{23384A}
+  \definecolor{heapcol}{HTML}{4A3B22}
+  \definecolor{privcol}{HTML}{4D2A2A}
+  \definecolor{pubcol}{HTML}{223F2E}
+  % il colore del testo diventa anche quello "di default" (header, footer, numeri)
+  \makeatletter
+  \AtBeginDocument{\pagecolor{sfondo}\color{black}\let\default@color\current@color}
+  \makeatother
+\else
+  \definecolor{sfondo}{RGB}{255,255,255}
+  \definecolor{codebg}{RGB}{248,248,250}
+  \definecolor{codekw}{RGB}{0,72,170}
+  \definecolor{codecom}{RGB}{0,128,64}
+  \definecolor{codestr}{RGB}{190,80,0}
+  \definecolor{codenum}{RGB}{140,140,140}
+  \definecolor{stackcol}{RGB}{214,234,248}
+  \definecolor{heapcol}{RGB}{253,235,208}
+  \definecolor{privcol}{RGB}{250,219,216}
+  \definecolor{pubcol}{RGB}{213,245,227}
+\fi
+
+% ---------- Tabelle ed elenchi ----------
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{tabularx}
+\usepackage{enumitem}
+\usepackage{needspace}   % \needspace{8cm} prima di "titoletto + figura": li tiene sulla stessa pagina
+\setlist{itemsep=0.25em,topsep=0.3em}
+
+% ---------- Codice C++ (listings) ----------
+\usepackage{listings}
+\lstdefinestyle{cpp}{
+  language=C++,
+  basicstyle=\ttfamily\small,
+  keywordstyle=\color{codekw}\bfseries,
+  commentstyle=\color{codecom}\itshape,
+  stringstyle=\color{codestr},
+  numberstyle=\tiny\color{codenum},
+  numbers=left,
+  numbersep=8pt,
+  backgroundcolor=\color{codebg},
+  frame=single,
+  rulecolor=\color{black!25!sfondo},
+  framesep=4pt,
+  xleftmargin=1.6em,
+  breaklines=true,
+  postbreak=\mbox{\textcolor{red}{$\hookrightarrow$}\space},
+  showstringspaces=false,
+  tabsize=4,
+  columns=fullflexible,
+  keepspaces=true,
+  morekeywords={constexpr,nullptr,override,string,namespace,using,cout,cin,cerr,endl,getline,stringstream},
+  literate=
+    {à}{{\`a}}1 {è}{{\`e}}1 {é}{{\'e}}1 {ì}{{\`i}}1
+    {ò}{{\`o}}1 {ù}{{\`u}}1 {È}{{\`E}}1 {°}{{\textdegree}}1
+    {À}{{\`A}}1 {É}{{\'E}}1 {Ì}{{\`I}}1 {Ò}{{\`O}}1 {Ù}{{\`U}}1
+}
+\lstset{style=cpp}
+\renewcommand{\lstlistingname}{Codice}
+% Codice inline: \cc|cin >> x|
+\newcommand{\cc}{\lstinline[basicstyle=\ttfamily\normalsize,keywordstyle=\color{codekw},postbreak={}]}
+\newcommand{\nl}{\texttt{\textbackslash n}}
+% Output REALE di un programma (file generati da verifica_codice.sh)
+\newcommand{\uscita}[1]{\lstinputlisting[language={},numbers=none,
+  backgroundcolor=\color{black!6!sfondo},basicstyle=\ttfamily\small,
+  title={\footnotesize\itshape Output reale del programma}]{#1}}
+% Input dato al programma (file codice/mNN/input/X.txt)
+\newcommand{\ingresso}[1]{\lstinputlisting[language={},numbers=none,
+  backgroundcolor=\color{yellow!8!sfondo},basicstyle=\ttfamily\small,
+  title={\footnotesize\itshape Input digitato (non compare nell'output)}]{#1}}
+% Codice da file con didascalia = percorso
+\newcommand{\codice}[1]{\lstinputlisting[caption={\texttt{\detokenize{#1}}}]{#1}}
+\newcommand{\q}[1]{\textquotedbl#1\textquotedbl}   % virgolette dritte sicure
+
+% ---------- TikZ ----------
+\usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.multipart,shapes.misc,calc,fit,backgrounds,decorations.pathreplacing,babel}
+\tikzset{
+  freccia/.style={-{Stealth[length=2.6mm]},thick},
+  frecciarossa/.style={-{Stealth[length=2.6mm]},thick,red!75!black},
+  cella/.style={draw,minimum width=1.6cm,minimum height=0.75cm,font=\ttfamily\small},
+  cellina/.style={draw,minimum width=0.75cm,minimum height=0.75cm,font=\ttfamily\small},
+  etichetta/.style={font=\footnotesize\itshape,text=black!70!sfondo},
+  zona/.style={draw,rounded corners,inner sep=8pt},
+  classe/.style={draw,rectangle split,rectangle split parts=3,
+                 rectangle split part fill={blue!15!sfondo,privcol,pubcol},
+                 text width=5.2cm,font=\ttfamily\small,align=left},
+  processo/.style={draw,rounded corners,fill=blue!8!sfondo,minimum height=0.9cm,
+                   text width=2.4cm,align=center,font=\small},
+  file/.style={draw,fill=yellow!20!sfondo,minimum height=0.9cm,
+               text width=1.9cm,align=center,font=\small\ttfamily},
+}
+
+% ---------- Box didattici (tcolorbox) ----------
+\usepackage[most]{tcolorbox}
+\tcbset{enhanced,breakable,boxrule=0.8pt,arc=2mm,coltitle=sfondo,coltext=black,
+        fonttitle=\bfseries,left=6pt,right=6pt,top=4pt,bottom=4pt}
+\newtcolorbox{analogia}[1][]{colback=blue!4!sfondo,colframe=blue!55!black,
+  title={Analogia#1}}
+\newtcolorbox{definizione}[1][]{colback=black!3!sfondo,colframe=black!65!sfondo,
+  title={Definizione#1}}
+\newtcolorbox{trappola}[1][]{colback=red!5!sfondo,colframe=red!70!black,
+  title={Trappola d'esame#1}}
+\newtcolorbox{consiglio}[1][]{colback=green!5!sfondo,colframe=green!45!black,
+  title={Tip#1}}
+\newtcolorbox{orale}[1][]{colback=violet!4!sfondo,colframe=violet!60!black,
+  title={#1}}
+\newtcolorbox{soluzione}[1][]{colback=yellow!6!sfondo,colframe=orange!70!black,
+  title={Soluzione#1}}
+\newtcolorbox{traccia}[1][]{colback=sfondo,colframe=black!80!sfondo,
+  title={Traccia#1}}
+\newtcolorbox{passopasso}[1][]{colback=cyan!4!sfondo,colframe=cyan!50!black,
+  title={Passo per passo#1}}
+\newtcolorbox{inparole}[1][]{colback=orange!5!sfondo,colframe=orange!60!black,
+  title={In parole povere#1}}
+% Laboratorio a step: \begin{step}{titolo dello step}
+\newtcolorbox[auto counter,number within=chapter,
+  number freestyle={\noexpand\arabic{\tcbcounter}}]{step}[1]{%
+  colback=black!2!sfondo,colframe=teal!60!black,
+  title={Step \thetcbcounter\ -- #1}}
+% Esercizi al PC: \begin{esercizio}{titolo}{facile|medio|difficile}
+\newtcolorbox[auto counter,number within=chapter]{esercizio}[2]{%
+  colback=sfondo,colframe=blue!45!black,
+  title={Esercizio \thetcbcounter\ -- #1\hfill\normalfont\itshape\small difficoltà: #2}}
+
+
+% ---------- Quiz a crocette ----------
+\newcounter{domanda}[chapter]
+\newenvironment{quiz}[1]{%
+  \refstepcounter{domanda}%
+  \par\medskip\noindent\textbf{Domanda \thedomanda.} #1
+  \begin{enumerate}[label=\textbf{\Alph*)},leftmargin=2.2em,itemsep=0.1em]}%
+  {\end{enumerate}}
+
+% ---------- Collegamenti (sempre per ultimo) ----------
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Programmazione 2 - Dispensa d'esame},pdfauthor={Giulio Casella}}

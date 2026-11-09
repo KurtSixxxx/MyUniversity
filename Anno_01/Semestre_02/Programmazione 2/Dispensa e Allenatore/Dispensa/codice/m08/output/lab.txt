@@ -1,0 +1,6 @@
+STEP 1: 5 4 3 2 1 | 1 2 3 4 5 
+STEP 2: somma = 37
+STEP 3: massimo = 12
+STEP 4: radar(si) osso(si) ciao(no) a(si) anna(si)
+STEP 5: lunghezza = 4, al contrario: 4 3 2 1 
+STEP 6: sommaCoda = 37, sommaCiclo = 37

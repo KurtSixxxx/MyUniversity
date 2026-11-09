@@ -1,0 +1,11 @@
+a:
+0 1 2 
+3 4 5 
+a + b:
+100 2 4 
+6 8 10 
+piccola dopo l'assegnamento:
+100 2 4 
+6 8 10 
+Errore: cella fuori dalla matrice
+Errore: dimensioni diverse

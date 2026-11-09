@@ -1,0 +1,38 @@
+=== STEP 1 ===
+Volare - Modugno (3:25)
+Azzurro - Sconosciuto (3:00)
+
+=== STEP 2-3 ===
+  + creata "Classici" (vive: 1)
+Playlist "Classici" (3 brani, 687 s):
+  1. Volare - Modugno (3:25)
+  2. Azzurro - Sconosciuto (3:00)
+  3. Caruso - Dalla (5:02)
+
+=== STEP 4 ===
+  + copiata in "Classici (copia)" (vive: 2)
+Playlist "Classici (copia)" (4 brani, 941 s):
+  1. Volare - Modugno (3:25)
+  2. Azzurro - Sconosciuto (3:00)
+  3. Caruso - Dalla (5:02)
+  4. Albachiara - Vasco (4:14)
+Playlist "Classici" (3 brani, 687 s):
+  1. Volare - Modugno (3:25)
+  2. Azzurro - Sconosciuto (3:00)
+  3. Caruso - Dalla (5:02)
+  - distrutta "Classici (copia)" (vive: 1)
+
+=== STEP 5 ===
+  + creata "Vuota" (vive: 2)
+Playlist "Vuota" (3 brani, 687 s):
+  1. Volare - Modugno (3:25)
+  2. Azzurro - Sconosciuto (3:00)
+  3. Caruso - Dalla (5:02)
+
+=== STEP 6 ===
+Playlist vive: 2
+Brano 0: Volare
+Errore: brano 9 inesistente
+Fine del main
+  - distrutta "Vuota" (vive: 1)
+  - distrutta "Classici" (vive: 0)

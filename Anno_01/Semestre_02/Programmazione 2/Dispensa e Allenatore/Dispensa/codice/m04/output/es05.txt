@@ -1,0 +1,4 @@
+B contiene p (sul bordo)?   true
+B contiene (5, 15)?         false
+B contiene piccolo?         true
+B contiene sporge?          false

@@ -1,0 +1,4 @@
+1-esimo piu' piccolo: 20
+5-esimo piu' piccolo: 50
+9-esimo piu' piccolo: 80
+valori in [33, 66]: 35 40 50 60 65 

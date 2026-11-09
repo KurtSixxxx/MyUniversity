@@ -1,0 +1,52 @@
+% Soluzioni degli esercizi del Modulo 10
+\chapter{Soluzioni -- Modulo 10 -- Sovraccaricamento degli Operatori}
+
+\textbf{Esercizio 10.1}
+\codice{codice/m10/es01.cpp}
+\uscita{codice/m10/output/es01.txt}
+
+\textbf{Esercizio 10.2} --- Memorizzare un solo numero (i secondi totali) rende la
+somma banale; la conversione in ore, minuti e secondi si fa solo nella stampa.
+\codice{codice/m10/es02.cpp}
+\uscita{codice/m10/output/es02.txt}
+
+\textbf{Esercizio 10.3} --- Gli operatori esterni non hanno bisogno di \cc|friend| se la
+classe offre getter pubblici sufficienti.
+\codice{codice/m10/es03.cpp}
+\uscita{codice/m10/output/es03.txt}
+
+\textbf{Esercizio 10.4} --- \cc|++(++c)| funziona perché il prefisso restituisce
+\cc|Contatore&|: il secondo \cc|++| agisce sullo stesso oggetto.
+\codice{codice/m10/es04.cpp}
+\uscita{codice/m10/output/es04.txt}
+
+\textbf{Esercizio 10.5} --- Il costruttore porta il segno al numeratore (\cc|5/-6|
+diventa \cc|-5/6|), così nel confronto incrociato i denominatori sono positivi e la
+disuguaglianza non si capovolge.
+\codice{codice/m10/es05.cpp}
+\uscita{codice/m10/output/es05.txt}
+
+\textbf{Esercizio 10.6}
+\codice{codice/m10/es06.cpp}
+\uscita{codice/m10/output/es06.txt}
+
+\textbf{Esercizio 10.7} --- Dopo un fallimento, \cc|clear()| e \cc|ignore()| (Modulo 2)
+saltano la riga sbagliata. \texttt{Bruno 33} viene letto correttamente come testo e
+numero, ma scartato per il valore fuori intervallo.
+\codice{codice/m10/es07.cpp}
+\ingresso{codice/m10/input/es07.txt}
+\uscita{codice/m10/output/es07.txt}
+
+\textbf{Esercizio 10.8}
+\codice{codice/m10/es08.cpp}
+\uscita{codice/m10/output/es08.txt}
+
+\textbf{Esercizio 10.9} --- \cc|+=| fa tutto il lavoro di inserimento (controllo dei
+duplicati, crescita): unione, intersezione e differenza lo riusano.
+\codice{codice/m10/es09.cpp}
+\uscita{codice/m10/output/es09.txt}
+
+\textbf{Esercizio 10.10} --- \cc|operator-| conta i giorni applicando \cc|++| finché le
+date coincidono: semplice e sicuro, anche se lento per intervalli enormi.
+\codice{codice/m10/es10.cpp}
+\uscita{codice/m10/output/es10.txt}

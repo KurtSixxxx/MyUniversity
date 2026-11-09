@@ -1,0 +1,10 @@
+Chiamata diretta sull'oggetto Moto:
+  [statico]  sono una moto
+  [dinamico] sono una moto
+Chiamata tramite Veicolo*:
+  [statico]  sono un veicolo generico
+  [dinamico] sono una moto
+Chiamata tramite Veicolo&:
+  [dinamico] sono una moto
+Chiamata su una copia di tipo Veicolo:
+  [dinamico] sono un veicolo generico

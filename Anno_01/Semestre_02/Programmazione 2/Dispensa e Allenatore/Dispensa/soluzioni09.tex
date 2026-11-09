@@ -1,0 +1,55 @@
+% Soluzioni degli esercizi del Modulo 9
+\chapter{Soluzioni -- Modulo 9 -- Ereditarietà, Polimorfismo, Classi Astratte e RTTI}
+
+\textbf{Esercizio 9.1} --- Costruttori dalla base alla derivata, distruttori al
+contrario, alla chiusura del blocco.
+\codice{codice/m09/es01.cpp}
+\uscita{codice/m09/output/es01.txt}
+
+\textbf{Esercizio 9.2} --- Le righe commentate sono quelle che non compilano.
+\codice{codice/m09/es02.cpp}
+\uscita{codice/m09/output/es02.txt}
+
+\textbf{Esercizio 9.3} --- Tramite \cc|Veicolo*| il metodo non virtuale esegue la
+versione di \cc|Veicolo|, quello virtuale la versione di \cc|Moto|. Sulla copia
+\cc|Veicolo copia = m;| anche il virtuale esegue la versione di \cc|Veicolo|: la copia
+\emph{è} un \cc|Veicolo| (slicing).
+\codice{codice/m09/es03.cpp}
+\uscita{codice/m09/output/es03.txt}
+
+\textbf{Esercizio 9.4}
+\codice{codice/m09/es04.cpp}
+\uscita{codice/m09/output/es04.txt}
+
+\textbf{Esercizio 9.5} --- \cc|Color(c)| converte l'intero letto in un valore
+dell'\cc|enum|. L'array di puntatori è dinamico perché la sua dimensione si conosce solo
+leggendo l'input: si libera prima ogni figura, poi l'array.
+\codice{codice/m09/es05.cpp}
+\ingresso{codice/m09/input/es05.txt}
+\uscita{codice/m09/output/es05.txt}
+
+\textbf{Esercizio 9.6} --- Senza \cc|virtual| il distruttore della derivata non parte e
+il suo buffer non viene liberato.
+\codice{codice/m09/es06.cpp}
+\uscita{codice/m09/output/es06.txt}
+
+\textbf{Esercizio 9.7} --- \cc|typeid(...).name()| restituisce \texttt{4Auto} con g++:
+un nome interno del compilatore, utile solo per il debug.
+\codice{codice/m09/es07.cpp}
+\uscita{codice/m09/output/es07.txt}
+
+\textbf{Esercizio 9.8} --- \cc|to_string| converte il numero in testo; \cc|c_str()|
+restituisce la stringa nel formato \cc|const char*| che \cc|what()| richiede. Il messaggio
+è salvato in un attributo, così resta valido anche dopo la fine del costruttore.
+\codice{codice/m09/es08.cpp}
+\uscita{codice/m09/output/es08.txt}
+
+\textbf{Esercizio 9.9} --- Si ordinano i \emph{puntatori}: gli oggetti restano dove
+sono nello heap, cambia solo l'ordine delle frecce.
+\codice{codice/m09/es09.cpp}
+\uscita{codice/m09/output/es09.txt}
+
+\textbf{Esercizio 9.10} --- Senza \cc|virtual| il costruttore di \cc|A| parte due volte:
+in \cc|D| ci sono due \cc|A|. Con l'ereditarietà virtuale una volta sola.
+\codice{codice/m09/es10.cpp}
+\uscita{codice/m09/output/es10.txt}

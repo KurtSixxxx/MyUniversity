@@ -1,0 +1,212 @@
+/* =====================================================================
+   Allenatore Prog2 — tema «Terminale»
+   Nero totale, fosforo verde, tutto monospazio, angoli vivi, scanline:
+   il terminale dei film di spionaggio. Si attiva con data-tema="hacker".
+   ===================================================================== */
+
+[data-tema="hacker"] {
+  color-scheme: dark;
+  --font: "Cascadia Mono", "Cascadia Code", "JetBrains Mono", Consolas, monospace;
+  --font-titoli: var(--font);
+  --mono: "Cascadia Mono", "Cascadia Code", Consolas, monospace;
+  --r-s: 0; --r-m: 0; --r-l: 0; --r-xl: 0;
+  --fosforo: #33ff99;
+  --fosforo-rgb: 51, 255, 153;
+  --fosforo-chiaro: #7dffbf;
+  --sfondo: #000000;
+  --superficie: #010603;
+  --superficie-2: #000302;
+  --barra: #000000;
+  --testo: #c9ffe2;
+  --testo-2: #5fb88a;
+  --testo-3: #2c6447;
+  --linea: rgba(51, 255, 153, .16);
+  --linea-forte: rgba(51, 255, 153, .34);
+  --riempi: rgba(51, 255, 153, .045);
+  --riempi-2: rgba(51, 255, 153, .085);
+  --seg: rgba(51, 255, 153, .05);
+  --seg-attivo: rgba(51, 255, 153, .2);
+  --accento: #33ff99;
+  --accento-2: #7dffbf;
+  --accento-tenue: rgba(51, 255, 153, .14);
+  --verde: #b6ff3b; --verde-testo: #b6ff3b; --verde-tenue: rgba(182, 255, 59, .13);
+  --rosso: #ff3b5c; --rosso-testo: #ff5c77; --rosso-tenue: rgba(255, 59, 92, .14);
+  --arancio: #ffb000; --arancio-testo: #ffc23d; --arancio-tenue: rgba(255, 176, 0, .14);
+  --viola: #00e5ff; --viola-tenue: rgba(0, 229, 255, .14);
+  --ombra: none;
+  --ombra-alta: 0 0 0 1px rgba(51, 255, 153, .3), 0 0 40px rgba(51, 255, 153, .12);
+  --bordo-card: rgba(51, 255, 153, .2);
+  --editor: #000000;
+  --editor-2: #000704;
+  --riga-attiva: rgba(51, 255, 153, .06);
+  --selezione: rgba(51, 255, 153, .3);
+  --c-kw: #00e5ff; --c-str: #ffb000; --c-com: #3a8a62; --c-num: #ff6ad5;
+  --c-pre: #b6ff3b; --c-tipo: #7dffd4; --c-std: #6fc8ff; --c-fn: #eaffef;
+  --sfocatura: rgba(0, 0, 0, .8);
+  --bagliore: 0 0 8px rgba(51, 255, 153, .45);
+}
+
+/* ---------- atmosfera: scanline, vignetta, leggero sfarfallio ---------- */
+[data-tema="hacker"] body { letter-spacing: .01em; }
+[data-tema="hacker"] body::after {
+  content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+  background:
+    repeating-linear-gradient(to bottom, rgba(0, 0, 0, 0) 0, rgba(0, 0, 0, 0) 2px, rgba(0, 0, 0, .22) 3px),
+    radial-gradient(ellipse at center, transparent 62%, rgba(0, 0, 0, .55) 100%);
+  animation: sfarfalla 7s infinite steps(1);
+}
+@keyframes sfarfalla { 0%, 96%, 100% { opacity: 1; } 97% { opacity: .82; } 98% { opacity: 1; } 99% { opacity: .9; } }
+[data-tema="hacker"] * { border-radius: 0 !important; }
+[data-tema="hacker"] .rotella { border-radius: 50% !important; border-color: rgba(var(--fosforo-rgb), .3); border-top-color: var(--fosforo); }
+[data-tema="hacker"] ::selection { background: var(--fosforo); color: #000; }
+[data-tema="hacker"] ::-webkit-scrollbar-thumb { background: rgba(var(--fosforo-rgb), .25); border: 4px solid transparent; background-clip: content-box; }
+[data-tema="hacker"] ::-webkit-scrollbar-thumb:hover { background-color: rgba(var(--fosforo-rgb), .5); }
+
+/* ---------- tipografia ---------- */
+[data-tema="hacker"] h1, [data-tema="hacker"] h2, [data-tema="hacker"] h3 {
+  font-weight: 700; letter-spacing: 0; text-transform: uppercase; color: var(--fosforo); text-shadow: var(--bagliore);
+}
+[data-tema="hacker"] h1 { font-size: 38px; }
+[data-tema="hacker"] h2 { font-size: 21px; }
+[data-tema="hacker"] h3 { font-size: 18px; }
+[data-tema="hacker"] .vista h1::after, [data-tema="hacker"] .elenco-testa h2::after {
+  content: '_'; margin-left: 4px; animation: cursore 1.05s steps(1) infinite;
+}
+@keyframes cursore { 50% { opacity: 0; } }
+[data-tema="hacker"] .sopratitolo { color: var(--testo-2); letter-spacing: .14em; }
+[data-tema="hacker"] .sopratitolo::before { content: '// '; color: var(--testo-3); }
+[data-tema="hacker"] .card-titolo { text-transform: uppercase; letter-spacing: .08em; font-size: 14px; color: var(--fosforo); }
+[data-tema="hacker"] .card-titolo::before { content: '> '; color: var(--testo-3); }
+[data-tema="hacker"] .numero, [data-tema="hacker"] .esito-numero { color: var(--fosforo); text-shadow: 0 0 22px rgba(var(--fosforo-rgb), .55); font-weight: 200; }
+[data-tema="hacker"] kbd { font-family: var(--font); background: transparent; border: 1px solid var(--linea-forte); color: var(--testo-2); }
+[data-tema="hacker"] code { color: var(--accento-2); }
+
+/* ---------- struttura ---------- */
+[data-tema="hacker"] .barra { border-right: 1px solid var(--linea); }
+[data-tema="hacker"] .avvio-logo, [data-tema="hacker"] .logo {
+  background: #000; color: var(--fosforo); border: 1px solid var(--fosforo);
+  box-shadow: 0 0 14px rgba(var(--fosforo-rgb), .35), inset 0 0 10px rgba(var(--fosforo-rgb), .2); text-shadow: var(--bagliore);
+}
+[data-tema="hacker"] .marchio-nome { text-transform: uppercase; color: var(--fosforo); text-shadow: var(--bagliore); letter-spacing: .12em; }
+[data-tema="hacker"] .marchio-sotto::before { content: '// '; }
+[data-tema="hacker"] .voce-menu { text-transform: uppercase; letter-spacing: .1em; font-size: 13px; border-left: 2px solid transparent; }
+[data-tema="hacker"] .voce-menu span::before { content: '  '; white-space: pre; }
+[data-tema="hacker"] .voce-menu.attiva { background: var(--accento-tenue); border-left-color: var(--fosforo); color: var(--fosforo); text-shadow: var(--bagliore); box-shadow: none; }
+[data-tema="hacker"] .voce-menu.attiva span::before { content: '> '; }
+[data-tema="hacker"] .app.stretta .voce-menu { border-left: 0; }
+[data-tema="hacker"] .conto-mini { border: 1px solid var(--linea); background: transparent; }
+[data-tema="hacker"] .conto-mini b { color: var(--fosforo); text-shadow: var(--bagliore); }
+[data-tema="hacker"] .elenco-es { background: #000; }
+
+/* ---------- superfici: riquadri con angoli «a mirino» ---------- */
+[data-tema="hacker"] .card, [data-tema="hacker"] .editor-card, [data-tema="hacker"] .console, [data-tema="hacker"] .traccia, [data-tema="hacker"] .flashcard {
+  border: 1px solid var(--bordo-card); box-shadow: none; position: relative;
+}
+[data-tema="hacker"] .card::before {
+  content: ''; position: absolute; inset: -1px; pointer-events: none;
+  background:
+    linear-gradient(var(--fosforo), var(--fosforo)) top left / 12px 1px no-repeat,
+    linear-gradient(var(--fosforo), var(--fosforo)) top left / 1px 12px no-repeat,
+    linear-gradient(var(--fosforo), var(--fosforo)) bottom right / 12px 1px no-repeat,
+    linear-gradient(var(--fosforo), var(--fosforo)) bottom right / 1px 12px no-repeat;
+}
+[data-tema="hacker"] .foglio { border: 1px solid var(--linea-forte); box-shadow: var(--ombra-alta); }
+[data-tema="hacker"] .foglio-sfondo { background: rgba(0, 0, 0, .78); backdrop-filter: none; }
+[data-tema="hacker"] .avviso { background: #000; color: var(--fosforo); border: 1px solid var(--fosforo); box-shadow: 0 0 20px rgba(var(--fosforo-rgb), .25); }
+[data-tema="hacker"] .avviso::before { content: '>> '; }
+
+/* ---------- controlli ---------- */
+[data-tema="hacker"] .btn { text-transform: uppercase; letter-spacing: .06em; font-size: 12.5px; font-weight: 600; }
+[data-tema="hacker"] .btn.primario { background: var(--fosforo); color: #000; box-shadow: 0 0 16px rgba(var(--fosforo-rgb), .35); }
+[data-tema="hacker"] .btn.primario:hover:not(:disabled) { background: var(--fosforo-chiaro); box-shadow: 0 0 24px rgba(var(--fosforo-rgb), .6); }
+[data-tema="hacker"] .btn.secondario { background: transparent; border: 1px solid var(--linea-forte); color: var(--testo); }
+[data-tema="hacker"] .btn.secondario:hover:not(:disabled) { background: var(--accento-tenue); border-color: var(--fosforo); color: var(--fosforo); }
+[data-tema="hacker"] .btn.fatto { color: #000; }
+[data-tema="hacker"] .btn.pericolo { color: #000; }
+[data-tema="hacker"] .btn kbd { border-color: rgba(0, 0, 0, .3); color: inherit; }
+[data-tema="hacker"] .pill { border: 1px solid var(--linea-forte); background: transparent; }
+[data-tema="hacker"] .pill.crono.attivo { color: #000; }
+[data-tema="hacker"] .segmentato { border: 1px solid var(--linea); background: transparent; }
+[data-tema="hacker"] .segmentato button { text-transform: uppercase; letter-spacing: .06em; font-size: 12px; }
+[data-tema="hacker"] .segmentato button.attivo { background: var(--accento-tenue); color: var(--fosforo); box-shadow: inset 0 -2px 0 var(--fosforo); }
+[data-tema="hacker"] .campo, [data-tema="hacker"] .cerca { background: #000; border: 1px solid var(--linea); }
+[data-tema="hacker"] .campo:focus, [data-tema="hacker"] .cerca:focus-within { border-color: var(--fosforo); box-shadow: 0 0 10px rgba(var(--fosforo-rgb), .25); }
+[data-tema="hacker"] .tag { background: transparent !important; border: 1px solid currentColor; text-transform: uppercase; font-size: 10px; letter-spacing: .08em; }
+[data-tema="hacker"] .chip { border: 1px solid var(--linea); }
+[data-tema="hacker"] .opzione { border: 1px solid var(--linea); }
+[data-tema="hacker"] .opzione:hover { border-color: var(--linea-forte); }
+[data-tema="hacker"] .opzione.scelta .lettera, [data-tema="hacker"] .opzione.giusta .lettera,
+[data-tema="hacker"] .opzione.sbagliata .lettera, [data-tema="hacker"] .punto.data, [data-tema="hacker"] .stato.fatto { color: #000; }
+[data-tema="hacker"] .voce-es.sel { box-shadow: inset 2px 0 0 var(--fosforo); }
+
+/* ---------- editor e console ---------- */
+[data-tema="hacker"] .editor-barra, [data-tema="hacker"] .console-barra { border-bottom: 1px solid var(--linea); }
+[data-tema="hacker"] .ed-numeri { color: var(--testo-3); }
+[data-tema="hacker"] .ed-testo { caret-color: var(--fosforo); }
+[data-tema="hacker"] .console-corpo { color: var(--fosforo); text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .3); }
+
+/* =====================================================================
+   INTRO
+   ===================================================================== */
+.intro {
+  position: fixed; inset: 0; z-index: 8000; background: #000; color: var(--fosforo); overflow: hidden;
+  font: 14px/1.45 "Cascadia Mono", "Cascadia Code", Consolas, monospace; cursor: default;
+  transition: opacity .7s ease, filter .7s ease;
+}
+.intro.via { opacity: 0; filter: blur(6px) brightness(2); pointer-events: none; }
+.intro canvas { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .55; }
+.intro::after {
+  content: ''; position: absolute; inset: 0; pointer-events: none;
+  background:
+    repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0, 0, 0, .28) 3px),
+    radial-gradient(ellipse at center, transparent 50%, rgba(0, 0, 0, .8) 100%);
+}
+.intro-log {
+  position: absolute; left: 48px; top: 40px; right: 48px; white-space: pre; color: color-mix(in srgb, var(--fosforo) 85%, black);
+  text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .5); font-size: 13px;
+}
+.intro-log .ok { color: var(--fosforo-chiaro, #b6ff3b); }
+.intro-log .att { color: #ffb000; }
+.intro-log .dim { color: color-mix(in srgb, var(--fosforo) 45%, black); }
+.intro-centro {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 26px; text-align: center;
+}
+.intro-banner {
+  margin: 0; white-space: pre; font: 700 clamp(9px, 1.45vw, 19px)/1 "Cascadia Mono", Consolas, monospace; letter-spacing: 0;
+  color: var(--fosforo); text-shadow: 0 0 10px rgba(var(--fosforo-rgb), .8), 0 0 40px rgba(var(--fosforo-rgb), .35);
+}
+.intro-banner.impatto { animation: impatto .9s ease-out; }
+@keyframes impatto {
+  0% { transform: scale(1.12); filter: brightness(3) blur(1px); }
+  8% { transform: scale(1) translateX(-6px); }
+  12% { transform: translateX(5px); filter: brightness(1.6); }
+  16% { transform: translateX(0); }
+  100% { filter: brightness(1); }
+}
+.intro-accesso {
+  font-size: 22px; letter-spacing: .5em; padding: 10px 26px; border: 1px solid var(--fosforo); color: #000; background: var(--fosforo);
+  box-shadow: 0 0 40px rgba(var(--fosforo-rgb), .6); opacity: 0; transform: scaleX(.2);
+  transition: opacity .2s, transform .35s cubic-bezier(.2, 1.4, .3, 1);
+}
+.intro-accesso.vis { opacity: 1; transform: none; animation: lampo 1.2s steps(1) 1; }
+@keyframes lampo { 10%, 30% { background: #000; color: var(--fosforo); } 20%, 40% { background: var(--fosforo); color: #000; } }
+.intro-motto { min-height: 3.2em; font-size: 15px; color: color-mix(in srgb, var(--fosforo) 25%, white); max-width: 760px; letter-spacing: .02em; }
+.intro-motto b { color: var(--fosforo); font-weight: 700; text-shadow: 0 0 8px rgba(var(--fosforo-rgb), .7); }
+.intro-motto .cur, .intro-invio .cur { animation: cursore 1s steps(1) infinite; }
+.intro-invio { font-size: 15px; letter-spacing: .2em; color: var(--fosforo); text-shadow: 0 0 8px rgba(var(--fosforo-rgb), .6); }
+.intro-salta {
+  position: absolute; right: 26px; bottom: 20px; color: color-mix(in srgb, var(--fosforo) 45%, black); font-size: 12px; letter-spacing: .14em; z-index: 2;
+}
+.intro-flash { position: absolute; inset: 0; background: color-mix(in srgb, var(--fosforo) 35%, white); opacity: 0; pointer-events: none; }
+.intro-flash.vai { animation: flash .6s ease-out; }
+@keyframes flash { 0% { opacity: .75; } 100% { opacity: 0; } }
+
+/* avvio (prima che l'app sappia il tema): niente logo «Apple» in modalità terminale */
+.avvio > * { animation: compari .2s .45s both; }
+@keyframes compari { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  [data-tema="hacker"] body::after { animation: none; }
+}
+[data-tema="hacker"] .marchio-sotto { white-space: nowrap; font-size: 11px; }
+[data-tema="hacker"] .marchio .logo { flex: none; }

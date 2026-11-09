@@ -1,0 +1,10 @@
+0 1 1 0 0    grado(0) = 2
+1 0 1 0 0    grado(1) = 2
+1 1 0 1 0    grado(2) = 3
+0 0 1 0 1    grado(3) = 2
+0 0 0 1 0    grado(4) = 1
+Archi: 5
+0 e 2 adiacenti? si
+0 e 4 adiacenti? no
+Completo? no
+Dopo aver aggiunto tutti gli archi: completo? si, archi = 10 (= 5*4/2)

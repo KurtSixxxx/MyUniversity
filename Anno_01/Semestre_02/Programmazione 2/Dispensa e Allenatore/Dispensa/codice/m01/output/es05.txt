@@ -1,0 +1,4 @@
+Accensione 1: riuscita
+Accensione 2: riuscita
+Accensione 3: fallita
+Lampadina: BRUCIATA (accensioni: 3/2)

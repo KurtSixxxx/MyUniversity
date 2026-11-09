@@ -1,0 +1,4 @@
+Programmazione
+programmazione
+uguali
+errore: indice fuori dalla stringa

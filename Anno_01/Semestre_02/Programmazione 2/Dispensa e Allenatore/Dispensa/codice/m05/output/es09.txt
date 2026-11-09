@@ -1,0 +1,5 @@
+int:    true
+0.1+0.2 == 0.3 con l'operatore ==: false
+double: true
+indirizzi uguali? false
+const char*: true

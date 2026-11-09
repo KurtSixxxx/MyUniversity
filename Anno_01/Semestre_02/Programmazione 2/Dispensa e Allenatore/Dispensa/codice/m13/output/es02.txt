@@ -1,0 +1,1 @@
+nodi 9, foglie 4, interni 5, somma 66

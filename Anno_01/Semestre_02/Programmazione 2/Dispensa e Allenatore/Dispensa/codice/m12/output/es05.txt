@@ -1,0 +1,4 @@
+"Anna": palindroma
+"I topi non avevano nipoti": palindroma
+"Programmazione": no
+"Ai lati d'Italia": palindroma
