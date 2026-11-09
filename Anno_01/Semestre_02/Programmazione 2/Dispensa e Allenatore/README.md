@@ -1,58 +1,179 @@
-# Programmazione 2 — Dispensa e Allenatore
+<p align="center">
+  <img src="immagini/copertina.png" alt="Allenatore Prog2 su PC e telefono" width="100%">
+</p>
 
-Kit completo per preparare l'esame di **Programmazione 2** (C++, OOP e strutture dati dinamiche) dell'Università di Catania: una dispensa di circa 300 pagine e un'app per allenarsi su PC e telefono.
+<h1 align="center">Dispensa &amp; Allenatore Prog2</h1>
 
-| | |
-|---|---|
-| **Dispensa** | 14 moduli, dalle classi ai grafi. Ogni modulo ha teoria con analogie, disegni della memoria, codice commentato, trappole d'esame, ~10 quiz a crocette, un laboratorio a step in stile esame, domande d'orale con risposta modello e 10 esercizi al PC. In appendice: piano di studio, simulazione d'esame completa, formulario, glossario, strategie per le tre prove. |
-| **Soluzioni** | Volume separato con le soluzioni compilate ed eseguite di tutti gli esercizi. |
-| **Allenatore (Windows)** | Quiz con simulazione d'esame (30 domande in 60 minuti), orale a flashcard, editor C++ che compila con `g++ -Wall -Wextra` e confronta l'output con la soluzione. Legge i contenuti direttamente dalla dispensa. |
-| **Allenatore (telefono)** | Android e iPhone, si installa dal browser e funziona offline: quiz, orale, «Prevedi l'output», esercizi con soluzione. |
-| **Bit** | Il compagno di studio: XP, livelli, missioni giornaliere, serie di giorni, 25 traguardi. Bit cresce con te (da uovo a Gigabyte). |
-| **Musica** | Colonna sonora originale generata dal vivo, oppure la tua playlist Spotify o YouTube. |
+<p align="center">
+  <b>Tutto quello che serve per superare Programmazione 2 all'Università di Catania.</b><br>
+  Una dispensa da 295 pagine che spiega, un'app che ti allena, un compagno che cresce con te.
+</p>
 
-Nel codice di laboratorio **non** si usa la STL: liste, pile, code, alberi e grafi sono scritti da zero con `new`/`delete`, come richiesto all'esame.
+<p align="center">
+  <a href="https://github.com/KurtSixxxx/MyUniversity/releases"><img alt="Scarica per Windows" src="https://img.shields.io/badge/Windows-Scarica_l'app-33ff99?style=for-the-badge&logo=windows&logoColor=black&labelColor=0b1a12"></a>
+  <a href="https://kurtsixxxx.github.io/MyUniversity/"><img alt="Apri sul telefono" src="https://img.shields.io/badge/Telefono-Apri_l'app-33ff99?style=for-the-badge&logo=android&logoColor=black&labelColor=0b1a12"></a>
+  <a href="Dispensa/dispensa-dark.pdf"><img alt="Leggi la dispensa" src="https://img.shields.io/badge/PDF-Leggi_la_dispensa-33ff99?style=for-the-badge&logo=latex&logoColor=black&labelColor=0b1a12"></a>
+</p>
 
-## Scaricare
+<p align="center">
+  <img alt="14 moduli" src="https://img.shields.io/badge/moduli-14-0b1a12?labelColor=33ff99">
+  <img alt="165 quiz" src="https://img.shields.io/badge/quiz-165-0b1a12?labelColor=33ff99">
+  <img alt="71 domande d'orale" src="https://img.shields.io/badge/orale-71_domande-0b1a12?labelColor=33ff99">
+  <img alt="169 esercizi" src="https://img.shields.io/badge/esercizi-169-0b1a12?labelColor=33ff99">
+  <img alt="Senza STL" src="https://img.shields.io/badge/C%2B%2B-senza_STL-0b1a12?labelColor=33ff99">
+  <img alt="Licenza" src="https://img.shields.io/badge/licenza-CC_BY--NC--SA_4.0-0b1a12?labelColor=33ff99">
+</p>
 
-- **Dispensa**: [`Dispensa/dispensa-light.pdf`](Dispensa/dispensa-light.pdf) (da stampare) o [`Dispensa/dispensa-dark.pdf`](Dispensa/dispensa-dark.pdf) (da schermo); soluzioni in [`Dispensa/soluzioni-light.pdf`](Dispensa/soluzioni-light.pdf) / [`soluzioni-dark.pdf`](Dispensa/soluzioni-dark.pdf).
-- **App per Windows**: `Allenatore Prog2.exe` nelle [Releases](https://github.com/KurtSixxxx/MyUniversity/releases) del repository. Mettilo accanto alla cartella `Dispensa`.
-- **App per telefono**: https://kurtsixxxx.github.io/MyUniversity/ — aprila dal telefono e aggiungila alla schermata Home.
+---
 
-Istruzioni complete (installazione, compilatore `g++`, telefono, sincronizzazione, problemi frequenti) nel capitolo **«Prima di iniziare»** della dispensa.
+## L'esame in tre prove, il kit in tre pezzi
 
-### In breve
+L'esame ha un **quiz a crocette** a sbarramento, una **prova di laboratorio** al PC e un **orale**. Leggere non basta: bisogna allenarsi su tutte e tre. Il kit è fatto apposta.
 
-1. Scarica dispensa ed eseguibile; installa `g++` con [MSYS2](https://www.msys2.org) (`pacman -S mingw-w64-ucrt-x86_64-gcc`, poi aggiungi `C:\msys64\ucrt64\bin` al `Path`).
-2. Avvia l'Allenatore: al primo avvio scegli nome, data dell'appello, docente, colore e il nome del tuo compagno.
-3. Ogni giorno: teoria sulla dispensa → quiz e codice nell'app → orale ad alta voce. Nei tempi morti, il telefono.
-4. Telefono — **iPhone**: Safari → Condividi → *Aggiungi alla schermata Home*. **Android**: Chrome → ⋮ → *Installa app*.
-5. PC e telefono si sincronizzano con un codice `P2:` da copiare e incollare (Impostazioni → Telefono). Nessun account, nessun server.
+| | Cosa fa | Per quale prova |
+|:--|:--|:--|
+| 📘 **La dispensa** | 14 moduli, dalle classi ai grafi. Teoria con analogie, disegni della memoria, codice commentato, trappole d'esame. Volume separato con tutte le soluzioni. | tutte |
+| 💻 **L'Allenatore per PC** | Quiz con simulazione d'esame cronometrata, orale a flashcard, editor C++ che compila con `g++ -Wall -Wextra` come in laboratorio e confronta il tuo output con la soluzione. | quiz · laboratorio · orale |
+| 📱 **L'Allenatore sul telefono** | Quiz, orale e «Prevedi l'output» nei tempi morti. Android e iPhone, si installa dal browser, funziona offline. | quiz · orale |
 
-## Struttura del repository
+E sopra tutto **Bit**, il compagno di studio che si nutre dei tuoi XP.
 
-```
-Dispensa/      sorgenti LaTeX, PDF e codice/ (mNN/: pattern, lab, es01..es10, input, output)
-Allenatore/    sorgenti dell'app (Python + pywebview, interfaccia HTML/CSS/JS in web/)
-docs/          versione per telefono (pagina unica, PWA), pubblicata con GitHub Pages
-```
+---
+
+## Una giornata con l'Allenatore
+
+<p align="center"><img src="immagini/pc-oggi.png" alt="Schermata Oggi" width="88%"></p>
+
+**Oggi** ti dice quanti giorni mancano all'appello, cosa studiare secondo il piano, le tre missioni del giorno e dove stai sbagliando. Niente da decidere: apri e inizi.
+
+<table>
+<tr>
+<td width="50%"><img src="immagini/pc-quiz.png" alt="Quiz"></td>
+<td width="50%"><img src="immagini/pc-codice.png" alt="Codice"></td>
+</tr>
+<tr>
+<td><b>Quiz a crocette.</b> Allenamento con correzione immediata (le domande sbagliate tornano più spesso) oppure simulazione d'esame: 30 domande, 60 minuti, soglia 18. Si risponde anche da tastiera.</td>
+<td><b>Codice.</b> Pattern da riscrivere a memoria, laboratorio a step e 10 esercizi per modulo. <code>Ctrl+Invio</code> compila ed esegue, gli errori sono segnati riga per riga, <i>Confronta</i> mette il tuo output accanto a quello della soluzione. Anche in VS Code.</td>
+</tr>
+</table>
+
+**Orale.** Le domande della dispensa come flashcard: rispondi ad alta voce con il cronometro, poi guardi la risposta modello e ti valuti. Quelle che non sai tornano più spesso (ripetizione distanziata).
+
+---
+
+## Bit, il tuo compagno di studio
+
+<p align="center"><img src="immagini/bit.png" alt="Le evoluzioni di Bit" width="100%"></p>
+
+Bit nasce da un uovo e si evolve con il tuo livello: **Bit → Byte → Kilobyte → Megabyte → Gigabyte**, ogni volta con una forma nuova e un lampo di evoluzione. Prende il colore che scegli, respira, sbatte le palpebre, salta quando guadagni XP. Se non studi per due giorni gli brontola lo stomaco, dopo quattro si addormenta.
+
+<table>
+<tr>
+<td width="55%"><img src="immagini/pc-bit.png" alt="Scheda di Bit"></td>
+<td>
+
+- ⚡ **XP** per ogni risposta, esercizio, laboratorio e simulazione
+- 🏆 **Livelli** con titoli, da *Hello World* a *Leggenda di Prog2*
+- 🎯 **3 missioni al giorno**, uguali su PC e telefono
+- 🔥 **Serie** di giorni di studio consecutivi
+- 🏅 **25 traguardi** da sbloccare
+
+I punti sono calcolati dai progressi veri: non si «farmano» ripetendo la stessa domanda.
+
+</td>
+</tr>
+</table>
+
+---
+
+## Sul telefono, in tasca
+
+<p align="center"><img src="immagini/telefono.png" alt="Allenatore sul telefono" width="100%"></p>
+
+Apri **[kurtsixxxx.github.io/MyUniversity](https://kurtsixxxx.github.io/MyUniversity/)** e installala:
+
+- **iPhone**: Safari → Condividi → *Aggiungi alla schermata Home*
+- **Android**: Chrome → ⋮ → *Installa app*
+
+Funziona offline. PC e telefono si sincronizzano con un codice da copiare e incollare: nessun account, nessun server, i tuoi dati restano tuoi.
+
+---
+
+## Fallo tuo
+
+<table>
+<tr>
+<td width="50%"><img src="immagini/pc-ambra.png" alt="Tema ambra"></td>
+<td width="50%"><img src="immagini/pc-musica.png" alt="Lettore musicale"></td>
+</tr>
+<tr>
+<td><b>Colori e profilo.</b> Il terminale verde fosforo diventa ambra, ciano, magenta o il colore che vuoi. Nome, data dell'appello, docente, corso e nome del compagno.</td>
+<td><b>Musica per studiare.</b> Una colonna sonora originale (lo-fi, synthwave, ambient) generata dal vivo, oppure la tua playlist <b>Spotify</b> o <b>YouTube</b>. <code>Ctrl+M</code> per il silenzio.</td>
+</tr>
+</table>
+
+---
+
+## La dispensa
+
+<p align="center"><img src="immagini/dispensa.png" alt="Pagine della dispensa" width="100%"></p>
+
+Ogni modulo ha sempre le stesse otto sezioni: **teoria e analogie**, **disegni della memoria**, **pattern di codice**, **trappole d'esame**, **quiz**, **laboratorio a step in stile esame**, **domande d'orale con risposta modello**, **10 esercizi al PC**. Tutto il codice è compilato ed eseguito davvero, e l'output stampato è quello reale. Nel codice di laboratorio la STL non si usa: liste, pile, code, alberi e grafi sono scritti da zero con `new` e `delete`, come all'esame.
+
+In appendice: piano di studio, **simulazione d'esame completa**, formulario, glossario e strategie per le tre prove.
+
+| Modulo | | Modulo | |
+|:--|:--|:--|:--|
+| 1 | OOP e information hiding | 8 | Ricorsione |
+| 2 | C++: I/O, namespace, scope | 9 | Ereditarietà, polimorfismo, RTTI |
+| 3 | Puntatori, reference, stack e heap | 10 | Overloading degli operatori |
+| 4 | Classi, costruttori, Regola dei Tre | 11 | Liste concatenate |
+| 5 | Template | 12 | Pile e code |
+| 6 | Complessità computazionale | 13 | Alberi e BST |
+| 7 | Ordinamento e ricerca | 14 | Grafi, BFS e DFS |
+
+📄 [Dispensa (scura)](Dispensa/dispensa-dark.pdf) · [Dispensa (da stampare)](Dispensa/dispensa-light.pdf) · [Soluzioni (scure)](Dispensa/soluzioni-dark.pdf) · [Soluzioni (da stampare)](Dispensa/soluzioni-light.pdf)
+
+---
+
+## Inizia in 3 minuti
+
+1. **Scarica** la dispensa e [`Allenatore Prog2.exe`](https://github.com/KurtSixxxx/MyUniversity/releases); metti l'exe accanto alla cartella `Dispensa`.
+2. **Installa g++** con [MSYS2](https://www.msys2.org): `pacman -S mingw-w64-ucrt-x86_64-gcc`, poi aggiungi `C:\msys64\ucrt64\bin` al `Path`.
+3. **Avvia** l'Allenatore: nome, appello, colore, nome del compagno. Fatto.
+
+La guida completa (installazione, uso insieme alla dispensa, telefono, sincronizzazione, problemi frequenti) è il capitolo **«Prima di iniziare»** della dispensa.
+
+<details>
+<summary><b>Domande frequenti</b></summary>
+
+- **Windows dice «Windows ha protetto il PC».** È normale per i programmi non firmati: *Ulteriori informazioni → Esegui comunque*.
+- **«Non trovo il compilatore g++».** Controlla il `Path` e riavvia l'app (il `Path` si legge solo all'avvio).
+- **Spotify suona solo 30 secondi.** Premi *Accedi a Spotify* nel lettore e accedi con email e password.
+- **Uso Mac o Linux.** La versione per telefono funziona in qualunque browser; l'app per PC parte anche dai sorgenti con `python app.py` (serve `pip install pywebview`).
+- **Dove sono i miei progressi?** Sul PC in `%APPDATA%\Allenatore Prog2`, sul telefono nella memoria del browser. Il codice `P2:` è anche un backup.
+
+</details>
+
+---
 
 ## Contribuire
 
-Errori nella dispensa, domande ambigue, esercizi che non compilano: apri una *issue* o una *pull request*.
+Hai trovato un errore, una domanda ambigua o un esercizio che non compila? Apri una *issue* o una *pull request*.
 
-- **Dispensa**: modifica i `.tex` in `Dispensa/`; i programmi in `Dispensa/codice/` vanno compilati ed eseguiti con `bash verifica_codice.sh mNN` (l'output nella dispensa è sempre quello reale). PDF: `compila.bat` o `bash build.sh` (serve MiKTeX o TeX Live).
-- **App**: `cd Allenatore`, `python -m venv .ambiente`, `.ambiente\Scripts\pip install -r requirements.txt`, poi `.ambiente\Scripts\python app.py`. Eseguibile: `crea_app.bat --pubblica`. Versione per telefono: `.ambiente\Scripts\python mobile\crea_mobile.py --pubblica`. Tutto insieme: `prepara_pubblicazione.py`.
-- Quiz, domande d'orale ed esercizi dell'app sono letti dalla dispensa: per aggiungerne uno basta scriverlo nel modulo, con gli ambienti `quiz`, `orale`, `esercizio`.
+- **Dispensa**: sorgenti LaTeX in `Dispensa/`. Il codice in `Dispensa/codice/` si verifica con `bash verifica_codice.sh mNN`; i PDF si ricompilano con `compila.bat`.
+- **App**: sorgenti in `Allenatore/` (Python + pywebview, interfaccia HTML/CSS/JS). `pip install -r requirements.txt`, poi `python app.py`.
+- Quiz, domande d'orale ed esercizi dell'app sono **letti direttamente dalla dispensa**: per aggiungerne uno basta scriverlo nel modulo.
 
-## Licenza
+```
+Dispensa/      sorgenti LaTeX, PDF e codice/ (mNN/: pattern, lab, es01..es10, input, output)
+Allenatore/    sorgenti dell'app per PC e del generatore della versione per telefono
+docs/          versione per telefono, pubblicata su GitHub Pages
+```
 
-Come tutto il repository: Creative Commons BY-NC-SA 4.0.
+---
 
-## Avvertenze
-
-Materiale di studio scritto da studenti, non ufficiale: in caso di dubbio valgono le slide e le indicazioni del docente. Le regole d'esame riportate (quiz a sbarramento, laboratorio, orale) vanno sempre verificate sulla pagina del corso.
-
-## Crediti
-
-Dispensa e Allenatore Prog2 sono un progetto di **Giulio Casella**, realizzato con l'aiuto di Claude (Anthropic).
+<p align="center">
+  Un progetto di <b>Giulio Casella</b>, realizzato con l'aiuto di Claude (Anthropic).<br>
+  Licenza <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.it">CC BY-NC-SA 4.0</a> · materiale non ufficiale, scritto da studenti per studenti: in caso di dubbio valgono le indicazioni del docente.
+</p>
