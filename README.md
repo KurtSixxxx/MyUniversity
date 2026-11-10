@@ -2,7 +2,37 @@
 
 Repository di appunti, dispense ed esercizi organizzati per il corso di laurea in Informatica, suddivisi per anni e semestri.
 
+---
+
+## ⭐ In evidenza: Dispensa &amp; Allenatore Prog2
+
+<p align="center">
+  <a href="./Anno_01/Semestre_02/Programmazione%202/Dispensa%20e%20Allenatore"><img src="./Anno_01/Semestre_02/Programmazione%202/Dispensa%20e%20Allenatore/immagini/copertina.png" alt="Allenatore Prog2 su PC e telefono" width="100%"></a>
+</p>
+
+<p align="center">
+  <b>Devi passare Programmazione 2? Non studiare e basta: allenati.</b><br>
+  Una dispensa da 295 pagine che spiega tutto da zero, un'app per PC e telefono che ti fa esercitare sulle tre prove d'esame, e <b>Bit</b>, un compagno di studio che cresce insieme a te.
+</p>
+
+<p align="center">
+  <a href="https://github.com/KurtSixxxx/MyUniversity/releases/latest"><img alt="Scarica per Windows" src="https://img.shields.io/badge/Windows-Scarica_l'app-33ff99?style=for-the-badge&logo=windows&logoColor=black&labelColor=0b1a12"></a>
+  <a href="https://kurtsixxxx.github.io/MyUniversity/"><img alt="Apri sul telefono" src="https://img.shields.io/badge/Telefono-Apri_l'app-33ff99?style=for-the-badge&logo=android&logoColor=black&labelColor=0b1a12"></a>
+  <a href="./Anno_01/Semestre_02/Programmazione%202/Dispensa%20e%20Allenatore"><img alt="Scopri il progetto" src="https://img.shields.io/badge/Progetto-Scopri_di_più-33ff99?style=for-the-badge&logo=github&logoColor=black&labelColor=0b1a12"></a>
+</p>
+
+*   📘 **14 moduli**, dalle classi ai grafi: analogie, disegni della memoria, codice C++ commentato (senza STL, come vuole il corso) e le trappole tipiche d'esame.
+*   ✅ **165 quiz** con simulazione cronometrata (30 domande, 60 minuti, soglia 18), proprio come la prova a crocette.
+*   💻 **169 esercizi** da scrivere e compilare con `g++ -Wall -Wextra`, con il confronto automatico tra il tuo output e quello della soluzione.
+*   🎤 **71 domande d'orale** come flashcard, con risposta modello e ripetizione distanziata.
+*   📱 **Sul telefono** (Android e iPhone) si installa dal browser e funziona anche offline: quiz e orale nei tempi morti.
+
+Gratis, open source, fatto da uno studente per gli studenti. Se ti è utile, lascia una ⭐ alla repository!
+
+---
+
 ## Accesso Rapido
+*   [⭐ Dispensa & Allenatore Prog2](./Anno_01/Semestre_02/Programmazione%202/Dispensa%20e%20Allenatore)
 *   [Guida per il primo anno](./GUIDA_PRIMO_ANNO.md)
 *   [Primo Anno](./Anno_01)
 *   [Secondo Anno](./Anno_02)
