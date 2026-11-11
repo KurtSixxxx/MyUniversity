@@ -205,7 +205,8 @@
       if (c.state !== 'running') c.resume().catch(() => {});
       const t = c.currentTime + .02, g = c.createGain(); g.connect(c.destination);
       const vol = Math.max(.05, this.volume / 100) * .22;
-      const note = { xp: ['A5', 'E6'], livello: ['D5', 'F5', 'A5', 'D6', 'F6', 'A6'], traguardo: ['A5', 'C6', 'E6', 'A6'], missione: ['E5', 'A5', 'C#6'] }[tipo] || ['A5'];
+      const note = { xp: ['A5', 'E6'], livello: ['D5', 'F5', 'A5', 'D6', 'F6', 'A6'], traguardo: ['A5', 'C6', 'E6', 'A6'], missione: ['E5', 'A5', 'C#6'],
+        errore: ['D#3', 'C3'], combo: ['C6', 'E6', 'G6', 'C7'] }[tipo] || ['A5'];
       const passo = tipo === 'xp' ? .06 : .09;
       note.forEach((n, i) => {
         const o = c.createOscillator(), e = c.createGain(); o.type = tipo === 'xp' ? 'triangle' : 'square';

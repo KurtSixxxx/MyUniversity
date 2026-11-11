@@ -710,7 +710,7 @@ textarea.campo.area { width: 100%; min-height: 70px; height: auto; padding: 10px
   .lavoro { padding-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *), *::before, *::after { animation: none !important; transition: none !important; }
+  *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *):not(.compagno):not(.compagno *), *::before, *::after { animation: none !important; transition: none !important; }
 }
 
 /* =====================================================================

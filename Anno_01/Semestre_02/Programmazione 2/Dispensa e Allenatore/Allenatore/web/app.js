@@ -85,6 +85,11 @@ async function avvia() {
   });
   S.gioco = Gioco.calcola(S.prog, S.cat, { obiettivo: S.imp.obiettivo_xp });
   S.traguardiVisti = new Set(S.imp.traguardi_visti || S.gioco.traguardi.filter(t => t.ok).map(t => t.id));
+  S.bit = new Gioco.Compagno({
+    stato: () => Gioco.pet(S.gioco || statoGioco(), nomePet()), colore: () => S.imp.accento || Gioco.COLORI[0][0],
+    contesto: () => S.vista, attivo: () => S.imp.compagno !== false && !!S.imp.configurato, visibile: () => S.vista !== 'bit',
+    lato: () => S.imp.barra_stretta ? 54 : 80, pos: S.imp.compagno_pos, ancora: casaBit, salvaPos: p => salvaImp({ compagno_pos: p }), suono: t => S.lettore?.effetto(t),
+  });
   aggiornaMini();
   setInterval(() => { aggiornaMini(); disegnaPetMini(); }, 60000);
   $('#app').hidden = false;
@@ -196,6 +201,7 @@ function applicaTema() {
   const scuro = temaScuro(), terminale = S.imp?.tema === 'hacker';
   document.documentElement.dataset.tema = terminale ? 'hacker' : scuro ? 'scuro' : 'chiaro';
   Gioco.applicaAccento(S.imp?.accento || Gioco.COLORI[0][0], terminale);
+  S.bit?.aggiorna();
   try { api().barra_titolo(scuro, scuro ? '#000000' : '#F5F5F7'); } catch (e) { /* non su Windows */ }
 }
 
@@ -212,6 +218,7 @@ function vai(v) {
   RENDER[v]();
   if (v !== 'codice') $('#contenuto').scrollTop = 0;
   salvaImp({ vista: v });
+  S.bit?.cambiaVista();
 }
 
 /* --- pannelli comprimibili: barra principale (Ctrl+B) ed elenco esercizi (Ctrl+E) --- */
@@ -225,7 +232,15 @@ function applicaPannelli() {
   const b = $('#mostra-elenco');
   if (b) b.title = senzaElenco ? 'Mostra l\'elenco degli esercizi (Ctrl+E)' : 'Nascondi l\'elenco degli esercizi (Ctrl+E)';
 }
-function cambiaPannello(chiave) { salvaImp({ [chiave]: !S.imp[chiave] }); applicaPannelli(); }
+function cambiaPannello(chiave) { salvaImp({ [chiave]: !S.imp[chiave] }); applicaPannelli(); setTimeout(() => S.bit?.aggiorna(), 260); }
+/* Bit abita nello spazio vuoto della barra laterale, sopra la scheda del livello: così non copre mai i pulsanti */
+function casaBit() {
+  const b = $('.barra'), p = $('.barra-piede'), m = $('#menu'); if (!b || !p || !m) return null;
+  const rb = b.getBoundingClientRect(), rp = p.getBoundingClientRect(), rm = m.getBoundingClientRect(), lato = S.imp.barra_stretta ? 54 : 80;
+  const y = rp.top - lato - 16;
+  if (y < rm.bottom + 24) return null;   // finestra troppo bassa: angolo in basso a destra
+  return { x: rb.left + rb.width / 2 - lato / 2, y };
+}
 
 function aggiornaMini() {
   const g = giorniAllEsame();
@@ -430,6 +445,7 @@ function quizPool() {
 function renderQuiz() {
   const el = $('#v-quiz');
   el.classList.toggle('vista-quiz-sessione', S.q.fase === 'sessione');
+  if (S.q.fase !== 'sessione') S.bit?.domanda(null);
   if (S.q.fase === 'sessione') return renderQuizSessione(el);
   if (S.q.fase === 'esito') return renderQuizEsito(el);
   const pool = quizPool(), esame = S.q.modo === 'esame';
@@ -479,6 +495,7 @@ function quizInizia() {
     lista = campionePesato(pool, pesi, Math.min(S.q.num, pool.length));
   }
   Object.assign(S.q, { fase: 'sessione', lista, i: 0, risposte: {}, esame: S.q.modo === 'esame', finito: false, inizio: Date.now() });
+  S.bit?.azzeraSerie();
   clearInterval(S.q.timer);
   if (S.q.esame) {
     S.q.scadenza = Date.now() + 60 * 60000 * lista.length / 30;
@@ -544,6 +561,8 @@ function renderQuizSessione(el) {
       </div>
     </div>`;
   evidenziaBlocchi(el);
+  // Bit conta i secondi solo in allenamento: nella simulazione d'esame resta in silenzio, come in aula
+  S.bit?.domanda(!Q.esame && !rivela ? q.id + '#' + Q.i : null);
 }
 
 function registraQuiz(q, ok) {
@@ -562,6 +581,7 @@ function quizScegli(k) {
     if (Q.risposte[Q.i] !== undefined) return;
     Q.risposte[Q.i] = k;
     registraQuiz(q, k === q.giusta);
+    S.bit?.reagisci(k === q.giusta ? 'giusta' : 'sbagliata');
     salvaProgressi();
   } else Q.risposte[Q.i] = k;
   renderQuiz();
@@ -699,6 +719,7 @@ function oraleValuta(v) {
   s.box = v === 0 ? 0 : v === 1 ? Math.min(s.box || 0, 2) : Math.min(4, (s.box || 0) + 1);
   s.n = (s.n || 0) + 1; s.data = oggiISO();
   Gioco.registra(S.prog, 'o');
+  S.bit?.reagisci(v === 2 ? 'oraleAlta' : 'oraleBassa', { m: titoloModulo(o.modulo) });
   salvaProgressi();
   oraleProssima();
 }
@@ -1061,6 +1082,8 @@ async function esegui() {
   S.c.ultimo = r; S.c.confronto = null;
   S.c.editor.segnaErrori(r.diagnostica);
   disegnaConsole();
+  if (!r.senza_compilatore) S.bit?.reagisci(!r.compilato ? 'compilaErrore' : (r.nota || r.uscita !== 0) ? 'crash'
+    : (r.diagnostica || []).some(d => d.tipo === 'avviso') ? 'compilaAvvisi' : 'compilaOk');
 }
 
 function segnaSchede() { $$('#console-schede button').forEach(b => b.classList.toggle('attivo', b.dataset.s === S.c.scheda)); }
@@ -1107,7 +1130,10 @@ async function disegnaConfronto() {
   const corpo = $('#console-corpo'), e = S.esPer[S.c.id], r = S.c.ultimo;
   if (!e.soluzione.output) { corpo.innerHTML = `<div class="console-attesa">${ic('confronta')}<span>Per questo esercizio non c'è un output di riferimento: controlla tu che il programma faccia quello che chiede la traccia.</span></div>`; return; }
   if (!r || !r.compilato) { corpo.innerHTML = `<div class="console-attesa">${ic('confronta')}<span>Prima esegui il programma, poi confronto il tuo output con quello della soluzione.</span></div>`; return; }
-  if (!S.c.confronto) S.c.confronto = await api().confronta(e.soluzione.output, r.stdout || '');
+  if (!S.c.confronto) {
+    S.c.confronto = await api().confronta(e.soluzione.output, r.stdout || '');
+    S.bit?.reagisci(S.c.confronto.uguale ? 'diffOk' : 'diffNo');
+  }
   const c = S.c.confronto;
   if (S.c.scheda !== 'confronto') return;
   if (c.uguale) {
@@ -1252,6 +1278,7 @@ function aggiornaGioco() {
   }
   disegnaPetMini();
   if (S.vista === 'bit') renderBit();
+  S.bit?.aggiorna();
 }
 
 function xpVolante(n) {
@@ -1484,6 +1511,8 @@ function apriImpostazioni() {
       <div class="imp-gruppo">${esc(nomePet())} e obiettivi</div>
       <div class="imp-riga"><div><div class="imp-nome">Nome del compagno</div><div class="secondario">Il personaggio che cresce con i tuoi XP.</div></div>
         <input class="campo" data-imp="nome_pet" value="${esc(S.imp.nome_pet || '')}" placeholder="Bit"></div>
+      <div class="imp-riga"><div><div class="imp-nome">${esc(nomePet())} in scena</div><div class="secondario">Resta in un angolo, reagisce a quiz, codice e orale e ti parla. Trascinalo dove dà meno fastidio; un clic lo fa saltare.</div></div>
+        <div class="azioni" style="margin:0"><button class="btn secondario piccolo" data-azione="bit-a-posto">Rimetti nell'angolo</button>${siNo('compagno')}</div></div>
       <div class="imp-riga"><div><div class="imp-nome">Obiettivo giornaliero</div><div class="secondario">Gli XP che sfamano ${esc(nomePet())} ogni giorno.</div></div>
         <div class="segmentato" id="imp-obiettivo">${[150, 300, 500, 800].map(k =>
           `<button data-v="${k}" class="${(S.imp.obiettivo_xp || 300) === k ? 'attivo' : ''}">${k} XP</button>`).join('')}</div></div>
@@ -1536,6 +1565,7 @@ function apriImpostazioni() {
     const b = ev.target.closest('button'); if (!b) return;
     salvaImp({ [seg.dataset.sino]: b.dataset.v === 'true' });
     $$('button', seg).forEach(x => x.classList.toggle('attivo', x === b));
+    if (seg.dataset.sino === 'compagno') S.bit?.aggiorna();
   });
   $('#imp-obiettivo').onclick = ev => { const b = ev.target.closest('button'); if (!b) return; salvaImp({ obiettivo_xp: +b.dataset.v });
     $$('#imp-obiettivo button').forEach(x => x.classList.toggle('attivo', x === b)); S.gioco = statoGioco(); disegnaPetMini(); };
@@ -1612,6 +1642,7 @@ const AZIONI = {
   'es-gruppo': d => { const m = +d.m; S.c.aperti.has(m) ? S.c.aperti.delete(m) : S.c.aperti.add(m); disegnaLista(); },
   'es-filtro': (d, b) => { S.c.filtro = d.f; $$('#es-filtro button').forEach(x => x.classList.toggle('attivo', x === b)); disegnaLista(); },
   'esegui': () => esegui(),
+  'bit-a-posto': () => { S.bit?.rimettiAPosto(); salvaImp({ compagno_pos: null }); },
   'scheda': d => { S.c.scheda = d.s; disegnaConsole(); },
   'vai-riga': d => S.c.editor?.vaiARiga(+d.r),
   'traccia': () => { S.c.tracciaAperta = !S.c.tracciaAperta; $('#traccia').classList.toggle('aperta', S.c.tracciaAperta);

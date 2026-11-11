@@ -275,7 +275,7 @@ textarea.campo { min-height: 90px; font: 12px/1.4 var(--mono); resize: vertical;
 .passi { margin: 0; padding-left: 20px; font-size: 13px; color: var(--testo-2); }
 .passi li { margin: 4px 0; }
 .passi b { color: var(--testo); }
-@media (prefers-reduced-motion: reduce) { *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *), *::before, *::after { animation: none !important; transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *):not(.compagno):not(.compagno *), *::before, *::after { animation: none !important; transition: none !important; } }
 @media (min-width: 700px) { h1 { font-size: 32px; } .numero { font-size: 92px; } }
 </style>
 </head>
@@ -442,7 +442,9 @@ function disegna() {
   const immersa = (vista === 'quiz' && Q.fase === 'sessione');
   $('#app').classList.toggle('immersa', immersa);
   disegnaSchede();
+  if (!(vista === 'quiz' && Q.fase === 'sessione')) BIT?.domanda(null);
   ({ oggi: vistaOggi, quiz: vistaQuiz, orale: vistaOrale, codice: vistaCodice, bit: vistaBit })[vista]();
+  BIT?.cambiaVista();
 }
 function avviso(t) { const b = $('#avviso-box'); b.innerHTML = '<div class="avviso">' + esc(t) + '</div>'; clearTimeout(avviso.t); avviso.t = setTimeout(() => { b.innerHTML = ''; }, 2200); }
 
@@ -533,6 +535,7 @@ function iniziaQuiz() {
   if (Q.modo === 'esame') lista = mescola(pool).slice(0, 30);
   else lista = campione(pool, pool.map(q => { const s = P.quiz[q.id]; return !s ? 3 : s.ultima === false ? 5 : 1 / (1 + (s.g || 0)); }), Math.min(Q.num, pool.length));
   Object.assign(Q, { fase: 'sessione', lista, i: 0, risposte: {}, esame: Q.modo === 'esame', finito: false, inizio: Date.now() });
+  BIT?.azzeraSerie();
   clearInterval(Q.timer);
   if (Q.esame) { Q.scadenza = Date.now() + 3600000 * lista.length / 30; Q.timer = setInterval(tick, 1000); }
   disegna(); window.scrollTo(0, 0);
@@ -567,13 +570,14 @@ function vistaSessione() {
     + '<button class="btn primario" data-a="quiz-succ"' + (!Q.esame && !Q.finito && sc === undefined ? ' disabled' : '') + '>' + etichetta + '</button></div></div>';
   evidenzia($('#vista'));
   $('.punto.qui')?.scrollIntoView({ block: 'nearest', inline: 'center' });
+  BIT?.domanda(!Q.esame && !rivela ? q.id + '#' + Q.i : null);
 }
 function registra(q, ok) { const s = P.quiz[q.id] || (P.quiz[q.id] = { g: 0, s: 0 }); s[ok ? 'g' : 's'] = (s[ok ? 'g' : 's'] || 0) + 1; s.ultima = ok; s.data = oggiISO();
   Gioco.registra(P, 'q'); if (ok) Gioco.registra(P, 'g'); }
 function scegli(k) {
   if (Q.fase !== 'sessione' || Q.finito) return;
   const q = Q.lista[Q.i];
-  if (!Q.esame) { if (Q.risposte[Q.i] !== undefined) return; Q.risposte[Q.i] = k; registra(q, k === q.giusta); salva(); }
+  if (!Q.esame) { if (Q.risposte[Q.i] !== undefined) return; Q.risposte[Q.i] = k; registra(q, k === q.giusta); BIT?.reagisci(k === q.giusta ? 'giusta' : 'sbagliata'); salva(); }
   else Q.risposte[Q.i] = k;
   vistaSessione();
   if (!Q.esame) $('.riscontro')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
@@ -634,7 +638,9 @@ function vistaOrale() {
 function votaOrale(v) {
   const o = O.corrente, s = P.orale[o.id] || (P.orale[o.id] = { box: 0, n: 0 });
   s.box = v === 0 ? 0 : v === 1 ? Math.min(s.box || 0, 2) : Math.min(4, (s.box || 0) + 1);
-  s.n = (s.n || 0) + 1; s.data = oggiISO(); Gioco.registra(P, 'o'); salva(); prossimaOrale();
+  s.n = (s.n || 0) + 1; s.data = oggiISO(); Gioco.registra(P, 'o');
+  BIT?.reagisci(v === 2 ? 'oraleAlta' : 'oraleBassa', { m: titoloModulo(o.modulo) || CORTI[o.modulo] });
+  salva(); prossimaOrale();
 }
 
 /* ================================================================ CODICE */
@@ -696,6 +702,7 @@ function G() { return STATO || (STATO = Gioco.calcola(P, CAT, { obiettivo: IMP.o
 function aggiornaGioco() {
   const prima = STATO; STATO = null; const dopo = G();
   if (!traguardiVisti) traguardiVisti = new Set(IMP.traguardi_visti || dopo.traguardi.filter(t => t.ok).map(t => t.id));
+  BIT?.aggiorna();
   if (!prima) return;
   const xp = dopo.xp - prima.xp;
   if (xp > 0) { xpVolante(xp); LETTORE?.effetto('xp'); setTimeout(saltaPet, 30); }
@@ -743,7 +750,7 @@ const svgPet = (indice, umore, lato, classe) => Gioco.svgPet(indice, umore, { co
 function saltaPet() { $$('.pet-svg').forEach(el => { el.classList.remove('salta'); void el.getBoundingClientRect(); el.classList.add('salta'); setTimeout(() => el.classList.remove('salta'), 800); }); }
 
 /* ================================================================ COLORE, BENVENUTO, INSTALLAZIONE */
-function applicaColore() { Gioco.applicaAccento(IMP.accento || Gioco.COLORI[0][0], true); const m = $('meta[name="theme-color"]'); if (m) m.content = '#000000'; }
+function applicaColore() { Gioco.applicaAccento(IMP.accento || Gioco.COLORI[0][0], true); BIT?.aggiorna(); const m = $('meta[name="theme-color"]'); if (m) m.content = '#000000'; }
 function coloriHTML() {
   const att = (IMP.accento || Gioco.COLORI[0][0]).toLowerCase(), preset = Gioco.COLORI.some(([c]) => c === att);
   return Gioco.COLORI.map(([c, n]) => '<button class="colore ' + (c === att ? 'attivo' : '') + '" data-a="colore" data-c="' + c + '" aria-label="' + n + '" style="--c:' + c + '"></button>').join('')
@@ -790,6 +797,8 @@ function apriFoglio() {
     + '<div class="sezione">Aspetto e ' + esc(nomePet()) + '</div>'
     + '<div class="etichetta">Colore del terminale</div><div class="colori">' + coloriHTML() + '</div>'
     + '<div class="etichetta">Nome del compagno</div><input class="campo" data-imp="nome_pet" value="' + esc(IMP.nome_pet || '') + '" placeholder="Bit" maxlength="16">'
+    + '<div class="etichetta">' + esc(nomePet()) + ' in scena (reagisce e ti parla; trascinalo dove vuoi)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.compagno !== false) === k ? 'attivo' : '') + '" data-a="compagno" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
+    + '<button class="btn pieno" style="margin-top:8px;background:none" data-a="bit-a-posto">Rimetti ' + esc(nomePet()) + ' nell\'angolo</button>'
     + '<div class="etichetta">Obiettivo giornaliero</div><div class="segmentato">' + [150, 300, 500, 800].map(k => '<button class="' + ((IMP.obiettivo_xp || 300) === k ? 'attivo' : '') + '" data-a="obiettivo" data-n="' + k + '">' + k + ' XP</button>').join('') + '</div>'
     + '<div class="sezione">Musica e suoni</div><button class="btn pieno" data-a="musica-apri">' + ic('musica') + 'Apri il lettore musicale</button>'
     + '<div class="etichetta">Effetti sonori (XP, missioni, livelli)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.effetti !== false) === k ? 'attivo' : '') + '" data-a="effetti" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
@@ -840,7 +849,8 @@ const AZ = {
   'cod-modo': d => { C.modo = d.m; vistaCodice(); },
   'prev-mostra': () => { C.mostrato = true; vistaCodice(); $$('pre.uscita').at(-1)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
   'prev-salta': () => prossimoPrevedi(),
-  'prev-voto': d => { const s = P.prevedi[C.corrente.id] || (P.prevedi[C.corrente.id] = { n: 0 }); s.ok = d.v === '1'; s.n = (s.n || 0) + 1; s.data = oggiISO(); if (s.ok) Gioco.registra(P, 'p'); salva(); prossimoPrevedi(); },
+  'prev-voto': d => { const s = P.prevedi[C.corrente.id] || (P.prevedi[C.corrente.id] = { n: 0 }); s.ok = d.v === '1'; s.n = (s.n || 0) + 1; s.data = oggiISO(); if (s.ok) Gioco.registra(P, 'p');
+    BIT?.reagisci(s.ok ? 'prevediOk' : 'prevediNo'); salva(); prossimoPrevedi(); },
   'es-apri': d => { C.aperto = d.id; C.solAperta = false; vistaCodice(); window.scrollTo(0, 0); },
   'es-chiudi': () => { C.aperto = null; vistaCodice(); },
   'es-fatto': () => { const s = P.esercizi[C.aperto] || (P.esercizi[C.aperto] = {}); s.fatto = !s.fatto; s.data = oggiISO();
@@ -869,6 +879,8 @@ const AZ = {
   'azzera-si': () => { const d = P.data_esame; P = VUOTO(); P.data_esame = d; STATO = null; salva(); chiudiFoglio(); avviso('Progressi azzerati'); },
   'colore': d => { salvaImp({ accento: d.c }); applicaColore(); $$('.colori').forEach(c => { c.innerHTML = coloriHTML(); }); collegaColori(); },
   'obiettivo': (d, b) => { salvaImp({ obiettivo_xp: +d.n }); STATO = null; $$('[data-a="obiettivo"]').forEach(x => x.classList.toggle('attivo', x === b)); },
+  'compagno': (d, b) => { salvaImp({ compagno: d.v === 'true' }); $$('[data-a="compagno"]').forEach(x => x.classList.toggle('attivo', x === b)); BIT?.aggiorna(); },
+  'bit-a-posto': () => { BIT?.rimettiAPosto(); salvaImp({ compagno_pos: null }); avviso(nomePet() + ' è tornato nell\'angolo'); },
   'effetti': (d, b) => { salvaImp({ effetti: d.v === 'true' }); $$('[data-a="effetti"]').forEach(x => x.classList.toggle('attivo', x === b)); },
   'musica-apri': () => { $('#foglio-box').innerHTML = ''; LETTORE.apri(); },
   'installa': async () => { if (!installa) return; installa.prompt(); try { await installa.userChoice; } catch (e) { /* annullato */ } installa = null; apriFoglio(); },
@@ -901,6 +913,11 @@ applicaColore();
 const LETTORE = new Musica.Lettore({ imp: () => IMP, salva: p => salvaImp(p), dock: $('#musica-dock'), avviso: t => avviso(t),
   mini: () => $$('#musica-mini-bit') });
 document.addEventListener('keydown', ev => { if (ev.key === 'Escape') LETTORE.chiudi(); });
+var BIT = new Gioco.Compagno({
+  stato: () => Gioco.pet(G(), nomePet()), colore: () => IMP.accento || Gioco.COLORI[0][0], contesto: () => vista,
+  attivo: () => IMP.compagno !== false && !!IMP.configurato, visibile: () => vista !== 'bit' && !$('#foglio-box').innerHTML,
+  lato: 60, classe: 'telefono', pos: IMP.compagno_pos, salvaPos: p => salvaImp({ compagno_pos: p }), suono: t => LETTORE?.effetto(t),
+});
 const iniziale = location.hash.slice(1);
 if (SCHEDE.some(s => s[0] === iniziale)) vista = iniziale;
 G(); aggiornaGioco();
