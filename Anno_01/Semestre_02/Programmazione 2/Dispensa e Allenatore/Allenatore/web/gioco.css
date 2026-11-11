@@ -51,6 +51,15 @@
 .md-yt-riga { display: flex; gap: 10px; align-items: flex-start; }
 .md-yt-riga .md-embed { flex: none; width: 192px; min-height: 108px; background: #000; border: 1px solid var(--linea); }
 .md-yt-riga .md-nota { margin-top: 0; }
+/* YouTube nella finestra di YouTube Music: niente riquadro del video, solo la spiegazione */
+.md-yt-riga:has(.md-finestra) { flex-direction: column; }
+.md-yt-riga .md-embed:has(.md-finestra) { width: auto; min-height: 0; background: none; border: 0; }
+.md-finestra { color: var(--testo-2); font-size: 11.5px; line-height: 1.5; }
+.md-finestra b { display: block; color: var(--testo); margin-bottom: 4px; }
+.md-finestra .md-btn { display: block; margin-top: 8px; }
+.md-yt-modo { align-items: center; font-size: 11px; color: var(--testo-2); }
+.md-yt-modo span { margin-right: 4px; }
+.md-yt-modo .md-btn.attivo { border-color: var(--fosforo); color: var(--fosforo); }
 .md-controlli { display: flex; align-items: center; gap: 6px; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--linea); }
 .md-tasto { background: none; border: 1px solid var(--linea); color: var(--testo); font: inherit; font-size: 12px; min-width: 36px; height: 32px; cursor: pointer; }
 .md-tasto:hover { border-color: var(--fosforo); color: var(--fosforo); }

@@ -82,6 +82,11 @@ async function avvia() {
   S.lettore = new Musica.Lettore({
     imp: () => S.imp, salva: p => salvaImp(p), dock: $('#musica-dock'), mini: () => [$('#musica-mini')],
     accediSpotify: () => accediSpotify(), avviso: t => avviso(t),
+    // YouTube nella finestra di YouTube Music (comandata da app.py): suonano anche i video non incorporabili
+    youtubeFinestra: {
+      apri: url => api().youtube_apri(url), stato: () => api().youtube_stato(),
+      comando: c => api().youtube_comando(c), mostra: () => api().youtube_mostra(),
+    },
   });
   S.gioco = Gioco.calcola(S.prog, S.cat, { obiettivo: S.imp.obiettivo_xp });
   S.traguardiVisti = new Set(S.imp.traguardi_visti || S.gioco.traguardi.filter(t => t.ok).map(t => t.id));

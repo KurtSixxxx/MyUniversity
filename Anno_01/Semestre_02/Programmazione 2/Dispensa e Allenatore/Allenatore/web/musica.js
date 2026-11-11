@@ -152,6 +152,15 @@
     if (!lista && !video) return null;
     return { lista: lista ? lista[1] : null, video: video ? video[1] : null };
   }
+  /* indirizzo di YouTube Music per la finestra: con una playlist parte dal primo brano da solo */
+  function urlYouTubeMusic(link) {
+    const id = idYouTube(link);
+    if (!id) return null;
+    const p = new URLSearchParams();
+    if (id.video) p.set('v', id.video);
+    if (id.lista) p.set('list', id.lista);
+    return 'https://music.youtube.com/watch?' + p.toString();
+  }
   const carica = {};
   function script(src) {
     return carica[src] || (carica[src] = new Promise((ok, no) => {
@@ -177,6 +186,23 @@
     get sorgente() { return this.imp.musica_sorgente || 'colonna'; }
     get muto() { return !!this.imp.musica_muto; }
     get volume() { return this.imp.musica_volume ?? 60; }
+    /* PC: YouTube suona nella finestra di YouTube Music (predefinito), non nel lettore incorporato */
+    get ytFinestra() { return !!this.o.youtubeFinestra && this.imp.youtube_modo !== 'incorporato'; }
+    seguiFinestra() {
+      if (this.tFinestra) return;
+      const giro = async () => {
+        let st = { aperta: false };
+        try { st = await this.o.youtubeFinestra.stato(); } catch (e) { /* ignorato */ }
+        this.ytAperta = !!st.aperta;
+        if (!st.aperta) { clearInterval(this.tFinestra); this.tFinestra = null; }
+        if (st.consenso && !this.avvisatoConsenso) { this.avvisatoConsenso = true; this.o.avviso?.('Nella finestra di YouTube accetta i cookie (solo la prima volta)'); }
+        if (this.sorgente !== 'youtube' || !this.ytFinestra) return;
+        const suona = !!st.aperta && !st.pausa && !!st.video;
+        const titolo = st.titolo ? st.titolo + (st.autore ? ' · ' + st.autore : '') : (st.pubblicita ? 'YouTube Music · pubblicità' : '');
+        if (suona !== this.suona || titolo !== this.ytTitolo) { this.suona = suona; this.ytTitolo = titolo; this.aggiorna(); }
+      };
+      this.tFinestra = setInterval(giro, 2000); giro();
+    }
     salva(p) { this.o.salva(p); }
     segnaAscolto(chiave) {
       const visti = this.imp.brani_ascoltati || [];
@@ -240,6 +266,13 @@
           if (!this.spotifyAvviato) { this.spotify.play(); this.spotifyAvviato = true; } else this.spotify.resume();
           this.segnaAscolto('spotify');
         } catch (e) { /* ignorato */ }
+      } else if (s === 'youtube' && this.ytFinestra) {
+        const url = urlYouTubeMusic(this.linkYouTube());
+        if (!url) return this.preparaYouTube();
+        const st = await this.o.youtubeFinestra.stato();
+        if (!st.aperta || this.ytUrl !== url) { this.ytUrl = url; await this.o.youtubeFinestra.apri(url); }
+        else await this.o.youtubeFinestra.comando('play');
+        this.segnaAscolto('youtube'); this.seguiFinestra();
       } else if (s === 'youtube') {
         await this.preparaYouTube();
         try { this.yt?.playVideo(); this.segnaAscolto('youtube'); } catch (e) { /* ignorato */ }
@@ -251,12 +284,14 @@
       this.motore?.ferma();
       try { this.spotify && !this.spotifyPausa && this.spotify.pause(); } catch (e) { /* ignorato */ }
       try { this.yt && this.ytPronto && this.yt.pauseVideo(); } catch (e) { /* ignorato */ }
+      if (this.o.youtubeFinestra && this.ytAperta) this.o.youtubeFinestra.comando('pausa');
       this.aggiorna();
     }
     alterna() { (this.suona ? this.pausa() : this.play()); }
     alternaMuto() {
       this.salva({ musica_muto: !this.muto });
       this.applicaVolume();
+      if (this.o.youtubeFinestra && this.ytAperta) this.o.youtubeFinestra.comando(this.muto ? 'muto' : 'audio');
       if (this.sorgente === 'spotify' && this.spotify) {   // Spotify non ha il volume: muto = pausa
         try {
           if (this.muto) { this.pausaPerMuto = !this.spotifyPausa; this.spotify.pause(); }
@@ -267,10 +302,12 @@
     }
     successivo() {
       if (this.sorgente === 'colonna') { this.salva({ musica_traccia: ((this.imp.musica_traccia || 0) + 1) % BRANI.length }); if (this.suona) this.motore.avvia(this.imp.musica_traccia); this.aggiorna(); }
+      else if (this.sorgente === 'youtube' && this.ytFinestra) this.o.youtubeFinestra.comando('succ');
       else if (this.sorgente === 'youtube') { try { this.yt?.nextVideo(); } catch (e) { /* ignorato */ } }
     }
     precedente() {
       if (this.sorgente === 'colonna') { this.salva({ musica_traccia: ((this.imp.musica_traccia || 0) + BRANI.length - 1) % BRANI.length }); if (this.suona) this.motore.avvia(this.imp.musica_traccia); this.aggiorna(); }
+      else if (this.sorgente === 'youtube' && this.ytFinestra) this.o.youtubeFinestra.comando('prec');
       else if (this.sorgente === 'youtube') { try { this.yt?.previousVideo(); } catch (e) { /* ignorato */ } }
     }
     cambiaSorgente(s) {
@@ -322,6 +359,14 @@
       const id = idYouTube(this.linkYouTube());
       const box = this.dock.querySelector('.md-youtube .md-embed');
       if (!id) { box.innerHTML = '<div class="md-vuoto">Incolla qui sopra il link di una playlist (o di un video) di YouTube.</div>'; return; }
+      if (this.ytFinestra) {
+        if (this.yt) { try { this.yt.destroy(); } catch (e) { /* ignorato */ } this.yt = null; this.ytChiave = null; this.ytPronto = false; }
+        box.innerHTML = `<div class="md-finestra"><b>YouTube Music in una finestra a parte</b>
+          Si sentono tutti i brani, anche quelli che non si possono incorporare in altre app. Premi play: la finestra si apre
+          e quando parte la musica si riduce a icona da sola (la prima volta accetta i cookie di YouTube).
+          <button class="md-btn" data-md="yt-mostra">Mostra la finestra</button></div>`;
+        return;
+      }
       const chiave = (id.lista || '') + '|' + (id.video || '');
       if (this.yt && this.ytChiave === chiave && !forza) return;
       try {
@@ -390,6 +435,9 @@
           <div class="md-pannello md-youtube">
             <div class="md-riga"><input class="md-campo" data-md-campo="youtube" placeholder="Link di una playlist YouTube" spellcheck="false">
               <button class="md-btn" data-md="usa-youtube">Usa</button></div>
+            ${this.o.youtubeFinestra ? `<div class="md-riga md-yt-modo"><span>Lettore</span>
+              <button class="md-btn" data-md="yt-modo" data-v="finestra">Finestra di YouTube</button>
+              <button class="md-btn" data-md="yt-modo" data-v="incorporato">Dentro l'app</button></div>` : ''}
             <div class="md-yt-riga"><div class="md-embed"></div>
               <div class="md-nota">La playlist suona in sottofondo anche con questo pannello chiuso.
                 <button class="md-link" data-md="predefinita-youtube">Torna alla playlist predefinita</button></div></div>
@@ -418,6 +466,8 @@
         else if (a === 'predefinita-spotify') { this.salva({ spotify_link: '' }); this.disegnaCorpo(); this.preparaSpotify(); }
         else if (a === 'predefinita-youtube') { this.salva({ youtube_link: '' }); this.disegnaCorpo(); this.preparaYouTube(true); }
         else if (a === 'accedi-spotify') this.o.accediSpotify?.();
+        else if (a === 'yt-mostra') this.o.youtubeFinestra?.mostra();
+        else if (a === 'yt-modo') { this.pausa(); this.salva({ youtube_modo: b.dataset.v }); this.disegnaCorpo(); this.preparaYouTube(true); }
       });
       d.querySelector('[data-md-vol]').addEventListener('input', ev => {
         this.salva({ musica_volume: +ev.target.value, musica_muto: false }); this.applicaVolume(); this.aggiorna();
@@ -447,12 +497,14 @@
       if (document.activeElement !== sp) sp.value = this.imp.spotify_link || '';
       if (document.activeElement !== yt) yt.value = this.imp.youtube_link || '';
       sp.placeholder = window.CONFIG?.spotifyPlaylist ? 'Predefinita del progetto · incolla un altro link' : 'Link di una playlist Spotify';
+      d.querySelectorAll('[data-md="yt-modo"]').forEach(b => b.classList.toggle('attivo', b.dataset.v === (this.ytFinestra ? 'finestra' : 'incorporato')));
       yt.placeholder = window.CONFIG?.youtubePlaylist ? 'Predefinita del progetto · incolla un altro link' : 'Link di una playlist YouTube';
     }
     descrizione() {
       const s = this.sorgente;
       if (s === 'colonna') return BRANI[this.imp.musica_traccia || 0].nome;
       if (s === 'spotify') return 'Spotify';
+      if (s === 'youtube' && this.ytFinestra) return this.ytTitolo || 'YouTube Music';
       if (s === 'youtube') { try { return this.ytPronto && this.yt.getVideoData()?.title || 'YouTube'; } catch (e) { return 'YouTube'; } }
       return 'Musica spenta';
     }
@@ -502,5 +554,5 @@
     ricaricaSpotify() { this.spotify = null; this.preparaSpotify(true); }
   }
 
-  window.Musica = { Lettore, BRANI, uriSpotify, idYouTube };
+  window.Musica = { Lettore, BRANI, uriSpotify, idYouTube, urlYouTubeMusic };
 })();

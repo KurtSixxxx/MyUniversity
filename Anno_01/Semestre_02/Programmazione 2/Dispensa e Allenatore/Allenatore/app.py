@@ -159,6 +159,88 @@ class Api:
         f.events.closed += chiusa
         return True
 
+    # ---------------------------------------------------------------- YouTube in finestra
+    #  I video che il proprietario non lascia incorporare (errore 150) su YouTube stesso
+    #  si sentono: la playlist suona in una finestra di YouTube Music (il sito vero, con le
+    #  sue regole e le sue pubblicità), che l'app comanda da fuori. Stesso profilo
+    #  dell'app: consenso ai cookie e accesso a Google restano tra un avvio e l'altro.
+    _YT_STATO = """(() => {
+      const v = document.querySelector('video'), q = s => document.querySelector(s);
+      const titolo = (q('ytmusic-player-bar .title') || {}).textContent || '';
+      const autore = ((q('ytmusic-player-bar .byline') || {}).textContent || '').split('\\u2022')[0];
+      return { video: !!v, pausa: v ? v.paused : true, titolo: titolo.trim(), autore: autore.trim(),
+        consenso: location.hostname.indexOf('consent.') === 0,
+        pubblicita: !!q('.ad-showing, ytmusic-player-bar[player-ui-state*="AD"]') };
+    })()"""
+    _YT_COMANDI = {
+        # sull'elemento audio/video direttamente: il pulsante di YouTube Music non sempre risponde ai clic simulati
+        'play': "(() => { const v = document.querySelector('video'); if (v && v.paused) v.play(); })()",
+        'pausa': "(() => { const v = document.querySelector('video'); if (v && !v.paused) v.pause(); })()",
+        'succ': "(() => { const b = document.querySelector('ytmusic-player-bar .next-button'); b && b.click(); })()",
+        'prec': "(() => { const b = document.querySelector('ytmusic-player-bar .previous-button'); b && b.click(); })()",
+        'muto': "(() => { const v = document.querySelector('video'); if (v) v.muted = true; })()",
+        'audio': "(() => { const v = document.querySelector('video'); if (v) v.muted = false; })()",
+    }
+
+    def youtube_apri(self, url):
+        from urllib.parse import urlparse
+        u = urlparse(url if isinstance(url, str) else '')
+        if u.scheme != 'https' or u.hostname != 'music.youtube.com':
+            return False
+        f = getattr(self, '_yt', None)
+        if f:
+            try:
+                f.load_url(url); f.restore(); f.show()
+                return True
+            except Exception:
+                self._yt = None
+        f = webview.create_window('YouTube Music · Allenatore Prog2', url, width=460, height=720,
+                                  min_size=(360, 420), background_color='#000000')
+        self._yt, self._yt_ridotta = f, False
+
+        def chiusa():
+            if getattr(self, '_yt', None) is f:
+                self._yt = None
+        f.events.closed += chiusa
+        return True
+
+    def youtube_stato(self):
+        f = getattr(self, '_yt', None)
+        if not f:
+            return {'aperta': False}
+        try:
+            s = f.evaluate_js(self._YT_STATO) or {}
+        except Exception:
+            return {'aperta': True, 'pausa': True}
+        s['aperta'] = True
+        # quando la musica parte la prima volta la finestra si riduce a icona da sola
+        if s.get('video') and not s.get('pausa') and not s.get('pubblicita') and not self._yt_ridotta:
+            self._yt_ridotta = True
+            try:
+                f.minimize()
+            except Exception:
+                pass
+        return s
+
+    def youtube_comando(self, comando):
+        f = getattr(self, '_yt', None)
+        if not f or comando not in self._YT_COMANDI:
+            return self.youtube_stato()
+        try:
+            f.evaluate_js(self._YT_COMANDI[comando])
+        except Exception:
+            pass
+        return self.youtube_stato()
+
+    def youtube_mostra(self):
+        f = getattr(self, '_yt', None)
+        if f:
+            try:
+                f.restore(); f.show()
+            except Exception:
+                pass
+        return bool(f)
+
     # ---------------------------------------------------------------- VS Code
     def _cartella_vscode(self):
         return self._imp.get('cartella_vscode') or M.cartella_vscode_predefinita(self._catalogo or {})
