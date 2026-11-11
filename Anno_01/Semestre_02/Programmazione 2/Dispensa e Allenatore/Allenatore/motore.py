@@ -27,7 +27,7 @@ import sys
 import time
 
 APP_NOME = 'Allenatore Prog2'
-APP_VERSIONE = '3.1'
+APP_VERSIONE = '3.2'
 CONGELATO = getattr(sys, 'frozen', False)
 QUI = os.path.dirname(os.path.abspath(__file__))
 RISORSE = getattr(sys, '_MEIPASS', QUI)                       # file inclusi nell'app

@@ -63,9 +63,15 @@ E sopra tutto **Bit**, il compagno di studio che si nutre dei tuoi XP.
 
 ## Bit, il tuo compagno di studio
 
-<p align="center"><img src="immagini/bit.png" alt="Le evoluzioni di Bit" width="100%"></p>
+<p align="center"><img src="immagini/bit.png" alt="I sei stadi di Bit e i suoi sei umori" width="100%"></p>
 
-Bit nasce da un uovo e si evolve con il tuo livello: **Bit → Byte → Kilobyte → Megabyte → Gigabyte**, ogni volta con una forma nuova e un lampo di evoluzione. Prende il colore che scegli, respira, sbatte le palpebre, salta quando guadagni XP. Se non studi per due giorni gli brontola lo stomaco, dopo quattro si addormenta.
+Bit nasce da un uovo e si evolve con il tuo livello: **Uovo (1) → Bit (3) → Byte (8) → Kilobyte (14) → Megabyte (20) → Gigabyte (26)**, ogni volta con una forma nuova e un lampo di evoluzione. Fino a Kilobyte è un cucciolo entusiasta; da Megabyte diventa un *Senior Dev* teatrale, drammatico con i memory leak e snob con le domande facili.
+
+Ha **sei umori**, legati a quello che fai davvero: *neutro* mentre studi, *felice* quando completi le tre missioni del giorno, *euforico* se superi una simulazione (o fai cinque giuste di fila), *triste* dopo un errore o una compilazione fallita, *affamato* dopo due giorni senza studio, *a riposo* dopo quattro.
+
+**Bit è sempre in scena**, in punti fissi come un commentatore: sopra la domanda nei quiz, accanto all'output di `g++` nel codice, a lato della carta all'orale. Mangia gli XP delle risposte giuste, va in glitch con gli errori, fa il giro della vittoria con i coriandoli e parla con un fumetto a 8 bit.
+
+**L'armadio di Bit**: con i traguardi sblocchi palette (Ambra vintage, Ciano hacker, Cyberpunk magenta, GameBoy, Oro leggendario), accessori (occhiali *Thug Life*, cappello da laurea, monocolo, cuffie lo-fi, sciarpa C++, baffetto) ed espressioni (`^_^` `¬_¬` `ಠ_ಠ` `*_*`).
 
 <table>
 <tr>

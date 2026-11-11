@@ -1,0 +1,289 @@
+/* =====================================================================
+   Allenatore Prog2 — Bit: pixel art, animazioni, Bit in scena, Armadio
+   Usa le variabili del tema: --fosforo, --fosforo-rgb, --testo, --linea...
+   Niente regola prefers-reduced-motion: le animazioni di Bit restano sempre
+   attive (richiesta dello studente; vedi le eccezioni in stile.css).
+   ===================================================================== */
+
+/* ------------------------------------------------------------ Bit in pixel art */
+.pet-svg { display: block; overflow: visible; image-rendering: pixelated;
+  filter: drop-shadow(0 0 3px var(--alone)) drop-shadow(0 0 12px color-mix(in srgb, var(--alone) 55%, transparent)); transition: filter .6s; }
+.pet-svg.umore-neutro { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--alone) 35%, transparent)); }
+.pet-svg.umore-dorme { filter: drop-shadow(0 0 8px color-mix(in srgb, var(--alone) 40%, transparent)) saturate(.75) brightness(.85); }
+.pet-svg.umore-triste { filter: drop-shadow(0 0 6px color-mix(in srgb, var(--alone) 55%, transparent)) saturate(.7); }
+.pet-svg.umore-euforico { animation: pet-alone 1.6s ease-in-out infinite; }
+@keyframes pet-alone { 50% { filter: drop-shadow(0 0 4px var(--alone)) drop-shadow(0 0 22px var(--alone)); } }
+.pet-svg g, .pet-svg text { transform-box: fill-box; }
+
+/* bit-idle-breath: respiro rilassato, il corpo si gonfia appena, appoggiato a terra */
+.pet-corpo { transform-origin: 50% 100%; animation: bit-idle-breath 3.2s ease-in-out infinite; }
+@keyframes bit-idle-breath { 0%, 100% { transform: scale(1, 1); } 50% { transform: scale(1.025, .965); } }
+.umore-dorme .pet-corpo { animation-duration: 5.5s; }
+.umore-triste .pet-corpo { animation-duration: 4.4s; }
+.umore-euforico .pet-corpo { animation: pet-saltella .9s ease-in-out infinite; }
+@keyframes pet-saltella { 0%, 100% { transform: translateY(0) scale(1, 1); } 15% { transform: translateY(0) scale(1.06, .92); }
+  45% { transform: translateY(-2.5px) scale(.96, 1.05); } 75% { transform: translateY(0) scale(1.04, .95); } }
+/* micro-blink delle palpebre */
+.pet-occhi.aperti { transform-origin: 50% 50%; animation: bit-blink 4.6s infinite; }
+@keyframes bit-blink { 0%, 91%, 97%, 100% { transform: scaleY(1); } 94% { transform: scaleY(.12); } }
+/* l'uovo dondola */
+.stadio-0 .pet-tutto { transform-origin: 50% 90%; animation: pet-dondola 3.4s ease-in-out infinite; }
+@keyframes pet-dondola { 0%, 70%, 100% { transform: rotate(0); } 76% { transform: rotate(-7deg); } 84% { transform: rotate(6deg); } 92% { transform: rotate(-3deg); } }
+/* fame: lo stomaco brontola */
+.umore-affamato .pet-tutto { transform-origin: 50% 100%; animation: pet-brontola 2.8s infinite; }
+@keyframes pet-brontola { 0%, 62%, 100% { transform: translateX(0); } 66% { transform: translateX(-.6px); } 70% { transform: translateX(.6px); }
+  74% { transform: translateX(-.5px); } 78% { transform: translateX(.4px); } 82% { transform: translateX(0); } }
+.pet-grr { transform-origin: 0 50%; animation: pet-grr 2.8s infinite; opacity: 0; }
+@keyframes pet-grr { 0%, 60%, 100% { opacity: 0; transform: translateX(0); } 66%, 80% { opacity: 1; transform: translateX(1px); } }
+/* bit-sleep-zzz: le Z salgono come bolle */
+.pet-zzz { font: 700 5px/1 var(--mono, monospace); opacity: 0; animation: bit-sleep-zzz 3s linear infinite; }
+@keyframes bit-sleep-zzz { 0% { opacity: 0; transform: translate(0, 0) scale(.6); } 20% { opacity: 1; }
+  60% { transform: translate(3px, -6px) scale(1.05); } 100% { opacity: 0; transform: translate(5px, -11px) scale(1.3); } }
+/* euforico: scintille */
+.pet-scintilla { transform-origin: 50% 50%; animation: pet-scintilla 1.4s ease-in-out infinite; opacity: 0; }
+@keyframes pet-scintilla { 0%, 100% { opacity: 0; transform: scale(.3) rotate(0); } 50% { opacity: 1; transform: scale(1) rotate(45deg); } }
+/* salto quando arrivano XP (classe aggiunta da JS) */
+.pet-svg.salta .pet-tutto { animation: pet-salta .75s cubic-bezier(.3, 1.6, .5, 1) 1; }
+@keyframes pet-salta { 0% { transform: translateY(0) scale(1.1, .85); } 35% { transform: translateY(-6px) scale(.92, 1.1); }
+  70% { transform: translateY(0) scale(1.08, .9); } 100% { transform: translateY(0) scale(1); } }
+/* evoluzione: il vecchio stadio lampeggia e sparisce, il nuovo arriva in un lampo */
+.evoluzione { position: relative; display: grid; place-items: center; margin: 0 auto 12px; }
+.evoluzione > * { grid-area: 1 / 1; }
+.evoluzione .vecchio { animation: evo-via 1.8s forwards; }
+.evoluzione .nuovo { opacity: 0; animation: evo-arriva 1.8s forwards; }
+.evoluzione .lampo { width: 140%; height: 140%; border-radius: 50%; background: radial-gradient(circle, #fff 0, var(--fosforo) 35%, transparent 70%);
+  opacity: 0; animation: evo-lampo 1.8s forwards; pointer-events: none; }
+@keyframes evo-via { 0%, 12%, 26%, 40% { opacity: 1; filter: brightness(1); } 6%, 19%, 33% { filter: brightness(4); } 50%, 100% { opacity: 0; transform: scale(1.15); } }
+@keyframes evo-arriva { 0%, 48% { opacity: 0; transform: scale(1.5); filter: brightness(5); } 60% { opacity: 1; } 100% { opacity: 1; transform: none; filter: none; } }
+@keyframes evo-lampo { 0%, 40% { opacity: 0; transform: scale(.3); } 52% { opacity: 1; transform: scale(1); } 100% { opacity: 0; transform: scale(1.4); } }
+.pet-mini .pet-svg { flex: none; }
+/* oggetti delle reazioni */
+.pet-occhiali { animation: cmp-occhiali .7s steps(5) .35s both; }
+@keyframes cmp-occhiali { from { transform: translateY(-9px); opacity: 0; } 20% { opacity: 1; } to { transform: none; opacity: 1; } }
+.pet-mani-occhi { animation: cmp-mani .3s steps(2) infinite; }
+@keyframes cmp-mani { 50% { transform: translateY(.5px); } }
+.pet-mano.sx { animation: cmp-clap-sx .26s steps(2) infinite; }
+.pet-mano.dx { animation: cmp-clap-dx .26s steps(2) infinite; }
+@keyframes cmp-clap-sx { 50% { transform: translateX(3px) translateY(-1px); } }
+@keyframes cmp-clap-dx { 50% { transform: translateX(-3px) translateY(-1px); } }
+
+/* ------------------------------------------------------------ Bit in scena */
+.compagno { --px: var(--fosforo); font-family: var(--mono, ui-monospace, monospace); }
+.compagno[hidden] { display: none !important; }
+/* postazione base: fissa in basso a destra (Oggi e le pagine senza un posto per Bit) */
+.compagno.base { position: fixed; z-index: 25; right: 22px; bottom: 18px; width: max-content; pointer-events: none; }
+.compagno.base > * { pointer-events: auto; }
+.compagno.base .cmp-fumetto { position: absolute; right: 6px; bottom: calc(100% + 16px); width: max-content; max-width: min(280px, calc(100vw - 40px)); }
+/* ancorato: dentro un .bit-posto della vista, fumetto accanto o sopra (stile «Oscar») */
+.bit-posto { display: flex; min-width: 0; }
+body.senza-bit .bit-posto { display: none; }   /* Bit spento nelle impostazioni */
+.compagno.ancorato { position: relative; display: flex; align-items: center; gap: 18px; width: 100%; min-width: 0; }
+/* nel markup il fumetto viene prima di Bit: riga = Bit a sinistra, riga-inv = Bit a destra, colonna = fumetto sopra */
+.bit-posto[data-layout="riga"] .compagno { flex-direction: row-reverse; justify-content: flex-end; }
+.bit-posto[data-layout="riga-inv"] .compagno { flex-direction: row; justify-content: flex-end; }
+.bit-posto[data-layout="colonna"] .compagno { flex-direction: column; align-items: center; gap: 16px; }
+.compagno.ancorato .cmp-fumetto { position: relative; flex: 0 1 auto; max-width: 620px; min-width: 0; }
+
+.cmp-pet { position: relative; display: block; flex: none; background: none; border: 0; padding: 0; margin: 0; cursor: pointer;
+  -webkit-tap-highlight-color: transparent; outline: none; }
+.cmp-pet:focus-visible { outline: 1px dashed var(--fosforo); outline-offset: 4px; }
+.cmp-corpo, .cmp-voce { display: block; transform-origin: 50% 100%; }
+.compagno.riposo .cmp-corpo { opacity: .85; }
+
+/* fumetto a 8 bit: bordo a gradini (box-shadow) e codina a scaletta */
+.cmp-fumetto {
+  display: flex; align-items: flex-start; gap: 8px;
+  padding: 10px 13px; background: var(--superficie, #000); color: var(--testo, #cfe); font-size: 12.5px; line-height: 1.5; cursor: default;
+  box-shadow: 0 -3px 0 0 var(--px), 0 3px 0 0 var(--px), -3px 0 0 0 var(--px), 3px 0 0 0 var(--px),
+    6px 6px 0 0 rgba(0, 0, 0, .45), 0 0 24px rgba(var(--fosforo-rgb), .18);
+  animation: cmp-pop .18s steps(3) both;
+}
+.cmp-fumetto[hidden] { display: none; }
+.cmp-fumetto::after { content: ''; position: absolute; width: 3px; height: 3px; background: var(--px); }
+/* codina verso il basso (base, colonna) */
+.compagno.base .cmp-fumetto::after, .bit-posto[data-layout="colonna"] .cmp-fumetto::after { right: 26px; top: 100%;
+  box-shadow: 0 3px 0 var(--px), 0 6px 0 var(--px), 3px 6px 0 var(--px), 6px 3px 0 var(--px), 6px 0 0 var(--px),
+    3px 0 0 var(--superficie, #000), 3px 3px 0 var(--superficie, #000); }
+.bit-posto[data-layout="colonna"] .cmp-fumetto::after { right: auto; left: calc(50% - 4px); }
+/* codina verso sinistra (riga: Bit a sinistra del fumetto) */
+.bit-posto[data-layout="riga"] .cmp-fumetto::after { right: 100%; top: calc(50% - 4px);
+  box-shadow: -3px 0 0 var(--px), -6px 0 0 var(--px), -6px 3px 0 var(--px), -3px 6px 0 var(--px), 0 6px 0 var(--px),
+    0 3px 0 var(--superficie, #000), -3px 3px 0 var(--superficie, #000); }
+/* codina verso destra (riga-inv: Bit a destra del fumetto) */
+.bit-posto[data-layout="riga-inv"] .cmp-fumetto::after { left: 100%; top: calc(50% - 4px);
+  box-shadow: 3px 0 0 var(--px), 6px 0 0 var(--px), 6px 3px 0 var(--px), 3px 6px 0 var(--px), 0 6px 0 var(--px),
+    0 3px 0 var(--superficie, #000), 3px 3px 0 var(--superficie, #000); }
+.cmp-fumetto.via { animation: cmp-via .2s steps(3) forwards; }
+.cmp-fumetto.scrive .cmp-testo::after { content: ''; display: inline-block; width: .55em; height: 1em; margin-left: 2px; vertical-align: -2px;
+  background: var(--fosforo); animation: cmp-cursore .5s steps(1) infinite; }
+.cmp-testo { white-space: pre-wrap; }
+.cmp-icona-box:empty { display: none; }
+.cmp-icona { display: block; color: var(--fosforo); margin-top: 2px; animation: cmp-icona 1s steps(2) infinite; }
+@keyframes cmp-pop { from { transform: scale(.6); opacity: 0; } to { transform: none; opacity: 1; } }
+@keyframes cmp-via { to { transform: scale(.7); opacity: 0; } }
+@keyframes cmp-cursore { 50% { opacity: 0; } }
+@keyframes cmp-icona { 50% { transform: rotate(-12deg); } }
+
+/* ---- animazioni del corpo ----
+   .cmp-pet  : bit-focus-reading (si inclina verso la domanda o l'output)
+   .cmp-corpo: reazioni (data-anim)
+   .cmp-voce : bit-talking-bounce (molleggio mentre il fumetto scrive)      */
+.compagno.legge .cmp-pet { animation: bit-focus-reading 3.6s ease-in-out infinite; transform-origin: 50% 100%; }
+@keyframes bit-focus-reading { 0%, 100% { transform: rotate(5deg) translateY(1px); } 50% { transform: rotate(8deg) translateY(2px); } }
+.bit-posto[data-sguardo="sx"] .compagno.legge .cmp-pet { animation-name: bit-focus-reading-sx; }
+@keyframes bit-focus-reading-sx { 0%, 100% { transform: rotate(-5deg) translateY(1px); } 50% { transform: rotate(-8deg) translateY(2px); } }
+.compagno.parla .cmp-voce { animation: bit-talking-bounce .24s ease-in-out infinite; }
+@keyframes bit-talking-bounce { 0%, 100% { transform: translateY(0) scale(1, 1); } 50% { transform: translateY(-2px) scale(.98, 1.03); } }
+.compagno.bocca .pet-bocca { transform: scaleY(1.9); transform-origin: 50% 0; }
+
+/* bit-eat-xp: bocca aperta, le particelle di XP gli volano in bocca */
+[data-anim="eat-xp"] .cmp-corpo { animation: bit-eat-xp 1.4s ease-in-out 1; }
+@keyframes bit-eat-xp { 0% { transform: none; } 15% { transform: scale(1.06, .94); } 30%, 60% { transform: scale(.96, 1.06) translateY(-3px); }
+  70% { transform: scale(1.12, .9); } 80% { transform: translateY(-8px) scale(.94, 1.08); } 100% { transform: none; } }
+/* salto di gioia */
+[data-anim="salto"] .cmp-corpo { animation: cmp-salto .7s cubic-bezier(.3, 1.6, .5, 1) 2; }
+@keyframes cmp-salto { 0% { transform: translateY(0) scale(1.12, .86); } 35% { transform: translateY(-16px) scale(.92, 1.1); }
+  70% { transform: translateY(0) scale(1.08, .92); } 100% { transform: none; } }
+/* bit-glitch-error: scossa rossa, vibrazione orizzontale, fette spostate */
+[data-anim="glitch-error"] .cmp-corpo { animation: bit-glitch-error .5s steps(1) 3; }
+@keyframes bit-glitch-error {
+  0% { transform: translate(0, 0); filter: drop-shadow(3px 0 0 #ff2a4f) drop-shadow(-3px 0 0 #00e5ff); }
+  15% { transform: translate(-5px, 1px) skewX(-8deg); filter: drop-shadow(-3px 0 0 #ff2a4f) drop-shadow(3px 0 0 #00e5ff) brightness(1.4); clip-path: inset(0 0 55% 0); }
+  30% { transform: translate(5px, -1px); filter: sepia(1) saturate(8) hue-rotate(-40deg); clip-path: none; }
+  45% { transform: translate(-3px, 0) skewX(10deg); filter: drop-shadow(2px 0 0 #ff2a4f) drop-shadow(-2px 0 0 #00e5ff); clip-path: inset(40% 0 0 0); }
+  60% { transform: translate(4px, 2px); filter: invert(.15) sepia(1) saturate(6) hue-rotate(-45deg); clip-path: none; }
+  80% { transform: translate(-4px, -1px); filter: drop-shadow(-3px 0 0 #ff2a4f); }
+  100% { transform: none; filter: none; } }
+[data-anim="glitch-error"] .cmp-aura, [data-anim="trema"] .cmp-aura { opacity: 1; background: radial-gradient(circle, rgba(255, 42, 79, .5) 0, transparent 65%); animation: cmp-lampo-rosso .25s steps(2) 5; }
+@keyframes cmp-lampo-rosso { 50% { opacity: .2; } }
+[data-anim="trema"] .cmp-corpo { animation: cmp-trema .09s linear 18; }
+@keyframes cmp-trema { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-2px) rotate(-1.5deg); } 75% { transform: translateX(2px) rotate(1.5deg); } }
+/* bit-victory-hype: giro di 360°, lampi di luce, coriandoli */
+[data-anim="victory-hype"] .cmp-corpo { animation: bit-victory-hype 1s cubic-bezier(.5, 0, .3, 1) 1, cmp-ondeggia .5s ease-in-out 1s 3; }
+@keyframes bit-victory-hype { 0% { transform: translateY(0); } 30% { transform: translateY(-16px) rotateY(180deg) scale(1.08); }
+  60% { transform: translateY(-16px) rotateY(360deg) scale(1.08); } 100% { transform: none; } }
+@keyframes cmp-ondeggia { 50% { transform: rotate(-6deg) translateY(-3px); } }
+[data-anim="victory-hype"] .cmp-aura { opacity: 1;
+  background: repeating-conic-gradient(from 0deg, rgba(255, 212, 71, .55) 0 12deg, transparent 12deg 30deg), radial-gradient(circle, rgba(255, 255, 255, .5) 0, transparent 60%);
+  -webkit-mask: radial-gradient(circle, #000 25%, transparent 70%); mask: radial-gradient(circle, #000 25%, transparent 70%);
+  animation: cmp-lampi 1.2s linear infinite; }
+@keyframes cmp-lampi { from { transform: rotate(0) scale(.9); } 50% { transform: rotate(45deg) scale(1.15); } to { transform: rotate(90deg) scale(.9); } }
+/* sbadiglio, brontolio, annuire */
+[data-anim="sbadiglio"] .cmp-corpo { animation: cmp-sbadiglio 2.4s ease-in-out 1; }
+@keyframes cmp-sbadiglio { 0%, 100% { transform: none; } 30%, 60% { transform: scale(.94, 1.1) rotate(-5deg); } 75% { transform: scale(1.04, .96); } }
+[data-anim="brontola"] .cmp-corpo { animation: cmp-trema .12s linear 4, cmp-sbadiglio 2s ease-in-out .6s 1; }
+[data-anim="annuisce"] .cmp-corpo { animation: cmp-annuisce .6s ease-in-out 2; }
+@keyframes cmp-annuisce { 0%, 100% { transform: none; } 40% { transform: rotate(5deg) translateY(2px); } 70% { transform: rotate(-3deg); } }
+.cmp-aura { position: absolute; inset: -30%; border-radius: 50%; opacity: 0; pointer-events: none; transition: opacity .3s; }
+
+/* particelle: XP, scintille d'oro, fumo, coriandoli */
+.cmp-effetti { position: absolute; inset: 0; pointer-events: none; }
+.cmp-p { position: absolute; left: 50%; top: 50%; width: 5px; height: 5px; background: var(--fosforo); box-shadow: 0 0 6px rgba(var(--fosforo-rgb), .8);
+  animation: cmp-vola 1s cubic-bezier(.2, .7, .3, 1) both; }
+.cmp-p.scritta { width: auto; height: auto; background: none; box-shadow: none; color: var(--fosforo); font: 700 11px var(--mono, monospace);
+  text-shadow: 0 0 6px rgba(var(--fosforo-rgb), .8); white-space: nowrap; }
+.cmp-p.xp-in { animation-name: bit-eat-xp-p; animation-duration: .9s; animation-timing-function: cubic-bezier(.6, 0, .9, .6); }
+.cmp-p.scintille { width: 3px; height: 9px; background: #ffd447; box-shadow: 0 0 8px #ffd447; animation-name: cmp-scintilla; animation-duration: 1.1s; }
+.cmp-p.scintille::after { content: ''; position: absolute; left: -3px; top: 3px; width: 9px; height: 3px; background: #ffd447; }
+.cmp-p.fumo { width: 10px; height: 10px; background: #8a8f98; box-shadow: 5px -3px 0 #6f747d, -4px 2px 0 #9aa0a8; opacity: .9;
+  animation-name: cmp-fumo; animation-duration: 1.5s; animation-timing-function: ease-out; }
+.cmp-p.coriandoli { width: 5px; height: 5px; box-shadow: none; animation-name: cmp-coriandoli; animation-duration: 1.7s; animation-timing-function: cubic-bezier(.2, .6, .4, 1); }
+@keyframes cmp-vola { 0% { transform: translate(-50%, -50%) scale(.4); opacity: 0; } 15% { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity: 0; } }
+@keyframes bit-eat-xp-p { 0% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1); opacity: 0; } 20% { opacity: 1; }
+  90% { opacity: 1; } 100% { transform: translate(-50%, -50%) scale(.2); opacity: 0; } }
+@keyframes cmp-scintilla { 0% { transform: translate(-50%, -50%) scale(.2) rotate(0); opacity: 0; } 30% { opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) scale(1) rotate(90deg); opacity: 0; } }
+@keyframes cmp-fumo { 0% { transform: translate(-50%, -80%) scale(.3); opacity: 0; } 20% { opacity: .9; }
+  100% { transform: translate(calc(-50% + var(--dx) * .5), calc(-120% + var(--dy))) scale(2.2); opacity: 0; } }
+@keyframes cmp-coriandoli { 0% { transform: translate(-50%, -50%) rotate(0); opacity: 1; }
+  45% { transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy))) rotate(calc(var(--giro) * .5)); opacity: 1; }
+  100% { transform: translate(calc(-50% + var(--dx) * 1.3), calc(-50% + var(--dy) + var(--cade) + 60px)) rotate(var(--giro)); opacity: 0; } }
+
+/* ---- dove si ancora nelle viste ---- */
+/* quiz: sopra la domanda, grande, fumetto a destra */
+.bit-posto[data-posto="quiz"] { margin: 0 auto 22px; min-height: 108px; align-items: center; }
+/* codice: accanto all'output di g++ */
+.console-riga { flex: 1; min-height: 0; display: flex; }
+.console-riga > .console-corpo { flex: 1; min-width: 0; }
+.console .bit-posto { flex: 0 0 clamp(250px, 34%, 420px); align-items: flex-end; padding: 10px 14px 12px 6px; border-left: 1px solid var(--linea); overflow: hidden; }
+.console .bit-posto .compagno { align-items: flex-end; }
+.console .bit-posto .cmp-fumetto { max-height: calc(var(--h-console, 240px) - 70px); overflow: auto; }
+/* orale: a lato della carta */
+.orale-palco { display: grid; grid-template-columns: minmax(0, 1fr) 240px; gap: 24px; align-items: start; }
+.orale-palco > .bit-posto { position: sticky; top: 24px; justify-content: center; padding-top: 6px; }
+.orale-palco > .bit-posto .cmp-fumetto { max-width: 240px; }
+@media (max-width: 1080px) {
+  .orale-palco { grid-template-columns: 1fr; }
+  .orale-palco > .bit-posto { position: static; justify-content: flex-start; }
+  .orale-palco > .bit-posto[data-layout="colonna"] .compagno { flex-direction: row-reverse; justify-content: flex-end; align-items: center; }
+  .orale-palco > .bit-posto[data-layout="colonna"] .cmp-fumetto::after { left: auto; right: 100%; top: calc(50% - 4px);
+    box-shadow: -3px 0 0 var(--px), -6px 0 0 var(--px), -6px 3px 0 var(--px), -3px 6px 0 var(--px), 0 6px 0 var(--px),
+      0 3px 0 var(--superficie, #000), -3px 3px 0 var(--superficie, #000); }
+  .orale-palco > .bit-posto .cmp-fumetto { max-width: 560px; }
+}
+/* telefono */
+.compagno.base.telefono { right: 10px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); }
+.compagno.telefono .cmp-fumetto { font-size: 12px; }
+.compagno.base.telefono .cmp-fumetto { max-width: min(240px, calc(100vw - 36px)); }
+.compagno.telefono.ancorato { gap: 14px; }
+.bit-posto.tel { margin: 4px 0 16px; padding-left: 4px; min-height: 72px; }
+
+/* ------------------------------------------------------------ Armadio di Bit */
+.armadio-velo { position: fixed; inset: 0; z-index: 8700; display: grid; place-items: center; padding: 24px;
+  background: rgba(0, 0, 0, .78); backdrop-filter: blur(3px); animation: arm-entra .18s ease; font-family: var(--mono, ui-monospace, monospace); }
+@keyframes arm-entra { from { opacity: 0; } }
+.armadio { width: min(980px, 100%); max-height: calc(100vh - 48px); display: flex; flex-direction: column; overflow: hidden;
+  background: var(--superficie, #000); color: var(--testo, #cfe); border: 1px solid var(--linea-forte, rgba(var(--fosforo-rgb), .34));
+  box-shadow: 0 0 0 1px rgba(var(--fosforo-rgb), .12), 0 30px 80px rgba(0, 0, 0, .6), 0 0 60px rgba(var(--fosforo-rgb), .12); }
+.arm-testa { display: flex; align-items: center; gap: 14px; padding: 16px 20px; border-bottom: 1px solid var(--linea); }
+.arm-testa > div:first-child { flex: 1; min-width: 0; }
+.arm-sopra { display: flex; align-items: center; gap: 6px; font-size: 11px; letter-spacing: .3em; text-transform: uppercase; color: var(--testo-2); }
+.arm-ic { color: var(--fosforo); }
+.arm-testa h2 { margin: 4px 0 0; font-size: 20px; font-weight: 700; color: var(--fosforo); letter-spacing: .02em; text-shadow: 0 0 10px rgba(var(--fosforo-rgb), .4); }
+.arm-conta { font-size: 12px; color: var(--testo-2); border: 1px solid var(--linea); padding: 4px 8px; white-space: nowrap; }
+.arm-chiudi { background: none; border: 1px solid var(--linea); color: var(--testo-2); width: 34px; height: 34px; font-size: 20px; line-height: 1; cursor: pointer; }
+.arm-chiudi:hover, .arm-chiudi:focus-visible { color: var(--fosforo); border-color: var(--fosforo); outline: none; }
+.arm-corpo { display: grid; grid-template-columns: 260px minmax(0, 1fr); min-height: 0; flex: 1; }
+.arm-anteprima { display: flex; flex-direction: column; align-items: center; gap: 14px; padding: 26px 18px; border-right: 1px solid var(--linea);
+  background: radial-gradient(circle at 50% 38%, rgba(var(--fosforo-rgb), .1), transparent 62%); }
+.arm-palco { display: grid; place-items: center; width: 200px; height: 200px; border: 1px dashed var(--linea); }
+.arm-addosso { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.arm-addosso span { font-size: 11px; color: var(--testo-2); border: 1px solid var(--linea); padding: 3px 7px; }
+.arm-btn { background: none; border: 1px solid var(--linea-forte); color: var(--testo); font: inherit; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; padding: 7px 12px; cursor: pointer; }
+.arm-btn:hover { border-color: var(--fosforo); color: var(--fosforo); }
+.arm-scaffali { display: flex; flex-direction: column; min-height: 0; padding: 16px 20px 20px; }
+.arm-schede { display: grid; grid-template-columns: repeat(3, 1fr); border: 1px solid var(--linea); margin-bottom: 14px; flex: none; }
+.arm-schede button { background: none; border: 0; color: var(--testo-2); font: inherit; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; padding: 9px 4px; cursor: pointer; }
+.arm-schede button + button { border-left: 1px solid var(--linea); }
+.arm-schede button.attiva { color: var(--fosforo); background: rgba(var(--fosforo-rgb), .12); box-shadow: inset 0 -2px 0 var(--fosforo); }
+.arm-nota { margin: -4px 0 12px; font-size: 11.5px; color: var(--testo-2); line-height: 1.5; }
+.arm-griglia { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 10px; overflow: auto; padding: 2px; }
+.arm-voce { position: relative; display: flex; flex-direction: column; align-items: center; gap: 6px; text-align: center; padding: 12px 10px 12px;
+  background: rgba(var(--fosforo-rgb), .03); border: 1px solid var(--linea); color: var(--testo); font: inherit; cursor: pointer; transition: border-color .15s, background .15s; }
+.arm-voce:hover { border-color: var(--linea-forte); background: rgba(var(--fosforo-rgb), .07); }
+.arm-voce.su { border-color: var(--fosforo); background: rgba(var(--fosforo-rgb), .12); box-shadow: 0 0 0 1px var(--fosforo), 0 0 18px rgba(var(--fosforo-rgb), .25); }
+.arm-voce.su::before { content: 'IN USO'; position: absolute; top: 6px; right: 6px; font-size: 9px; letter-spacing: .12em; color: #000; background: var(--fosforo); padding: 2px 4px; }
+.arm-voce b { font-size: 12.5px; font-weight: 700; }
+.arm-voce b code { font: inherit; color: var(--fosforo); }
+.arm-voce small { font-size: 11px; color: var(--testo-2); line-height: 1.4; }
+.arm-mini { position: relative; display: grid; place-items: center; width: 76px; height: 76px; }
+.arm-voce.chiuso { cursor: not-allowed; }
+.arm-voce.chiuso .arm-mini .pet-svg { filter: brightness(0) drop-shadow(0 0 1px rgba(var(--fosforo-rgb), .6)); opacity: .55; }
+.arm-voce.chiuso b { color: var(--testo-2); }
+.arm-lucchetto { position: absolute; right: 2px; bottom: 2px; color: var(--testo-2); }
+.arm-barra { display: block; width: 100%; height: 4px; background: rgba(var(--fosforo-rgb), .12); margin-top: 2px; }
+.arm-barra i { display: block; height: 100%; background: var(--fosforo); }
+.arm-voce.nego { animation: arm-nego .35s steps(4); }
+@keyframes arm-nego { 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@media (max-width: 720px) {
+  .armadio-velo { padding: 0; align-items: end; }
+  .armadio { max-height: 92vh; width: 100%; padding-bottom: env(safe-area-inset-bottom, 0px); }
+  .arm-corpo { grid-template-columns: 1fr; overflow: auto; }
+  .arm-anteprima { border-right: 0; border-bottom: 1px solid var(--linea); flex-direction: row; flex-wrap: wrap; justify-content: center; padding: 14px; }
+  .arm-palco { width: 132px; height: 132px; }
+  .arm-palco .pet-svg { width: 120px; height: 120px; }
+  .arm-griglia { grid-template-columns: repeat(2, minmax(0, 1fr)); overflow: visible; }
+  .arm-testa { padding: 14px 16px; }
+  .arm-testa h2 { font-size: 17px; }
+}

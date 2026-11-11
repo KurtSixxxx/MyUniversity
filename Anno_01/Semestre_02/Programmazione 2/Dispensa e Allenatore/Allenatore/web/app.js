@@ -86,10 +86,13 @@ async function avvia() {
   S.gioco = Gioco.calcola(S.prog, S.cat, { obiettivo: S.imp.obiettivo_xp });
   S.traguardiVisti = new Set(S.imp.traguardi_visti || S.gioco.traguardi.filter(t => t.ok).map(t => t.id));
   S.bit = new Gioco.Compagno({
-    stato: () => Gioco.pet(S.gioco || statoGioco(), nomePet()), colore: () => S.imp.accento || Gioco.COLORI[0][0],
-    contesto: () => S.vista, attivo: () => S.imp.compagno !== false && !!S.imp.configurato, visibile: () => S.vista !== 'bit',
-    lato: () => S.imp.barra_stretta ? 54 : 80, pos: S.imp.compagno_pos, ancora: casaBit, salvaPos: p => salvaImp({ compagno_pos: p }), suono: t => S.lettore?.effetto(t),
+    stato: () => Gioco.pet(S.gioco || statoGioco(), nomePet()), vestito: vestitoBit,
+    contesto: () => S.vista, attivo: () => S.imp.compagno !== false && !!S.imp.configurato,
+    // nella vista Bit c'è già quello grande; nella simulazione d'esame Bit si fa da parte, come in aula
+    visibile: () => S.vista !== 'bit' && !(S.vista === 'quiz' && S.q.fase === 'sessione' && S.q.esame && !S.q.finito),
+    lato: 84, osserva: $('#contenuto'), suono: t => S.lettore?.effetto(t),
   });
+  S.armadioPrima = new Set(Gioco.armadio(S.gioco, S.prog, S.imp).sbloccati);
   aggiornaMini();
   setInterval(() => { aggiornaMini(); disegnaPetMini(); }, 60000);
   $('#app').hidden = false;
@@ -177,7 +180,7 @@ const linkTelefono = () => (window.CONFIG?.linkTelefono || '').trim();
 /* la regola di unione (per ogni voce vince la più recente) è in gioco.js, uguale sul telefono */
 const unisciProgressi = (a, b) => Gioco.unisci(a, b);
 /* il profilo viaggia con i progressi, così il telefono si personalizza da solo */
-const CAMPI_PROFILO = ['nome', 'data_esame', 'professore', 'corso', 'sigla', 'accento', 'nome_pet', 'obiettivo_xp'];
+const CAMPI_PROFILO = ['nome', 'data_esame', 'professore', 'corso', 'sigla', 'accento', 'nome_pet', 'obiettivo_xp', 'armadio'];
 function codiceProgressi() {
   const profilo = Object.fromEntries(CAMPI_PROFILO.filter(k => S.imp[k] !== undefined && S.imp[k] !== '').map(k => [k, S.imp[k]]));
   const prog = { ...S.prog, data_esame: S.imp.data_esame };
@@ -232,15 +235,7 @@ function applicaPannelli() {
   const b = $('#mostra-elenco');
   if (b) b.title = senzaElenco ? 'Mostra l\'elenco degli esercizi (Ctrl+E)' : 'Nascondi l\'elenco degli esercizi (Ctrl+E)';
 }
-function cambiaPannello(chiave) { salvaImp({ [chiave]: !S.imp[chiave] }); applicaPannelli(); setTimeout(() => S.bit?.aggiorna(), 260); }
-/* Bit abita nello spazio vuoto della barra laterale, sopra la scheda del livello: così non copre mai i pulsanti */
-function casaBit() {
-  const b = $('.barra'), p = $('.barra-piede'), m = $('#menu'); if (!b || !p || !m) return null;
-  const rb = b.getBoundingClientRect(), rp = p.getBoundingClientRect(), rm = m.getBoundingClientRect(), lato = S.imp.barra_stretta ? 54 : 80;
-  const y = rp.top - lato - 16;
-  if (y < rm.bottom + 24) return null;   // finestra troppo bassa: angolo in basso a destra
-  return { x: rb.left + rb.width / 2 - lato / 2, y };
-}
+function cambiaPannello(chiave) { salvaImp({ [chiave]: !S.imp[chiave] }); applicaPannelli(); }
 
 function aggiornaMini() {
   const g = giorniAllEsame();
@@ -540,6 +535,7 @@ function renderQuizSessione(el) {
         ${Q.esame && !Q.finito ? `<span class="pill timer" id="quiz-timer">${mmss((Q.scadenza - Date.now()) / 1000)}</span>` : ''}
       </div>
       <div class="sessione-corpo">
+        ${Q.esame && !Q.finito ? '' : '<div class="bit-posto" data-posto="quiz" data-layout="riga" data-lato="104" data-sguardo="giu"></div>'}
         <div class="sopratitolo accento">${esc(dove)}</div>
         <div class="domanda testo-ricco">${q.domanda}</div>
         <div class="opzioni ${rivela ? 'rivelate' : ''}">${opz}</div>
@@ -615,6 +611,7 @@ async function quizConsegna(forza) {
   salvaProgressi();
   Q.fase = 'esito';
   renderQuiz();
+  setTimeout(() => S.bit?.reagisci(giuste >= soglia ? 'simulazioneOk' : 'simulazioneNo'), 400);
 }
 
 function renderQuizEsito(el) {
@@ -662,6 +659,7 @@ function oraleProssima() {
   S.o.mostrata = false;
   fermaTimerOrale();
   renderOrale();
+  setTimeout(() => { if (S.vista === 'orale' && !S.o.valutata) S.bit?.parla('orale'); S.o.valutata = false; }, 60);
 }
 function renderOrale() {
   const el = $('#v-orale');
@@ -680,7 +678,7 @@ function renderOrale() {
         <span class="pill">${sicure} di ${S.cat.orale.length} sicure</span>
       </div>
     </header>
-    <div class="card flashcard">
+    <div class="orale-palco"><div class="card flashcard">
       <div class="flash-testa">
         <span class="sopratitolo accento">${esc(nomeModulo(o.modulo))} · ${esc(titoloModulo(o.modulo))}</span>
         <span class="livello" title="Livello ${box} di 4">${[1, 2, 3, 4].map(i => `<i class="${i <= box ? 'on' : ''}"></i>`).join('')}</span>
@@ -701,6 +699,7 @@ function renderOrale() {
         <button class="btn valuta verde" data-azione="orale-valuta" data-v="2">La sapevo <kbd>3</kbd></button>
       </div>
     </div>
+    <div class="bit-posto" data-posto="orale" data-layout="colonna" data-lato="120" data-sguardo="sx"></div></div>
     <div class="orale-piede"><button class="btn fantasma" data-azione="orale-salta">Salta questa domanda ${ic('destra')}</button></div>`;
   evidenziaBlocchi(el);
 }
@@ -712,6 +711,7 @@ function oraleMostra() {
   $('.flash-risposta', el).hidden = false;
   $('.flash-valuta', el).hidden = false;
   $('.flash-risposta', el).classList.add('appare');
+  S.bit?.parla('risposta');
 }
 function oraleValuta(v) {
   const o = S.o.corrente, po = S.prog.orale;
@@ -720,6 +720,7 @@ function oraleValuta(v) {
   s.n = (s.n || 0) + 1; s.data = oggiISO();
   Gioco.registra(S.prog, 'o');
   S.bit?.reagisci(v === 2 ? 'oraleAlta' : 'oraleBassa', { m: titoloModulo(o.modulo) });
+  S.o.valutata = true;   // la reazione resta nel fumetto: niente frase nuova sulla domanda successiva
   salvaProgressi();
   oraleProssima();
 }
@@ -1022,7 +1023,8 @@ async function apriEsercizio(id) {
         <span class="spazio"></span>
         <span id="console-stato"></span>
       </div>
-      <div class="console-corpo" id="console-corpo"></div>
+      <div class="console-riga"><div class="console-corpo" id="console-corpo"></div>
+        <div class="bit-posto" data-posto="codice" data-layout="riga-inv" data-lato="76" data-sguardo="sx"></div></div>
     </div>`;
   evidenziaBlocchi($('#lavoro'));
   sistemaTraccia();
@@ -1267,7 +1269,14 @@ function aggiornaGioco() {
     const guadagno = dopo.xp - prima.xp;
     if (guadagno > 0) { xpVolante(guadagno); S.lettore?.effetto('xp'); setTimeout(saltaPet, 30); }
     const misPrima = prima.missioni.filter(m => m.fatto).length, misDopo = dopo.missioni.filter(m => m.fatto).length;
-    if (misDopo > misPrima) { avviso(misDopo === 3 ? 'Tutte le missioni di oggi completate! +100 XP' : 'Missione completata: +40 XP', 'ok'); S.lettore?.effetto('missione'); }
+    if (misDopo > misPrima) { avviso(misDopo === 3 ? 'Tutte le missioni di oggi completate! +100 XP' : 'Missione completata: +40 XP', 'ok'); S.lettore?.effetto('missione');
+      if (misDopo === 3) setTimeout(() => S.bit?.reagisci('missioni'), 1600); }
+    const arm = Gioco.armadio(dopo, S.prog, S.imp), nuoviArm = arm.sbloccati.filter(id => !S.armadioPrima?.has(id));
+    if (nuoviArm.length) {
+      const nomi = [...arm.palette, ...arm.accessori, ...arm.facce].filter(v => nuoviArm.includes(v.id)).map(v => v.nome);
+      setTimeout(() => avviso(`Nuovo nell'armadio di ${nomePet()}: ${nomi.join(', ')}`, 'ok'), 2200);
+    }
+    S.armadioPrima = new Set(arm.sbloccati);
     const nuovi = dopo.traguardi.filter(t => t.ok && !S.traguardiVisti.has(t.id));
     if (nuovi.length) {
       nuovi.forEach(t => S.traguardiVisti.add(t.id));
@@ -1310,7 +1319,13 @@ function livelloNuovo(st, prima) {
 }
 
 /* Bit in pixel art (gioco.js): il colore del corpo è il colore d'accento scelto */
-const svgPet = (indice, umore, lato, classe = '') => Gioco.svgPet(indice, umore, { colore: S.imp?.accento || Gioco.COLORI[0][0], lato, classe });
+const vestitoBit = () => ({ colore: S.imp?.accento || Gioco.COLORI[0][0], ...Gioco.vestito(S.gioco || statoGioco(), S.prog, S.imp) });
+const svgPet = (indice, umore, lato, classe = '') => Gioco.svgPet(indice, umore, { ...vestitoBit(), lato, classe });
+function apriArmadio() {
+  Gioco.apriArmadio({ stato: S.gioco || statoGioco(), prog: S.prog, imp: S.imp, nome: nomePet(), colore: S.imp.accento || Gioco.COLORI[0][0],
+    salva: scelte => { salvaImp({ armadio: scelte }); S.bit?.aggiorna(); disegnaPetMini(); },
+    chiuso: () => { if (S.vista === 'bit') renderBit(); if (S.vista === 'oggi') renderOggi(); } });
+}
 /* salto di gioia quando arrivano XP */
 function saltaPet() {
   $$('.pet-svg').forEach(el => { el.classList.remove('salta'); void el.getBoundingClientRect(); el.classList.add('salta'); setTimeout(() => el.classList.remove('salta'), 800); });
@@ -1353,7 +1368,7 @@ function renderBit() {
   el.innerHTML = `
     <header class="testata riga">
       <div><div class="sopratitolo">Il tuo compagno di studio</div><h1>${esc(pet.nome)}</h1></div>
-      <div class="testata-destra"><button class="btn secondario piccolo" data-azione="rinomina-pet">Rinomina</button></div>
+      <div class="testata-destra"><button class="btn primario piccolo" data-azione="armadio">Armadio</button><button class="btn secondario piccolo" data-azione="rinomina-pet">Rinomina</button></div>
     </header>
     <div class="griglia-2">
       <div class="card bit-scheda">
@@ -1364,9 +1379,10 @@ function renderBit() {
           <div><span class="secondario">Umore</span><b>${esc(Gioco.UMORI[pet.umore])}</b></div>
           <div><span class="secondario">Evoluzione</span><b>${pet.prossimo ? `${esc(pet.prossimo.nome)} al livello ${pet.prossimo.livello}` : 'forma finale'}</b></div>
         </div>
+        <p class="secondario piccola" style="margin:10px 0 0">${esc(pet.motivo)}</p>
         <div class="etichetta-campo" style="margin-top:14px">Sazietà di oggi · ${st.xpOggi}/${st.obiettivo} XP</div>
         <div class="xp-barra cibo"><i style="width:${percento(Math.min(st.xpOggi, st.obiettivo), st.obiettivo)}%"></i></div>
-        <p class="secondario piccola">${esc(pet.descr)} Si nutre degli XP che guadagni: se non studi per due giorni ha fame, dopo quattro si addormenta.</p>
+        <p class="secondario piccola">${esc(pet.descr)} Umori: neutro mentre studi, felice con le tre missioni del giorno, euforico se superi una simulazione (o fai 5 giuste di fila), triste dopo un errore, affamato dopo due giorni senza studio, a riposo dopo quattro.</p>
       </div>
       <div class="card">
         <div class="card-titolo">Livello ${st.livello} · ${esc(st.titolo)}</div>
@@ -1511,8 +1527,8 @@ function apriImpostazioni() {
       <div class="imp-gruppo">${esc(nomePet())} e obiettivi</div>
       <div class="imp-riga"><div><div class="imp-nome">Nome del compagno</div><div class="secondario">Il personaggio che cresce con i tuoi XP.</div></div>
         <input class="campo" data-imp="nome_pet" value="${esc(S.imp.nome_pet || '')}" placeholder="Bit"></div>
-      <div class="imp-riga"><div><div class="imp-nome">${esc(nomePet())} in scena</div><div class="secondario">Resta in un angolo, reagisce a quiz, codice e orale e ti parla. Trascinalo dove dà meno fastidio; un clic lo fa saltare.</div></div>
-        <div class="azioni" style="margin:0"><button class="btn secondario piccolo" data-azione="bit-a-posto">Rimetti nell'angolo</button>${siNo('compagno')}</div></div>
+      <div class="imp-riga"><div><div class="imp-nome">${esc(nomePet())} in scena</div><div class="secondario">Sta sopra la domanda nei quiz, accanto all'output di g++ nel codice, a lato della carta all'orale, in basso a destra nella pagina Oggi. Reagisce e ti parla; un clic lo fa saltare.</div></div>
+        <div class="azioni" style="margin:0"><button class="btn secondario piccolo" data-azione="armadio">Armadio</button>${siNo('compagno')}</div></div>
       <div class="imp-riga"><div><div class="imp-nome">Obiettivo giornaliero</div><div class="secondario">Gli XP che sfamano ${esc(nomePet())} ogni giorno.</div></div>
         <div class="segmentato" id="imp-obiettivo">${[150, 300, 500, 800].map(k =>
           `<button data-v="${k}" class="${(S.imp.obiettivo_xp || 300) === k ? 'attivo' : ''}">${k} XP</button>`).join('')}</div></div>
@@ -1642,7 +1658,7 @@ const AZIONI = {
   'es-gruppo': d => { const m = +d.m; S.c.aperti.has(m) ? S.c.aperti.delete(m) : S.c.aperti.add(m); disegnaLista(); },
   'es-filtro': (d, b) => { S.c.filtro = d.f; $$('#es-filtro button').forEach(x => x.classList.toggle('attivo', x === b)); disegnaLista(); },
   'esegui': () => esegui(),
-  'bit-a-posto': () => { S.bit?.rimettiAPosto(); salvaImp({ compagno_pos: null }); },
+  'armadio': () => { if (!$('#foglio').hidden) chiudiFoglio(); apriArmadio(); },
   'scheda': d => { S.c.scheda = d.s; disegnaConsole(); },
   'vai-riga': d => S.c.editor?.vaiARiga(+d.r),
   'traccia': () => { S.c.tracciaAperta = !S.c.tracciaAperta; $('#traccia').classList.toggle('aperta', S.c.tracciaAperta);

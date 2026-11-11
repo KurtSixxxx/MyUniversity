@@ -14,6 +14,7 @@
 <!--__PWA__-->
 <style>
 /*__GIOCO_CSS__*/
+/*__BIT_CSS__*/
 </style>
 <style>
 /* Layout: app a schede (Oggi, Quiz, Orale, Codice, Bit) con barra in basso.
@@ -291,6 +292,7 @@ textarea.campo { min-height: 90px; font: 12px/1.4 var(--mono); resize: vertical;
 <script id="dati" type="application/json">/*__DATI__*/</script>
 <script>/*__CONFIG__*/</script>
 <script>/*__GIOCO__*/</script>
+<script>/*__BIT__*/</script>
 <script>/*__MUSICA__*/</script>
 <script>
 'use strict';
@@ -335,7 +337,7 @@ try { const l = JSON.parse(localStorage.getItem(CHIAVE) || 'null'); if (l) P = O
 let IMP = {};
 try { IMP = JSON.parse(localStorage.getItem(CHIAVE_IMP) || '{}') || {}; } catch (e) { IMP = {}; }
 function salvaImp(parz) { Object.assign(IMP, parz); try { localStorage.setItem(CHIAVE_IMP, JSON.stringify(IMP)); } catch (e) { /* ignorato */ } }
-const CAMPI_PROFILO = ['nome', 'data_esame', 'professore', 'corso', 'sigla', 'accento', 'nome_pet', 'obiettivo_xp'];
+const CAMPI_PROFILO = ['nome', 'data_esame', 'professore', 'corso', 'sigla', 'accento', 'nome_pet', 'obiettivo_xp', 'armadio'];
 const nomePet = () => (IMP.nome_pet || '').trim() || 'Bit';
 let docRif = null, salvataggio = 'locale', inScrittura = false, ancora = false, tSalva = null;
 
@@ -562,7 +564,8 @@ function vistaSessione() {
   $('#vista').innerHTML = '<div class="sessione"><div class="sess-testa"><button class="tondo" data-a="quiz-esci" aria-label="Esci">' + ic('x') + '</button>'
     + '<div class="progresso"><i style="width:' + percento(Q.esame && !Q.finito ? date : Q.i + 1, n) + '%"></i></div><span class="conta">' + (Q.i + 1) + '/' + n + '</span>'
     + (Q.esame && !Q.finito ? '<span class="timer" id="timer">' + mmss((Q.scadenza - Date.now()) / 1000) + '</span>' : '') + '</div>'
-    + '<div class="sess-corpo"><div class="sopra accento">' + esc(dove) + '</div><div class="domanda ricco">' + q.domanda + '</div><div class="opzioni">' + opz + '</div>' + risc
+    + '<div class="sess-corpo">' + (Q.esame && !Q.finito ? '' : '<div class="bit-posto tel" data-posto="quiz" data-layout="riga" data-lato="66" data-sguardo="giu"></div>')
+    + '<div class="sopra accento">' + esc(dove) + '</div><div class="domanda ricco">' + q.domanda + '</div><div class="opzioni">' + opz + '</div>' + risc
     + (Q.esame ? '<div class="punti">' + Q.lista.map((x, k) => { let c = k === Q.i ? 'qui' : ''; if (Q.finito) c += Q.risposte[k] === x.giusta ? ' ok' : ' no'; else if (Q.risposte[k] !== undefined) c += ' data'; return '<button class="punto ' + c + '" data-a="quiz-vai" data-k="' + k + '">' + (k + 1) + '</button>'; }).join('') + '</div>' : '')
     + '</div><div class="piede">'
     + ((Q.esame || Q.finito) ? '<button class="btn stretto" data-a="quiz-prec"' + (Q.i ? '' : ' disabled') + ' aria-label="Precedente">' + ic('indietro') + '</button>' : '')
@@ -599,6 +602,7 @@ function consegna(forza) {
   if (tot >= 30) Gioco.registra(P, 's');
   Q.durata = (Date.now() - Q.inizio) / 1000;
   salva(); Q.fase = 'esito'; disegna(); window.scrollTo(0, 0);
+  setTimeout(() => BIT?.reagisci(g >= Math.ceil(tot * 0.6) ? 'simulazioneOk' : 'simulazioneNo'), 400);
 }
 function vistaEsito() {
   const tot = Q.lista.length, g = Q.lista.filter((q, i) => Q.risposte[i] === q.giusta).length, soglia = Math.ceil(tot * 0.6), sup = g >= soglia;
@@ -619,6 +623,7 @@ function prossimaOrale() {
   const pool = poolOrale(); if (!pool.length) return;
   O.corrente = campione(pool, pool.map(o => (o.id === O.corrente?.id && pool.length > 1) ? 1e-4 : Math.pow(5 - (P.orale[o.id]?.box || 0), 2)), 1)[0];
   O.mostrata = false; vistaOrale(); window.scrollTo(0, 0);
+  setTimeout(() => { if (vista === 'orale' && !O.valutata) BIT?.parla('orale'); O.valutata = false; }, 60);
 }
 function vistaOrale() {
   if (!O.corrente || (O.filtro !== 'tutti' && O.corrente.modulo !== +O.filtro)) { O.corrente = null; return prossimaOrale(); }
@@ -629,6 +634,7 @@ function vistaOrale() {
     + '<div class="card flash" style="margin-top:14px"><div class="riga"><span class="sopra accento">' + esc(nomeModulo(o.modulo)) + ' · ' + esc(CORTI[o.modulo] || '') + '</span><span class="spazio"></span><span class="livello" aria-label="Livello ' + box + ' di 4">' + [1, 2, 3, 4].map(i => '<i class="' + (i <= box ? 'on' : '') + '"></i>').join('') + '</span></div>'
     + '<h2>' + o.domanda + '</h2><div class="secondario piccolo">Rispondi ad alta voce prima di guardare: una definizione, un esempio, perché serve.</div>'
     + (O.mostrata ? '<div class="risposta ricco">' + o.risposta + '</div>' : '') + '</div>'
+    + '<div class="bit-posto tel" data-posto="orale" data-layout="riga" data-lato="60" data-sguardo="su" style="margin-top:14px"></div>'
     + '<div style="margin-top:14px">' + (O.mostrata
       ? '<div class="valuta"><button class="btn r" data-a="orale-voto" data-v="0">Non<br>la sapevo</button><button class="btn a" data-a="orale-voto" data-v="1">In<br>parte</button><button class="btn v" data-a="orale-voto" data-v="2">La<br>sapevo</button></div>'
       : '<button class="btn primario pieno" data-a="orale-mostra">' + ic('occhio') + 'Mostra la risposta</button><button class="btn pieno" style="margin-top:10px;background:none" data-a="orale-salta">Salta</button>')
@@ -640,6 +646,7 @@ function votaOrale(v) {
   s.box = v === 0 ? 0 : v === 1 ? Math.min(s.box || 0, 2) : Math.min(4, (s.box || 0) + 1);
   s.n = (s.n || 0) + 1; s.data = oggiISO(); Gioco.registra(P, 'o');
   BIT?.reagisci(v === 2 ? 'oraleAlta' : 'oraleBassa', { m: titoloModulo(o.modulo) || CORTI[o.modulo] });
+  O.valutata = true;
   salva(); prossimaOrale();
 }
 
@@ -662,6 +669,7 @@ function vistaCodice() {
       + '<pre class="cpp">' + esc(sol.files[0].contenuto.replace(/\n$/, '')) + '</pre>'
       + (sol.input ? '<div class="sopra" style="margin:4px 0 6px">Input da tastiera</div><pre class="uscita">' + esc(sol.input.replace(/\n$/, '')) + '</pre>' : '')
       + (C.mostrato ? '<div class="sopra" style="margin:4px 0 6px">Output</div><pre class="uscita">' + esc(sol.output.replace(/\n$/, '')) + '</pre>' : '') + '</div>'
+      + '<div class="bit-posto tel" data-posto="codice" data-layout="riga" data-lato="60" data-sguardo="su" style="margin-top:14px"></div>'
       + '<div style="margin-top:14px">' + (C.mostrato
         ? '<div class="valuta" style="grid-template-columns:1fr 1fr"><button class="btn r" data-a="prev-voto" data-v="0">Sbagliato</button><button class="btn v" data-a="prev-voto" data-v="1">Ci ho preso</button></div>'
         : '<button class="btn primario pieno" data-a="prev-mostra">' + ic('terminale') + 'Mostra l\'output</button><button class="btn pieno" style="margin-top:10px;background:none" data-a="prev-salta">Un altro programma</button>') + '</div>';
@@ -697,17 +705,21 @@ function vistaEsercizio() {
 
 /* ================================================================ IMPOSTAZIONI E SINCRONIZZAZIONE */
 /* ================================================================ GIOCO: XP, missioni, traguardi, Bit */
-let STATO = null, traguardiVisti = null;
+let STATO = null, traguardiVisti = null, armadioPrima = new Set();
 function G() { return STATO || (STATO = Gioco.calcola(P, CAT, { obiettivo: IMP.obiettivo_xp || 300 })); }
 function aggiornaGioco() {
   const prima = STATO; STATO = null; const dopo = G();
-  if (!traguardiVisti) traguardiVisti = new Set(IMP.traguardi_visti || dopo.traguardi.filter(t => t.ok).map(t => t.id));
+  if (!traguardiVisti) { traguardiVisti = new Set(IMP.traguardi_visti || dopo.traguardi.filter(t => t.ok).map(t => t.id)); armadioPrima = new Set(Gioco.armadio(dopo, P, IMP).sbloccati); }
   BIT?.aggiorna();
   if (!prima) return;
   const xp = dopo.xp - prima.xp;
   if (xp > 0) { xpVolante(xp); LETTORE?.effetto('xp'); setTimeout(saltaPet, 30); }
   const mp = prima.missioni.filter(m => m.fatto).length, md = dopo.missioni.filter(m => m.fatto).length;
-  if (md > mp) { setTimeout(() => avviso(md === 3 ? 'Tutte le missioni completate! +100 XP' : 'Missione completata: +40 XP'), 300); LETTORE?.effetto('missione'); }
+  if (md > mp) { setTimeout(() => avviso(md === 3 ? 'Tutte le missioni completate! +100 XP' : 'Missione completata: +40 XP'), 300); LETTORE?.effetto('missione');
+    if (md === 3) setTimeout(() => BIT?.reagisci('missioni'), 1600); }
+  const arm = Gioco.armadio(dopo, P, IMP), nuoviArm = arm.sbloccati.filter(id => !armadioPrima.has(id));
+  if (nuoviArm.length) setTimeout(() => avviso('Nuovo nell\'armadio: ' + [...arm.palette, ...arm.accessori, ...arm.facce].filter(v => nuoviArm.includes(v.id)).map(v => v.nome).join(', ')), 2200);
+  armadioPrima = new Set(arm.sbloccati);
   const nuovi = dopo.traguardi.filter(t => t.ok && !traguardiVisti.has(t.id));
   if (nuovi.length) { nuovi.forEach(t => traguardiVisti.add(t.id)); salvaImp({ traguardi_visti: [...traguardiVisti] });
     setTimeout(() => { avviso('Traguardo: ' + nuovi.map(t => t.nome).join(', ')); LETTORE?.effetto('traguardo'); }, 1200); }
@@ -731,9 +743,11 @@ function vistaBit() {
   const st = G(), pet = Gioco.pet(st, nomePet()), ok = st.traguardi.filter(t => t.ok).length;
   $('#vista').innerHTML = '<div class="pagina"><div class="testa"><div><div class="sopra">Il tuo compagno di studio</div><h1>' + esc(pet.nome) + '</h1></div>'
     + '<button class="tondo" data-a="impostazioni" aria-label="Impostazioni">' + ic('ingranaggio') + '</button></div>'
+    + '<button class="btn primario pieno" data-a="armadio" style="margin-bottom:14px">Apri l\'armadio di ' + esc(pet.nome) + '</button>'
     + '<div class="card"><div class="bit-palco">' + svgPet(pet.indice, pet.umore, 190) + '</div>'
     + '<div class="pet-nuvola" style="margin-left:8px">' + esc(pet.frase) + '</div>'
     + '<div class="bit-dati"><div>stadio<b>' + esc(pet.stadio) + '</b></div><div>umore<b>' + esc(Gioco.UMORI[pet.umore]) + '</b></div><div>serie<b>' + st.serie + ' gg</b></div></div>'
+    + '<div class="secondario piccolo" style="margin-top:8px">' + esc(pet.motivo) + '</div>'
     + '<div class="sopra" style="margin:14px 0 6px">Sazietà di oggi · ' + st.xpOggi + '/' + st.obiettivo + ' XP</div><div class="xp-barra cibo"><i style="width:' + percento(Math.min(st.xpOggi, st.obiettivo), st.obiettivo) + '%"></i></div>'
     + '<div class="secondario piccolo" style="margin-top:8px">' + esc(pet.descr) + (pet.prossimo ? ' Diventa ' + esc(pet.prossimo.nome) + ' al livello ' + pet.prossimo.livello + '.' : '') + '</div></div>'
     + '<div class="sezione">Livello ' + st.livello + ' · ' + esc(st.titolo) + '</div><div class="card"><div class="riga"><b style="font-size:32px;font-weight:200;color:var(--fosforo)">' + st.xp + '</b><span class="secondario">XP · prossimo livello a ' + st.prossimo + '</span></div>'
@@ -746,7 +760,13 @@ function vistaBit() {
   LETTORE?.aggiorna();
 }
 /* Bit in pixel art: colore del corpo = colore scelto; salta quando arrivano XP */
-const svgPet = (indice, umore, lato, classe) => Gioco.svgPet(indice, umore, { colore: IMP.accento || Gioco.COLORI[0][0], lato, classe: classe || '' });
+const vestitoBit = () => ({ colore: IMP.accento || Gioco.COLORI[0][0], ...Gioco.vestito(G(), P, IMP) });
+const svgPet = (indice, umore, lato, classe) => Gioco.svgPet(indice, umore, { ...vestitoBit(), lato, classe: classe || '' });
+function apriArmadio() {
+  Gioco.apriArmadio({ stato: G(), prog: P, imp: IMP, nome: nomePet(), colore: IMP.accento || Gioco.COLORI[0][0],
+    salva: scelte => { salvaImp({ armadio: scelte }); BIT?.aggiorna(); },   // salvato nel localStorage del telefono, con le altre impostazioni
+    chiuso: () => disegna() });
+}
 function saltaPet() { $$('.pet-svg').forEach(el => { el.classList.remove('salta'); void el.getBoundingClientRect(); el.classList.add('salta'); setTimeout(() => el.classList.remove('salta'), 800); }); }
 
 /* ================================================================ COLORE, BENVENUTO, INSTALLAZIONE */
@@ -797,8 +817,8 @@ function apriFoglio() {
     + '<div class="sezione">Aspetto e ' + esc(nomePet()) + '</div>'
     + '<div class="etichetta">Colore del terminale</div><div class="colori">' + coloriHTML() + '</div>'
     + '<div class="etichetta">Nome del compagno</div><input class="campo" data-imp="nome_pet" value="' + esc(IMP.nome_pet || '') + '" placeholder="Bit" maxlength="16">'
-    + '<div class="etichetta">' + esc(nomePet()) + ' in scena (reagisce e ti parla; trascinalo dove vuoi)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.compagno !== false) === k ? 'attivo' : '') + '" data-a="compagno" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
-    + '<button class="btn pieno" style="margin-top:8px;background:none" data-a="bit-a-posto">Rimetti ' + esc(nomePet()) + ' nell\'angolo</button>'
+    + '<div class="etichetta">' + esc(nomePet()) + ' in scena (reagisce e ti parla)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.compagno !== false) === k ? 'attivo' : '') + '" data-a="compagno" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
+    + '<button class="btn pieno" style="margin-top:8px;background:none" data-a="armadio">Armadio di ' + esc(nomePet()) + '</button>'
     + '<div class="etichetta">Obiettivo giornaliero</div><div class="segmentato">' + [150, 300, 500, 800].map(k => '<button class="' + ((IMP.obiettivo_xp || 300) === k ? 'attivo' : '') + '" data-a="obiettivo" data-n="' + k + '">' + k + ' XP</button>').join('') + '</div>'
     + '<div class="sezione">Musica e suoni</div><button class="btn pieno" data-a="musica-apri">' + ic('musica') + 'Apri il lettore musicale</button>'
     + '<div class="etichetta">Effetti sonori (XP, missioni, livelli)</div><div class="segmentato">' + [[true, 'Sì'], [false, 'No']].map(([k, t]) => '<button class="' + ((IMP.effetti !== false) === k ? 'attivo' : '') + '" data-a="effetti" data-v="' + k + '">' + t + '</button>').join('') + '</div>'
@@ -844,7 +864,7 @@ const AZ = {
   },
   'quiz-rivedi': d => { Q.fase = 'sessione'; Q.finito = true; Q.i = +d.k; disegna(); window.scrollTo(0, 0); },
   'quiz-nuovo': () => { Q.fase = 'scelta'; disegna(); },
-  'orale-mostra': () => { O.mostrata = true; vistaOrale(); }, 'orale-salta': () => prossimaOrale(),
+  'orale-mostra': () => { O.mostrata = true; vistaOrale(); setTimeout(() => BIT?.parla('risposta'), 60); }, 'orale-salta': () => prossimaOrale(),
   'orale-voto': d => votaOrale(+d.v),
   'cod-modo': d => { C.modo = d.m; vistaCodice(); },
   'prev-mostra': () => { C.mostrato = true; vistaCodice(); $$('pre.uscita').at(-1)?.scrollIntoView({ behavior: 'smooth', block: 'center' }); },
@@ -880,7 +900,7 @@ const AZ = {
   'colore': d => { salvaImp({ accento: d.c }); applicaColore(); $$('.colori').forEach(c => { c.innerHTML = coloriHTML(); }); collegaColori(); },
   'obiettivo': (d, b) => { salvaImp({ obiettivo_xp: +d.n }); STATO = null; $$('[data-a="obiettivo"]').forEach(x => x.classList.toggle('attivo', x === b)); },
   'compagno': (d, b) => { salvaImp({ compagno: d.v === 'true' }); $$('[data-a="compagno"]').forEach(x => x.classList.toggle('attivo', x === b)); BIT?.aggiorna(); },
-  'bit-a-posto': () => { BIT?.rimettiAPosto(); salvaImp({ compagno_pos: null }); avviso(nomePet() + ' è tornato nell\'angolo'); },
+  'armadio': () => { $('#foglio-box').innerHTML = ''; apriArmadio(); },
   'effetti': (d, b) => { salvaImp({ effetti: d.v === 'true' }); $$('[data-a="effetti"]').forEach(x => x.classList.toggle('attivo', x === b)); },
   'musica-apri': () => { $('#foglio-box').innerHTML = ''; LETTORE.apri(); },
   'installa': async () => { if (!installa) return; installa.prompt(); try { await installa.userChoice; } catch (e) { /* annullato */ } installa = null; apriFoglio(); },
@@ -914,9 +934,10 @@ const LETTORE = new Musica.Lettore({ imp: () => IMP, salva: p => salvaImp(p), do
   mini: () => $$('#musica-mini-bit') });
 document.addEventListener('keydown', ev => { if (ev.key === 'Escape') LETTORE.chiudi(); });
 var BIT = new Gioco.Compagno({
-  stato: () => Gioco.pet(G(), nomePet()), colore: () => IMP.accento || Gioco.COLORI[0][0], contesto: () => vista,
-  attivo: () => IMP.compagno !== false && !!IMP.configurato, visibile: () => vista !== 'bit' && !$('#foglio-box').innerHTML,
-  lato: 60, classe: 'telefono', pos: IMP.compagno_pos, salvaPos: p => salvaImp({ compagno_pos: p }), suono: t => LETTORE?.effetto(t),
+  stato: () => Gioco.pet(G(), nomePet()), vestito: vestitoBit, contesto: () => vista,
+  attivo: () => IMP.compagno !== false && !!IMP.configurato,
+  visibile: () => vista !== 'bit' && !(vista === 'quiz' && Q.fase === 'sessione' && Q.esame && !Q.finito),
+  lato: 58, classe: 'telefono', osserva: $('#vista'), suono: t => LETTORE?.effetto(t),
 });
 const iniziale = location.hash.slice(1);
 if (SCHEDE.some(s => s[0] === iniziale)) vista = iniziale;

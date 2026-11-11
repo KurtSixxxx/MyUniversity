@@ -59,14 +59,16 @@ def sicuro_js(t):   # dentro <script>: niente chiusura del tag
 
 
 modello = leggi(os.path.join(QUI, 'modello.html'))
-for segnaposto in ('/*__DATI__*/', '/*__CONFIG__*/', '/*__GIOCO__*/', '/*__MUSICA__*/', '/*__GIOCO_CSS__*/', '<!--__PWA__-->'):
+for segnaposto in ('/*__DATI__*/', '/*__CONFIG__*/', '/*__GIOCO__*/', '/*__BIT__*/', '/*__MUSICA__*/', '/*__GIOCO_CSS__*/', '/*__BIT_CSS__*/', '<!--__PWA__-->'):
     assert modello.count(segnaposto) == 1, segnaposto
 pagina = (modello
           .replace('/*__DATI__*/', json.dumps(dati, ensure_ascii=False, separators=(',', ':')).replace('</', '<\\/'))
           .replace('/*__CONFIG__*/', sicuro_js(leggi(os.path.join(WEB, 'config.js'))))
           .replace('/*__GIOCO__*/', sicuro_js(leggi(os.path.join(WEB, 'gioco.js'))))
+          .replace('/*__BIT__*/', sicuro_js(leggi(os.path.join(WEB, 'bit.js'))))
           .replace('/*__MUSICA__*/', sicuro_js(leggi(os.path.join(WEB, 'musica.js'))))
-          .replace('/*__GIOCO_CSS__*/', leggi(os.path.join(WEB, 'gioco.css'))))
+          .replace('/*__GIOCO_CSS__*/', leggi(os.path.join(WEB, 'gioco.css')))
+          .replace('/*__BIT_CSS__*/', leggi(os.path.join(WEB, 'bit.css'))))
 
 if not a.pubblica:
     uscita = os.path.join(QUI, 'allenatore-iphone.html')

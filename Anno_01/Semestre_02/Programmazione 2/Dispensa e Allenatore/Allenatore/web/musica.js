@@ -178,6 +178,10 @@
     get muto() { return !!this.imp.musica_muto; }
     get volume() { return this.imp.musica_volume ?? 60; }
     salva(p) { this.o.salva(p); }
+    segnaAscolto(chiave) {
+      const visti = this.imp.brani_ascoltati || [];
+      if (!visti.includes(chiave)) this.salva({ brani_ascoltati: [...visti, chiave] });
+    }
 
     /* ---------------- audio di base (colonna + effetti) */
     audio() {
@@ -191,6 +195,9 @@
       this.master.connect(comp).connect(this.analisi).connect(this.ctx.destination);
       this.livelloColonna = this.ctx.createGain(); this.livelloColonna.connect(this.master);
       this.motore = new MotoreColonna(this.ctx, this.livelloColonna);
+      // ogni brano della colonna sonora ascoltato viene segnato (sblocca le cuffie di Bit nell'armadio)
+      const avvia = this.motore.avvia.bind(this.motore);
+      this.motore.avvia = i => { avvia(i); this.segnaAscolto('colonna-' + i); };
       this.applicaVolume();
       return this.ctx;
     }
@@ -231,10 +238,11 @@
         try {
           if (!this.spotify) return;
           if (!this.spotifyAvviato) { this.spotify.play(); this.spotifyAvviato = true; } else this.spotify.resume();
+          this.segnaAscolto('spotify');
         } catch (e) { /* ignorato */ }
       } else if (s === 'youtube') {
         await this.preparaYouTube();
-        try { this.yt?.playVideo(); } catch (e) { /* ignorato */ }
+        try { this.yt?.playVideo(); this.segnaAscolto('youtube'); } catch (e) { /* ignorato */ }
       }
       this.aggiorna();
     }
