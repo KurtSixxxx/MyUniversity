@@ -576,6 +576,25 @@ pre.cpp, pre.uscita {
 .ed-err { position: absolute; left: 0; right: 0; height: 22px; }
 .ed-err.errore { background: var(--rosso-tenue); box-shadow: inset 3px 0 0 var(--rosso); }
 .ed-err.avviso { background: var(--arancio-tenue); box-shadow: inset 3px 0 0 var(--arancio); }
+/* segni degli errori come in un IDE: onda sotto il punto esatto + messaggio a fine riga */
+.ed-segni { position: absolute; left: 0; top: 0; width: 0; height: 0; pointer-events: none; z-index: 1; font: 14px/22px var(--mono); will-change: transform; transition: opacity .2s; }
+.ed-segni.vecchi { opacity: .35; }
+.ed-onda { position: absolute; height: 22px; min-width: 1ch; }
+.ed-onda::after { content: ''; position: absolute; left: 0; right: 0; bottom: 1px; height: 4px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 3 L1.5 1 L3 3 L4.5 1 L6 3' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 6px 4px repeat-x;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='4'%3E%3Cpath d='M0 3 L1.5 1 L3 3 L4.5 1 L6 3' fill='none' stroke='black' stroke-width='1.2'/%3E%3C/svg%3E") 0 0 / 6px 4px repeat-x; }
+.ed-onda.errore { color: var(--rosso); }
+.ed-onda.avviso { color: var(--arancio); }
+.ed-msg { position: absolute; height: 22px; white-space: pre; font-size: 12px; font-style: italic; padding: 0 8px; border-radius: 4px; }
+.ed-msg.errore { color: var(--rosso); background: var(--rosso-tenue); }
+.ed-msg.avviso { color: var(--arancio); background: var(--arancio-tenue); }
+.ed-stato { white-space: nowrap; font: 600 12px var(--mono); padding: 3px 9px; border-radius: 999px; border: 1px solid transparent; background: none; color: var(--testo-3); cursor: default; }
+.ed-stato:empty { display: none; }
+.ed-stato.ok { color: var(--verde); border-color: var(--linea); }
+.ed-stato.errore { color: var(--rosso); background: var(--rosso-tenue); cursor: pointer; }
+.ed-stato.avviso { color: var(--arancio); background: var(--arancio-tenue); cursor: pointer; }
+.ed-stato.controlla { opacity: .55; }
 .ed-hl, .ed-testo {
   position: absolute; inset: 0; margin: 0; border: 0; padding: 16px 20px 200px;
   font: 14px/22px var(--mono); tab-size: 4; white-space: pre; word-wrap: normal; letter-spacing: 0;
@@ -683,17 +702,17 @@ textarea.campo.area { width: 100%; min-height: 70px; height: auto; padding: 10px
 
 /* ---------- avvisi (toast) ---------- */
 .avvisi { position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%); z-index: 60; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
-.avviso {
+.avvisi > .avviso {
   display: inline-flex; align-items: center; gap: 8px; padding: 11px 18px; border-radius: 999px;
   background: rgba(29, 29, 31, .92); color: #fff; font-size: 13.5px; font-weight: 500;
   box-shadow: 0 10px 30px rgba(0, 0, 0, .2); backdrop-filter: blur(10px); animation: compare .3s var(--curva);
   transition: opacity .35s, transform .35s;
 }
-[data-tema="scuro"] .avviso { background: rgba(58, 58, 60, .95); }
-.avviso .ic { width: 16px; height: 16px; }
-.avviso.ok .ic { color: var(--verde); }
-.avviso.errore .ic { color: var(--rosso); }
-.avviso.via { opacity: 0; transform: translateY(8px); }
+[data-tema="scuro"] .avvisi > .avviso { background: rgba(58, 58, 60, .95); }
+.avvisi > .avviso .ic { width: 16px; height: 16px; }
+.avvisi > .avviso.ok .ic { color: var(--verde); }
+.avvisi > .avviso.errore .ic { color: var(--rosso); }
+.avvisi > .avviso.via { opacity: 0; transform: translateY(8px); }
 
 /* ---------- schermi più piccoli ---------- */
 @media (max-width: 1280px) {
@@ -710,7 +729,7 @@ textarea.campo.area { width: 100%; min-height: 70px; height: auto; padding: 10px
   .lavoro { padding-top: 16px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  *:not(.pet-svg):not(.pet-svg *):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *):not(.compagno):not(.compagno *), *::before, *::after { animation: none !important; transition: none !important; }
+  *:not(.pet-svg):not(.pet-svg *):not(.respiro-cerchio):not(.evoluzione *):not(.xp-volante):not(.livello-nuovo *):not(.compagno):not(.compagno *), *::before, *::after { animation: none !important; transition: none !important; }
 }
 
 /* =====================================================================

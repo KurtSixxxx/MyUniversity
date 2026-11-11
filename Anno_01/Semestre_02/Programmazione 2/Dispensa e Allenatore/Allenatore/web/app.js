@@ -104,6 +104,8 @@ async function avvia() {
   intro.then(() => {
     if (!S.imp.configurato) return benvenuto();
     if (S.imp.musica_auto !== false && S.lettore.sorgente === 'colonna') S.lettore.play();
+    if (giorniAllEsame() === 0) giornoEsame();          // il giorno dell'esame: prima di tutto, la calma
+    else setTimeout(chiediStella, 6000);                // altrimenti, con calma, la stella su GitHub
   });
 }
 
@@ -125,7 +127,7 @@ function mostraIntro() {
 
 function caricaDati(d) {
   S.imp = d.impostazioni; S.gpp = d.gpp; S.versione = d.versione; S.cartellaDati = d.cartella_dati;
-  S.prog = d.progressi || {};
+  S.prog = Gioco.pulisci(d.progressi);
   for (const k of ['quiz', 'orale', 'esercizi']) S.prog[k] = S.prog[k] || {};
   S.prog.simulazioni = S.prog.simulazioni || [];
   if (d.errore || !d.catalogo) { erroreAvvio(d.errore || 'Contenuti non trovati.', true); return false; }
@@ -192,7 +194,7 @@ function leggiCodiceProgressi(c) {
   let o;
   try { o = JSON.parse(decodeURIComponent(escape(atob(c.slice(3))))); } catch (e) { throw new Error('Codice incompleto: ricopialo per intero'); }
   if (!o || !o.prog) throw new Error('Codice non valido');
-  return { prog: o.prog, profilo: o.profilo || {} };
+  return { prog: Gioco.pulisci(o.prog), profilo: Gioco.pulisciProfilo(o.profilo) };
 }
 
 /* ---------------------------------------------------------------- tema */
@@ -370,6 +372,7 @@ function renderOggi() {
       </div>
       <div class="eroe-piano">${piano}</div>
     </div>
+    ${typeof cartaPanico === 'function' ? cartaPanico(g) : ''}
     ${cartaBitOggi()}
     <div class="griglia-2">
       <div class="card anelli-card">
@@ -781,16 +784,44 @@ function evidenziaBlocchi(r) { $$('pre.cpp:not(.fatto)', r).forEach(p => { p.inn
 /* =====================================================================
    EDITOR (textarea + strato evidenziato)
    ===================================================================== */
+const espandiTab = s => s.replace(/\t/g, '    ');
+/* Messaggi di g++ con un suggerimento in italiano per i casi più frequenti all'esame */
+function spiegaErrore(msg, colonna, riga) {
+  const inizioRiga = (riga || '').search(/\S/) + 1 === colonna;
+  const regole = [
+    [/^expected '[;,]' before|^expected initializer before|^expected ';'/, inizioRiga ? 'manca probabilmente il ; alla fine della riga PRIMA' : 'manca un ;'],
+    [/was not declared in this scope/, 'nome sconosciuto: scritto male, non dichiarato o manca un #include'],
+    [/expected '}' at end of input/, 'manca una } di chiusura'],
+    [/expected unqualified-id|expected primary-expression/, 'sintassi non valida in questo punto'],
+    [/no match for 'operator/, 'operatore non definito per questi tipi'],
+    [/no matching function for call/, 'nessuna funzione con questi parametri'],
+    [/unused variable/, 'variabile mai usata'],
+    [/unused parameter/, 'parametro mai usato'],
+    [/comparison of integer expressions of different signedness/, 'confronto tra int e unsigned'],
+    [/control reaches end of non-void function/, 'manca il return'],
+    [/is used uninitialized|may be used uninitialized/, 'variabile usata senza valore iniziale'],
+    [/has virtual functions and accessible non-virtual destructor|deleting object of polymorphic class type .* non-virtual destructor/, 'serve un distruttore virtual'],
+    [/abstract type|pure virtual/, 'classe astratta: non si può istanziare'],
+    [/is private within this context|is protected within this context/, 'membro non accessibile (private/protected)'],
+    [/invalid conversion from/, 'tipi non compatibili'],
+    [/redeclaration of|redefinition of/, 'dichiarato due volte'],
+  ];
+  for (const [re, it] of regole) if (re.test(msg)) return `${msg}  → ${it}`;
+  return msg;
+}
+
 class Editor {
   constructor(el, { onCambio, onEsegui, onSalva }) {
     this.el = el; this.onCambio = onCambio; this.onEsegui = onEsegui; this.onSalva = onSalva;
     el.innerHTML = `<div class="ed-numeri"><div class="ed-numeri-int"></div></div>
       <div class="ed-area"><div class="ed-strato"><div class="ed-riga-attiva"></div><div class="ed-errori"></div></div>
       <pre class="ed-hl" aria-hidden="true"><code></code></pre>
+      <div class="ed-segni" aria-hidden="true"></div>
       <textarea class="ed-testo" spellcheck="false" autocapitalize="off" autocomplete="off" autocorrect="off" wrap="off"></textarea></div>`;
     this.ta = $('textarea', el); this.hl = $('code', el); this.pre = $('pre', el);
     this.num = $('.ed-numeri-int', el); this.strato = $('.ed-strato', el); this.attiva = $('.ed-riga-attiva', el);
     this.erroriEl = $('.ed-errori', el); this.errori = new Map(); this.nRighe = 0;
+    this.segni = $('.ed-segni', el); this.diag = [];
     this.LH = 22; this.PT = 16;
     this.ta.addEventListener('input', () => { this.disegna(); this.onCambio?.(); });
     this.ta.addEventListener('scroll', () => this.scorri());
@@ -817,6 +848,7 @@ class Editor {
     this.pre.scrollTop = t; this.pre.scrollLeft = l;
     this.num.style.transform = `translateY(${-t}px)`;
     this.strato.style.transform = `translateY(${-t}px)`;
+    this.segni.style.transform = `translate(${-l}px, ${-t}px)`;
   }
   rigaAttiva() {
     if (document.activeElement !== this.ta) return;
@@ -826,10 +858,30 @@ class Editor {
   }
   segnaErrori(diag) {
     this.errori.clear();
-    for (const d of diag || []) if (!this.errori.has(d.riga) || d.tipo === 'errore') this.errori.set(d.riga, d.tipo === 'errore' ? 'errore' : 'avviso');
+    this.diag = diag || [];
+    for (const d of this.diag) if (!this.errori.has(d.riga) || d.tipo === 'errore') this.errori.set(d.riga, d.tipo === 'errore' ? 'errore' : 'avviso');
     this.erroriEl.innerHTML = [...this.errori].map(([r, t]) => `<div class="ed-err ${t}" style="top:${this.PT + (r - 1) * this.LH}px"></div>`).join('');
+    // come in un IDE: sottolineatura ondulata sotto il punto esatto + messaggio in fondo alla riga
+    const righe = this.ta.value.split('\n'), visti = new Set();
+    this.segni.classList.remove('vecchi');
+    this.segni.innerHTML = this.diag.map(d => {
+      const testo = righe[d.riga - 1];
+      if (testo === undefined) return '';
+      const col = Math.max(1, Math.min(d.colonna || 1, testo.length + 1)) - 1;
+      const parola = /^[A-Za-z_0-9]+|^\S/.exec(testo.slice(col));
+      const larg = parola ? parola[0].length : 1;
+      const top = this.PT + (d.riga - 1) * this.LH;
+      let s = `<div class="ed-onda ${d.tipo}" style="top:${top}px;left:calc(20px + ${espandiTab(testo.slice(0, col)).length}ch);width:${larg}ch"></div>`;
+      if (!visti.has(d.riga)) {      // un solo messaggio per riga: il primo (di solito quello giusto)
+        visti.add(d.riga);
+        s += `<div class="ed-msg ${d.tipo}" style="top:${top}px;left:calc(20px + ${espandiTab(testo).length + 3}ch)">${d.tipo === 'errore' ? '✖' : '⚠'} ${esc(spiegaErrore(d.testo, d.colonna, testo))}</div>`;
+      }
+      return s;
+    }).join('');
     this._numSporco = true; this.disegna();
   }
+  /* il testo è cambiato: i segni restano ma sbiaditi finché il controllo non li ricalcola */
+  sbiadisciSegni() { if (this.diag.length) this.segni.classList.add('vecchi'); }
   vaiARiga(r) {
     const righe = this.ta.value.split('\n');
     r = Math.max(1, Math.min(r, righe.length));
@@ -1004,6 +1056,7 @@ async function apriEsercizio(id) {
     <div class="editor-card">
       <div class="editor-barra">
         <span class="file">${ic('codice')}${esc(id)}.cpp<i class="pallino" id="pallino" hidden></i></span>
+        <button class="ed-stato" id="ed-stato" data-azione="ed-stato"></button>
         <span class="spazio"></span>
         <button class="btn secondario piccolo" data-azione="vscode-apri" title="Apri questo esercizio in VS Code, con la consegna scritta in commento">${ic('terminale')}Apri in VS Code</button>
         <button class="btn secondario piccolo" data-azione="vscode-importa" title="Copia qui il codice che hai scritto in VS Code (Ctrl+I)">${ic('salva')}Importa da VS Code</button>
@@ -1029,16 +1082,54 @@ async function apriEsercizio(id) {
   evidenziaBlocchi($('#lavoro'));
   sistemaTraccia();
   S.c.editor = new Editor($('#editor'), {
-    onCambio: () => { S.c.sporco = true; $('#pallino').hidden = false; clearTimeout(S.c.tAuto); S.c.tAuto = setTimeout(() => salvaCodice(), 900); },
+    onCambio: () => {
+      S.c.sporco = true; $('#pallino').hidden = false; clearTimeout(S.c.tAuto); S.c.tAuto = setTimeout(() => salvaCodice(), 900);
+      S.c.editor.sbiadisciSegni(); programmaControllo();
+    },
     onEsegui: () => esegui(), onSalva: () => salvaCodice(true),
   });
   const salvato = await api().leggi_codice(id);
   if (S.c.id !== id) return;
   S.c.editor.valore = salvato ?? MODELLO(e.titolo);
   S.c.input = e.soluzione.input || '';
+  statoControllo(null);
+  if (salvato) programmaControllo(200);
   attivaManiglia();
   disegnaConsole();
   setTimeout(() => S.c.editor?.ta.focus(), 50);
+}
+
+/* ---- controllo dal vivo: 1 secondo dopo l'ultima modifica, g++ -fsyntax-only (come la «linea rossa» di un IDE) */
+function programmaControllo(ritardo = 1000) {
+  clearTimeout(S.c.tControllo);
+  if (S.imp.controllo_vivo === false || !S.gpp) return;
+  S.c.tControllo = setTimeout(controllaOra, ritardo);
+}
+async function controllaOra() {
+  const id = S.c.id, ed = S.c.editor;
+  if (!id || !ed || S.c.inCorso) return;
+  if (S.c.controllando) { S.c.ricontrolla = true; return; }   // uno alla volta
+  const codice = ed.valore;
+  S.c.controllando = true; statoControllo('attesa');
+  let r;
+  try { r = await api().controlla(id, codice); } catch (e) { r = null; }
+  S.c.controllando = false;
+  if (S.c.ricontrolla) { S.c.ricontrolla = false; return controllaOra(); }
+  if (!r || S.c.id !== id || S.c.editor !== ed) return;
+  if (ed.valore !== codice) return programmaControllo(300);   // nel frattempo hai scritto altro
+  if (r.scaduto || r.errore || r.senza_compilatore) return statoControllo(null);
+  ed.segnaErrori(r.diagnostica);
+  statoControllo(r.diagnostica);
+}
+function statoControllo(diag) {
+  const el = $('#ed-stato'); if (!el) return;
+  if (diag === null) { el.className = 'ed-stato'; el.innerHTML = ''; return; }
+  if (diag === 'attesa') { el.classList.add('controlla'); return; }
+  const err = diag.filter(d => d.tipo === 'errore').length, avv = diag.length - err;
+  el.className = 'ed-stato ' + (err ? 'errore' : avv ? 'avviso' : 'ok');
+  el.title = err || avv ? 'Clic: vai al primo problema' : 'g++ non trova errori (controllo automatico mentre scrivi)';
+  el.dataset.r = diag.length ? (diag.find(d => d.tipo === 'errore') || diag[0]).riga : '';
+  el.innerHTML = err || avv ? [err && plur(err, 'errore', 'errori'), avv && plur(avv, 'avviso', 'avvisi')].filter(Boolean).join(' · ') : '✓ nessun errore';
 }
 
 function sistemaTraccia() {
@@ -1083,6 +1174,7 @@ async function esegui() {
   b.disabled = false; b.innerHTML = `${ic('play')}Esegui`;
   S.c.ultimo = r; S.c.confronto = null;
   S.c.editor.segnaErrori(r.diagnostica);
+  if (!r.senza_compilatore) statoControllo(r.diagnostica || []);
   disegnaConsole();
   if (!r.senza_compilatore) S.bit?.reagisci(!r.compilato ? 'compilaErrore' : (r.nota || r.uscita !== 0) ? 'crash'
     : (r.diagnostica || []).some(d => d.tipo === 'avviso') ? 'compilaAvvisi' : 'compilaOk');
@@ -1546,6 +1638,8 @@ function apriImpostazioni() {
         ${siNo('musica')}</div>
 
       <div class="imp-gruppo">Sistema</div>
+      <div class="imp-riga"><div><div class="imp-nome">Errori mentre scrivi</div><div class="secondario">Nell'editor g++ controlla il codice un secondo dopo che smetti di scrivere: onda rossa sotto l'errore e messaggio a fine riga.</div></div>
+        ${siNo('controllo_vivo')}</div>
       <div class="imp-riga colonna"><div class="imp-nome">Contenuti</div><div class="secondario">${fonte}</div>
         <div class="azioni"><button class="btn secondario piccolo" data-azione="scegli-dispensa">${ic('cartella')}Scegli la cartella della dispensa…</button>
         <button class="btn secondario piccolo" data-azione="ricarica">${ic('ricomincia')}Ricarica i contenuti</button></div></div>
@@ -1571,6 +1665,7 @@ function apriImpostazioni() {
         <div class="secondario">Progressi e codice sono salvati in <code>${esc(S.cartellaDati)}</code>.</div>
         <div class="azioni"><button class="btn secondario piccolo" data-azione="apri-dati">${ic('cartella')}Apri la cartella</button>
         <button class="btn pericolo-testo piccolo" data-azione="azzera">Azzera i progressi</button></div></div>
+      ${typeof creditiHTML === 'function' ? creditiHTML() : ''}
       <div class="imp-piede secondario">Allenatore Prog2 · versione ${esc(S.versione)} · ${S.cat.quiz.length} quiz, ${S.cat.orale.length} domande d'orale, ${S.cat.esercizi.length} esercizi
         <br>Un progetto di Giulio Casella
         ${window.CONFIG?.linkProgetto ? `<br><button class="link" data-azione="apri-progetto">Pagina del progetto e aggiornamenti</button>` : ''}</div>
@@ -1660,7 +1755,11 @@ const AZIONI = {
   'esegui': () => esegui(),
   'armadio': () => { if (!$('#foglio').hidden) chiudiFoglio(); apriArmadio(); },
   'scheda': d => { S.c.scheda = d.s; disegnaConsole(); },
+  'quiz-moduli': d => { S.q.moduli = new Set(String(d.ms || '').split(',').map(Number).filter(Boolean)); S.q.modo = 'allenamento'; S.q.fase = 'scelta'; vai('quiz'); quizInizia(); },
+  'panico-spunta': d => spuntaPanico(d.k),
+  'apri-repo': () => api().apri_link(linkRepo()),
   'vai-riga': d => S.c.editor?.vaiARiga(+d.r),
+  'ed-stato': d => { if (d.r) S.c.editor?.vaiARiga(+d.r); },
   'traccia': () => { S.c.tracciaAperta = !S.c.tracciaAperta; $('#traccia').classList.toggle('aperta', S.c.tracciaAperta);
     $('.traccia-interruttore span').textContent = S.c.tracciaAperta ? 'Riduci' : 'Mostra tutta la traccia'; },
   'crono': () => crono(),

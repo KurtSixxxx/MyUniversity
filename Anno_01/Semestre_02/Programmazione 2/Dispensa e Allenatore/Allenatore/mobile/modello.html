@@ -332,7 +332,7 @@ const campione = (l, p, k) => l.map((x, i) => [Math.pow(Math.random(), 1 / Math.
 const VUOTO = () => ({ quiz: {}, orale: {}, esercizi: {}, prevedi: {}, simulazioni: [], attivita: {}, data_esame: '' });
 const CHIAVE = 'allenatore-prog2-progressi', CHIAVE_IMP = 'allenatore-prog2-impostazioni';
 let P = VUOTO();
-try { const l = JSON.parse(localStorage.getItem(CHIAVE) || 'null'); if (l) P = Object.assign(VUOTO(), l); } catch (e) { /* nessuna memoria locale */ }
+try { const l = JSON.parse(localStorage.getItem(CHIAVE) || 'null'); if (l) P = Object.assign(VUOTO(), Gioco.pulisci(l)); } catch (e) { /* nessuna memoria locale */ }
 /* impostazioni del telefono (profilo, colore, musica): restano su questo dispositivo */
 let IMP = {};
 try { IMP = JSON.parse(localStorage.getItem(CHIAVE_IMP) || '{}') || {}; } catch (e) { IMP = {}; }
@@ -387,7 +387,7 @@ function leggiCodice(c) {
   if (!c.startsWith('P2:')) throw new Error('Il codice deve iniziare con P2:');
   const o = JSON.parse(decodeURIComponent(escape(atob(c.slice(3)))));
   if (!o || !o.prog) throw new Error('Codice non valido');
-  return { prog: o.prog, profilo: o.profilo || {} };
+  return { prog: Gioco.pulisci(o.prog), profilo: Gioco.pulisciProfilo(o.profilo) };
 }
 
 /* ---------------------------------------------------------------- statistiche */

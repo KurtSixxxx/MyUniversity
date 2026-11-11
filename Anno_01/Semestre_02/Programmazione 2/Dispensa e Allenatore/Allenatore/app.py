@@ -81,9 +81,19 @@ class Api:
                     'messaggi': 'Non trovo il compilatore g++. Installa MSYS2/MinGW e aggiungi '
                                 'la cartella di g++ al PATH, poi riavvia l\'app.'}
         try:
-            return M.esegui_codice(self._gpp, id_, codice, ingresso or '', int(tempo_max or 10))
+            tempo = max(1, min(int(tempo_max or 10), 120))
+            return M.esegui_codice(self._gpp, id_, codice, str(ingresso or ''), tempo)
         except Exception as e:
             return {'compilato': False, 'diagnostica': [], 'messaggi': 'Errore interno: %s' % e}
+
+    def controlla(self, id_, codice):
+        """Errori mentre si scrive (g++ -fsyntax-only), senza compilare né eseguire."""
+        if not self._gpp:
+            return {'ok': False, 'diagnostica': [], 'senza_compilatore': True}
+        try:
+            return M.controlla_sintassi(self._gpp, id_, str(codice or ''))
+        except Exception as e:
+            return {'ok': False, 'diagnostica': [], 'errore': str(e)}
 
     def confronta(self, atteso, ottenuto):
         return M.confronta_output(atteso, ottenuto)
@@ -119,9 +129,27 @@ class Api:
     def accedi_spotify(self):
         """Finestra di accesso a Spotify. Condivide i cookie con l'app (stesso profilo
         WebView2), quindi dopo l'accesso il lettore incorporato suona i brani interi."""
+        # Serve solo l'autorizzazione: appena Spotify lascia la pagina di accesso
+        # (accesso fatto, o già fatto in passato) la finestra si chiude da sola,
+        # invece di restare aperta sul lettore web.
         f = webview.create_window(
-            'Accedi a Spotify', 'https://accounts.spotify.com/it/login?continue=https%3A%2F%2Fopen.spotify.com%2F',
-            width=520, height=800, background_color='#000000')
+            'Accedi a Spotify', 'https://accounts.spotify.com/it/login?continue=https%3A%2F%2Fwww.spotify.com%2Fit%2Faccount%2Foverview%2F',
+            width=480, height=720, background_color='#000000')
+
+        def caricata():
+            try:
+                url = f.get_current_url() or ''
+            except Exception:
+                return
+            from urllib.parse import urlparse
+            host = (urlparse(url).hostname or '').lower()
+            # accesso con Google/Apple/Facebook passa da altri siti: si chiude solo al ritorno su spotify.com
+            if host in ('www.spotify.com', 'open.spotify.com', 'spotify.com'):
+                try:
+                    f.destroy()
+                except Exception:
+                    pass
+        f.events.loaded += caricata
 
         def chiusa():
             try:
@@ -218,12 +246,15 @@ def avvia(dopo_avvio=None):
     # il tema salvato, letto da index.html prima del primo disegno (niente lampo di colore)
     try:
         with open(os.path.join(M.RISORSE, 'web', 'tema-iniziale.js'), 'w', encoding='utf-8') as f:
-            f.write('window.TEMA_INIZIALE = %r;\n' % tema)
+            import json   # json, non repr: una stringa Python non è sempre JavaScript valido
+            f.write('window.TEMA_INIZIALE = %s;\n' % json.dumps(str(tema)))
     except OSError:
         pass
     # musica dell'intro senza dover prima premere un tasto
     os.environ['WEBVIEW2_ADDITIONAL_BROWSER_ARGUMENTS'] = (
-        '--disable-features=ElasticOverscroll --allow-file-access-from-files --autoplay-policy=no-user-gesture-required')
+        # (niente --allow-file-access-from-files: l'interfaccia è servita da http://127.0.0.1,
+        #  e quel permesso farebbe leggere a una pagina file:// qualunque altro file del disco)
+        '--disable-features=ElasticOverscroll --autoplay-policy=no-user-gesture-required')
     larg, alt, x, y, ingrandita = 1440, 900, None, None, False
     if os.name == 'nt':
         try:

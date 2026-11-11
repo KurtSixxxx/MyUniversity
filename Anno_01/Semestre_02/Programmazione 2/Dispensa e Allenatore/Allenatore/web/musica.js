@@ -303,7 +303,12 @@
         box.querySelector('.md-embed').replaceChildren(posto);
         await new Promise(ok => api.createController(posto, { uri, width: '100%', height: 152, theme: 'dark' }, ctrl => {
           this.spotify = ctrl; this.spotifyUri = uri; this.spotifyAvviato = false;
-          ctrl.addListener('playback_update', e => { this.spotifyPausa = !!e.data?.isPaused; if (this.sorgente === 'spotify') { this.suona = !this.spotifyPausa; this.aggiorna(); } });
+          ctrl.addListener('playback_update', e => {
+            // arriva più volte al secondo (posizione del brano): si ridisegna solo se cambia play/pausa
+            const pausa = !!e.data?.isPaused, prima = this.suona;
+            this.spotifyPausa = pausa;
+            if (this.sorgente === 'spotify' && prima !== !pausa) { this.suona = !pausa; this.aggiorna(); }
+          });
           ok();
         }));
       } catch (e) {
@@ -333,16 +338,34 @@
         box.replaceChildren(posto);
         const vars = { playsinline: 1, rel: 0, modestbranding: 1, controls: 1, origin: location.origin, widget_referrer: location.href };
         if (id.lista) { vars.listType = 'playlist'; vars.list = id.lista; } else { vars.loop = 1; vars.playlist = id.video; }
+        // con una playlist la chiave videoId NON deve esserci: l'API di YouTube rifiuta
+        // videoId: undefined con «Invalid video id» (era la causa di «YouTube non risponde»)
+        const base = { width: 192, height: 108, playerVars: vars };
+        if (!id.lista) base.videoId = id.video;
         this.yt = new YT.Player(posto, {
-          width: 192, height: 108, videoId: id.lista ? undefined : id.video, playerVars: vars,
+          ...base,
           events: {
-            onReady: () => { this.ytPronto = true; this.applicaVolume(); if (this.suona && this.sorgente === 'youtube') this.yt.playVideo(); },
-            onStateChange: e => { if (this.sorgente !== 'youtube') return; if (e.data === 1) this.suona = true; if (e.data === 2) this.suona = false; this.aggiorna(); },
-            onError: e => { this.o.avviso?.(e.data === 150 || e.data === 101 || e.data >= 152 ? 'Questo video non si può riprodurre fuori da YouTube: salto al successivo' : 'YouTube: video non disponibile'); try { this.yt.nextVideo(); } catch (x) { /* ignorato */ } },
+            onReady: () => { this.ytPronto = true; this.ytErrori = 0; this.applicaVolume(); if (this.suona && this.sorgente === 'youtube') this.yt.playVideo(); },
+            onStateChange: e => { if (this.sorgente !== 'youtube') return; if (e.data === 1) { this.suona = true; this.ytErrori = 0; } if (e.data === 2) this.suona = false; this.aggiorna(); },
+            onError: e => {
+              // 101/150: il proprietario (spesso l'etichetta discografica) vieta la riproduzione fuori da YouTube
+              const vietato = e.data === 150 || e.data === 101 || e.data >= 152;
+              const lunghezza = (() => { try { return (this.yt.getPlaylist() || []).length; } catch (x) { return 0; } })();
+              this.ytErrori = (this.ytErrori || 0) + 1;
+              if (this.ytErrori >= Math.max(1, Math.min(lunghezza || 1, 15))) {   // basta saltare: nessun video si può suonare
+                this.suona = false; this.aggiorna();
+                this.o.avviso?.(vietato ? 'I video di questa playlist non si possono riprodurre fuori da YouTube (lo decide chi li ha pubblicati). Prova un\'altra playlist.' : 'YouTube: video non disponibili');
+                return;
+              }
+              this.o.avviso?.(vietato ? 'Questo video non si può riprodurre fuori da YouTube: salto al successivo' : 'YouTube: video non disponibile');
+              try { this.yt.nextVideo(); } catch (x) { /* ignorato */ }
+            },
           },
         });
       } catch (e) {
-        box.innerHTML = '<div class="md-vuoto">YouTube non risponde: serve la connessione a Internet.</div>';
+        const rete = e && /^(rete|tempo)$/.test(e.message);
+        box.innerHTML = rete ? '<div class="md-vuoto">YouTube non risponde: controlla la connessione a Internet.</div>'
+          : `<div class="md-vuoto">Il lettore di YouTube non è partito (${ESC(e && e.message)}). Prova un altro link.</div>`;
       }
     }
 
@@ -453,12 +476,23 @@
       d.querySelector('[data-md="muto"]').classList.toggle('attivo', this.muto);
       d.querySelector('[data-md-vol]').value = this.volume;
       d.classList.toggle('suona', this.suona);
+      // Il mini-lettore si costruisce UNA volta e poi si aggiornano solo i pezzi cambiati:
+      // Spotify manda playback_update più volte al secondo e ricostruirlo ogni volta
+      // (innerHTML) faceva sfarfallare la barra (onde azzerate, testo ridisegnato).
       for (const m of this.o.mini?.() || []) {
-        m.innerHTML = `<button class="mm-play" data-mm="play" title="Riproduci / pausa">${this.suona ? '||' : '&gt;'}</button>
-          <button class="mm-testo" data-mm="apri" title="Apri il lettore musicale"><span class="md-onde"></span><span class="mm-nome">${ESC(this.descrizione())}</span></button>
-          <button class="mm-muto ${this.muto ? 'attivo' : ''}" data-mm="muto" title="${this.muto ? 'Riattiva l\'audio' : 'Muto'} (Ctrl+M)">${this.muto ? 'M' : '♪'}</button>`;
-        m.onclick = ev => { const b = ev.target.closest('[data-mm]'); if (!b) return; const a = b.dataset.mm;
-          a === 'play' ? this.alterna() : a === 'muto' ? this.alternaMuto() : this.apri(); };
+        if (!m.querySelector('.mm-play')) {
+          m.innerHTML = `<button class="mm-play" data-mm="play" title="Riproduci / pausa"></button>
+            <button class="mm-testo" data-mm="apri" title="Apri il lettore musicale"><span class="md-onde"></span><span class="mm-nome"></span></button>
+            <button class="mm-muto" data-mm="muto"></button>`;
+          m.onclick = ev => { const b = ev.target.closest('[data-mm]'); if (!b) return; const a = b.dataset.mm;
+            a === 'play' ? this.alterna() : a === 'muto' ? this.alternaMuto() : this.apri(); };
+        }
+        const metti = (sel, prop, v) => { const el = m.querySelector(sel); if (el && el[prop] !== v) el[prop] = v; };
+        metti('.mm-play', 'textContent', this.suona ? '||' : '>');
+        metti('.mm-nome', 'textContent', this.descrizione());
+        metti('.mm-muto', 'textContent', this.muto ? 'M' : '♪');
+        metti('.mm-muto', 'title', (this.muto ? 'Riattiva l\'audio' : 'Muto') + ' (Ctrl+M)');
+        const mu = m.querySelector('.mm-muto'); if (mu && mu.classList.contains('attivo') !== this.muto) mu.classList.toggle('attivo', this.muto);
       }
     }
     apri() { this.dock.classList.add('aperto'); this.disegnaCorpo(); if (this.sorgente === 'spotify') this.preparaSpotify(); if (this.sorgente === 'youtube') this.preparaYouTube(); }

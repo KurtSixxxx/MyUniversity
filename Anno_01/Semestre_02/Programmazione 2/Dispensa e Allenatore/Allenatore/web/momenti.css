@@ -1,0 +1,65 @@
+/* =====================================================================
+   Allenatore Prog2 — momenti speciali (modalità panico, giorno
+   dell'esame, stella su GitHub, crediti). Vedi momenti.js.
+   ===================================================================== */
+
+/* ---------------------------------------------------------------- modalità panico */
+.card.panico { border: 1px solid var(--rosso); box-shadow: 0 0 0 1px var(--rosso-tenue), 0 0 32px var(--rosso-tenue); margin-bottom: 20px; }
+.panico-testa { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 18px; }
+.panico-testa h2 { margin: 2px 0 6px; }
+.panico-testa .sopratitolo { color: var(--rosso); letter-spacing: .12em; }
+.panico-sirena { flex: none; width: 14px; height: 14px; margin-top: 4px; border-radius: 50%; background: var(--rosso); box-shadow: 0 0 12px var(--rosso); animation: sirena 1.6s ease-in-out infinite; }
+@keyframes sirena { 50% { opacity: .25; box-shadow: none; } }
+.panico-giorni { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 1100px) { .panico-giorni { grid-template-columns: 1fr; } }
+.panico-giorno { border: 1px solid var(--linea); border-radius: 12px; padding: 14px; background: var(--riempi); }
+.panico-giorno.oggi { border-color: var(--rosso); background: var(--rosso-tenue); }
+.panico-giorno.passato { opacity: .55; }
+.panico-giorno-testa { display: flex; align-items: center; gap: 8px; font-weight: 600; margin-bottom: 2px; }
+.panico-giorno-testa b { color: var(--rosso); font-family: var(--mono); }
+.panico-giorno-testa .pill { margin-left: auto; }
+.panico-voce { display: flex; align-items: center; gap: 10px; padding: 9px 0; border-top: 1px solid var(--linea); font-size: 13.5px; }
+.panico-voce:first-of-type { margin-top: 10px; }
+.panico-voce span { flex: 1; }
+.panico-voce.fatta span { text-decoration: line-through; color: var(--testo-3); }
+.panico-spunta { flex: none; width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--testo-3); background: none; color: var(--verde); font: 700 13px/1 var(--mono); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.panico-voce.fatta .panico-spunta { border-color: var(--verde); }
+.panico-regole { margin-top: 14px; }
+
+/* ---------------------------------------------------------------- giorno dell'esame */
+.calma-velo { position: fixed; inset: 0; z-index: 70; display: grid; place-items: center; padding: 24px;
+  background: rgba(0, 0, 0, .6); backdrop-filter: blur(6px); animation: dissolvi .3s ease; }
+.calma-velo.via { opacity: 0; transition: opacity .25s; }
+.calma { position: relative; width: min(460px, 94vw); max-height: 92vh; overflow: auto; text-align: center;
+  background: var(--superficie); border: 1px solid var(--linea-forte); border-radius: 20px; padding: 30px 30px 26px; box-shadow: var(--ombra-alta); }
+.calma h2 { margin: 4px 0 14px; }
+.calma-chiudi { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--riempi-2); color: var(--testo-2); cursor: pointer; display: grid; place-items: center; }
+.calma-chiudi svg { width: 16px; height: 16px; }
+.calma-bit { display: flex; justify-content: center; margin-bottom: 6px; }
+.respiro { position: relative; width: 170px; height: 170px; margin: 6px auto 10px; display: grid; place-items: center; }
+.respiro-cerchio { position: absolute; width: 104px; height: 104px; border-radius: 50%;
+  background: radial-gradient(circle, var(--accento-tenue), transparent 70%); border: 2px solid var(--accento);
+  box-shadow: 0 0 30px var(--accento-tenue); transform: scale(.8); transition: transform 4s ease-in-out; }
+[data-tema] .respiro-cerchio { border-radius: 50% !important; }
+.respiro-testo { position: relative; font: 600 15px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--accento); }
+.calma-frase { min-height: 44px; margin: 0 0 12px; color: var(--testo-2); }
+.calma-lista { text-align: left; margin: 0 auto 18px; padding: 12px 16px 12px 34px; max-width: 340px; border-radius: 12px; background: var(--riempi); font-size: 13.5px; line-height: 1.7; }
+/* (l'esercizio di respirazione resta animato anche con «animazioni ridotte»: escluso in stile.css) */
+
+/* ---------------------------------------------------------------- stella su GitHub */
+.stella { position: fixed; right: 24px; bottom: 120px; z-index: 55; width: 360px; display: flex; gap: 10px; align-items: flex-start;
+  padding: 12px 34px 12px 12px; border-radius: 14px; background: var(--superficie); border: 1px solid var(--linea-forte);
+  box-shadow: var(--ombra-alta); font-size: 13px; line-height: 1.45; opacity: 0; transform: translateY(12px); transition: opacity .3s, transform .3s; }
+.stella.vis { opacity: 1; transform: none; }
+.stella-bit { flex: none; }
+.stella-testo b { color: var(--accento); }
+.stella { box-sizing: border-box; max-width: calc(100vw - 48px); }
+.stella-azioni { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 8px; }
+.stella-azioni > * { white-space: nowrap; }
+.stella-testo { flex: 1; min-width: 0; overflow-wrap: break-word; }
+.stella-x { position: absolute; top: 6px; right: 6px; width: 24px; height: 24px; border: 0; border-radius: 50%; background: none; color: var(--testo-3); cursor: pointer; display: grid; place-items: center; padding: 0; }
+.stella-x svg { width: 13px; height: 13px; }
+.stella-x:hover { background: var(--riempi-2); color: var(--testo); }
+
+/* ---------------------------------------------------------------- crediti */
+.crediti-lista { margin: 10px 0 4px; padding-left: 18px; line-height: 1.7; }

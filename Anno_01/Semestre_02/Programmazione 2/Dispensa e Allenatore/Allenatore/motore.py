@@ -832,6 +832,34 @@ def esegui_codice(gpp, id_, codice, ingresso='', tempo_max=10):
     return ris
 
 
+_RE_DIAG_FILE = re.compile(r'^(.*?):(\d+):(\d+):\s*(fatal error|error|warning):\s*(.*)$', re.M)
+
+
+def controlla_sintassi(gpp, id_, codice):
+    """Controllo «dal vivo» mentre si scrive: g++ -fsyntax-only (niente eseguibile, niente
+    esecuzione). Su una copia a parte, così non tocca il file salvato. Restituisce solo
+    i messaggi che riguardano il file dell'esercizio (non quelli dentro le librerie)."""
+    percorso_lavoro(id_)                        # valida l'identificativo
+    cartella = os.path.join(LAVORI, 'controllo')
+    os.makedirs(cartella, exist_ok=True)
+    sorgente = os.path.join(cartella, id_ + '.cpp')
+    with io.open(sorgente, 'w', encoding='utf-8', newline='\n') as f:
+        f.write(codice)
+    try:
+        r = subprocess.run([gpp, '-fsyntax-only', '-Wall', '-Wextra', '-std=c++17', '-fmax-errors=30', sorgente],
+                           capture_output=True, text=True, encoding='utf-8', errors='replace',
+                           timeout=20, env=ambiente_gpp(gpp), creationflags=NO_FINESTRA, cwd=cartella)
+    except subprocess.TimeoutExpired:
+        return {'ok': False, 'diagnostica': [], 'scaduto': True}
+    diag, nome = [], os.path.normcase(os.path.abspath(sorgente))
+    for m in _RE_DIAG_FILE.finditer(r.stderr or ''):
+        if os.path.normcase(os.path.abspath(os.path.join(cartella, m.group(1)))) != nome:
+            continue
+        diag.append({'riga': int(m.group(2)), 'colonna': int(m.group(3)),
+                     'tipo': 'errore' if 'error' in m.group(4) else 'avviso', 'testo': m.group(5).strip()})
+    return {'ok': r.returncode == 0, 'diagnostica': diag[:60]}
+
+
 def confronta_output(atteso, ottenuto):
     a, b = normalizza_output(atteso or ''), normalizza_output(ottenuto or '')
     if a == b:
@@ -1056,7 +1084,8 @@ def crea_cartella_vscode(cat, cartella, gpp=None):
         nuovi += 1
     for sotto in os.listdir(cartella):                          # cartelle dei vecchi nomi rimaste vuote
         p = os.path.join(cartella, sotto)
-        if sotto.startswith('.') or not os.path.isdir(p):
+        # SICUREZZA: si toccano solo le cartelle dei moduli (M01 ..), mai altre cartelle dell'utente
+        if sotto.startswith('.') or not os.path.isdir(p) or not re.match(r'^M\d\d ', sotto):
             continue
         contenuto = os.listdir(p)
         if all(x.lower().endswith('.exe') and os.path.isfile(os.path.join(p, x)) for x in contenuto):
@@ -1093,8 +1122,15 @@ def apri_in_vscode(cartella, file=None):
     code = trova_vscode()
     if not code:
         return False
+    # SICUREZZA: code.cmd passerebbe da cmd.exe (shell=True), dove un percorso con & o %
+    # diventerebbe un comando: si lancia direttamente Code.exe, che sta due cartelle sopra
+    if code.lower().endswith('.cmd'):
+        exe = os.path.normpath(os.path.join(os.path.dirname(code), '..', 'Code.exe'))
+        if not os.path.isfile(exe):
+            return False
+        code = exe
     argomenti = [code, cartella] + ([file] if file else [])
-    subprocess.Popen(argomenti, creationflags=NO_FINESTRA, shell=code.lower().endswith('.cmd'))
+    subprocess.Popen(argomenti, creationflags=NO_FINESTRA)
     return True
 
 

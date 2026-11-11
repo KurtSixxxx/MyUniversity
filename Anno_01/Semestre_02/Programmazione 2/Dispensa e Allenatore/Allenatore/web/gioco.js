@@ -172,8 +172,61 @@
 
   /* ------------------------------------------------------------ unione dei progressi (PC <-> telefono) */
   /* per ogni voce vince la più recente; a parità si uniscono le informazioni */
+  /* SICUREZZA: i progressi arrivano anche da fuori (codice P2: incollato, cloud del telefono).
+     Qui si tengono solo numeri, booleani e date: niente testo che finisca nell'HTML come codice. */
+  const RE_ID = /^[A-Za-z0-9_-]{1,40}$/, RE_DATA = /^\d{4}-\d{2}-\d{2}$/;
+  const numero = v => { v = Number(v); return Number.isFinite(v) ? Math.max(0, Math.min(v, 1e7)) : 0; };
+  const data = v => typeof v === 'string' && RE_DATA.test(v) ? v : '';
+  const oggetto = v => v && typeof v === 'object' && !Array.isArray(v) ? v : {};
+  function pulisci(p) {
+    p = oggetto(p);
+    const out = {};
+    for (const k of ['quiz', 'orale', 'esercizi', 'prevedi']) {
+      out[k] = {};
+      for (const [id, v] of Object.entries(oggetto(p[k]))) {
+        if (!RE_ID.test(id)) continue;
+        const r = {};
+        for (const [c, x] of Object.entries(oggetto(v))) {
+          if (!/^[a-z_]{1,20}$/.test(c)) continue;
+          if (c === 'data') r.data = data(x);
+          else if (typeof x === 'boolean' || x === null) r[c] = !!x;
+          else r[c] = numero(x);
+        }
+        out[k][id] = r;
+      }
+    }
+    out.simulazioni = (Array.isArray(p.simulazioni) ? p.simulazioni : []).slice(-500).map(s => {
+      s = oggetto(s);
+      return { data: data(s.data), giuste: numero(s.giuste), totale: numero(s.totale), superato: !!s.superato };
+    });
+    out.attivita = {};
+    for (const [d, v] of Object.entries(oggetto(p.attivita))) {
+      if (!RE_DATA.test(d)) continue;
+      out.attivita[d] = {};
+      for (const [c, n] of Object.entries(oggetto(v))) if (/^[a-z]{1,3}$/.test(c)) out.attivita[d][c] = numero(n);
+    }
+    if (data(p.data_esame)) out.data_esame = p.data_esame;
+    if (data(p.data_esame_agg)) out.data_esame_agg = p.data_esame_agg;
+    return out;
+  }
+  /* il profilo che viaggia nel codice P2: testo breve, colore esadecimale, numeri e date */
+  function pulisciProfilo(o) {
+    o = oggetto(o);
+    const out = {}, testo = (v, n) => typeof v === 'string' ? v.replace(/[<>"`]/g, '').trim().slice(0, n) : '';
+    for (const k of ['nome', 'professore', 'corso', 'sigla', 'nome_pet']) if (testo(o[k], 60)) out[k] = testo(o[k], k === 'nome_pet' ? 16 : 60);
+    if (typeof o.accento === 'string' && /^#[0-9a-fA-F]{6}$/.test(o.accento)) out.accento = o.accento;
+    if ([150, 300, 500, 800].includes(Number(o.obiettivo_xp))) out.obiettivo_xp = Number(o.obiettivo_xp);
+    if (data(o.data_esame)) out.data_esame = o.data_esame;
+    const a = oggetto(o.armadio), arm = {};
+    for (const k of ['palette', 'faccia', 'occhi', 'testa', 'collo', 'viso']) {
+      if (a[k] === null) arm[k] = null; else if (typeof a[k] === 'string' && RE_ID.test(a[k])) arm[k] = a[k];
+    }
+    if (Object.keys(arm).length) out.armadio = arm;
+    return out;
+  }
+
   function unisci(a, b) {
-    a = a || {}; b = b || {};
+    a = pulisci(a); b = pulisci(b);
     const out = { ...a, ...b, simulazioni: [] };
     for (const k of ['quiz', 'orale', 'esercizi', 'prevedi']) {
       const x = a[k] || {}, y = b[k] || {}; out[k] = {};
@@ -257,7 +310,7 @@
 
   window.Gioco = {
     oggiISO, registra, calcola, missioni, esitoMissioni,
-    sogliaLivello, livelloDa, unisci, COLORI, paletta, applicaAccento, XP_ES,
+    sogliaLivello, livelloDa, unisci, pulisci, pulisciProfilo, COLORI, paletta, applicaAccento, XP_ES,
     _util: { rgbDa, hslDa, hash, oggiISO },   // per bit.js
   };
 })();
