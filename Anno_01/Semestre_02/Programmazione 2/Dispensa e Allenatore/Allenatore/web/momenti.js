@@ -148,7 +148,7 @@ function linkRepo() {
 }
 function chiediStella() {
   const repo = linkRepo();
-  if (!repo || S.imp.stella_fatta || S.imp.stella_mai || giorniAllEsame() === 0 || !S.imp.configurato) return;
+  if (!repo || S.imp.stella_fatta || S.imp.stella_mai || giorniAllEsame() === 0 || !S.imp.configurato || S.tour) return;
   if (document.querySelector('.stella')) return;
   const el = document.createElement('div');
   el.className = 'stella';

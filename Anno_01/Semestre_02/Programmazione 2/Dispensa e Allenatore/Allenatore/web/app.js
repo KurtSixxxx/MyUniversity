@@ -110,6 +110,7 @@ async function avvia() {
     if (!S.imp.configurato) return benvenuto();
     if (S.imp.musica_auto !== false && S.lettore.sorgente === 'colonna') S.lettore.play();
     if (giorniAllEsame() === 0) giornoEsame();          // il giorno dell'esame: prima di tutto, la calma
+    else if (!S.imp.tour_visto && typeof avviaTour === 'function') setTimeout(avviaTour, 400);   // il giro guidato con Bit, una volta
     else setTimeout(chiediStella, 6000);                // altrimenti, con calma, la stella su GitHub
   });
 }
@@ -1537,6 +1538,7 @@ function benvenuto() {
       nome_pet: $('#bv-pet').value.trim(), configurato: true });
     chiudiFoglio(); disegnaMenu(); aggiornaMini(); vai(S.vista);
     if (S.imp.musica_auto !== false && S.lettore.sorgente === 'colonna') S.lettore.play();
+    if (!S.imp.tour_visto && typeof avviaTour === 'function') setTimeout(avviaTour, 450);   // subito dopo, Bit fa fare il giro dell'app
   };
   setTimeout(() => $('#bv-nome')?.focus(), 60);
 }
@@ -1626,6 +1628,8 @@ function apriImpostazioni() {
         <input class="campo" data-imp="nome_pet" value="${esc(S.imp.nome_pet || '')}" placeholder="Bit"></div>
       <div class="imp-riga"><div><div class="imp-nome">${esc(nomePet())} in scena</div><div class="secondario">Sta sopra la domanda nei quiz, accanto all'output di g++ nel codice, a lato della carta all'orale, in basso a destra nella pagina Oggi. Reagisce e ti parla; un clic lo fa saltare.</div></div>
         <div class="azioni" style="margin:0"><button class="btn secondario piccolo" data-azione="armadio">Armadio</button>${siNo('compagno')}</div></div>
+      <div class="imp-riga"><div><div class="imp-nome">Tour dell'app</div><div class="secondario">${esc(nomePet())} ti mostra le schede e come si usano, in un minuto. Esc lo salta.</div></div>
+        <button class="btn secondario piccolo" data-azione="tour">${ic('play')}Rivedi il tour</button></div>
       <div class="imp-riga"><div><div class="imp-nome">Obiettivo giornaliero</div><div class="secondario">Gli XP che sfamano ${esc(nomePet())} ogni giorno.</div></div>
         <div class="segmentato" id="imp-obiettivo">${[150, 300, 500, 800].map(k =>
           `<button data-v="${k}" class="${(S.imp.obiettivo_xp || 300) === k ? 'attivo' : ''}">${k} XP</button>`).join('')}</div></div>
@@ -1637,6 +1641,8 @@ function apriImpostazioni() {
         ${siNo('musica_auto')}</div>
       <div class="imp-riga"><div><div class="imp-nome">Effetti sonori</div><div class="secondario">Un suono breve per XP, missioni e livelli.</div></div>
         ${siNo('effetti')}</div>
+      <div class="imp-riga"><div><div class="imp-nome">Voce di ${esc(nomePet())}</div><div class="secondario">Il «bip bip» da videogioco a 8 bit mentre il testo del tour compare.</div></div>
+        ${siNo('voce_bit')}</div>
       <div class="imp-riga"><div><div class="imp-nome">Intro all'avvio</div><div class="secondario">Animazione di accesso al terminale. Esc, Invio o un clic la saltano.</div></div>
         <div class="azioni" style="margin:0"><button class="btn secondario piccolo" data-azione="rivedi-intro">${ic('play')}Guarda</button>${siNo('intro')}</div></div>
       <div class="imp-riga"><div><div class="imp-nome">Musica dell'intro</div><div class="secondario">Sigla sintetizzata, circa 10 secondi.</div></div>
@@ -1775,6 +1781,7 @@ const AZIONI = {
   'ricarica': async () => dopoRicarica(await api().ricarica()),
   'apri-dati': () => api().apri_cartella_dati(),
   'rivedi-intro': () => { chiudiFoglio(); setTimeout(mostraIntro, 250); },
+  'tour': () => { chiudiFoglio(); setTimeout(avviaTour, 250); },
   'barra-riduci': () => cambiaPannello('barra_stretta'),
   'elenco-riduci': () => cambiaPannello('elenco_nascosto'),
   'vscode-apri': () => vscodeApri(),

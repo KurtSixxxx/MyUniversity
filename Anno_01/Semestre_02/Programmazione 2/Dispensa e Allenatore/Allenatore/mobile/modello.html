@@ -40,6 +40,10 @@
 
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; border-radius: 0 !important; }
 html, body { height: 100%; }
+/* testo non selezionabile (come un'app vera, niente lente e menu «Copia» al tocco prolungato);
+   si scrive e si seleziona solo nei campi */
+html, body { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
+input, textarea { -webkit-user-select: text; user-select: text; -webkit-touch-callout: default; }
 body { background: var(--sfondo); color: var(--testo); font: 15px/1.5 var(--font); -webkit-font-smoothing: antialiased;
   -webkit-text-size-adjust: 100%; margin: 0; letter-spacing: .005em; }
 /* scanline leggere, come il terminale del PC */
