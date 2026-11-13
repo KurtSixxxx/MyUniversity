@@ -3,7 +3,8 @@
 """
 Allenatore Prog2 - app desktop per allenarsi all'esame di Programmazione 2.
 
-Interfaccia: HTML/CSS/JS (cartella web/) in una finestra WebView2 (pywebview).
+Interfaccia: HTML/CSS/JS (cartella web/) in una finestra pywebview
+(WebView2 su Windows, WebKit sul Mac).
 Logica: motore.py (lettura della dispensa, compilazione con g++, progressi).
 
 Sviluppo:      .ambiente\\Scripts\\python app.py
@@ -40,9 +41,13 @@ class Api:
 
     # ---------------------------------------------------------------- avvio
     def avvio(self):
+        if os.environ.get('ALLENATORE_COLLAUDO'):   # collaudo automatico: l'interfaccia è partita
+            with open(os.path.join(M.DATI_UTENTE, 'collaudo.txt'), 'a', encoding='utf-8') as f:
+                f.write('avvio %s\n' % M.APP_VERSIONE)
         return {'catalogo': self._catalogo, 'errore': self._errore,
                 'progressi': M.carica_progressi(), 'impostazioni': self._imp,
-                'gpp': self._gpp, 'versione': M.APP_VERSIONE, 'cartella_dati': M.DATI_UTENTE}
+                'gpp': self._gpp, 'versione': M.APP_VERSIONE, 'cartella_dati': M.DATI_UTENTE,
+                'sistema': 'mac' if M.MAC else 'windows'}
 
     def ricarica(self):
         self._carica()
@@ -78,8 +83,10 @@ class Api:
             self._gpp = M.trova_gpp()
         if not self._gpp:
             return {'compilato': False, 'senza_compilatore': True, 'diagnostica': [],
-                    'messaggi': 'Non trovo il compilatore g++. Installa MSYS2/MinGW e aggiungi '
-                                'la cartella di g++ al PATH, poi riavvia l\'app.'}
+                    'messaggi': ('Non trovo il compilatore. Apri il Terminale, scrivi xcode-select --install '
+                                 'e conferma; poi riavvia l\'app.') if M.MAC else
+                                ('Non trovo il compilatore g++. Installa MSYS2/MinGW e aggiungi '
+                                 'la cartella di g++ al PATH, poi riavvia l\'app.')}
         try:
             tempo = max(1, min(int(tempo_max or 10), 120))
             return M.esegui_codice(self._gpp, id_, codice, str(ingresso or ''), tempo)
@@ -111,10 +118,10 @@ class Api:
         return self.ricarica()
 
     def copia_appunti(self, testo):
-        """Copia testo ASCII (il codice dei progressi) negli appunti di Windows."""
+        """Copia testo ASCII (il codice dei progressi) negli appunti (clip su Windows, pbcopy sul Mac)."""
         try:
             import subprocess
-            subprocess.run(['clip'], input=testo.encode('ascii', 'ignore'), check=True,
+            subprocess.run(['pbcopy' if M.MAC else 'clip'], input=testo.encode('ascii', 'ignore'), check=True,
                            creationflags=0x08000000 if os.name == 'nt' else 0)
             return True
         except Exception:
@@ -295,7 +302,11 @@ class Api:
 
     def apri_cartella_dati(self):
         os.makedirs(M.DATI_UTENTE, exist_ok=True)
-        os.startfile(M.DATI_UTENTE)
+        if M.MAC:
+            import subprocess
+            subprocess.Popen(['open', M.DATI_UTENTE])
+        else:
+            os.startfile(M.DATI_UTENTE)
         return True
 
     def barra_titolo(self, scuro, colore):
@@ -324,9 +335,12 @@ class Api:
 def avvia(dopo_avvio=None):
     api = Api()
     tema = api._imp.get('tema', 'auto') if api._imp.get('tema_terminale_proposto') else 'hacker'
-    scuro = tema in ('scuro', 'hacker') or (tema == 'auto' and windows_scuro())
+    scuro = tema in ('scuro', 'hacker') or (tema == 'auto' and sistema_scuro())
     # il tema salvato, letto da index.html prima del primo disegno (niente lampo di colore)
+    # (non nell'app per Mac: il pacchetto .app firmato non va modificato)
     try:
+        if M.MAC and M.CONGELATO:
+            raise OSError
         with open(os.path.join(M.RISORSE, 'web', 'tema-iniziale.js'), 'w', encoding='utf-8') as f:
             import json   # json, non repr: una stringa Python non è sempre JavaScript valido
             f.write('window.TEMA_INIZIALE = %s;\n' % json.dumps(str(tema)))
@@ -354,6 +368,14 @@ def avvia(dopo_avvio=None):
             x, y = area.left + (lw - larg) // 2, area.top + (lh - alt) // 2
         except Exception:
             pass
+    elif M.MAC:
+        try:
+            from AppKit import NSScreen   # arriva con pywebview (pyobjc)
+            area = NSScreen.mainScreen().visibleFrame()
+            lw, lh = int(area.size.width), int(area.size.height)
+            larg, alt = min(larg, lw - 40), min(alt, lh - 40)
+        except Exception:
+            larg, alt = 1280, 800
     finestra = webview.create_window(
         M.APP_NOME, url=os.path.join(M.RISORSE, 'web', 'index.html'), js_api=api,
         width=larg, height=alt, x=x, y=y, maximized=ingrandita,
@@ -373,8 +395,15 @@ def avvia(dopo_avvio=None):
         webview.start(**opzioni)
 
 
-def windows_scuro():
-    """True se Windows usa il tema scuro per le app."""
+def sistema_scuro():
+    """True se il sistema (Windows o macOS) usa il tema scuro per le app."""
+    if M.MAC:
+        try:
+            import subprocess
+            r = subprocess.run(['defaults', 'read', '-g', 'AppleInterfaceStyle'], capture_output=True, text=True, timeout=5)
+            return r.stdout.strip().lower() == 'dark'
+        except Exception:
+            return False
     try:
         import winreg
         with winreg.OpenKey(winreg.HKEY_CURRENT_USER,

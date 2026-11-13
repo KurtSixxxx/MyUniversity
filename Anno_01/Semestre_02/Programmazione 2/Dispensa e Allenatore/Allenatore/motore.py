@@ -32,7 +32,11 @@ CONGELATO = getattr(sys, 'frozen', False)
 QUI = os.path.dirname(os.path.abspath(__file__))
 RISORSE = getattr(sys, '_MEIPASS', QUI)                       # file inclusi nell'app
 CARTELLA_EXE = os.path.dirname(sys.executable) if CONGELATO else QUI
-DATI_UTENTE = os.environ.get('ALLENATORE_DATI') or os.path.join(os.environ.get('APPDATA') or os.path.expanduser('~'), APP_NOME)
+MAC = sys.platform == 'darwin'
+# dati dello studente: %APPDATA% su Windows, ~/Library/Application Support sul Mac
+DATI_UTENTE = os.environ.get('ALLENATORE_DATI') or (
+    os.path.join(os.path.expanduser('~'), 'Library', 'Application Support', APP_NOME) if MAC
+    else os.path.join(os.environ.get('APPDATA') or os.path.expanduser('~'), APP_NOME))
 DISPENSA = os.path.normpath(os.path.join(QUI, '..', 'Dispensa'))
 LAVORI = os.path.join(DATI_UTENTE, 'lavori')
 FILE_PROGRESSI = os.path.join(DATI_UTENTE, 'progressi.json')
@@ -507,6 +511,17 @@ class Dati:
 #  3. COMPILAZIONE ED ESECUZIONE
 # =====================================================================
 def trova_gpp():
+    if MAC:
+        # /usr/bin/g++ c'è sempre, ma senza gli strumenti di sviluppo di Apple è solo un
+        # segnaposto che apre la finestra di installazione: prima si controlla xcode-select
+        for c in ('/opt/homebrew/bin/g++', '/usr/local/bin/g++'):
+            if os.path.isfile(c):
+                return c
+        try:
+            ok = subprocess.run(['xcode-select', '-p'], capture_output=True, timeout=10).returncode == 0
+        except (OSError, subprocess.SubprocessError):
+            ok = False
+        return '/usr/bin/g++' if ok and os.path.isfile('/usr/bin/g++') else None
     g = shutil.which('g++')
     if g:
         return g
@@ -526,7 +541,12 @@ CODICI_USCITA = {
     3221226505: 'errore grave del programma (spesso un delete fatto due volte o su un '
                 'puntatore non valido).',
     3: 'il programma si è fermato con abort(): spesso un\'eccezione non catturata.',
-    -11: 'segmentation fault.',
+    -11: 'segmentation fault: un puntatore nullo o già cancellato? un indice fuori dall\'array? '
+         '(anche una ricorsione senza caso base finisce così).',
+    -6: 'il programma si è fermato con abort(): spesso un\'eccezione non catturata, '
+        'o un delete fatto due volte.',
+    -8: 'divisione intera per zero.',
+    -10: 'accesso a memoria non valida (bus error): un puntatore non inizializzato?',
 }
 
 
@@ -559,6 +579,8 @@ def esegui(gpp, eseguibile, ingresso, tempo_max=10):
                                'infinito, oppure sta aspettando dati da tastiera: scrivili '
                                'nel riquadro “Input”.' % tempo_max)
     except PermissionError:
+        if MAC:
+            return None, '', '', 'macOS non permette di eseguire il programma (Permission denied).'
         return None, '', '', ('Windows ha bloccato l\'eseguibile (Permission denied). Di solito '
                               'è l\'antivirus che lo scambia per un virus: modifica un po\' il '
                               'codice e ricompila.')
@@ -986,7 +1008,28 @@ def cartella_vscode_predefinita(cat):
     return os.path.join(os.path.expanduser('~'), 'Documents', 'Esercizi Prog2 VS Code')
 
 
+def _tasks_vscode_mac(gpp):
+    exe = "${workspaceFolder}/.build/${fileBasenameNoExtension}"
+    inp = "${workspaceFolder}/.input/${fileBasenameNoExtension}.txt"
+    presenta = {'echo': False, 'reveal': 'always', 'focus': True, 'panel': 'shared',
+                'clear': True, 'showReuseMessage': False}
+    opzioni = {'cwd': '${fileDirname}'}
+    return {'version': '2.0.0', 'tasks': [
+        {'label': 'Compila', 'type': 'process', 'command': gpp or 'g++',
+         'args': ['-Wall', '-Wextra', '-std=c++17', '-g', '${file}', '-o', exe],
+         'options': opzioni, 'problemMatcher': ['$gcc'], 'presentation': dict(presenta, focus=False)},
+        {'label': 'Compila ed esegui', 'type': 'shell', 'dependsOn': 'Compila',
+         'command': '"%s"' % exe, 'options': opzioni, 'problemMatcher': [],
+         'group': {'kind': 'build', 'isDefault': True}, 'presentation': presenta},
+        {'label': 'Compila ed esegui con l\'input di prova', 'type': 'shell', 'dependsOn': 'Compila',
+         'command': 'if [ -f "%s" ]; then "%s" < "%s"; else echo "Questo esercizio non ha un input di prova."; "%s"; fi'
+                    % (inp, exe, inp, exe),
+         'options': opzioni, 'problemMatcher': [], 'group': 'build', 'presentation': presenta}]}
+
+
 def _tasks_vscode(gpp):
+    if MAC:
+        return _tasks_vscode_mac(gpp)
     gpp = gpp or 'g++'
     bin_ = os.path.dirname(gpp) if os.path.isabs(gpp) else ''
     exe = "${workspaceFolder}\\.build\\${fileBasenameNoExtension}.exe"
@@ -1049,7 +1092,8 @@ def crea_cartella_vscode(cat, cartella, gpp=None):
     scrivi('.vscode/tasks.json', json.dumps(_tasks_vscode(gpp), ensure_ascii=False, indent=2))
     impostazioni = {'files.encoding': 'utf8', 'files.eol': '\n',
                     'files.exclude': {'.build': True, '.input': True, '**/*.exe': True},
-                    'C_Cpp.default.cppStandard': 'c++17', 'C_Cpp.default.intelliSenseMode': 'windows-gcc-x64',
+                    'C_Cpp.default.cppStandard': 'c++17',
+                    'C_Cpp.default.intelliSenseMode': 'macos-clang-arm64' if MAC else 'windows-gcc-x64',
                     'editor.rulers': [LARGHEZZA + 3],
                     # Code Runner (il ▷ in alto): stesso schema del suo comando predefinito, così
                     # funziona sia in PowerShell sia nel Prompt; in più gli avvisi come all'esame
@@ -1110,6 +1154,11 @@ def trova_file_vscode(cartella, id_):
 
 
 def trova_vscode():
+    if MAC:
+        for app in ('/Applications', os.path.expanduser('~/Applications')):
+            c = os.path.join(app, 'Visual Studio Code.app', 'Contents', 'Resources', 'app', 'bin', 'code')
+            if os.path.isfile(c):
+                return c
     for c in (shutil.which('code'),
               os.path.join(os.environ.get('LOCALAPPDATA', ''), 'Programs', 'Microsoft VS Code', 'bin', 'code.cmd'),
               r'C:\Program Files\Microsoft VS Code\bin\code.cmd'):

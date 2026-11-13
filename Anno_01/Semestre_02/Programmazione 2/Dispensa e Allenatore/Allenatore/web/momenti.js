@@ -181,7 +181,7 @@ function creditiHTML() {
         <li><b>Contenuti</b>: dispensa scritta seguendo il programma del corso, le slide e le prove d'esame</li>
         <li><b>Bit</b>: compagno in pixel art originale</li>
         <li><b>Colonna sonora</b>: brani originali generati dal vivo con Web Audio</li>
-        <li><b>Tecnologia</b>: Python, pywebview e Microsoft WebView2, compilatore g++ (MinGW-w64), PyInstaller</li>
+        <li><b>Tecnologia</b>: Python, pywebview (Microsoft WebView2 su Windows, WebKit sul Mac), compilatore g++ (MinGW-w64 su Windows, Apple clang sul Mac), PyInstaller</li>
         <li><b>Musica in streaming</b>: lettori ufficiali di Spotify e YouTube (marchi dei rispettivi proprietari)</li>
         <li>Sviluppato con l'aiuto di Claude (Anthropic)</li>
       </ul>

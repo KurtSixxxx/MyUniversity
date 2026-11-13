@@ -24,7 +24,7 @@ PUB = os.path.join(os.path.dirname(QUI), 'Pubblicazione')
 DEST = os.path.join(PUB, 'Allenatore')
 
 DA_COPIARE = [
-    'app.py', 'motore.py', 'crea_app.py', 'crea_app.bat', 'prepara_pubblicazione.py',
+    'app.py', 'motore.py', 'crea_app.py', 'crea_app.bat', 'prepara_pubblicazione.py', 'collaudo.py',
     'web', 'mobile/modello.html', 'mobile/crea_mobile.py', 'risorse/icona.ico', 'risorse/icona.png',
 ]
 ESCLUSI = {'tema-iniziale.js', '__pycache__'}

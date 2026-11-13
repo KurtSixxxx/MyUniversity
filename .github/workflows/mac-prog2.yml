@@ -1,0 +1,77 @@
+# Costruisce l'Allenatore Prog2 per Mac (Apple Silicon e Intel) su un Mac di GitHub,
+# lo prova (avvio dell'app, compilatore, screenshot) e carica i .dmg nella Release.
+# Va nella RADICE del repository.
+# Parte da solo quando si pubblica una Release prog2-*, oppure a mano:
+#   Actions -> Allenatore Prog2 per Mac -> Run workflow (tag della Release, facoltativo).
+name: Allenatore Prog2 per Mac
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release in cui caricare i .dmg (es. prog2-v3.6); vuoto = solo prova'
+        required: false
+permissions:
+  contents: write
+env:
+  CARTELLA: 'Anno_01/Semestre_02/Programmazione 2/Dispensa e Allenatore'
+  TAG: ${{ github.event.release.tag_name || inputs.tag }}
+jobs:
+  mac:
+    if: github.event_name != 'release' || startsWith(github.event.release.tag_name, 'prog2-')
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - runner: macos-15          # Apple Silicon (M1, M2, M3, M4...)
+            arch: AppleSilicon
+          - runner: macos-15-intel    # Mac con processore Intel
+            arch: Intel
+    runs-on: ${{ matrix.runner }}
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          sparse-checkout: ${{ env.CARTELLA }}
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Dipendenze
+        run: python -m pip install --upgrade pip pywebview pyinstaller pillow segno
+      - name: Contenuti della dispensa
+        working-directory: ${{ env.CARTELLA }}/Allenatore
+        run: python motore.py --test
+      - name: Compilatore (soluzioni della dispensa con Apple clang)
+        working-directory: ${{ env.CARTELLA }}/Allenatore
+        run: python collaudo.py ../Dispensa
+      - name: Costruzione dell'app e del .dmg
+        working-directory: ${{ env.CARTELLA }}/Allenatore
+        run: python crea_app.py --pubblica
+      - name: Prova di avvio (l'interfaccia deve chiamare l'API) + screenshot
+        working-directory: ${{ env.CARTELLA }}
+        run: |
+          DATI="$RUNNER_TEMP/dati"; mkdir -p "$DATI"
+          echo '{"configurato": true, "intro": false, "nome": "Mario", "musica_auto": false, "tema_terminale_proposto": true, "tema": "hacker", "data_esame": "2026-12-15"}' > "$DATI/impostazioni.json"
+          ALLENATORE_DATI="$DATI" ALLENATORE_COLLAUDO=1 "Allenatore/dist/Allenatore Prog2.app/Contents/MacOS/Allenatore Prog2" > "$RUNNER_TEMP/app.log" 2>&1 &
+          PID=$!
+          for i in $(seq 1 90); do [ -f "$DATI/collaudo.txt" ] && break; sleep 1; done
+          sleep 12
+          screencapture -x "$RUNNER_TEMP/mac-${{ matrix.arch }}.png" || true
+          kill $PID 2>/dev/null || true
+          cat "$RUNNER_TEMP/app.log" || true
+          test -f "$DATI/collaudo.txt" || { echo "L'interfaccia non è partita"; exit 1; }
+          echo "Interfaccia partita: $(cat "$DATI/collaudo.txt")"
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: mac-${{ matrix.arch }}
+          path: |
+            ${{ env.CARTELLA }}/rilascio/*.dmg
+            ${{ runner.temp }}/mac-*.png
+            ${{ runner.temp }}/app.log
+      - name: Caricamento nella Release
+        if: env.TAG != ''
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release upload "$TAG" "$CARTELLA"/rilascio/*.dmg --clobber -R "${{ github.repository }}"

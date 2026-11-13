@@ -59,6 +59,10 @@ const S = {
 };
 const VISTE = [['oggi', 'Oggi'], ['quiz', 'Quiz'], ['orale', 'Orale'], ['codice', 'Codice'], ['bit', 'Bit']];
 const nomePet = () => (S.imp?.nome_pet || '').trim() || 'Bit';
+/* come si installa il compilatore, a seconda del sistema */
+const comeInstallareGpp = () => S.mac
+  ? 'apri il Terminale, scrivi <code>xcode-select --install</code> e conferma, poi riavvia l\'app.'
+  : 'installa MSYS2/MinGW, aggiungi la cartella di g++ al PATH e riavvia l\'app.';
 const CORTI = { 0: 'Simulazione', 1: 'OOP', 2: 'C++ base', 3: 'Puntatori', 4: 'Classi', 5: 'Template', 6: 'Complessità',
   7: 'Ordinamento', 8: 'Ricorsione', 9: 'Ereditarietà', 10: 'Operatori', 11: 'Liste', 12: 'Pile e code', 13: 'Alberi', 14: 'Grafi' };
 const ETICHETTE_TIPO = { es: '', lab: 'Laboratorio a step', pattern: 'Pattern a memoria', esame: 'Simulazione d\'esame' };
@@ -133,6 +137,8 @@ function mostraIntro() {
 
 function caricaDati(d) {
   S.imp = d.impostazioni; S.gpp = d.gpp; S.versione = d.versione; S.cartellaDati = d.cartella_dati;
+  S.mac = d.sistema === 'mac';
+  document.documentElement.dataset.sistema = S.mac ? 'mac' : 'windows';
   S.prog = Gioco.pulisci(d.progressi);
   for (const k of ['quiz', 'orale', 'esercizi']) S.prog[k] = S.prog[k] || {};
   S.prog.simulazioni = S.prog.simulazioni || [];
@@ -996,7 +1002,7 @@ function disegnaVuoto() {
     Scrivi, premi <kbd>Ctrl</kbd> <kbd>↵</kbd> per compilare con g++ come in laboratorio, poi confronta il tuo output con quello della soluzione.</p>
     <div class="azioni centro"><button class="btn primario" data-azione="codice-apri" data-id="esame-lab">${ic('orologio')}Simulazione d'esame</button>
     ${(() => { const l = S.cat.esercizi.find(e => e.tipo === 'lab' && !S.prog.esercizi[e.id]?.fatto); return l ? `<button class="btn secondario" data-azione="codice-apri" data-id="${l.id}">Prossimo laboratorio</button>` : ''; })()}</div>
-    ${S.gpp ? '' : `<div class="banner">${ic('attenzione')} Non trovo il compilatore g++: installa MSYS2/MinGW e riavvia l'app.</div>`}
+    ${S.gpp ? '' : `<div class="banner">${ic('attenzione')} Non trovo il compilatore g++: ${comeInstallareGpp()}</div>`}
   </div>`;
 }
 
@@ -1617,7 +1623,7 @@ function apriImpostazioni() {
         <input class="campo" data-imp="sigla" value="${esc(S.imp.sigla || '')}" placeholder="UNICT"></div>
 
       <div class="imp-gruppo">Aspetto</div>
-      <div class="imp-riga"><div><div class="imp-nome">Tema</div><div class="secondario">Terminale è lo stile dell'app e del telefono. Automatico segue Windows.</div></div>
+      <div class="imp-riga"><div><div class="imp-nome">Tema</div><div class="secondario">Terminale è lo stile dell'app e del telefono. Automatico segue il sistema.</div></div>
         <div class="segmentato" id="imp-tema">${[['hacker', 'Terminale'], ['auto', 'Automatico'], ['chiaro', 'Chiaro'], ['scuro', 'Scuro']].map(([k, t]) =>
           `<button data-t="${k}" class="${(S.imp.tema || 'auto') === k ? 'attivo' : ''}">${t}</button>`).join('')}</div></div>
       <div class="imp-riga"><div><div class="imp-nome">Colore</div><div class="secondario">Il colore del fosforo. L'ultimo cerchio apre la tavolozza.</div></div>
@@ -1655,7 +1661,7 @@ function apriImpostazioni() {
         <div class="azioni"><button class="btn secondario piccolo" data-azione="scegli-dispensa">${ic('cartella')}Scegli la cartella della dispensa…</button>
         <button class="btn secondario piccolo" data-azione="ricarica">${ic('ricomincia')}Ricarica i contenuti</button></div></div>
       <div class="imp-riga colonna"><div class="imp-nome">Compilatore</div>
-        <div class="secondario">${S.gpp ? `g++ trovato in <code>${esc(S.gpp)}</code>` : 'g++ non trovato: installa MSYS2/MinGW e aggiungilo al PATH.'}</div></div>
+        <div class="secondario">${S.gpp ? `g++ trovato in <code>${esc(S.gpp)}</code>` : 'g++ non trovato: ' + comeInstallareGpp()}</div></div>
       <div class="imp-riga colonna"><div class="imp-nome">Esercizi in VS Code</div><div id="imp-vscode"></div></div>
       <div class="imp-gruppo">Telefono</div>
       <div class="imp-riga colonna"><div class="imp-nome">Allenatore sul telefono (Android e iPhone)</div>
@@ -1839,6 +1845,17 @@ document.addEventListener('change', ev => {
   const t = ev.target.closest('[data-cambia]');
   if (t?.dataset.cambia === 'orale-filtro') { S.o.filtro = t.value; S.o.corrente = null; renderOrale(); }
 });
+
+/* sul Mac ⌘ fa le veci di Ctrl: ⌘↵ esegue, ⌘1…5 cambia scheda, ⌘S salva, ...
+   (l'evento viene ripetuto con ctrlKey; copia, incolla, annulla e chiudi restano quelli del sistema) */
+const TASTI_DI_SISTEMA = new Set(['c', 'v', 'x', 'a', 'z', 'y', 'q', 'w', 'h', 'f']);
+document.addEventListener('keydown', ev => {
+  if (!S.mac || !ev.metaKey || ev.ctrlKey || !ev.isTrusted || TASTI_DI_SISTEMA.has(ev.key.toLowerCase())) return;
+  if (['Meta', 'Shift', 'Alt'].includes(ev.key)) return;
+  ev.preventDefault(); ev.stopImmediatePropagation();
+  (ev.target || document).dispatchEvent(new KeyboardEvent('keydown', {
+    key: ev.key, code: ev.code, shiftKey: ev.shiftKey, altKey: ev.altKey, ctrlKey: true, bubbles: true, cancelable: true }));
+}, true);
 
 document.addEventListener('keydown', ev => {
   if (ev.defaultPrevented) return;

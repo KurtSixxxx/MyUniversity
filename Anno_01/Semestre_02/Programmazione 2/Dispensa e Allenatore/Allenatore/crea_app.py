@@ -8,6 +8,10 @@ oppure                              .ambiente\\Scripts\\python crea_app.py [--se
 Versione da distribuire:            .ambiente\\Scripts\\python crea_app.py --pubblica
    (contenuti dalla dispensa di Pubblicazione/, eseguibile in Pubblicazione/rilascio/, niente collegamenti)
 
+Sul Mac (python3 crea_app.py [--pubblica]) costruisce invece "Allenatore Prog2.app"
+e lo impacchetta in un .dmg (Apple Silicon o Intel, come il Mac su cui gira):
+vedi main_mac(). Da Windows non si può: lo fa il workflow mac-prog2.yml su GitHub.
+
 Passi:
   1. disegna l'icona (risorse/icona.ico)
   2. crea la copia dei contenuti della dispensa (build/contenuti.json), inclusa nell'eseguibile
@@ -34,6 +38,30 @@ DIST = os.path.join(QUI, 'dist')
 
 def passo(t):
     print('\n== ' + t)
+
+
+def cartella_pubblica(*parti):
+    """Pubblicazione/... sul PC dello studente; nel repository la dispensa pubblica sta accanto ad Allenatore/."""
+    if os.path.isdir(os.path.join(PROGETTO, 'Pubblicazione')):
+        return os.path.join(PROGETTO, 'Pubblicazione', *parti)
+    return os.path.join(PROGETTO, *parti)
+
+
+def crea_contenuti(pubblica):
+    """Copia dei contenuti della dispensa (build/contenuti.json), inclusa nell'app."""
+    import json
+    cat = M.carica_catalogo(cartella_pubblica('Dispensa') if pubblica else '')
+    print('   da ' + str(cat.get('percorso')))
+    if cat['fonte'] != 'dispensa':
+        sys.exit('Dispensa non trovata: impossibile creare la copia dei contenuti.')
+    for k in ('fonte', 'percorso'):
+        cat.pop(k, None)
+    contenuti = os.path.join(BUILD, 'contenuti.json')
+    with io.open(contenuti, 'w', encoding='utf-8') as f:
+        json.dump(cat, f, ensure_ascii=False, separators=(',', ':'))
+    print('   %d quiz, %d domande d\'orale, %d esercizi (%d KB)' % (
+        len(cat['quiz']), len(cat['orale']), len(cat['esercizi']), os.path.getsize(contenuti) // 1024))
+    return contenuti
 
 
 # ---------------------------------------------------------------- 1. icona
@@ -124,27 +152,103 @@ def collegamento(destinazione_lnk, exe):
     subprocess.run(['powershell', '-NoProfile', '-Command', ps], check=True)
 
 
+# ---------------------------------------------------------------- Mac
+PRIMO_AVVIO_MAC = """ALLENATORE PROG2 PER MAC
+========================
+
+1. Trascina «Allenatore Prog2» nella cartella Applicazioni.
+
+2. La prima volta macOS potrebbe dire che l'app «non può essere aperta» o che
+   lo sviluppatore non è verificato (l'app non è firmata da Apple: è un progetto
+   gratuito di uno studente). Per aprirla lo stesso:
+     • prova ad aprirla una volta, chiudi l'avviso;
+     • Impostazioni di Sistema → Privacy e sicurezza → in fondo «Apri comunque».
+   In alternativa, nel Terminale:
+     xattr -dr com.apple.quarantine "/Applications/Allenatore Prog2.app"
+
+3. Per compilare gli esercizi serve il compilatore di Apple. Nel Terminale:
+     xcode-select --install
+   e conferma l'installazione (pochi minuti, una volta sola).
+
+I tuoi progressi sono in ~/Library/Application Support/Allenatore Prog2.
+Le scorciatoie con Ctrl funzionano anche con ⌘ (es. ⌘↵ esegue il codice).
+"""
+
+
+def main_mac(pubblica):
+    import platform
+    import plistlib
+    import tempfile
+    from PIL import Image
+    arch = 'AppleSilicon' if platform.machine() == 'arm64' else 'Intel'
+
+    passo('1. Icona e QR del telefono')
+    png = os.path.join(RISORSE, 'icona.png')
+    if not os.path.isfile(png):     # di solito c'è già (disegnata su Windows, con il font giusto)
+        crea_icona()
+    icns = os.path.join(BUILD, 'icona.icns')
+    Image.open(png).convert('RGBA').save(icns)
+    print('   ' + icns)
+    print('   QR: ' + (crea_qr() or 'nessun link del telefono in web/config.js'))
+
+    passo('2. Copia dei contenuti della dispensa')
+    contenuti = crea_contenuti(pubblica)
+
+    passo('3. Compilazione con PyInstaller (%s)' % arch)
+    sep = os.pathsep
+    subprocess.run([sys.executable, '-m', 'PyInstaller', '--noconfirm', '--clean', '--windowed', '--onedir',
+                    '--name', NOME, '--icon', icns, '--osx-bundle-identifier', 'it.allenatoreprog2.app',
+                    '--add-data', os.path.join(QUI, 'web') + sep + 'web',
+                    '--add-data', contenuti + sep + '.',
+                    '--distpath', DIST, '--workpath', os.path.join(BUILD, 'pyinstaller'), '--specpath', BUILD,
+                    os.path.join(QUI, 'app.py')], check=True)
+    app = os.path.join(DIST, NOME + '.app')
+
+    passo('4. Informazioni del pacchetto e firma ad hoc')
+    info = os.path.join(app, 'Contents', 'Info.plist')
+    with open(info, 'rb') as f:
+        p = plistlib.load(f)
+    p.update({'CFBundleDisplayName': NOME, 'CFBundleShortVersionString': M.APP_VERSIONE,
+              'CFBundleVersion': M.APP_VERSIONE, 'NSHumanReadableCopyright': '2026 Giulio Casella · CC BY-NC-SA 4.0',
+              'LSApplicationCategoryType': 'public.app-category.education', 'NSHighResolutionCapable': True,
+              'LSMinimumSystemVersion': '11.0',
+              # l'interfaccia è servita da http://127.0.0.1 (server locale di pywebview)
+              'NSAppTransportSecurity': {'NSAllowsLocalNetworking': True}})
+    with open(info, 'wb') as f:
+        plistlib.dump(p, f)
+    # dopo aver toccato Info.plist la firma va rifatta, altrimenti macOS dice che l'app è «danneggiata»
+    subprocess.run(['codesign', '--force', '--deep', '--sign', '-', app], check=True)
+    subprocess.run(['codesign', '--verify', '--deep', '--strict', app], check=True)
+    print('   ' + app)
+
+    passo('5. Immagine disco (.dmg)')
+    cartella = cartella_pubblica('rilascio') if pubblica else PROGETTO
+    os.makedirs(cartella, exist_ok=True)
+    dmg = os.path.join(cartella, 'Allenatore.Prog2-mac-%s.dmg' % arch)
+    with tempfile.TemporaryDirectory() as tmp:
+        subprocess.run(['ditto', app, os.path.join(tmp, NOME + '.app')], check=True)
+        os.symlink('/Applications', os.path.join(tmp, 'Applicazioni'))
+        with io.open(os.path.join(tmp, 'Leggimi - primo avvio.txt'), 'w', encoding='utf-8') as f:
+            f.write(PRIMO_AVVIO_MAC)
+        if os.path.exists(dmg):
+            os.remove(dmg)
+        subprocess.run(['hdiutil', 'create', '-volname', NOME, '-srcfolder', tmp, '-ov', '-format', 'UDZO', dmg], check=True)
+    print('   ' + dmg + '  (%d MB)' % (os.path.getsize(dmg) // (1024 * 1024)))
+    print('\nFatto.')
+
+
 def main():
     os.makedirs(BUILD, exist_ok=True)
     pubblica = '--pubblica' in sys.argv
+    if sys.platform == 'darwin':
+        return main_mac(pubblica)
     passo('1. Icona e QR del telefono')
     crea_icona()
     print('   risorse/icona.ico')
     print('   QR: ' + (crea_qr() or 'nessun link del telefono in web/config.js'))
 
     passo('2. Copia dei contenuti della dispensa')
-    cat = M.carica_catalogo(os.path.join(PROGETTO, 'Pubblicazione', 'Dispensa') if pubblica else '')
-    print('   da ' + str(cat.get('percorso')))
-    if cat['fonte'] != 'dispensa':
-        sys.exit('Dispensa non trovata: impossibile creare la copia dei contenuti.')
-    for k in ('fonte', 'percorso'):
-        cat.pop(k, None)
-    import json
-    contenuti = os.path.join(BUILD, 'contenuti.json')
-    with io.open(contenuti, 'w', encoding='utf-8') as f:
-        json.dump(cat, f, ensure_ascii=False, separators=(',', ':'))
-    print('   %d quiz, %d domande d\'orale, %d esercizi (%d KB)' % (
-        len(cat['quiz']), len(cat['orale']), len(cat['esercizi']), os.path.getsize(contenuti) // 1024))
+    contenuti = crea_contenuti(pubblica)
 
     passo('3. Compilazione con PyInstaller')
     sep = os.pathsep
@@ -167,7 +271,7 @@ def main():
 
     if pubblica:
         passo('4. Copia in Pubblicazione/rilascio (da caricare nelle Release di GitHub)')
-        cartella = os.path.join(PROGETTO, 'Pubblicazione', 'rilascio')
+        cartella = cartella_pubblica('rilascio')
         os.makedirs(cartella, exist_ok=True)
         exe = os.path.join(cartella, NOME + '.exe')
         shutil.copy2(exe_creato, exe)
