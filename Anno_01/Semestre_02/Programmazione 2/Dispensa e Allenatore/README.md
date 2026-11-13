@@ -11,6 +11,7 @@
 
 <p align="center">
   <a href="https://github.com/KurtSixxxx/MyUniversity/releases"><img alt="Scarica per Windows" src="https://img.shields.io/badge/Windows-Scarica_l'app-33ff99?style=for-the-badge&logo=windows&logoColor=black&labelColor=0b1a12"></a>
+  <a href="https://github.com/KurtSixxxx/MyUniversity/releases"><img alt="Scarica per Mac" src="https://img.shields.io/badge/Mac-Scarica_l'app-33ff99?style=for-the-badge&logo=apple&logoColor=black&labelColor=0b1a12"></a>
   <a href="https://kurtsixxxx.github.io/MyUniversity/"><img alt="Apri sul telefono" src="https://img.shields.io/badge/Telefono-Apri_l'app-33ff99?style=for-the-badge&logo=android&logoColor=black&labelColor=0b1a12"></a>
   <a href="Dispensa/dispensa-dark.pdf"><img alt="Leggi la dispensa" src="https://img.shields.io/badge/PDF-Leggi_la_dispensa-33ff99?style=for-the-badge&logo=latex&logoColor=black&labelColor=0b1a12"></a>
 </p>
@@ -144,9 +145,17 @@ In appendice: piano di studio, **simulazione d'esame completa**, formulario, glo
 
 ## Inizia in 3 minuti
 
+**Windows**
+
 1. **Scarica** la dispensa e [`Allenatore Prog2.exe`](https://github.com/KurtSixxxx/MyUniversity/releases); metti l'exe accanto alla cartella `Dispensa`.
 2. **Installa g++** con [MSYS2](https://www.msys2.org): `pacman -S mingw-w64-ucrt-x86_64-gcc`, poi aggiungi `C:\msys64\ucrt64\bin` al `Path`.
 3. **Avvia** l'Allenatore: nome, appello, colore, nome del compagno. Fatto.
+
+**Mac**
+
+1. **Scarica** dalle [Release](https://github.com/KurtSixxxx/MyUniversity/releases) il `.dmg` giusto: `AppleSilicon` per i Mac con chip M1, M2, M3, M4…, `Intel` per quelli più vecchi (menu Apple → *Informazioni su questo Mac*). Aprilo e trascina l'app in *Applicazioni*.
+2. **Installa il compilatore**: nel Terminale scrivi `xcode-select --install` e conferma.
+3. **Avvia** l'Allenatore. La prima volta macOS potrebbe bloccarla (non è firmata da Apple): *Impostazioni di Sistema → Privacy e sicurezza → Apri comunque*.
 
 La guida completa (installazione, uso insieme alla dispensa, telefono, sincronizzazione, problemi frequenti) è il capitolo **«Prima di iniziare»** della dispensa.
 
@@ -156,8 +165,9 @@ La guida completa (installazione, uso insieme alla dispensa, telefono, sincroniz
 - **Windows dice «Windows ha protetto il PC».** È normale per i programmi non firmati: *Ulteriori informazioni → Esegui comunque*.
 - **«Non trovo il compilatore g++».** Controlla il `Path` e riavvia l'app (il `Path` si legge solo all'avvio).
 - **Spotify suona solo 30 secondi.** Premi *Accedi a Spotify* nel lettore e accedi con email e password.
-- **Uso Mac o Linux.** La versione per telefono funziona in qualunque browser; l'app per PC parte anche dai sorgenti con `python app.py` (serve `pip install pywebview`).
-- **Dove sono i miei progressi?** Sul PC in `%APPDATA%\Allenatore Prog2`, sul telefono nella memoria del browser. Il codice `P2:` è anche un backup.
+- **Il Mac dice che l'app «non può essere aperta» o è «danneggiata».** L'app non è firmata da Apple: *Impostazioni di Sistema → Privacy e sicurezza → Apri comunque*, oppure nel Terminale `xattr -dr com.apple.quarantine "/Applications/Allenatore Prog2.app"`. Sul Mac le scorciatoie con Ctrl funzionano anche con ⌘.
+- **Uso Linux.** La versione per telefono funziona in qualunque browser; l'app per PC parte anche dai sorgenti con `python app.py` (serve `pip install pywebview`).
+- **Dove sono i miei progressi?** Su Windows in `%APPDATA%\Allenatore Prog2`, sul Mac in `~/Library/Application Support/Allenatore Prog2`, sul telefono nella memoria del browser. Il codice `P2:` è anche un backup.
 
 </details>
 
